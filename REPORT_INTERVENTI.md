@@ -204,3 +204,107 @@ Nella copia `sintetico_audited.h5ad`, `audit_label_vs_reference` e' di tipo `Boo
 - I flag hanno la stessa definizione di identita' di riferimento del Modulo B (≥ 3 cellule nel sangue, margine ≥ 0.20, marcatori "conta > 0"). Le cellule di cloni piccoli restano NA.
 - Non ho testato AnnData con `obs_names` duplicati, ne' file `.h5ad` aperti in modalita' `backed`.
 - Nell'app, la copia `.h5ad` viene costruita in memoria: su dataset grandi potrebbe essere lenta o pesante. Non l'ho misurato.
+
+---
+
+## Intervento 3 — Propagazione dell'errore sulla frazione di CD8
+
+### 1. File modificati e creati
+
+- `core/cd8_propagation.py` (NUOVO): matrice di confusione con direzione, inversione, ricampionamento dei pazienti, Monte Carlo sui conteggi, tre scenari, rifiuti espliciti, testo delle assunzioni.
+- `core/synthetic.py` (ESISTENTE, solo aggiunta in coda): `make_cd8_fraction_dataset`, con frazione vera per paziente nota ed errore con direzione iniettato.
+- `core/report.py` (ESISTENTE): sezione `_cd8_section`; `render_report` e `save_report` hanno un nuovo parametro opzionale in coda, `cd8_result`.
+- `cli.py` (ESISTENTE): opzioni `tcr --cd8-compartment`, `--cd4-label` e `--cd8-label`.
+- `app.py` (ESISTENTE): sottosezione "Frazione di CD8" nella scheda del Modulo B.
+- `tests/test_cd8_propagation_calibration.py` (NUOVO).
+- `README.md` e `NOTE.md`: aggiornati alla fine del lavoro, con cosa fa e cosa non fa ogni modulo e con le idee scartate o rimandate.
+- `core/stats.py` e `core/tcr_validation.py`: NON toccati in questo intervento. `marker_error_rate` resta invariata; la categoria "altro" esiste solo in `cd8_propagation.py`.
+
+### Formula di inversione (come richiesto)
+
+Notazione: per una cellula vera CD4, a4 = P(chiamata CD4), b4 = P(chiamata CD8), o4 = P(chiamata altro); per una vera CD8, a8, b8, o8. Le probabilita' sono stimate sulle cellule del compartimento con identita' di riferimento, pooled fra pazienti. Per il paziente, r e' la frazione CD8 osservata, cioe' n_CD8 / (n_CD4 + n_CD8). Con x e y le cellule vere CD4 e CD8:
+
+    n_CD4 = a4·x + a8·y        n_CD8 = b4·x + b8·y
+
+Da cui, con (n_CD4, n_CD8) ∝ (1 − r, r):
+
+    x ∝ b8·(1 − r) − a8·r      y ∝ a4·r − b4·(1 − r)      frazione vera = y / (x + y), troncata a [0, 1]
+
+Trattamento di "altro": le cellule chiamate "altro" non entrano ne' nel numeratore ne' nel denominatore della frazione riportata. La loro perdita, diversa fra CD4 e CD8, e' gia' contenuta nelle a e b, che per riga sommano a 1 − o. Non serve quindi una categoria "altro" nell'inversione, e le cellule non-T chiamate CD4/CD8 non sono modellate.
+
+Condizionamento: J = b8/(a8+b8) − b4/(a4+b4). Rifiuto se J < 0.2, oppure se il 2.5° percentile di J nel bootstrap e' ≤ 0.
+
+Scenari: l'errore di riga, 1 − chiamata corretta, e' moltiplicato per k ∈ {0.5, 1, 2}, mantenendo la proporzione fra "chiamata sbagliata" e "altro".
+
+Incertezza: le repliche della matrice ricampionano i pazienti con lo schema di `core.stats.cluster_bootstrap`; per ciascuna si estrae r* da Beta(n_CD8 + ½, n_CD4 + ½) e si inverte. L'intervallo e' dato dai percentili 2.5–97.5.
+
+### 2. Test
+
+Suite completa finale: **53 passed, 2 xfailed** in 524 s (`logs/pytest_intervento3.txt`), contro 46 passed e 2 xfailed dopo l'Intervento 2 e 18 passed e 1 xfailed alla baseline. Nessun FAILED.
+
+Output reale di `pytest -v -s`, test nuovi:
+
+```
+[sym] copertura IC95% (scenario 1x): 1910/2000 = 0.955 (banda (0.9, 0.99)); frazione riportata senza correzione: 1368/2000 = 0.684; intervalli rifiutati: 0
+[asym] copertura IC95% (scenario 1x): 1916/2000 = 0.958 (banda (0.9, 0.99)); frazione riportata senza correzione: 597/2000 = 0.298; intervalli rifiutati: 0
+tests/test_cd8_propagation_calibration.py::test_scenarios_are_ordered_and_all_reported PASSED
+tests/test_cd8_propagation_calibration.py::test_refuses_with_fewer_than_five_reference_patients PASSED
+tests/test_cd8_propagation_calibration.py::test_refuses_ill_conditioned_matrix PASSED
+tests/test_cd8_propagation_calibration.py::test_resampling_matches_cluster_bootstrap_exactly PASSED
+tests/test_cd8_propagation_calibration.py::test_end_to_end_from_module_b_flags PASSED
+```
+
+(Le due righe `[sym]` e `[asym]` sono stampate da `test_coverage_symmetric_error` e `test_coverage_asymmetric_error`, entrambe PASSED; pytest con `-s` stampa "PASSED" su una riga a parte, qui filtrata.)
+
+| Calibrazione | Repliche | Copertura IC95% (scenario 1x) | Banda dichiarata | Senza correzione (solo conteggi) | Rifiuti |
+|---|---|---|---|---|---|
+| Errore simmetrico (CD4→CD8 = CD8→CD4 = 0.15, altro 0.05) | 200 × 10 pazienti = 2000 intervalli | 1910/2000 = **0.955** | [0.90, 0.99] | 1368/2000 = 0.684 | 0 |
+| Errore asimmetrico (CD4→CD8 = 0.24 = 3 × CD8→CD4 = 0.08, altro 0.05) | 2000 | 1916/2000 = **0.958** | [0.90, 0.99] | 597/2000 = 0.298 | 0 |
+
+Entrambe sono in banda al primo tentativo, senza correzioni del metodo. La colonna "senza correzione" mostra che l'inversione conta: l'intervallo dei soli conteggi manca il valore vero nel 32% dei casi con errore simmetrico e nel 70% con errore asimmetrico. Altri test: equivalenza esatta (1e-12) con `cluster_bootstrap`; rifiuto con 4 pazienti di riferimento; rifiuto con J ≈ 0.05 (errore 0.45/0.45); tre scenari sempre presenti; test end-to-end dai flag del Modulo B.
+
+### 3. Output reale
+
+Stesso dataset sintetico dell'Intervento 2 (errore nel tumore circa 42%), comando `python cli.py tcr ... --marker-map markers.json --reference-compartment PBMC --cd8-compartment Tumor --n-boot 1000`, output completo:
+
+```
+Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.107 (IC95% [+0.088, +0.127], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.283 (IC95% [0.250, 0.312], 12 pazienti).
+Flag per cellula valutabili (audit_label_vs_reference non NA): 39.6% delle cellule.
+Matrice di confusione stimata su 1131 cellule con identita' di riferimento da 12 pazienti (pooled fra pazienti), J = 0.43. Frazione CD8 nel compartimento 'Tumor' del paziente PT000 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 71): riportata 0.56 (IC95% dei soli conteggi 0.44-0.67, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.43 e 0.74; 1x: fra 0.37 e 0.92; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT001 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 74): riportata 0.43 (IC95% dei soli conteggi 0.31-0.55, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.25 e 0.57; 1x: fra 0.05 e 0.61; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT002 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 70): riportata 0.47 (IC95% dei soli conteggi 0.36-0.59, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.31 e 0.62; 1x: fra 0.18 e 0.72; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT003 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 74): riportata 0.65 (IC95% dei soli conteggi 0.54-0.75, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.56 e 0.83; 1x: fra 0.60 e 1.00; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT004 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 59): riportata 0.49 (IC95% dei soli conteggi 0.37-0.62, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.33 e 0.66; 1x: fra 0.20 e 0.79; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT005 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 90): riportata 0.51 (IC95% dei soli conteggi 0.41-0.60, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.38 e 0.65; 1x: fra 0.29 e 0.76; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT006 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 80): riportata 0.56 (IC95% dei soli conteggi 0.46-0.66, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.45 e 0.72; 1x: fra 0.41 e 0.90; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT007 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 74): riportata 0.46 (IC95% dei soli conteggi 0.35-0.57, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.30 e 0.60; 1x: fra 0.14 e 0.68; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT008 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 89): riportata 0.45 (IC95% dei soli conteggi 0.35-0.56, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.30 e 0.58; 1x: fra 0.15 e 0.64; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT009 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 77): riportata 0.48 (IC95% dei soli conteggi 0.37-0.60, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.33 e 0.63; 1x: fra 0.21 e 0.75; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT010 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 70): riportata 0.40 (IC95% dei soli conteggi 0.29-0.51, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.22 e 0.52; 1x: fra 0.01 e 0.53; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Frazione CD8 nel compartimento 'Tumor' del paziente PT011 (CD8T sul totale delle cellule etichettate CD4T o CD8T, n = 76): riportata 0.36 (IC95% dei soli conteggi 0.25-0.46, senza correzione). Intervallo plausibile al 95% tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni non condivisi con il sangue -- 0.5x: fra 0.17 e 0.45; 1x: fra 0.00 e 0.43; 2x: non prodotto (matrice di confusione mal condizionata (J = -0.51; servono J >= 0.2 e un intervallo di J che escluda lo zero)). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione. Assunzioni. (1) L'identita' di riferimento stimata dal sangue e' considerata corretta. (2) La matrice di confusione e' stimata solo sui cloni condivisi con il sangue, che per costruzione sono quelli espansi (almeno 3 cellule nel sangue e identita' netta), ed e' unica per tutti i pazienti (pooled), non per paziente. Nei dati originali (PDAC, GSE278694) l'errore di annotazione cresce con la dimensione del clone (rho = +0.177): la direzione plausibile del bias e' quindi una SOVRASTIMA dell'errore sui cloni non condivisi, ma non e' stata verificata, perche' quelle cellule non hanno riferimento. Per questo sono riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali e' "il risultato". (3) Le cellule etichettate CD4 o CD8 sono vere cellule T; doppietti e altre cellule non-T etichettate CD4/CD8 non sono modellati.
+[ok] report scritto in out3/tcr_cd8_report.html
+```
+
+
+### 4. Decisioni e assunzioni
+
+- **La matrice e' stimata nel compartimento bersaglio**, non in tutti i compartimenti: l'errore dipende dal compartimento (0.195 nel tumore contro 0.059 nel tessuto adiacente in `pdac-ml`).
+- **Denominatore:** cellule etichettate CD4T o CD8T nel compartimento bersaglio di quel paziente. E' dichiarato nella frase e nel report; le etichette sono configurabili (`--cd4-label`, `--cd8-label`).
+- **Ricampionamento dei pazienti.** `core.stats.cluster_bootstrap` restituisce solo media e IC, non le repliche, e non va modificata. Ho quindi scritto `patient_resample_draws`, che ne riproduce lo schema chiamata per chiamata. Un test verifica che la media sulle stesse repliche dia esattamente (1e-12) lo stesso IC di `cluster_bootstrap`. E' una **deviazione dalla lettera** ("importali"), ma non dalla sostanza: lo stimatore validato non e' stato modificato ne' reimplementato in modo diverso.
+- **Monte Carlo:** una frazione estratta da Beta(n_CD8 + ½, n_CD4 + ½), cioe' con prior di Jeffreys, per ogni replica della matrice; 1000 repliche di default (`--n-boot`).
+- **Soglie dichiarate:** J minimo 0.2; almeno 20 cellule CD4+CD8 per paziente; rifiuto se oltre il 10% delle repliche e' non valido (matrice senza una delle due identita', errore scalato ≥ 1, inversione non definita); almeno 5 pazienti con cellule di riferimento nel compartimento (la stessa soglia del Modulo B).
+- **Troncamento a [0, 1]** delle frazioni invertite. Vicino ai bordi l'intervallo puo' toccare 0 o 1.
+- **Il rifiuto per condizionamento vale per singolo scenario:** con errore 2x lo scenario puo' essere rifiutato mentre 0.5x e 1x vengono prodotti. Succede nel dataset di esempio, dove l'errore nel tumore e' circa il 42% e raddoppiato rende J negativo.
+- **Nessuno scenario e' indicato come "il risultato"** e il testo delle assunzioni compare sempre accanto agli intervalli, come chiesto.
+
+### 5. Bug o anomalie
+
+- **Motivo di rifiuto sbagliato (corretto).** Nel primo output reale lo scenario 2x veniva rifiutato con "le probabilita' superano 1", mentre la causa vera era J = −0.51 (inversione mal condizionata): bastava una sola replica bootstrap con errore raddoppiato ≥ 1 per far scattare il rifiuto meno informativo. Ho riordinato i controlli: stima puntuale, poi J, poi repliche non valide (rifiuto solo oltre il 10%). Ho anche allineato il numero di estrazioni Beta alle repliche rimaste. Le calibrazioni sono state rieseguite dopo la correzione e danno numeri identici (1x non e' toccato).
+- Nessuna correzione a codice esistente in questo intervento.
+
+### 6. Limiti noti
+
+- La calibrazione copre un solo disegno: 10 pazienti, 150–300 cellule T ciascuno, 30% con riferimento scelto a caso, frazione vera fra 0.2 e 0.7. In simulazione l'assunzione chiave (cloni con riferimento rappresentativi) e' vera per costruzione: la copertura con cloni NON rappresentativi (errore che dipende dalla dimensione del clone) non e' stata misurata. E' proprio il caso che gli scenari 0.5x/2x dovrebbero coprire, ma senza garanzia di copertura.
+- Matrice pooled: se l'errore varia molto fra pazienti, l'intervallo del singolo paziente puo' essere troppo stretto. Non misurato.
+- Le cellule non-T etichettate CD4/CD8 (es. doppietti) non sono modellate.
+- Con errori grandi (come nel dataset di esempio, circa 42%) gli intervalli 1x sono molto larghi (es. 0.37–0.92): e' l'informazione corretta, ma va detto a chi legge.
+- L'app ricalcola gli intervalli a ogni clic, senza cache; non misurato su dataset reali grandi.
+
+---
+
+## Riepilogo finale
+
+- **Commit:** `cf61e76` baseline (stato iniziale, prima di ogni modifica); `4079895` Intervento 1; `e56d1b9` Intervento 2; il commit "Intervento 3" contiene questo resoconto (vedi `git log`).
+- **Suite:** 18 passed / 1 xfailed alla baseline → 36 / 2 → 46 / 2 → **53 passed / 2 xfailed**. Gli xfail sono quello preesistente (Nadeau-Bengio a k=5, conservativo) e quello nuovo (`test_variance_share_bootstrap_coverage_tissue`, conservativo: copertura 1.000 > 0.99).
+- **Stime NON esposte per calibrazione fuori banda:** la scomposizione della varianza dell'audit del disegno.
+- **`core/stats.py` non e' mai stato modificato** (`git diff cf61e76 -- core/stats.py` e' vuoto). `core/tcr_validation.py` ha solo aggiunte (Intervento 2); l'output del Modulo B e' identico a prima della modifica (test di regressione).
+- `README.md` aggiornato con cosa fa e cosa non fa ogni modulo; `NOTE.md` con le idee scartate o rimandate.

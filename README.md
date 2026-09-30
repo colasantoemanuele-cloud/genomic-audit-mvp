@@ -6,6 +6,18 @@ partner: applicazione locale, non multi-tenant, senza autenticazione ne' pagamen
 
 ## Cosa fa
 
+**Audit del disegno e del confondimento (solo metadati).** Legge una tabella con una riga
+per campione o libreria (oppure `adata.obs`, ridotto alle combinazioni distinte dei fattori)
+e l'indicazione del ruolo delle colonne: paziente, tessuto, fattori tecnici (libreria,
+batch, chimica, protocollo, data), esiti. Riporta:
+(1) i fatti strutturali del disegno, rilevati in modo deterministico: annidamenti, fattori
+coincidenti, esiti determinati da un fattore, fattori tecnici in corrispondenza 1:1 con la
+coppia paziente-tessuto; per ogni coppia di fattori riporta anche il Cramér V con la
+correzione di Bergsma, "non valutabile" su tabelle troppo piccole, con allarme a V >= 0.5;
+(2) per ogni confronto richiesto, il numero di unita' indipendenti (pazienti) e la classe
+`stimabile` / `stimabile con bassa potenza` / `non stimabile`.
+Funziona anche prima di sequenziare, sul foglio di disegno dei campioni.
+
 **Modulo A -- Audit del leakage per paziente.** Per un task di classificazione a scelta
 dell'utente, confronta una valutazione onesta (split a 5 fold raggruppato per paziente,
 `StratifiedGroupKFold`) con un controllo negativo (split casuale sulle singole cellule,
@@ -29,6 +41,22 @@ etichetta -> geni marcatori canonici, calcola anche il tasso d'errore per compar
 usando come riferimento un solo compartimento (tipicamente il sangue), per evitare la
 circolarita' di stimare il riferimento sugli stessi dati che poi si giudicano.
 
+**Modulo B -- Flag per cellula.** Con la mappa dei marcatori e il compartimento di
+riferimento, il Modulo B scrive in una COPIA dell'AnnData (`<nome>_audited.h5ad`) e in un
+CSV due colonne per cellula: `audit_reference_label`, l'identita' del clone stimata nel
+sangue, e `audit_label_vs_reference`, True/False se l'etichetta assegnata discorda o
+concorda. Il valore e' `NA` dove la cellula non era verificabile. La media dei flag
+valutabili di un compartimento coincide esattamente con il tasso d'errore del Modulo B.
+
+**Modulo B -- Frazione di CD8 con l'errore propagato.** Per ogni paziente, nel
+compartimento scelto: frazione di cellule etichettate CD8 sul totale delle CD4+CD8, e
+intervallo plausibile al 95% dopo l'inversione di una matrice di confusione con direzione
+(vera CD4/CD8 -> chiamata CD4/CD8/altro), stimata sulle cellule con identita' di
+riferimento e pooled fra pazienti. Tre scenari di errore sono sempre riportati (0.5x, 1x,
+2x), senza indicarne uno come "il risultato". Nessun intervallo con meno di 5 pazienti con
+riferimento o con una matrice mal condizionata (J < 0.2, oppure un intervallo di J che
+include lo zero).
+
 ## Cosa NON fa
 
 - Nessuna autenticazione, nessun utente multiplo, nessuna fatturazione, nessun deployment
@@ -39,7 +67,23 @@ circolarita' di stimare il riferimento sugli stessi dati che poi si giudicano.
   significativo" non vuol dire "equivalente". Lo strumento lo segnala esplicitamente
   invece di nasconderlo.
 - Il Modulo B richiede che il dataset abbia una colonna di compartimento tissutale e file
-  VDJ Cell Ranger; senza quelli, resta disponibile solo il Modulo A.
+  VDJ Cell Ranger; senza quelli, restano disponibili solo l'audit del disegno e il Modulo A.
+- **Audit del disegno:** non guarda l'espressione genica e non stima effetti biologici.
+  La scomposizione della varianza su pseudobulk (paziente/tessuto/batch) esiste in
+  `core/design_audit.py` ma NON e' esposta: la calibrazione del suo intervallo e' fuori
+  banda per la quota del tessuto (vedi `NOTE.md`). Il Cramér V a soglia 0.5 ha potenza
+  0.46 a V = 0.5: un'associazione moderata spesso non viene segnalata. Non verifica che una
+  colonna dichiarata come esito sia davvero a livello di paziente.
+- **Flag per cellula:** non correggono nulla, e le etichette originali non vengono mai
+  modificate. Non esiste un flag dei doppietti: lo fanno gia' scDblFinder e Scrublet. Le
+  cellule senza TCR, i cloni senza cellule sufficienti nel sangue, le etichette fuori dalla
+  mappa dei marcatori e le cellule del compartimento di riferimento restano `NA`, e `NA`
+  non significa "corretta".
+- **Frazione di CD8:** assume che l'identita' dal sangue sia corretta e che i cloni
+  condivisi con il sangue (quelli espansi) siano rappresentativi dei non condivisi.
+  Quest'ultima assunzione non e' verificabile: nei dati PDAC originali l'errore cresce con
+  la dimensione del clone. La matrice e' unica per tutti i pazienti. Doppietti e cellule
+  non-T etichettate CD4/CD8 non sono modellati.
 
 ## Installazione
 
@@ -60,6 +104,8 @@ uv run streamlit run app.py
 uv run python cli.py demo --out results/demo_report.html
 ```
 
+La demo include l'audit del disegno su metadati sintetici con la struttura di GSE278694.
+
 La demo genera due dataset sintetici (uno per modulo, per mostrare chiaramente l'effetto
 che ciascuno misura): per il Modulo A, un "fingerprint" genico casuale specifico per
 paziente che uno split casuale sulle cellule puo' sfruttare ma uno split per paziente no;
@@ -70,6 +116,11 @@ VERA del clone (non all'etichetta assegnata, che puo' essere sbagliata).
 ## Uso con dati propri
 
 ```bash
+# Audit del disegno (solo metadati: CSV con una riga per campione, oppure --h5ad)
+uv run python cli.py design --meta campioni.csv --patient-col patient --tissue-col tissue \
+    --technical batch=run --technical protocol=protocol \
+    --compare tissue:Tumor:Adjacent_normal --out results/design_report.html
+
 # Modulo A
 uv run python cli.py leakage --h5ad dati.h5ad \
     --target-col tissue --patient-col patient_id --out results/leakage_report.html
@@ -80,7 +131,10 @@ uv run python cli.py leakage --h5ad dati.h5ad \
 uv run python cli.py tcr --h5ad dati.h5ad --vdj-manifest vdj_manifest.csv \
     --patient-col patient_id --compartment-col tissue --celltype-col celltype \
     --barcode-col barcode --marker-map markers.json --reference-compartment PBMC \
+    --export-flags --cd8-compartment Tumor \
     --out results/tcr_report.html
+# --export-flags  -> results/dati_audited.h5ad (copia) e results/dati_audit_flags.csv
+# --cd8-compartment -> intervalli sulla frazione di CD8 per paziente nel report
 ```
 
 Oppure `uv run streamlit run app.py` senza la spunta "dati sintetici", per caricare i
@@ -106,6 +160,16 @@ banda teorica [2%, 8%] ma sul lato sicuro. La banda resta quella teorica, non e'
 allargata per far passare il numero osservato: se in futuro questo test tornasse a
 passare inaspettatamente, la suite fallirebbe (segnale da investigare).
 
+Altre calibrazioni obbligatorie, con le bande dichiarate nel docstring di ciascun file:
+`tests/test_design_audit_calibration.py` (falsi allarmi del Cramér V, annidamento e
+confondimento rilevati al 100%, caso GSE278694; la copertura dell'intervallo della quota
+del tessuto e' `xfail(strict=True)`) e `tests/test_cd8_propagation_calibration.py`
+(copertura dell'IC 95% della frazione di CD8 con errore simmetrico e asimmetrico).
+`tests/test_tcr_flags.py` verifica che i flag coincidano esattamente con il tasso d'errore
+e che l'output del Modulo B sia identico a quello precedente alla modifica
+(`tests/fixtures/tcr_regression_baseline.json`). Il resoconto degli interventi, con tutti i
+numeri misurati, e' in `REPORT_INTERVENTI.md`.
+
 `tests/test_synthetic_data.py` verifica invece, end-to-end, che gli effetti iniettati nei
 generatori sintetici (`core/synthetic.py`) vengano effettivamente rilevati dai due moduli.
 
@@ -113,8 +177,10 @@ generatori sintetici (`core/synthetic.py`) vengano effettivamente rilevati dai d
 
 ```
 core/               motore analitico, installabile e testabile senza Streamlit
+  design_audit.py   audit del disegno e del confondimento
   leakage_audit.py  Modulo A
-  tcr_validation.py Modulo B
+  tcr_validation.py Modulo B (inclusi i flag per cellula)
+  cd8_propagation.py frazione di CD8 con propagazione dell'errore
   stats.py          Nadeau-Bengio, cluster bootstrap (validati con calibrazione)
   synthetic.py       generatori di dati sintetici (demo + test)
   report.py         report HTML autocontenuto

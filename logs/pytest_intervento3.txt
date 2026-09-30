@@ -1,0 +1,69 @@
+[sym] copertura IC95% (scenario 1x): 1910/2000 = 0.955 (banda (0.9, 0.99)); frazione riportata senza correzione: 1368/2000 = 0.684; intervalli rifiutati: 0
+PASSED
+[asym] copertura IC95% (scenario 1x): 1916/2000 = 0.958 (banda (0.9, 0.99)); frazione riportata senza correzione: 597/2000 = 0.298; intervalli rifiutati: 0
+PASSED
+tests/test_cd8_propagation_calibration.py::test_scenarios_are_ordered_and_all_reported PASSED
+tests/test_cd8_propagation_calibration.py::test_refuses_with_fewer_than_five_reference_patients PASSED
+tests/test_cd8_propagation_calibration.py::test_refuses_ill_conditioned_matrix PASSED
+tests/test_cd8_propagation_calibration.py::test_resampling_matches_cluster_bootstrap_exactly PASSED
+tests/test_cd8_propagation_calibration.py::test_end_to_end_from_module_b_flags PASSED
+tests/test_design_audit.py::test_cramers_v_perfect_and_null PASSED
+tests/test_design_audit.py::test_small_table_is_not_evaluable PASSED
+tests/test_design_audit.py::test_batch_perfectly_separating_tissue_makes_comparison_not_estimable PASSED
+tests/test_design_audit.py::test_paired_comparison_with_enough_patients_is_estimable PASSED
+tests/test_design_audit.py::test_patient_level_outcome_is_between_patient_comparison PASSED
+tests/test_design_audit.py::test_missing_level_is_not_estimable PASSED
+tests/test_design_audit.py::test_sample_sheet_from_cell_level_obs PASSED
+tests/test_design_audit.py::test_protocol_note_present_only_when_protocol_declared PASSED
+[a] falsi allarmi Cramér V: 1/200 = 0.005 (banda (0.0, 0.05)); repliche con fatti strutturali: 0/200
+PASSED
+[b] annidamento paziente-in-batch rilevato: 200/200
+PASSED
+[c] esito determinato dal paziente rilevato: 200/200; confronto tessuto classificato 'non stimabile': 200/200
+PASSED
+[potenza] detection rate (soglia V >= 0.5, n=60, 3x3): V=0.3: 0.020, V=0.5: 0.460, V=0.7: 0.980, V=0.9: 1.000
+PASSED
+[quote] patient: vero 0.5, media stime 0.500 (bias -0.000), entro +-0.1: 1.000
+[quote] tissue: vero 0.3, media stime 0.300 (bias +0.000), entro +-0.1: 1.000
+PASSED
+[copertura IC95%] patient: 193/200 = 0.965 (banda (0.9, 0.99))
+PASSED
+[copertura IC95%] tissue: 200/200 = 1.000 (banda (0.9, 0.99))
+XFAIL
+[pseudobulk] quote stimate: {'patient_id': 0.49802726409817816, 'tissue': 0.317798575636533}
+PASSED
+tests/test_design_audit_calibration.py::test_variance_decomposition_refuses_confounded_factors PASSED
+tests/test_design_audit_calibration.py::test_variance_decomposition_refuses_too_few_patients PASSED
+[GSE278694] Confronto 'tissue': Tumor vs Adjacent_normal: stimabile con bassa potenza, disegno appaiato (entro paziente), 5 pazienti con entrambi i livelli (soglia dichiarata: 5 pazienti, la stessa del Modulo B; inoltre con 5 pazienti appaiati anche un test di Wilcoxon esatto non puo' scendere sotto p = 0.062). Un risultato non significativo qui non indica assenza di effetto. Attenzione: 16 pazienti con un solo livello esclusi dal confronto appaiato.
+[GSE278694] Confronto 'protocol': scRNA vs snRNA: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'scRNA' e 'snRNA' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente).
+PASSED
+tests/test_stats_calibration.py::test_nadeau_bengio_calibration_null PASSED
+tests/test_stats_calibration.py::test_nadeau_bengio_calibration_null_k5_default XFAIL
+tests/test_stats_calibration.py::test_nadeau_bengio_less_anticonservative_than_uncorrected_ttest PASSED
+tests/test_stats_calibration.py::test_nadeau_bengio_power PASSED
+tests/test_stats_calibration.py::test_wilcoxon_min_pvalue_formula PASSED
+tests/test_stats_calibration.py::test_nadeau_bengio_zero_variance_returns_p_one PASSED
+tests/test_stats_calibration.py::test_cluster_bootstrap_calibration_null PASSED
+tests/test_stats_calibration.py::test_cluster_bootstrap_power PASSED
+tests/test_stats_calibration.py::test_cluster_bootstrap_insufficient_groups_flagged PASSED
+tests/test_stats_calibration.py::test_cluster_bootstrap_naive_vs_cluster_ci_width PASSED
+tests/test_synthetic_data.py::test_leakage_dataset_shows_gap PASSED
+tests/test_synthetic_data.py::test_leakage_dataset_model_comparison_runs_when_enough_patients PASSED
+tests/test_synthetic_data.py::test_leakage_dataset_skips_model_comparison_below_threshold PASSED
+tests/test_synthetic_data.py::test_tcr_validation_detects_injected_discordance PASSED
+tests/test_synthetic_data.py::test_tcr_validation_no_injected_effect_is_not_significant PASSED
+tests/test_synthetic_data.py::test_tcr_validation_marker_error_rate PASSED
+tests/test_synthetic_data.py::test_tcr_validation_insufficient_patients_flagged PASSED
+tests/test_synthetic_data.py::test_tcr_narrative_handles_significant_negative_excess PASSED
+tests/test_synthetic_data.py::test_vdj_csv_roundtrip PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[eccesso_035_marcatori] PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[eccesso_0_marcatori] PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[tre_compartimenti] PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[senza_marcatori_pochi_pazienti] PASSED
+tests/test_tcr_flags.py::test_flags_mean_equals_marker_error_rate_exactly PASSED
+tests/test_tcr_flags.py::test_reference_compartment_and_unverifiable_cells_are_na PASSED
+tests/test_tcr_flags.py::test_flags_follow_rows_when_order_is_shuffled PASSED
+tests/test_tcr_flags.py::test_export_writes_copy_and_leaves_original_untouched PASSED
+tests/test_tcr_flags.py::test_export_refuses_existing_flag_columns PASSED
+tests/test_tcr_flags.py::test_no_flags_without_marker_map PASSED
+============ 53 passed, 2 xfailed, 24 warnings in 523.60s (0:08:43) ============

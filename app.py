@@ -12,6 +12,7 @@ import anndata as ad
 import pandas as pd
 import streamlit as st
 
+from core.cd8_propagation import cd8_fraction_intervals
 from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
 from core.leakage_audit import run_leakage_audit
 from core.report import render_report
@@ -28,7 +29,7 @@ st.caption(
     "Prototipo per un singolo studio pilota. Tutto gira in locale: nessun dato lascia questa macchina."
 )
 
-for key in ("design_result", "leakage_result", "tcr_result"):
+for key in ("design_result", "leakage_result", "tcr_result", "cd8_result"):
     if key not in st.session_state:
         st.session_state[key] = None
 
@@ -326,13 +327,46 @@ with tab_b:
                 st.download_button("Scarica dati_audited.h5ad", st.session_state.audited_h5ad,
                                    file_name="dati_audited.h5ad")
 
+            st.subheader("Frazione di CD8: effetto dell'errore di annotazione")
+            comp_options = sorted(tcr_adata.obs[compartment_col_b].astype(str).unique())
+            cd8_comp = st.selectbox("Compartimento", comp_options,
+                                    index=comp_options.index("Tumor") if "Tumor" in comp_options else 0,
+                                    key="cd8_comp")
+            labels = list(marker_map) if marker_map else ["CD4T", "CD8T"]
+            c1, c2 = st.columns(2)
+            cd4_label = c1.selectbox("Etichetta CD4", labels, index=0, key="cd4_label")
+            cd8_label = c2.selectbox("Etichetta CD8", labels, index=min(1, len(labels) - 1), key="cd8_label")
+            if st.button("Calcola gli intervalli sulla frazione di CD8"):
+                obs_flags = tcr_adata.obs.join(result_b.cell_flags)
+                st.session_state.cd8_result = cd8_fraction_intervals(
+                    obs_flags, patient_col=patient_col_b, compartment_col=compartment_col_b,
+                    celltype_col=celltype_col_b, reference_col="audit_reference_label",
+                    target_compartment=cd8_comp, cd4_label=cd4_label, cd8_label=cd8_label)
+            cd8_res = st.session_state.cd8_result
+            if cd8_res is not None:
+                if cd8_res.refused_reason:
+                    st.warning(f"Intervalli non prodotti: {cd8_res.refused_reason}.")
+                elif cd8_res.matrix is not None:
+                    st.caption(f"Matrice di confusione (pooled fra {cd8_res.n_reference_patients} pazienti, "
+                               f"J = {cd8_res.youden_j:.2f})")
+                    st.dataframe(cd8_res.matrix.round(3))
+
+                def _iv(iv):
+                    return f"{iv.low:.2f}–{iv.high:.2f}" if iv.low is not None else "non prodotto"
+                st.dataframe(pd.DataFrame([
+                    {"paziente": p.patient, "n (CD4+CD8)": p.n_cd4_called + p.n_cd8_called,
+                     "riportata": "—" if p.reported is None else f"{p.reported:.2f}",
+                     "errore 0.5x": _iv(p.scenarios[0.5]), "errore 1x": _iv(p.scenarios[1.0]),
+                     "errore 2x": _iv(p.scenarios[2.0])} for p in cd8_res.patients]), hide_index=True)
+                st.caption(cd8_res.assumptions)
+
 # --------------------------------------------------------------------------- #
 st.divider()
-if any(st.session_state[k] is not None for k in ("design_result", "leakage_result", "tcr_result")):
+if any(st.session_state[k] is not None for k in ("design_result", "leakage_result", "tcr_result", "cd8_result")):
     report_html = render_report(
         leakage_result=st.session_state.leakage_result, tcr_result=st.session_state.tcr_result,
         dataset_name="demo sintetico" if use_demo else "dataset caricato",
-        design_result=st.session_state.design_result,
+        design_result=st.session_state.design_result, cd8_result=st.session_state.cd8_result,
     )
     st.download_button("Scarica report HTML completo", report_html, file_name="report_audit.html",
                         mime="text/html")

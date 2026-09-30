@@ -17,6 +17,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from core.cd8_propagation import CD8PropagationResult
 from core.design_audit import DesignAuditResult
 from core.leakage_audit import LeakageAuditResult, ModelComparisonResult
 from core.tcr_validation import MarkerErrorResult, TcrValidationResult
@@ -335,11 +336,57 @@ def _tcr_section(result: TcrValidationResult) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# Propagazione dell'errore sulla frazione di CD8
+# --------------------------------------------------------------------------- #
+def _cd8_section(r: CD8PropagationResult) -> str:
+    parts = [
+        f"<h2>Frazione di CD8 nel compartimento '{html.escape(r.target_compartment)}': "
+        f"effetto dell'errore di annotazione</h2>",
+        '<div class="card verdict-warn">' if r.refused_reason is None else '<div class="card verdict-no">',
+        '<p class="narrative">Per ogni paziente: frazione di cellule etichettate CD8 sul totale delle '
+        "cellule etichettate CD4 o CD8 in questo compartimento (denominatore dichiarato), e intervallo "
+        "plausibile dopo aver tenuto conto dell'errore di annotazione misurato con il Modulo B. Tre "
+        "scenari di errore (0.5x, 1x, 2x) sono sempre riportati: nessuno e' \"il risultato\".</p>",
+    ]
+    if r.refused_reason:
+        parts.append(f'<p class="narrative"><b>Intervalli non prodotti:</b> {html.escape(r.refused_reason)}.</p>')
+    elif r.matrix is not None:
+        parts.append(
+            f'<p class="narrative">Matrice di confusione con direzione, stimata su {r.n_reference_cells:,} '
+            f"cellule con identita' di riferimento da {r.n_reference_patients} pazienti, unica per tutti "
+            f"i pazienti (pooled). Ogni riga: probabilita' che una cellula con quell'identita' vera "
+            f"riceva ciascuna etichetta. J = {r.youden_j:.2f} (differenza fra le probabilita' di "
+            f"essere chiamata CD8 per una vera CD8 e per una vera CD4: sotto 0.2 la correzione non "
+            f"viene fatta).</p>")
+        parts.append("<table><tr><th></th>" + "".join(f"<th>{html.escape(c)}</th>" for c in r.matrix.columns) + "</tr>")
+        for idx, row in r.matrix.iterrows():
+            parts.append(f"<tr><td>{html.escape(idx)}</td>" + "".join(f"<td>{v:.3f}</td>" for v in row) + "</tr>")
+        parts.append("</table>")
+    parts.append("<table><tr><th>Paziente</th><th>n (CD4+CD8)</th><th>Riportata [IC95% conteggi]</th>"
+                 "<th>Errore 0.5x</th><th>Errore 1x</th><th>Errore 2x</th></tr>")
+
+    def cell(iv):
+        return (f"{iv.low:.2f}–{iv.high:.2f}" if iv.low is not None
+                else f"non prodotto: {html.escape(iv.refused_reason or '')}")
+    for p in r.patients:
+        rep = (f"{p.reported:.2f} [{p.naive_low:.2f}–{p.naive_high:.2f}]" if p.naive_low is not None
+               else ("—" if p.reported is None else f"{p.reported:.2f}"))
+        parts.append(f"<tr><td>{html.escape(p.patient)}</td><td>{p.n_cd4_called + p.n_cd8_called}</td>"
+                     f"<td>{rep}</td>" + "".join(f"<td>{cell(p.scenarios[k])}</td>" for k in sorted(p.scenarios))
+                     + "</tr>")
+    parts.append("</table>")
+    parts.append(f'<p class="narrative"><i>{html.escape(r.assumptions)}</i></p>')
+    parts.append("</div>")
+    return "".join(parts)
+
+
+# --------------------------------------------------------------------------- #
 def render_report(
     leakage_result: LeakageAuditResult | None = None,
     tcr_result: TcrValidationResult | None = None,
     dataset_name: str = "dataset caricato",
     design_result: DesignAuditResult | None = None,
+    cd8_result: CD8PropagationResult | None = None,
 ) -> str:
     """Ritorna una stringa HTML autocontenuta: nessun asset esterno, i grafici sono
     immagini PNG incorporate come data URI."""
@@ -356,6 +403,8 @@ def render_report(
         body.append(_leakage_section(leakage_result))
     if tcr_result is not None:
         body.append(_tcr_section(tcr_result))
+    if cd8_result is not None:
+        body.append(_cd8_section(cd8_result))
     if leakage_result is None and tcr_result is None and design_result is None:
         body.append("<p>Nessun risultato da mostrare: esegui almeno un modulo.</p>")
     body.append(
@@ -378,9 +427,11 @@ def save_report(
     tcr_result: TcrValidationResult | None = None,
     dataset_name: str = "dataset caricato",
     design_result: DesignAuditResult | None = None,
+    cd8_result: CD8PropagationResult | None = None,
 ) -> Path:
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(render_report(leakage_result, tcr_result, dataset_name, design_result),
+    out_path.write_text(render_report(leakage_result, tcr_result, dataset_name, design_result,
+                                      cd8_result),
                         encoding="utf-8")
     return out_path

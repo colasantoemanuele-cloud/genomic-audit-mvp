@@ -27,6 +27,7 @@ from pathlib import Path
 import anndata as ad
 import pandas as pd
 
+from core.cd8_propagation import cd8_fraction_intervals
 from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
 from core.leakage_audit import run_leakage_audit
 from core.report import save_report
@@ -131,7 +132,19 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
         h5ad_path, csv_path = export_audited(adata, result, prefix)
         print(f"[ok] copia con i flag scritta in {h5ad_path} (il file originale non e' toccato)")
         print(f"[ok] flag per cellula scritti in {csv_path}")
-    out = save_report(args.out, tcr_result=result, dataset_name=Path(args.h5ad).stem)
+    cd8 = None
+    if args.cd8_compartment:
+        if result.cell_flags is None:
+            sys.exit("--cd8-compartment richiede --marker-map e --reference-compartment")
+        obs = adata.obs.join(result.cell_flags)
+        cd8 = cd8_fraction_intervals(
+            obs, patient_col=args.patient_col, compartment_col=args.compartment_col,
+            celltype_col=args.celltype_col, reference_col="audit_reference_label",
+            target_compartment=args.cd8_compartment, cd4_label=args.cd4_label,
+            cd8_label=args.cd8_label, n_boot=args.n_boot, seed=args.seed)
+        print(cd8.narrative)
+    out = save_report(args.out, tcr_result=result, dataset_name=Path(args.h5ad).stem,
+                      cd8_result=cd8)
     print(f"[ok] report scritto in {out}")
 
 
@@ -166,9 +179,16 @@ def _cmd_demo(args: argparse.Namespace) -> None:
     )
     print("\n=== Modulo B (dataset sintetico) ===")
     print(tcr_result.narrative)
+    cd8_result = cd8_fraction_intervals(
+        tcr_adata.obs.join(tcr_result.cell_flags), patient_col="patient_id",
+        compartment_col="tissue", celltype_col="celltype", reference_col="audit_reference_label",
+        target_compartment="Tumor", seed=args.seed)
+    print("\n=== Frazione di CD8 nel tumore (dataset sintetico) ===")
+    print(cd8_result.narrative)
 
     out = save_report(args.out, leakage_result=leakage_result, tcr_result=tcr_result,
-                       dataset_name="demo sintetico", design_result=design_result)
+                       dataset_name="demo sintetico", design_result=design_result,
+                       cd8_result=cd8_result)
     print(f"\n[ok] report scritto in {out}")
     print(f"[ok] file VDJ di esempio scritti in {out_dir / 'vdj'}")
 
@@ -223,6 +243,11 @@ def main() -> None:
     p_tcr.add_argument("--export-flags", action="store_true",
                         help="scrive <nome>_audited.h5ad (copia con i flag) e <nome>_audit_flags.csv "
                              "nella cartella di --out; richiede --marker-map")
+    p_tcr.add_argument("--cd8-compartment", default=None,
+                        help="compartimento (es. Tumor) su cui stimare l'intervallo della frazione di "
+                             "CD8 per paziente; richiede --marker-map")
+    p_tcr.add_argument("--cd4-label", default="CD4T")
+    p_tcr.add_argument("--cd8-label", default="CD8T")
     p_tcr.add_argument("--n-boot", type=int, default=2000)
     p_tcr.add_argument("--seed", type=int, default=0)
     p_tcr.add_argument("--out", default="results/tcr_report.html", type=Path)
