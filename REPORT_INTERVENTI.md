@@ -308,3 +308,51 @@ Matrice di confusione stimata su 1131 cellule con identita' di riferimento da 12
 - **Stime NON esposte per calibrazione fuori banda:** la scomposizione della varianza dell'audit del disegno.
 - **`core/stats.py` non e' mai stato modificato** (`git diff cf61e76 -- core/stats.py` e' vuoto). `core/tcr_validation.py` ha solo aggiunte (Intervento 2); l'output del Modulo B e' identico a prima della modifica (test di regressione).
 - `README.md` aggiornato con cosa fa e cosa non fa ogni modulo; `NOTE.md` con le idee scartate o rimandate.
+
+---
+
+## Prompt finale — Parte A (PARZIALE: interrotta per limite di utilizzo)
+
+Fatti: A1 (tabella + scomposizione), A2. Da fare: A3 in forma tabellare, A4 (copertura per compartimento), Parte B (B1, B2, B3), suite prima/dopo.
+
+### A1 — Modulo B su GSE278694 reale (`validation/gse278694_moduleB.py`, output in `validation/results/`)
+
+Esecuzione `cli.py tcr` sui dati completi (199.184 cellule, nessun sottocampionamento): 69 s, picco di memoria 6,1 GB. Input preparati in scratch, senza modificare `pdac-ml`: copie dei CSV VDJ con il suffisso "-1" rimosso dal barcode (295.451 righe), perche' in `sc_raw.h5ad` il barcode e' di 16 nt; manifest PA_xx→PAxx, Normal→Adjacent_normal. Marcatori: CD4T=[CD4], CD8T=[CD8A, CD8B], come in `10_loco.py`.
+
+| Quantita' | MVP | Tesi | Differenza | Causa |
+|---|---|---|---|---|
+| Discordanza entro compartimento (baseline) | 0,124 | 0,107 | +0,017 (+16%) | L'MVP include tutte le cellule con TCR (105.809), la tesi solo quelle etichettate CD4T/CD8T/NK (104.964). Con lo stesso filtro l'MVP da' 0,1070 |
+| Eccesso di discordanza | +0,059 [+0,034; +0,098], 11 pz, 1.124 coppie | +0,059 [+0,034; +0,100], 11 pz, 1.114 coppie | < 1% | Coincide; con il filtro della tesi: +0,0590 [+0,0342; +0,1004], 1.114 coppie |
+| Errore solo sangue, Tumor | 0,093 [0,050; 0,144], 10 pz | 0,195 [0,123; 0,274], 10 pz | −52% | Definizioni diverse, vedi la scomposizione |
+| Errore solo sangue, Adjacent_normal | 0,041, IC NON prodotto (4 pz < 5) | 0,059 [0,000; 0,084], 4 pz | −30% | Stesse definizioni del Tumor; in piu' la soglia di 5 pazienti dell'MVP rifiuta l'IC |
+| Tumor − Adjacent (stessi cloni) | non calcolato dall'MVP; con le definizioni MVP: +0,021 [−0,035; +0,075], 132 cloni, 4 pz | +0,080 [+0,021; +0,170], 88 cloni | — | Stesse cause |
+
+Scomposizione del tasso d'errore Tumor, passando dalle definizioni dell'MVP a quelle della tesi un cambiamento alla volta (stessi dati, stesso bootstrap):
+
+| Passo | Tumor | Adjacent | Tumor − Adj |
+|---|---|---|---|
+| S0 MVP (per cellula, tutte le cellule con TCR, CD4>0 non esclusivo, solo etichette CD4T/CD8T) | 0,093 | 0,041 | +0,021 |
+| S1 + solo cellule CD4T/CD8T/NK | 0,093 | 0,042 | +0,021 |
+| S2 + CD4 positivo solo se CD8A e CD8B negativi | 0,092 | 0,043 | +0,021 |
+| S3 + etichetta **NK contata come errore** | **0,163** | 0,053 | +0,081 |
+| S4 + ≥ 3 cellule del clone anche nel compartimento giudicato | 0,156 | 0,052 | +0,062 |
+| S5 + unita' = coppia clone-compartimento con etichetta maggioritaria (= tesi) | **0,1951 [0,1230; 0,2737]** | **0,0593 [0,000; 0,0839]** | **+0,0795 [+0,021; +0,170], 88 cloni** |
+
+S5 riproduce esattamente i numeri della tesi, quindi la scomposizione e' completa. Le due cause principali sono:
+1. `marker_error_rate` dell'MVP esclude le cellule etichettate NK, mentre la tesi le conta come errore: +0,070.
+2. La tesi conta un errore per coppia clone-compartimento, pesando i cloni e non le cellule, e richiede ≥ 3 cellule anche nel compartimento giudicato: +0,033 in totale.
+
+La regola di positivita' di CD4 e il filtro sulle cellule linfoidi hanno effetto trascurabile (≤ 0,001). Nessun parametro dell'MVP e' stato modificato.
+
+### A2 — Audit del disegno sui metadati reali
+
+Output completo in `validation/results/cli_design_real.txt` (sc + sn, 37 unita') e in `cli_design_real_sc.txt` (solo sc, via `--h5ad`). L'output coincide con quello del generatore "GSE278694-like" riga per riga, a parte il nome della colonna (`patients`). Verifica strutturale: stessi tessuti per ciascuno dei 14 pazienti sc, 37 righe, 8 pazienti sn disgiunti, tutti tumore. Il generatore NON va corretto.
+
+Una segnalazione: le librerie della coorte che GEO chiama "snRNA" si chiamano `*_FFPE`, e 4 su 8 hanno barcode di sonda (probabile protocollo su FFPE con sonde). Il protocollo va quindi descritto come "snRNA da FFPE", non come snRNA da tessuto congelato.
+
+### A3/A4 — risultati grezzi gia' ottenuti (da rendere in tabella)
+
+- J pooled = 0,48, su 4.851 cellule di riferimento da 10 pazienti.
+- Scenario 2x: non prodotto per i pazienti visti ("probabilita' di errore stimata supera 1").
+- Scenario 1x: sposta fortemente verso il basso la frazione di CD8 (es. PA01: riportata 0,61, 1x 0,00–0,35).
+- Flag valutabili: 4,2% di tutte le cellule; manca il dettaglio per compartimento.
