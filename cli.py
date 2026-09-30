@@ -3,6 +3,9 @@
 
 Esempi:
     python cli.py demo --out results/demo_report.html
+    python cli.py design --meta campioni.csv --patient-col patient --tissue-col tissue \
+        --technical batch=run --technical protocol=protocol \
+        --compare tissue:Tumor:Adjacent_normal --out results/design_report.html
     python cli.py leakage --h5ad dati.h5ad --target-col tissue --patient-col patient_id \
         --out results/leakage_report.html
     python cli.py tcr --h5ad dati.h5ad --vdj-manifest vdj_manifest.csv \
@@ -24,10 +27,68 @@ from pathlib import Path
 import anndata as ad
 import pandas as pd
 
+from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
 from core.leakage_audit import run_leakage_audit
 from core.report import save_report
-from core.synthetic import make_leakage_dataset, make_tcr_validation_dataset, write_vdj_csvs
+from core.synthetic import (
+    make_gse278694_like_sheet,
+    make_leakage_dataset,
+    make_tcr_validation_dataset,
+    write_vdj_csvs,
+)
 from core.tcr_validation import parse_vdj_contigs, run_tcr_validation
+
+
+def _parse_technical(items: list[str]) -> dict[str, str]:
+    out = {}
+    for item in items:
+        if "=" not in item:
+            sys.exit(f"--technical vuole ruolo=colonna, ricevuto '{item}'")
+        role, col = item.split("=", 1)
+        if role not in TECHNICAL_ROLES:
+            sys.exit(f"ruolo tecnico '{role}' non riconosciuto; ammessi: {', '.join(TECHNICAL_ROLES)}")
+        out[role] = col
+    return out
+
+
+def _parse_comparisons(items: list[str]) -> list[tuple[str, str, str]]:
+    out = []
+    for item in items:
+        parts = item.split(":")
+        if len(parts) != 3:
+            sys.exit(f"--compare vuole colonna:livello_a:livello_b, ricevuto '{item}'")
+        out.append((parts[0], parts[1], parts[2]))
+    return out
+
+
+def _print_design(result) -> None:
+    print(result.narrative)
+    for pr in result.pairs:
+        print(" -", pr.sentence)
+    for note in result.notes:
+        print(" *", note)
+
+
+def _cmd_design(args: argparse.Namespace) -> None:
+    technical = _parse_technical(args.technical)
+    comparisons = _parse_comparisons(args.compare)
+    cols = [args.patient_col] + ([args.tissue_col] if args.tissue_col else []) \
+        + list(technical.values()) + list(args.outcome_col)
+    if args.meta:
+        sheet = pd.read_csv(args.meta, dtype=str)
+        name = Path(args.meta).stem
+    else:
+        adata = ad.read_h5ad(args.h5ad, backed="r")
+        sheet = sample_sheet_from_obs(adata.obs, cols)
+        name = Path(args.h5ad).stem
+    result = run_design_audit(
+        sheet, patient_col=args.patient_col, tissue_col=args.tissue_col,
+        technical_cols=technical, outcome_cols=list(args.outcome_col), comparisons=comparisons,
+        min_units=args.min_units,
+    )
+    _print_design(result)
+    out = save_report(args.out, design_result=result, dataset_name=name)
+    print(f"[ok] report scritto in {out}")
 
 
 def _cmd_leakage(args: argparse.Namespace) -> None:
@@ -68,6 +129,16 @@ def _cmd_demo(args: argparse.Namespace) -> None:
     out_dir = Path(args.data_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    design_sheet = make_gse278694_like_sheet()
+    design_result = run_design_audit(
+        design_sheet, patient_col="patient", tissue_col="tissue",
+        technical_cols={"protocol": "protocol", "library": "library"},
+        comparisons=[("tissue", "Tumor", "Adjacent_normal"), ("protocol", "scRNA", "snRNA")],
+    )
+    print("=== Audit del disegno (struttura sintetica modellata su GSE278694) ===")
+    _print_design(design_result)
+    print()
+
     leakage_adata = make_leakage_dataset(seed=args.seed)
     leakage_result = run_leakage_audit(
         leakage_adata, target_col="label", patient_col="patient_id", seed=args.seed,
@@ -87,7 +158,7 @@ def _cmd_demo(args: argparse.Namespace) -> None:
     print(tcr_result.narrative)
 
     out = save_report(args.out, leakage_result=leakage_result, tcr_result=tcr_result,
-                       dataset_name="demo sintetico")
+                       dataset_name="demo sintetico", design_result=design_result)
     print(f"\n[ok] report scritto in {out}")
     print(f"[ok] file VDJ di esempio scritti in {out_dir / 'vdj'}")
 
@@ -101,6 +172,21 @@ def main() -> None:
     p_demo.add_argument("--data-dir", default="data/synthetic", type=Path)
     p_demo.add_argument("--seed", type=int, default=0)
     p_demo.set_defaults(func=_cmd_demo)
+
+    p_des = sub.add_parser("design", help="audit del disegno e del confondimento (solo metadati)")
+    src = p_des.add_mutually_exclusive_group(required=True)
+    src.add_argument("--meta", type=Path, help="CSV dei metadati, una riga per campione/libreria")
+    src.add_argument("--h5ad", type=Path, help="AnnData: si usa solo adata.obs, ridotto ai campioni")
+    p_des.add_argument("--patient-col", required=True)
+    p_des.add_argument("--tissue-col", default=None)
+    p_des.add_argument("--technical", action="append", default=[],
+                       help=f"ruolo=colonna, ruoli: {', '.join(TECHNICAL_ROLES)} (ripetibile)")
+    p_des.add_argument("--outcome-col", action="append", default=[], help="colonna di esito (ripetibile)")
+    p_des.add_argument("--compare", action="append", default=[],
+                       help="colonna:livello_a:livello_b (ripetibile)")
+    p_des.add_argument("--min-units", type=int, default=5)
+    p_des.add_argument("--out", default="results/design_report.html", type=Path)
+    p_des.set_defaults(func=_cmd_design)
 
     p_leak = sub.add_parser("leakage", help="Modulo A: audit del leakage per paziente")
     p_leak.add_argument("--h5ad", required=True, type=Path)

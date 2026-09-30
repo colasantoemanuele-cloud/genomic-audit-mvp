@@ -17,6 +17,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from core.design_audit import DesignAuditResult
 from core.leakage_audit import LeakageAuditResult, ModelComparisonResult
 from core.tcr_validation import MarkerErrorResult, TcrValidationResult
 
@@ -48,6 +49,68 @@ def _fig_to_data_uri(fig) -> str:
     fig.savefig(buf, format="png", dpi=140, bbox_inches="tight")
     plt.close(fig)
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode("ascii")
+
+
+# --------------------------------------------------------------------------- #
+# Audit del disegno
+# --------------------------------------------------------------------------- #
+_KIND_LABEL = {
+    "annidamento": "annidamento", "uno-a-uno": "fattori coincidenti",
+    "esito-determinato": "esito determinato da un fattore", "unita'-tecnica": "unita' tecnica",
+    "costante": "fattore costante", "identificatore": "identificativo di campione",
+}
+
+
+def _design_section(result: DesignAuditResult) -> str:
+    structural = [f for f in result.findings
+                  if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica")]
+    not_estimable = any(c.classification == "non stimabile" for c in result.comparisons)
+    verdict_cls = "verdict-warn" if (structural or not_estimable) else "verdict-yes"
+    roles = ", ".join(f"{html.escape(c)} ({html.escape(r)})" for c, r in result.roles.items())
+    parts = [
+        "<h2>Audit del disegno e del confondimento</h2>",
+        f'<div class="card {verdict_cls}">',
+        f'<p class="narrative">Unita\' analizzate: {result.n_rows} righe dei metadati. Fattori: {roles}. '
+        "Questo controllo guarda solo la struttura del disegno (chi e' stato misurato come, "
+        "quando, in quale tessuto): non usa l'espressione genica e non giudica il lavoro di "
+        "chi ha disegnato lo studio. Rende espliciti i limiti che il disegno pone alle "
+        "conclusioni.</p>",
+    ]
+    if result.comparisons:
+        parts.append("<h3>Confronti richiesti</h3>")
+        parts.append("<table><tr><th>Confronto</th><th>Classe</th><th>Disegno</th>"
+                     "<th>Unita' indipendenti</th><th>Cosa significa</th></tr>")
+        for c in result.comparisons:
+            tag = ("tag-ok" if c.classification == "stimabile" else "tag-warn")
+            parts.append(
+                f"<tr><td>{html.escape(c.factor)}: {html.escape(c.level_a)} vs {html.escape(c.level_b)}</td>"
+                f'<td><span class="tag {tag}">{html.escape(c.classification)}</span></td>'
+                f"<td>{html.escape(c.design)}</td><td>{c.n_units}</td>"
+                f"<td>{html.escape(c.sentence)}</td></tr>")
+        parts.append("</table>")
+    parts.append("<h3>Fatti strutturali del disegno</h3>")
+    if structural:
+        parts.append("<ul>" + "".join(
+            f"<li><b>{html.escape(_KIND_LABEL[f.kind])}</b>: {html.escape(f.sentence)}</li>"
+            for f in structural) + "</ul>")
+    else:
+        parts.append('<p class="narrative">Nessun annidamento, coincidenza o esito determinato '
+                     "da un singolo fattore.</p>")
+    other = [f for f in result.findings if f.kind in ("costante", "identificatore")]
+    if other:
+        parts.append('<p class="narrative">' + " ".join(html.escape(f.sentence) for f in other) + "</p>")
+    if result.pairs:
+        parts.append("<h3>Associazione fra coppie di fattori (Cramér V corretto di Bergsma)</h3>")
+        parts.append("<table><tr><th>Coppia</th><th>V</th><th>Cosa significa</th></tr>")
+        for pr in result.pairs:
+            v = "non valutabile" if pr.cramer_v is None else f"{pr.cramer_v:.2f}"
+            parts.append(f"<tr><td>{html.escape(pr.factor_a)} × {html.escape(pr.factor_b)}</td>"
+                         f"<td>{v}</td><td>{html.escape(pr.sentence)}</td></tr>")
+        parts.append("</table>")
+    for note in result.notes:
+        parts.append(f'<p class="narrative"><i>{html.escape(note)}</i></p>')
+    parts.append("</div>")
+    return "".join(parts)
 
 
 # --------------------------------------------------------------------------- #
@@ -257,6 +320,7 @@ def render_report(
     leakage_result: LeakageAuditResult | None = None,
     tcr_result: TcrValidationResult | None = None,
     dataset_name: str = "dataset caricato",
+    design_result: DesignAuditResult | None = None,
 ) -> str:
     """Ritorna una stringa HTML autocontenuta: nessun asset esterno, i grafici sono
     immagini PNG incorporate come data URI."""
@@ -267,14 +331,17 @@ def render_report(
         f"Generato il {now}. Strumento diagnostico per un singolo studio pilota: "
         f"non e' una certificazione, e' un supporto alla decisione per chi analizza i dati.</p>",
     ]
+    if design_result is not None:
+        body.append(_design_section(design_result))
     if leakage_result is not None:
         body.append(_leakage_section(leakage_result))
     if tcr_result is not None:
         body.append(_tcr_section(tcr_result))
-    if leakage_result is None and tcr_result is None:
+    if leakage_result is None and tcr_result is None and design_result is None:
         body.append("<p>Nessun risultato da mostrare: esegui almeno un modulo.</p>")
     body.append(
-        '<div class="footer">Report generato da genomic-audit. Il Modulo A misura quanto una '
+        '<div class="footer">Report generato da genomic-audit. L\'audit del disegno legge solo i '
+        "metadati e segnala quali confronti la struttura dello studio permette. Il Modulo A misura quanto una "
         "valutazione che non raggruppa per paziente sovrastimerebbe l'accuratezza e sottostimerebbe "
         "l'incertezza. Il Modulo B misura, tramite il repertorio T-cell receptor, quanto l'annotazione "
         "di tipo cellulare da clustering e' internamente coerente per uno stesso clone attraverso i "
@@ -291,8 +358,10 @@ def save_report(
     leakage_result: LeakageAuditResult | None = None,
     tcr_result: TcrValidationResult | None = None,
     dataset_name: str = "dataset caricato",
+    design_result: DesignAuditResult | None = None,
 ) -> Path:
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(render_report(leakage_result, tcr_result, dataset_name), encoding="utf-8")
+    out_path.write_text(render_report(leakage_result, tcr_result, dataset_name, design_result),
+                        encoding="utf-8")
     return out_path

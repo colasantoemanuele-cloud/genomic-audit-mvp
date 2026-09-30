@@ -1,0 +1,100 @@
+"""Test funzionali dell'audit del disegno (casi limite, non calibrazione: quella e' in
+test_design_audit_calibration.py)."""
+
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from core.design_audit import (
+    assess_comparison,
+    cramers_v_bergsma,
+    run_design_audit,
+    sample_sheet_from_obs,
+)
+
+
+def test_cramers_v_perfect_and_null():
+    assert cramers_v_bergsma(np.array([[50, 0], [0, 50]])) > 0.95
+    assert cramers_v_bergsma(np.array([[25, 25], [25, 25]])) == 0.0
+    assert cramers_v_bergsma(np.array([[10, 0]])) is None
+
+
+def test_small_table_is_not_evaluable():
+    sheet = pd.DataFrame({"patient": ["P1", "P2", "P3", "P4"], "batch": ["a", "b", "a", "b"],
+                          "tissue": ["T", "T", "N", "N"]})
+    res = run_design_audit(sheet, patient_col="patient", technical_cols={"batch": "batch"},
+                           outcome_cols=["tissue"])
+    pair = next(p for p in res.pairs if {p.factor_a, p.factor_b} == {"batch", "tissue"})
+    assert pair.cramer_v is None
+    assert "non valutabile" in pair.sentence
+
+
+def test_batch_perfectly_separating_tissue_makes_comparison_not_estimable():
+    rows = []
+    for p in range(8):
+        rows.append({"patient": f"P{p}", "tissue": "Tumor", "batch": "run1", "library": f"L{p}T"})
+        rows.append({"patient": f"P{p}", "tissue": "Normal", "batch": "run2", "library": f"L{p}N"})
+    sheet = pd.DataFrame(rows)
+    res = run_design_audit(sheet, patient_col="patient", tissue_col="tissue",
+                           technical_cols={"batch": "batch", "library": "library"},
+                           comparisons=[("tissue", "Tumor", "Normal")])
+    c = res.comparisons[0]
+    assert c.n_units == 8
+    assert c.classification == "non stimabile"
+    assert "batch" in c.sentence
+    assert any(f.kind == "uno-a-uno" and set(f.factors) == {"tissue", "batch"} for f in res.findings)
+
+
+def test_paired_comparison_with_enough_patients_is_estimable():
+    rows = []
+    rng = np.random.default_rng(0)
+    for p in range(8):
+        for t in ("Tumor", "Normal"):
+            rows.append({"patient": f"P{p}", "tissue": t, "batch": f"run{rng.integers(0, 3)}"})
+    res = run_design_audit(pd.DataFrame(rows), patient_col="patient", tissue_col="tissue",
+                           technical_cols={"batch": "batch"},
+                           comparisons=[("tissue", "Tumor", "Normal")])
+    c = res.comparisons[0]
+    assert c.design.startswith("appaiato")
+    assert c.n_units == 8
+    assert c.classification == "stimabile"
+
+
+def test_patient_level_outcome_is_between_patient_comparison():
+    rows = []
+    for p in range(12):
+        resp = "R" if p < 6 else "NR"
+        for t in ("Tumor", "PBMC"):
+            rows.append({"patient": f"P{p}", "tissue": t, "response": resp})
+    res = run_design_audit(pd.DataFrame(rows), patient_col="patient", tissue_col="tissue",
+                           outcome_cols=["response"], comparisons=[("response", "R", "NR")])
+    c = res.comparisons[0]
+    assert c.design == "fra pazienti"
+    assert c.n_patients_a == 6 and c.n_patients_b == 6
+    assert c.classification == "stimabile"
+    assert any(f.kind == "esito-determinato" and f.factors == ("patient", "response")
+               for f in res.findings)
+
+
+def test_missing_level_is_not_estimable():
+    sheet = pd.DataFrame({"patient": ["P1", "P2"], "tissue": ["Tumor", "Tumor"]})
+    c = assess_comparison(sheet, "tissue", "Tumor", "Normal", "patient",
+                          roles={"patient": "patient", "tissue": "tissue"})
+    assert c.classification == "non stimabile"
+    assert "non compare" in c.sentence
+
+
+def test_sample_sheet_from_cell_level_obs():
+    obs = pd.DataFrame({"patient": ["P1"] * 5 + ["P2"] * 3, "tissue": ["T"] * 8,
+                        "celltype": list("abcdeabc")})
+    sheet = sample_sheet_from_obs(obs, ["patient", "tissue"])
+    assert len(sheet) == 2
+
+
+def test_protocol_note_present_only_when_protocol_declared():
+    sheet = pd.DataFrame({"patient": ["P1", "P2", "P3"], "protocol": ["scRNA", "snRNA", "scRNA"]})
+    with_p = run_design_audit(sheet, patient_col="patient", technical_cols={"protocol": "protocol"})
+    without = run_design_audit(sheet, patient_col="patient")
+    assert any("snRNA" in n for n in with_p.notes)
+    assert not any("snRNA" in n for n in without.notes)

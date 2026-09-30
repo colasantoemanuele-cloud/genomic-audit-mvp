@@ -12,9 +12,14 @@ import anndata as ad
 import pandas as pd
 import streamlit as st
 
+from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
 from core.leakage_audit import run_leakage_audit
 from core.report import render_report
-from core.synthetic import make_leakage_dataset, make_tcr_validation_dataset
+from core.synthetic import (
+    make_gse278694_like_sheet,
+    make_leakage_dataset,
+    make_tcr_validation_dataset,
+)
 from core.tcr_validation import parse_vdj_contigs, run_tcr_validation
 
 st.set_page_config(page_title="Audit genomico — coorti piccole", layout="wide")
@@ -23,7 +28,7 @@ st.caption(
     "Prototipo per un singolo studio pilota. Tutto gira in locale: nessun dato lascia questa macchina."
 )
 
-for key in ("leakage_result", "tcr_result"):
+for key in ("design_result", "leakage_result", "tcr_result"):
     if key not in st.session_state:
         st.session_state[key] = None
 
@@ -55,7 +60,91 @@ else:
             adata = _read_h5ad(uploaded.getvalue())
         st.success(f"{adata.n_obs:,} cellule, {adata.n_vars:,} geni.")
 
-tab_a, tab_b = st.tabs(["Modulo A — Leakage per paziente", "Modulo B — Validazione via TCR"])
+tab_d, tab_a, tab_b = st.tabs(["Audit del disegno", "Modulo A — Leakage per paziente",
+                               "Modulo B — Validazione via TCR"])
+
+# --------------------------------------------------------------------------- #
+with tab_d:
+    st.markdown(
+        "Legge **solo i metadati** (una riga per campione o libreria) e segnala quali fattori "
+        "sono confusi fra loro e quali confronti il disegno permette davvero, con quante unita' "
+        "indipendenti. Non usa l'espressione genica."
+    )
+    sheet = None
+    if use_demo:
+        sheet = make_gse278694_like_sheet()
+        st.caption("Metadati sintetici con la struttura di GSE278694: 14 pazienti scRNA-seq "
+                   "(una libreria per coppia paziente-tessuto) e 8 pazienti snRNA-seq disgiunti.")
+        d_patient, d_tissue = "patient", "tissue"
+        d_technical = {"protocol": "protocol", "library": "library"}
+        d_outcomes: list[str] = []
+        d_comparisons = [("tissue", "Tumor", "Adjacent_normal"), ("protocol", "scRNA", "snRNA")]
+    else:
+        meta_file = st.file_uploader("CSV dei metadati (opzionale se hai caricato un .h5ad)",
+                                     type=["csv"], key="meta_csv")
+        if meta_file is not None:
+            sheet = pd.read_csv(meta_file, dtype=str)
+        elif adata is not None:
+            sheet = adata.obs.astype(str)
+        if sheet is not None:
+            cols = list(sheet.columns)
+            d_patient = st.selectbox("Colonna paziente", cols, key="d_patient")
+            d_tissue = st.selectbox("Colonna tessuto/compartimento (opzionale)", [""] + cols,
+                                    key="d_tissue") or None
+            d_technical = {}
+            for role in TECHNICAL_ROLES:
+                c = st.selectbox(f"Colonna '{role}' (opzionale)", [""] + cols, key=f"d_{role}")
+                if c:
+                    d_technical[role] = c
+            d_outcomes = st.multiselect("Colonne di esito (opzionali)", cols, key="d_outcomes")
+            comp_text = st.text_area(
+                "Confronti da valutare, uno per riga: colonna:livello_a:livello_b",
+                value="", key="d_comparisons")
+            d_comparisons = []
+            for line in comp_text.splitlines():
+                parts = [x.strip() for x in line.split(":")]
+                if len(parts) == 3 and all(parts):
+                    d_comparisons.append(tuple(parts))
+                elif line.strip():
+                    st.error(f"Riga non valida (serve colonna:livello_a:livello_b): {line}")
+            used = [d_patient] + ([d_tissue] if d_tissue else []) + list(d_technical.values()) + d_outcomes
+            if meta_file is None:
+                sheet = sample_sheet_from_obs(sheet, list(dict.fromkeys(used)))
+                st.caption(f"Metadati ridotti da cellule a {len(sheet)} combinazioni distinte dei fattori scelti.")
+        else:
+            st.info("Carica un CSV di metadati o un file .h5ad, oppure attiva i dati sintetici.")
+
+    if sheet is not None and st.button("Esegui audit del disegno", type="primary"):
+        try:
+            st.session_state.design_result = run_design_audit(
+                sheet, patient_col=d_patient, tissue_col=d_tissue, technical_cols=d_technical,
+                outcome_cols=d_outcomes, comparisons=d_comparisons,
+            )
+        except ValueError as e:
+            st.error(str(e))
+
+    result_d = st.session_state.design_result
+    if result_d is not None:
+        if result_d.comparisons:
+            st.subheader("Confronti richiesti")
+            st.dataframe(pd.DataFrame([
+                {"confronto": f"{c.factor}: {c.level_a} vs {c.level_b}", "classe": c.classification,
+                 "disegno": c.design, "unita' indipendenti": c.n_units, "spiegazione": c.sentence}
+                for c in result_d.comparisons]), hide_index=True)
+        st.subheader("Fatti strutturali")
+        structural = [f for f in result_d.findings
+                      if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica")]
+        for f in structural:
+            st.markdown(f"- {f.sentence}")
+        if not structural:
+            st.markdown("Nessun annidamento, coincidenza o esito determinato da un singolo fattore.")
+        st.subheader("Associazione fra coppie di fattori")
+        st.dataframe(pd.DataFrame([
+            {"coppia": f"{p.factor_a} × {p.factor_b}",
+             "Cramér V": "non valutabile" if p.cramer_v is None else f"{p.cramer_v:.3f}",
+             "spiegazione": p.sentence} for p in result_d.pairs]), hide_index=True)
+        for note in result_d.notes:
+            st.caption(note)
 
 # --------------------------------------------------------------------------- #
 with tab_a:
@@ -215,10 +304,11 @@ with tab_b:
 
 # --------------------------------------------------------------------------- #
 st.divider()
-if st.session_state.leakage_result is not None or st.session_state.tcr_result is not None:
+if any(st.session_state[k] is not None for k in ("design_result", "leakage_result", "tcr_result")):
     report_html = render_report(
         leakage_result=st.session_state.leakage_result, tcr_result=st.session_state.tcr_result,
         dataset_name="demo sintetico" if use_demo else "dataset caricato",
+        design_result=st.session_state.design_result,
     )
     st.download_button("Scarica report HTML completo", report_html, file_name="report_audit.html",
                         mime="text/html")

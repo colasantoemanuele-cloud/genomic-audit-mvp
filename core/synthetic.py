@@ -194,3 +194,180 @@ def write_vdj_csvs(contigs: pd.DataFrame, out_dir: Path) -> list[tuple[Path, str
             "productive", "full_length"]].to_csv(path, index=False)
         files.append((path, pat, comp))
     return files
+
+
+# --------------------------------------------------------------------------- #
+# Audit del disegno (Intervento 1)
+# --------------------------------------------------------------------------- #
+def make_design_sheet_independent(
+    n_patients: int = 10,
+    samples_per_patient: int = 8,
+    factor_levels: dict[str, int] | None = None,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """Tabella di campioni con fattori INDIPENDENTI fra loro e dal paziente: ogni
+    campione riceve un livello estratto a caso, in modo uniforme e indipendente, per
+    ciascun fattore. Con ``samples_per_patient`` alto un annidamento casuale (TUTTI i
+    campioni di TUTTI i pazienti nello stesso livello) e' di fatto impossibile. Una
+    colonna ``library`` identifica ogni riga (un campione = una libreria)."""
+    if factor_levels is None:
+        factor_levels = {"tissue": 3, "batch": 4, "chemistry": 2, "protocol": 2}
+    rng = np.random.default_rng(seed)
+    rows = []
+    for p in range(n_patients):
+        for s in range(samples_per_patient):
+            row = {"patient": f"P{p:02d}", "library": f"L{p:02d}_{s:02d}"}
+            for name, k in factor_levels.items():
+                row[name] = f"{name}{int(rng.integers(0, k))}"
+            rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def make_design_sheet_nested(
+    n_patients: int = 10,
+    samples_per_patient: int = 4,
+    patients_per_batch: int = 2,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """Annidamento iniettato: ogni paziente e' processato interamente in un solo batch
+    (paziente annidato nel batch), ogni batch contiene ``patients_per_batch`` pazienti.
+    Il tessuto resta estratto a caso."""
+    rng = np.random.default_rng(seed)
+    order = rng.permutation(n_patients)
+    batch_of = {int(p): f"B{i // patients_per_batch}" for i, p in enumerate(order)}
+    rows = []
+    for p in range(n_patients):
+        for s in range(samples_per_patient):
+            rows.append({"patient": f"P{p:02d}", "library": f"L{p:02d}_{s:02d}",
+                         "batch": batch_of[p],
+                         "tissue": ("Tumor", "Normal")[int(rng.integers(0, 2))]})
+    return pd.DataFrame(rows)
+
+
+def make_design_sheet_outcome_confounded(
+    n_patients: int = 10,
+    samples_per_patient: int = 3,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """Confondimento completo paziente-esito: ogni paziente ha un solo valore dell'esito
+    (es. pazienti che hanno solo tumore, altri solo normale). Entrambi i valori sono
+    presenti nella coorte (almeno un paziente per valore)."""
+    rng = np.random.default_rng(seed)
+    labels = np.array(["Tumor"] * (n_patients // 2) + ["Normal"] * (n_patients - n_patients // 2))
+    labels = rng.permutation(labels)
+    rows = []
+    for p in range(n_patients):
+        for s in range(samples_per_patient):
+            rows.append({"patient": f"P{p:02d}", "library": f"L{p:02d}_{s:02d}",
+                         "batch": f"B{int(rng.integers(0, 3))}", "tissue": labels[p]})
+    return pd.DataFrame(rows)
+
+
+def make_design_sheet_association(
+    target_v: float,
+    n_samples: int = 60,
+    n_levels: int = 3,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """Due fattori con ``n_levels`` livelli ciascuno e Cramér V di POPOLAZIONE pari a
+    ``target_v``: A uniforme; B = A con probabilita' ``target_v``, altrimenti uniforme e
+    indipendente. Per la mistura p_ij = s*delta_ij/k + (1-s)/k^2 vale phi^2 = s^2 (k-1),
+    quindi V = s esattamente."""
+    rng = np.random.default_rng(seed)
+    a = rng.integers(0, n_levels, n_samples)
+    copy = rng.random(n_samples) < target_v
+    b = np.where(copy, a, rng.integers(0, n_levels, n_samples))
+    return pd.DataFrame({"library": [f"L{i:03d}" for i in range(n_samples)],
+                         "factor_a": [f"a{x}" for x in a], "factor_b": [f"b{x}" for x in b]})
+
+
+# Struttura delle librerie di GSE278694 (dalla tabella qc_by_library_sc.csv di pdac-ml):
+# scRNA-seq, 14 pazienti, 29 librerie, ogni libreria = una coppia paziente-tessuto;
+# 5 pazienti (04, 06, 08, 09, 10) con tumore e tessuto adiacente.
+_GSE278694_SC_LIBRARIES = {
+    "PDAC01": ("Tumor",), "PDAC02": ("Tumor",),
+    "PDAC04": ("Tumor", "Adjacent_normal"),
+    "PDAC05": ("Tumor", "PBMC"),
+    "PDAC06": ("Tumor", "Adjacent_normal", "PBMC"),
+    "PDAC07": ("Tumor", "PBMC"),
+    "PDAC08": ("Tumor", "Adjacent_normal", "PBMC"),
+    "PDAC09": ("Tumor", "Adjacent_normal", "PBMC"),
+    "PDAC10": ("Tumor", "Adjacent_normal", "PBMC"),
+    "PDAC11": ("Tumor", "PBMC"), "PDAC12": ("Tumor", "PBMC"),
+    "PDAC13": ("Tumor", "PBMC"), "PDAC14": ("Tumor", "PBMC"),
+    "PDAC15": ("PBMC",),
+}
+
+
+def make_gse278694_like_sheet(n_sn_patients: int = 8) -> pd.DataFrame:
+    """Riproduce la STRUTTURA del disegno di GSE278694 (nessun dato di espressione):
+    coorte scRNA-seq come sopra, piu' una coorte snRNA-seq di ``n_sn_patients`` pazienti
+    DISGIUNTI (nessun paziente ha entrambe le modalita'), un campione tumorale ciascuno.
+    Gli identificativi dei pazienti snRNA sono fittizi."""
+    rows = []
+    for pat, tissues in _GSE278694_SC_LIBRARIES.items():
+        for t in tissues:
+            rows.append({"patient": pat, "tissue": t, "protocol": "scRNA",
+                         "library": f"{pat}-{t}-GEX"})
+    for i in range(n_sn_patients):
+        pat = f"SN{i + 1:02d}"
+        rows.append({"patient": pat, "tissue": "Tumor", "protocol": "snRNA",
+                     "library": f"{pat}-Tumor-snRNA"})
+    return pd.DataFrame(rows)
+
+
+def make_variance_units(
+    n_patients: int = 12,
+    tissues: tuple[str, ...] = ("Tumor", "Normal"),
+    shares: tuple[float, float, float] = (0.5, 0.3, 0.2),
+    n_genes: int = 300,
+    seed: int = 0,
+) -> tuple[np.ndarray, pd.DataFrame]:
+    """Matrice unita' x geni (gia' su scala log) con quote di varianza NOTE per gene:
+    ``shares`` = (paziente, tessuto, residuo). Effetto paziente ~ N(0, s_p) per gene;
+    effetto tessuto a media nulla fra i livelli con varianza fra livelli pari a s_t (con
+    2 tessuti: +-sqrt(s_t), segno casuale per gene); residuo ~ N(0, s_e). Disegno
+    bilanciato: ogni paziente ha un'unita' per tessuto."""
+    s_p, s_t, s_e = shares
+    rng = np.random.default_rng(seed)
+    k = len(tissues)
+    # effetti di tessuto centrati con varianza (1/k) sum(alpha^2) = s_t
+    raw = rng.normal(0, 1, (k, n_genes))
+    raw -= raw.mean(axis=0, keepdims=True)
+    raw /= np.sqrt((raw ** 2).mean(axis=0, keepdims=True))
+    tissue_eff = raw * np.sqrt(s_t)
+    patient_eff = rng.normal(0, np.sqrt(s_p), (n_patients, n_genes))
+    rows, Y = [], []
+    for p in range(n_patients):
+        for ti, t in enumerate(tissues):
+            rows.append({"patient": f"P{p:02d}", "tissue": t})
+            Y.append(patient_eff[p] + tissue_eff[ti] + rng.normal(0, np.sqrt(s_e), n_genes))
+    return np.vstack(Y), pd.DataFrame(rows)
+
+
+def make_pseudobulk_adata(
+    n_patients: int = 10,
+    tissues: tuple[str, ...] = ("Tumor", "Normal"),
+    cells_per_unit: int = 60,
+    n_genes: int = 400,
+    shares: tuple[float, float, float] = (0.5, 0.3, 0.2),
+    seed: int = 0,
+) -> ad.AnnData:
+    """AnnData a livello di cellula le cui medie di espressione per unita'
+    paziente-tessuto seguono le quote di ``make_variance_units`` (scala log naturale),
+    per il test end-to-end della pseudobulk. Una colonna ``library`` 1:1 con la coppia
+    paziente-tessuto, come in GSE278694."""
+    rng = np.random.default_rng(seed)
+    Y, units = make_variance_units(n_patients, tissues, shares, n_genes, seed=seed)
+    base = rng.normal(2.0, 0.5, n_genes)
+    X_rows, obs = [], []
+    for u, row in units.iterrows():
+        mean = np.exp(base + 0.6 * Y[u])
+        counts = rng.poisson(np.tile(mean, (cells_per_unit, 1)))
+        X_rows.append(counts)
+        obs += [{"patient_id": row.patient, "tissue": row.tissue,
+                 "library": f"{row.patient}-{row.tissue}"}] * cells_per_unit
+    X = sp.csr_matrix(np.vstack(X_rows).astype(np.float32))
+    return ad.AnnData(X=X, obs=pd.DataFrame(obs),
+                      var=pd.DataFrame(index=[f"g{i}" for i in range(n_genes)]))
+
