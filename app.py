@@ -20,7 +20,7 @@ from core.synthetic import (
     make_leakage_dataset,
     make_tcr_validation_dataset,
 )
-from core.tcr_validation import parse_vdj_contigs, run_tcr_validation
+from core.tcr_validation import export_audited, parse_vdj_contigs, run_tcr_validation
 
 st.set_page_config(page_title="Audit genomico — coorti piccole", layout="wide")
 st.title("Audit genomico per coorti cliniche piccole")
@@ -301,6 +301,30 @@ with tab_b:
                      "IC95% alto": r.ci_high, "pazienti": r.n_groups, "sufficiente": r.sufficient}
                     for comp, r in result_b.marker_error.by_compartment.items()]
             st.dataframe(pd.DataFrame(rows), hide_index=True)
+
+        if result_b.cell_flags is not None:
+            st.subheader("Flag per cellula")
+            st.markdown(
+                f"Cellule valutabili: **{result_b.flag_coverage:.1%}**. Le altre sono NA: non "
+                "verificabili (nessun TCR, clone senza riferimento, etichetta fuori dalla mappa "
+                "dei marcatori, o compartimento di riferimento). NA non significa \"corretta\"; "
+                "le etichette originali non vengono modificate."
+            )
+            st.download_button(
+                "Scarica i flag per cellula (CSV)",
+                result_b.cell_flags.to_csv(index_label="obs_name"),
+                file_name="audit_flags.csv", mime="text/csv",
+            )
+            if st.button("Prepara la copia .h5ad con i flag"):
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    try:
+                        h5ad_path, _ = export_audited(tcr_adata, result_b, Path(tmp_dir) / "dati")
+                        st.session_state.audited_h5ad = h5ad_path.read_bytes()
+                    except ValueError as e:
+                        st.error(str(e))
+            if st.session_state.get("audited_h5ad"):
+                st.download_button("Scarica dati_audited.h5ad", st.session_state.audited_h5ad,
+                                   file_name="dati_audited.h5ad")
 
 # --------------------------------------------------------------------------- #
 st.divider()

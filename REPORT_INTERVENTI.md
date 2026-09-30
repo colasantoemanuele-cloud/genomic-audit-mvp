@@ -120,3 +120,87 @@ Audit del disegno su 37 unita' (righe dei metadati) e 4 fattori. 2 fatti struttu
 - Un confronto fra pazienti su una colonna di esito presume che l'esito sia davvero a livello di paziente; lo strumento non lo verifica.
 - Nel foglio di GSE278694 la struttura della coorte snRNA (8 pazienti, un campione tumorale ciascuno) e' un'approssimazione: i dettagli reali non sono stati verificati.
 - L'app e' stata verificata solo in modalita' demo con `AppTest` (nessun upload reale).
+
+---
+
+## Intervento 2 — Flag per cellula dal Modulo B
+
+### 1. File modificati e creati
+
+- `core/tcr_validation.py` (ESISTENTE, **toccato** come consentito dal prompt; solo aggiunte, +91 righe e nessuna riga rimossa):
+  - `TcrValidationResult` ha due nuovi campi opzionali in coda, con default: `cell_flags` e `flag_coverage`. I costruttori esistenti restano compatibili.
+  - `run_tcr_validation` aggiunge la colonna interna `_row` (posizione di riga originale) prima della merge e calcola i flag quando sono dati `marker_map` e `reference_compartment`. `_row` non entra in nessun calcolo.
+  - Nuove funzioni `cell_flags` (stessi filtri di `marker_error_rate`) ed `export_audited` (copia `*_audited.h5ad` + CSV), piu' `FLAG_COLUMNS` e `FLAG_DEFINITIONS`.
+  - `pairwise_excess_discordance`, `assign_reference_identity`, `marker_error_rate` e i narrativi NON sono stati modificati.
+- `cli.py` (ESISTENTE): opzione `tcr --export-flags` e stampa della copertura dei flag.
+- `core/report.py` (ESISTENTE): sottosezione "Flag per cellula" nel Modulo B, con la copertura.
+- `app.py` (ESISTENTE): copertura, download del CSV dei flag e della copia `.h5ad`.
+- `tests/test_tcr_flags.py` (NUOVO), `tests/fixtures/tcr_regression.py` e `tests/fixtures/__init__.py` (NUOVI).
+- `tests/fixtures/tcr_regression_baseline.json` (NUOVO): output di `run_tcr_validation` su 4 configurazioni sintetiche, generato dal codice del commit di baseline PRIMA di modificare `tcr_validation.py`. Prima di generarlo ho verificato con `git diff cf61e76 -- core/tcr_validation.py core/stats.py` che non ci fossero differenze.
+- `core/stats.py`: NON toccato.
+
+### 2. Test
+
+Suite completa dopo l'Intervento 2: **46 passed, 2 xfailed** in 475 s (`logs/pytest_intervento2.txt`), contro 36 passed e 2 xfailed dopo l'Intervento 1. Nessun test preesistente e' cambiato di esito. Le calibrazioni gia' approvate (`test_stats_calibration.py`) e i test del Modulo B (`test_synthetic_data.py`) sono stati rieseguiti dopo la modifica a `tcr_validation.py` e passano tutti.
+
+Output reale di `pytest -v`, test nuovi:
+
+```
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[eccesso_035_marcatori] PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[eccesso_0_marcatori] PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[tre_compartimenti] PASSED
+tests/test_tcr_flags.py::test_regression_identical_to_baseline[senza_marcatori_pochi_pazienti] PASSED
+tests/test_tcr_flags.py::test_flags_mean_equals_marker_error_rate_exactly PASSED
+tests/test_tcr_flags.py::test_reference_compartment_and_unverifiable_cells_are_na PASSED
+tests/test_tcr_flags.py::test_flags_follow_rows_when_order_is_shuffled PASSED
+tests/test_tcr_flags.py::test_export_writes_copy_and_leaves_original_untouched PASSED
+tests/test_tcr_flags.py::test_export_refuses_existing_flag_columns PASSED
+tests/test_tcr_flags.py::test_no_flags_without_marker_map PASSED
+```
+
+Questo intervento non introduce nessuna nuova stima statistica: i flag riportano, cellula per cellula, la stessa quantita' del tasso d'errore esistente. Il requisito di calibrazione e' quindi sostituito dai due test richiesti.
+- **Coerenza:** su 5 dataset sintetici con 3 compartimenti, per ogni compartimento non di riferimento la media di `audit_label_vs_reference` sulle cellule valutabili e' uguale con `==` (uguaglianza esatta in virgola mobile) alla stima puntuale di `marker_error_rate`. Anche il numero di cellule valutabili coincide con `n_obs` del bootstrap.
+- **Regressione:** 4 configurazioni (eccesso 0.35 con marcatori; eccesso 0 con marcatori; 3 compartimenti; 4 pazienti senza marcatori). Tutti i numeri, le tabelle per coppia di compartimenti e le frasi narrative sono identici al riferimento generato prima della modifica, con tolleranza 1e-12 (di fatto identici). Come prova di sensibilita', cambiando il solo seme del bootstrap il test fallisce, quindi il confronto non e' banale.
+
+### 3. Output reale
+
+Dataset sintetico (`make_tcr_validation_dataset(n_patients=12, n_clones_per_patient=15, injected_excess=0.35, seed=0)`, salvato come `sintetico.h5ad` con i CSV VDJ e il manifest), comando `python cli.py tcr ... --marker-map markers.json --reference-compartment PBMC --export-flags --n-boot 1000`:
+
+```
+Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.107 (IC95% [+0.088, +0.127], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.283 (IC95% [0.250, 0.312], 12 pazienti).
+Flag per cellula valutabili (audit_label_vs_reference non NA): 39.6% delle cellule.
+[ok] copia con i flag scritta in out/sintetico_audited.h5ad (il file originale non e' toccato)
+[ok] flag per cellula scritti in out/sintetico_audit_flags.csv
+[ok] report scritto in out/tcr_report.html
+```
+
+Prime righe di `sintetico_audit_flags.csv` (le prime cellule sono nel sangue, quindi `audit_label_vs_reference` e' vuoto, cioe' NA):
+
+```
+obs_name,audit_reference_label,audit_label_vs_reference
+cell0,CD8T,
+cell1,CD8T,
+cell2,CD8T,
+cell3,CD8T,
+```
+
+Nella copia `sintetico_audited.h5ad`, `audit_label_vs_reference` e' di tipo `BooleanDtype`, con NA 1381, False 648 e True 256 su 2285 cellule. Le colonne originali hanno gli stessi valori. Frase generata nel report HTML (sezione "Flag per cellula"): "Copertura: 2,285 cellule su 2,285 (100.0%) hanno un'identita' di riferimento; 904 (39.6%) sono valutabili, e di queste 256 sono discordanti. Tutte le altre sono NA: lo strumento non poteva verificarle (…). NA non significa "corretta"."
+
+### 4. Decisioni e assunzioni
+
+- **Cellule del compartimento di riferimento:** `audit_label_vs_reference` = NA, anche quando il clone ha un riferimento. `marker_error_rate` le esclude perche' il riferimento e' stimato proprio da loro, e il prompt chiede la stessa logica. `audit_reference_label` invece e' valorizzato anche per loro.
+- `audit_reference_label` e' valorizzato per ogni cellula il cui clone ha un riferimento, compresa un'etichetta come "NK": si tratta dell'identita' del clone, non di un giudizio sulla cellula.
+- **Copertura riportata** = frazione di TUTTE le cellule dell'AnnData con `audit_label_vs_reference` non NA. Sui dati reali, dove il sangue e le cellule senza TCR sono molte, sara' bassa: e' voluto.
+- **Export:** si rifiuta se `adata.obs` ha gia' colonne con quei nomi (nessuna sovrascrittura) o se l'indice dei flag non coincide con `obs_names`. Le definizioni vanno in `uns['genomic_audit_flags']`; il CSV contiene solo `obs_name` e i due flag, senza righe di commento, cosi' resta leggibile da qualunque parser. Da CLI i file vanno nella cartella di `--out`, con il nome del file `.h5ad` di input.
+- Nessun flag dei doppietti, come da prompt.
+
+### 5. Bug o anomalie
+
+- Nessun bug trovato nel codice esistente. Un'anomalia di formato: scrivendo la copia, anndata converte le colonne di testo in categoriali; i valori non cambiano. Il test verifica l'uguaglianza dei valori come stringhe, non del tipo.
+- I 10 test nuovi sono passati al primo tentativo. Per non fidarmi di un test di regressione potenzialmente banale, ho fatto la verifica di sensibilita' descritta sopra.
+
+### 6. Limiti noti
+
+- I flag hanno la stessa definizione di identita' di riferimento del Modulo B (≥ 3 cellule nel sangue, margine ≥ 0.20, marcatori "conta > 0"). Le cellule di cloni piccoli restano NA.
+- Non ho testato AnnData con `obs_names` duplicati, ne' file `.h5ad` aperti in modalita' `backed`.
+- Nell'app, la copia `.h5ad` viene costruita in memoria: su dataset grandi potrebbe essere lenta o pesante. Non l'ho misurato.

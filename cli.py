@@ -36,7 +36,7 @@ from core.synthetic import (
     make_tcr_validation_dataset,
     write_vdj_csvs,
 )
-from core.tcr_validation import parse_vdj_contigs, run_tcr_validation
+from core.tcr_validation import export_audited, parse_vdj_contigs, run_tcr_validation
 
 
 def _parse_technical(items: list[str]) -> dict[str, str]:
@@ -121,6 +121,16 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
         reference_compartment=args.reference_compartment,
     )
     print(result.narrative)
+    if result.flag_coverage is not None:
+        print(f"Flag per cellula valutabili (audit_label_vs_reference non NA): "
+              f"{result.flag_coverage:.1%} delle cellule.")
+    if args.export_flags:
+        if result.cell_flags is None:
+            sys.exit("--export-flags richiede --marker-map e --reference-compartment")
+        prefix = Path(args.out).parent / Path(args.h5ad).stem
+        h5ad_path, csv_path = export_audited(adata, result, prefix)
+        print(f"[ok] copia con i flag scritta in {h5ad_path} (il file originale non e' toccato)")
+        print(f"[ok] flag per cellula scritti in {csv_path}")
     out = save_report(args.out, tcr_result=result, dataset_name=Path(args.h5ad).stem)
     print(f"[ok] report scritto in {out}")
 
@@ -210,6 +220,9 @@ def main() -> None:
                         help="JSON {\"etichetta\": [\"gene1\", \"gene2\"]}, opzionale")
     p_tcr.add_argument("--reference-compartment", default=None,
                         help="richiesto insieme a --marker-map per il tasso d'errore per compartimento")
+    p_tcr.add_argument("--export-flags", action="store_true",
+                        help="scrive <nome>_audited.h5ad (copia con i flag) e <nome>_audit_flags.csv "
+                             "nella cartella di --out; richiede --marker-map")
     p_tcr.add_argument("--n-boot", type=int, default=2000)
     p_tcr.add_argument("--seed", type=int, default=0)
     p_tcr.add_argument("--out", default="results/tcr_report.html", type=Path)

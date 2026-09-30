@@ -311,6 +311,25 @@ def _tcr_section(result: TcrValidationResult) -> str:
             html_parts.append(f"<tr><td>{html.escape(comp)}</td><td>{val}</td><td>{res.n_groups}</td></tr>")
         html_parts.append("</table>")
 
+    if result.cell_flags is not None:
+        f = result.cell_flags
+        n = len(f)
+        n_ref = int(f["audit_reference_label"].notna().sum())
+        n_eval = int(f["audit_label_vs_reference"].notna().sum())
+        n_disc = int(f["audit_label_vs_reference"].fillna(False).astype(bool).sum())
+        html_parts.append("<h3>Flag per cellula</h3>")
+        html_parts.append(
+            f'<p class="narrative">Il controllo produce due colonne per cellula, esportabili in una '
+            f"copia dell'AnnData (<code>*_audited.h5ad</code>) e in un CSV: "
+            f"<code>audit_reference_label</code> (identita' del clone stimata nel sangue) e "
+            f"<code>audit_label_vs_reference</code> (l'etichetta assegnata discorda da quell'identita'). "
+            f"Le etichette originali non vengono modificate. Copertura: {n_ref:,} cellule su {n:,} "
+            f"({n_ref / n:.1%}) hanno un'identita' di riferimento; {n_eval:,} ({result.flag_coverage:.1%}) "
+            f"sono valutabili, e di queste {n_disc:,} sono discordanti. Tutte le altre sono NA: "
+            f"lo strumento non poteva verificarle (nessun TCR, clone senza cellule sufficienti nel "
+            f"riferimento, etichetta non CD4/CD8, o cellula del compartimento di riferimento). NA non "
+            f"significa \"corretta\".</p>")
+
     html_parts.append("</div>")
     return "".join(html_parts)
 

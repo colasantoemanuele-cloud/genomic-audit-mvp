@@ -1,0 +1,170 @@
+{
+ "eccesso_035_marcatori": {
+  "n_cells_with_tcr": 2285,
+  "n_clones_total": 180,
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.107 (IC95% [+0.088, +0.127], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.283 (IC95% [0.251, 0.311], 12 pazienti).",
+  "discordance": {
+   "n_pairs": 180,
+   "n_patients": 12,
+   "mean_excess": 0.10744680605151073,
+   "ci_low": 0.08774076462909619,
+   "ci_high": 0.12691721355656546,
+   "sufficient": true
+  },
+  "by_compartment_pair": [
+   {
+    "comp_a": "PBMC",
+    "comp_b": "Tumor",
+    "n_pairs": 180,
+    "n_patients": 12,
+    "excess": 0.10744680605151073,
+    "ci_low": 0.08774076462909619,
+    "ci_high": 0.12691721355656546,
+    "sufficient": true
+   }
+  ],
+  "marker_error": {
+   "n_resolved_clones": 180,
+   "by_compartment": {
+    "Tumor": {
+     "mean": 0.2831858407079646,
+     "ci_low": 0.2505542117140371,
+     "ci_high": 0.31062910133314914,
+     "n_groups": 12,
+     "n_obs": 904,
+     "sufficient": true
+    }
+   }
+  }
+ },
+ "eccesso_0_marcatori": {
+  "n_cells_with_tcr": 2384,
+  "n_clones_total": 180,
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di -0.002 (IC95% [-0.007, +0.002], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: non distinguibile dal rumore di base entro compartimento (l'intervallo include lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.026 (IC95% [0.018, 0.035], 12 pazienti).",
+  "discordance": {
+   "n_pairs": 180,
+   "n_patients": 12,
+   "mean_excess": -0.0020350058801948275,
+   "ci_low": -0.006536494793292112,
+   "ci_high": 0.0021652377566120317,
+   "sufficient": true
+  },
+  "by_compartment_pair": [
+   {
+    "comp_a": "PBMC",
+    "comp_b": "Tumor",
+    "n_pairs": 180,
+    "n_patients": 12,
+    "excess": -0.0020350058801948275,
+    "ci_low": -0.006536494793292112,
+    "ci_high": 0.0021652377566120317,
+    "sufficient": true
+   }
+  ],
+  "marker_error": {
+   "n_resolved_clones": 180,
+   "by_compartment": {
+    "Tumor": {
+     "mean": 0.026382978723404255,
+     "ci_low": 0.01776369471794593,
+     "ci_high": 0.03474228085154142,
+     "n_groups": 12,
+     "n_obs": 1175,
+     "sufficient": true
+    }
+   }
+  }
+ },
+ "tre_compartimenti": {
+  "n_cells_with_tcr": 1589,
+  "n_clones_total": 80,
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.035 (IC95% [+0.017, +0.055], su 240 coppie clone-compartimenti da 8 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 80 cloni risolti): 'Adjacent': 0.019 (IC95% [0.011, 0.026], 8 pazienti). 'Tumor': 0.198 (IC95% [0.161, 0.236], 8 pazienti).",
+  "discordance": {
+   "n_pairs": 240,
+   "n_patients": 8,
+   "mean_excess": 0.0349005681375262,
+   "ci_low": 0.016554897342540332,
+   "ci_high": 0.05495199948355241,
+   "sufficient": true
+  },
+  "by_compartment_pair": [
+   {
+    "comp_a": "Adjacent",
+    "comp_b": "PBMC",
+    "n_pairs": 80,
+    "n_patients": 8,
+    "excess": -0.0002006436085659837,
+    "ci_low": -0.004882916250784445,
+    "ci_high": 0.0042856989528574285,
+    "sufficient": true
+   },
+   {
+    "comp_a": "Adjacent",
+    "comp_b": "Tumor",
+    "n_pairs": 80,
+    "n_patients": 8,
+    "excess": 0.06838068103183559,
+    "ci_low": 0.03986259392477617,
+    "ci_high": 0.10133647258379645,
+    "sufficient": true
+   },
+   {
+    "comp_a": "PBMC",
+    "comp_b": "Tumor",
+    "n_pairs": 80,
+    "n_patients": 8,
+    "excess": 0.03652166698930899,
+    "ci_low": 0.00864049471131677,
+    "ci_high": 0.06641556785095591,
+    "sufficient": true
+   }
+  ],
+  "marker_error": {
+   "n_resolved_clones": 80,
+   "by_compartment": {
+    "Adjacent": {
+     "mean": 0.01876172607879925,
+     "ci_low": 0.011048205937708699,
+     "ci_high": 0.026470069313169496,
+     "n_groups": 8,
+     "n_obs": 533,
+     "sufficient": true
+    },
+    "Tumor": {
+     "mean": 0.19825708061002179,
+     "ci_low": 0.16120622323003275,
+     "ci_high": 0.23558263766764836,
+     "n_groups": 8,
+     "n_obs": 459,
+     "sufficient": true
+    }
+   }
+  }
+ },
+ "senza_marcatori_pochi_pazienti": {
+  "n_cells_with_tcr": 507,
+  "n_clones_total": 40,
+  "narrative": "Numerosita' insufficiente per una stima affidabile dell'eccesso di discordanza (4 pazienti contribuiscono cloni comparabili, ne servono almeno 5): nessun intervallo di confidenza riportato.",
+  "discordance": {
+   "n_pairs": 40,
+   "n_patients": 4,
+   "mean_excess": 0.08878029040282331,
+   "ci_low": null,
+   "ci_high": null,
+   "sufficient": false
+  },
+  "by_compartment_pair": [
+   {
+    "comp_a": "PBMC",
+    "comp_b": "Tumor",
+    "n_pairs": 40,
+    "n_patients": 4,
+    "excess": 0.08878029040282331,
+    "ci_low": null,
+    "ci_high": null,
+    "sufficient": false
+   }
+  ],
+  "marker_error": null
+ }
+}

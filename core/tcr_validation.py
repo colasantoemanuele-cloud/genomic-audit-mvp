@@ -277,6 +277,82 @@ def marker_error_rate(
 
 
 # --------------------------------------------------------------------------- #
+# (C) Flag per cellula (Intervento 2)
+# --------------------------------------------------------------------------- #
+FLAG_COLUMNS = ("audit_reference_label", "audit_label_vs_reference")
+FLAG_DEFINITIONS = {
+    "audit_reference_label": (
+        "Identita' del clone T della cellula stimata dai marcatori canonici SOLO nel "
+        "compartimento di riferimento (schema solo sangue: >= 3 cellule del clone nel "
+        "riferimento, margine >= 0.20 fra la prima e la seconda identita'). NA se la cellula "
+        "non ha TCR o il suo clone non ha un'identita' di riferimento."),
+    "audit_label_vs_reference": (
+        "True se l'etichetta assegnata alla cellula discorda dall'identita' di riferimento del "
+        "clone, False se concorda. Stessa logica di marker_error_rate: NA se il clone non ha "
+        "riferimento, se l'etichetta e' fuori dalla marker_map, o se la cellula sta nel "
+        "compartimento di riferimento (da cui il riferimento e' stimato). E' un segnale, non "
+        "una correzione: l'etichetta originale non viene modificata."),
+}
+
+
+def cell_flags(
+    cells: pd.DataFrame,
+    reference_identity: pd.DataFrame,
+    n_obs: int,
+    patient_col: str = "patient",
+    clone_col: str = "clone_id",
+    compartment_col: str = "compartment",
+    label_col: str = "celltype",
+    reference_compartment: str = "PBMC",
+    row_col: str = "_row",
+) -> pd.DataFrame:
+    """Flag per cellula, indicizzati per posizione di riga (0..n_obs-1) in adata.obs.
+
+    ``audit_label_vs_reference`` ripete ESATTAMENTE i filtri di ``marker_error_rate``
+    (join interno sull'identita' di riferimento, esclusione del compartimento di
+    riferimento, etichette limitate a quelle presenti fra le identita' di riferimento),
+    cosi' la media dei flag valutabili di un compartimento coincide con la stima puntuale
+    del tasso d'errore di quel compartimento."""
+    ref_label = pd.Series(pd.NA, index=pd.RangeIndex(n_obs), dtype="object")
+    vs_ref = pd.Series(pd.NA, index=pd.RangeIndex(n_obs), dtype="boolean")
+    if not reference_identity.empty:
+        j = cells.merge(reference_identity, on=[patient_col, clone_col], how="inner")
+        ref_label.loc[j[row_col].values] = j["reference_identity"].astype(str).values
+        j = j[j[compartment_col] != reference_compartment]
+        j = j[j[label_col].isin(reference_identity["reference_identity"].unique())]
+        err = j[label_col].astype(str) != j["reference_identity"].astype(str)
+        vs_ref.loc[j[row_col].values] = err.values
+    return pd.DataFrame({"audit_reference_label": ref_label, "audit_label_vs_reference": vs_ref})
+
+
+def export_audited(adata: ad.AnnData, result: "TcrValidationResult",
+                   out_prefix: str | Path) -> tuple[Path, Path]:
+    """Scrive ``<prefisso>_audited.h5ad`` (COPIA di adata con le due colonne di flag in
+    obs e le definizioni in uns['genomic_audit_flags']) e ``<prefisso>_audit_flags.csv``
+    (obs_names + flag). L'AnnData passato non viene modificato; le colonne esistenti non
+    vengono sovrascritte (errore se una colonna di flag esiste gia')."""
+    if result.cell_flags is None:
+        raise ValueError("nessun flag da esportare: servono marker_map e reference_compartment")
+    clash = [c for c in FLAG_COLUMNS if c in adata.obs.columns]
+    if clash:
+        raise ValueError(f"adata.obs contiene gia' le colonne {clash}: non vengono sovrascritte")
+    if list(result.cell_flags.index) != list(adata.obs_names):
+        raise ValueError("i flag non corrispondono alle righe di questo AnnData")
+    out_prefix = Path(out_prefix)
+    out_prefix.parent.mkdir(parents=True, exist_ok=True)
+    h5ad_path = out_prefix.with_name(out_prefix.name + "_audited.h5ad")
+    csv_path = out_prefix.with_name(out_prefix.name + "_audit_flags.csv")
+    copy = adata.copy()
+    for c in FLAG_COLUMNS:
+        copy.obs[c] = result.cell_flags[c].values
+    copy.obs["audit_reference_label"] = copy.obs["audit_reference_label"].astype("category")
+    copy.uns["genomic_audit_flags"] = dict(FLAG_DEFINITIONS)
+    copy.write_h5ad(h5ad_path)
+    result.cell_flags.to_csv(csv_path, index_label="obs_name")
+    return h5ad_path, csv_path
+
+
+# --------------------------------------------------------------------------- #
 # Orchestratore
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
@@ -286,6 +362,11 @@ class TcrValidationResult:
     discordance: DiscordanceResult
     marker_error: MarkerErrorResult | None
     narrative: str
+    # Flag per cellula (Intervento 2): una riga per riga di adata.obs, stesso indice
+    # (obs_names). None se marker_map/reference_compartment non sono forniti.
+    cell_flags: pd.DataFrame | None = None
+    # Frazione delle cellule di adata con audit_label_vs_reference valutabile (non NA).
+    flag_coverage: float | None = None
 
 
 def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> str:
@@ -352,6 +433,10 @@ def run_tcr_validation(
     for c in ("patient", "compartment", "celltype", "barcode"):
         obs[c] = obs[c].astype(str)
     obs = obs.reset_index(drop=True)
+    # Posizione di riga originale: serve solo a riscrivere i flag per cellula sulle righe
+    # giuste di adata.obs dopo la merge (che non preserva l'ordine). Non entra in nessun
+    # calcolo.
+    obs["_row"] = np.arange(len(obs))
 
     # Le colonne pos_<etichetta> vengono allineate per POSIZIONE (stessa riga di
     # adata.obs), non per join sul barcode: il barcode 10x da solo NON e' univoco a
@@ -372,6 +457,7 @@ def run_tcr_validation(
     discordance = _summarize_discordance(pw, n_boot, seed, min_patients_for_ci)
 
     marker_error = None
+    flags, coverage = None, None
     if marker_map and reference_compartment:
         ref_identity = assign_reference_identity(
             cells, list(marker_map), reference_compartment=reference_compartment,
@@ -380,6 +466,10 @@ def run_tcr_validation(
             cells, ref_identity, reference_compartment=reference_compartment,
             n_boot=n_boot, seed=seed, min_patients_for_ci=min_patients_for_ci,
         )
+        flags = cell_flags(cells, ref_identity, n_obs=adata.n_obs,
+                           reference_compartment=reference_compartment)
+        flags.index = adata.obs_names
+        coverage = float(flags["audit_label_vs_reference"].notna().mean()) if adata.n_obs else 0.0
 
     narrative = _discordance_narrative(discordance, min_patients_for_ci) + \
         _marker_narrative(marker_error, min_patients_for_ci)
@@ -387,4 +477,5 @@ def run_tcr_validation(
     return TcrValidationResult(
         n_cells_with_tcr=len(cells), n_clones_total=int(cells["clone_id"].nunique()),
         discordance=discordance, marker_error=marker_error, narrative=narrative,
+        cell_flags=flags, flag_coverage=coverage,
     )
