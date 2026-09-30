@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Output generati (report, dati sintetici, cache di test)
+results/
+data/synthetic/*
+!data/synthetic/.gitkeep
+.pytest_cache/

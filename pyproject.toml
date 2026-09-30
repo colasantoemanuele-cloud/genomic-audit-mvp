@@ -1,0 +1,29 @@
+[project]
+name = "genomic-audit"
+version = "0.1.0"
+description = "Audit del leakage per paziente e validazione dell'annotazione via TCR per coorti cliniche piccole"
+authors = [
+    { name = "Emanuele", email = "emanuele@localhost" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "anndata>=0.10",
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "scikit-learn>=1.4",
+    "scipy>=1.12",
+    "streamlit>=1.35",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
