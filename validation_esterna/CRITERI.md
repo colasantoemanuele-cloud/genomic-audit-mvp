@@ -115,3 +115,27 @@ eleggibile per il Modulo A": i requisiti non vengono abbassati.
 "PRONTO" solo se tutti i criteri (D1-D4 per ogni dataset dell'audit, A1-A4 per ogni dataset
 del Modulo A) sono soddisfatti su tutti i dataset eleggibili testati. Altrimenti "NON
 PRONTO", con l'elenco dei criteri falliti. Non esistono verdetti parziali favorevoli.
+
+## 5. Modifica del piano (2026-10-02), decisa dall'utente DOPO l'esecuzione sul dataset completo
+
+Questa sezione e' stata aggiunta dopo aver visto dei risultati, ed e' quindi dichiarata come
+tale. I criteri delle sezioni 1-4 restano invariati.
+
+**Motivo.** `cli.py leakage` su GSE125449 completo (9.946 cellule, 18.372 geni, 19
+pazienti) non era terminato dopo oltre 5 ore e 18 ore di CPU. Era rallentato anche dalle mie
+esecuzioni in parallelo. Il confronto LeaveOneGroupOut addestra 3 modelli (tra cui random
+forest e gradient boosting su matrice densa) su tutti i geni, per ciascuno dei 19 pazienti.
+L'utente ha chiesto di testare il Modulo A su una piccola coorte.
+
+**Coorte ridotta del Modulo A** (`validation_esterna/build_small.py`), regole fissate prima
+di costruirla:
+- 10 pazienti estratti a caso fra i 19 di GSE125449 (numpy default_rng(0),
+  scelta senza reinserimento);
+- per ciascun paziente al massimo 200 cellule estratte a caso (default_rng(0)), tutte se
+  sono meno di 200;
+- nessun filtro sui geni ne' sulle classi, etichetta `Type` degli autori invariata.
+
+Su questa coorte si valutano A1-A4 con gli stessi criteri della sezione 3. Il tempo
+dell'esecuzione sul dataset completo e' riportato come risultato. L'esecuzione completa resta
+attiva a priorita' minima: se termina, i suoi numeri saranno riportati. L'audit del disegno
+non cambia: e' gia' stato valutato sui dataset completi.
