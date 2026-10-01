@@ -258,6 +258,8 @@ def _tcr_section(result: TcrValidationResult) -> str:
         f'<div class="card {verdict_cls}">',
         f"<p>{tag}</p>",
         "<table><tr><th>Quantita'</th><th>Valore</th><th>Cosa significa</th></tr>",
+        (f"<tr><td>Match dei barcode VDJ</td><td>{result.barcode_match.fraction:.1%}</td>"
+         f"<td>{html.escape(result.barcode_match.sentence)}</td></tr>" if result.barcode_match else ""),
         f"<tr><td>Cellule con TCR</td><td>{result.n_cells_with_tcr:,}</td>"
         f"<td>Cellule per cui e' stato ricostruito un clonotipo (catena TRB rilevata).</td></tr>",
         f"<tr><td>Coppie clone-compartimenti confrontabili</td><td>{d.n_pairs:,}</td>"

@@ -45,7 +45,9 @@ def _vdj_files(tmp: Path, strip_suffix: bool) -> list[tuple[Path, str, str]]:
 @pytest.fixture(scope="module")
 def real(tmp_path_factory):
     adata = ad.read_h5ad(H5AD)
-    contigs = parse_vdj_contigs(_vdj_files(tmp_path_factory.mktemp("vdj"), strip_suffix=True))
+    # File VDJ ORIGINALI (barcode con "-1"): la normalizzazione del suffisso e' automatica
+    # dalla Pulizia 2 e deve essere dichiarata.
+    contigs = parse_vdj_contigs(_vdj_files(tmp_path_factory.mktemp("vdj"), strip_suffix=False))
     res = run_tcr_validation(
         adata, contigs, patient_col="patients", compartment_col="tissue",
         celltype_col="all_celltype", barcode_col="barcode", n_boot=2000, seed=0,
@@ -73,3 +75,12 @@ def test_cell_convention_unchanged_on_real_data(real):
     print(f"\n[reale, per cellula] Tumor {cell.mean:.4f} [{cell.ci_low:.4f}; {cell.ci_high:.4f}]")
     assert abs(cell.mean - 0.0925967851482907) < 1e-12
     assert cell is res.marker_error.by_compartment["Tumor"]
+
+
+def test_barcode_suffix_normalized_and_declared_on_real_data(real):
+    _, res = real
+    m = res.barcode_match
+    print("\n[reale] " + m.sentence)
+    assert m.normalized_suffixes == ("-1",)
+    assert "Normalizzato il suffisso -1" in m.sentence
+    assert m.n_matched == 105_809 and m.fraction > 0.5

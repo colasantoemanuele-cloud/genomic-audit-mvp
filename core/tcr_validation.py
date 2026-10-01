@@ -16,6 +16,7 @@ due gruppi DIVERSI (una cellula per lato), nessun problema di reinserimento.
 
 from __future__ import annotations
 
+import re
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -77,6 +78,76 @@ def build_clonotypes(contigs: pd.DataFrame) -> pd.DataFrame:
     trb = contigs[contigs.chain == "TRB"][["patient", "compartment", "barcode", "cdr3_nt"]]
     trb = trb.rename(columns={"cdr3_nt": "clone_id"})
     return trb.drop_duplicates(["patient", "compartment", "barcode"]).reset_index(drop=True)
+
+
+# --------------------------------------------------------------------------- #
+# Controllo del match dei barcode (Pulizia 2)
+# --------------------------------------------------------------------------- #
+MIN_BARCODE_MATCH = 0.5
+_SUFFIX_RE = re.compile(r"-\d+$")
+_KEY = ["patient", "compartment", "barcode"]
+
+
+@dataclass(frozen=True)
+class BarcodeMatch:
+    n_vdj: int
+    n_matched: int
+    fraction: float
+    normalized_suffixes: tuple[str, ...]  # suffissi rimossi; vuoto se nessuna normalizzazione
+    sentence: str
+
+
+def _match_fraction(obs: pd.DataFrame, clones: pd.DataFrame) -> tuple[int, float]:
+    if clones.empty:
+        return 0, 0.0
+    n = len(clones.merge(obs[_KEY].drop_duplicates(), on=_KEY, how="inner"))
+    return n, n / len(clones)
+
+
+def _strip(b: pd.Series) -> pd.Series:
+    return b.astype(str).str.replace(_SUFFIX_RE, "", regex=True)
+
+
+def match_barcodes(obs: pd.DataFrame, clones: pd.DataFrame,
+                   min_fraction: float = MIN_BARCODE_MATCH) -> tuple[pd.DataFrame, pd.DataFrame, BarcodeMatch]:
+    """Frazione di barcode VDJ (cellule con TRB) ritrovati nei metadati, per (paziente,
+    compartimento, barcode). Se rimuovere il suffisso "-N" (es. "-1" di Cell Ranger) da
+    entrambi i lati aumenta il match senza creare collisioni (barcode diversi che diventano
+    uguali, es. -1 e -2 dello stesso campione aggregato), la normalizzazione viene applicata
+    e dichiarata. Errore esplicito se il match finale e' sotto ``min_fraction``."""
+    n_raw, f_raw = _match_fraction(obs, clones)
+    used_obs, used_clones, suffixes = obs, clones, ()
+    obs_n = obs.assign(barcode=_strip(obs["barcode"]))
+    clones_n = clones.assign(barcode=_strip(clones["barcode"]))
+    n_norm, f_norm = _match_fraction(obs_n, clones_n)
+    collisions = (clones_n.duplicated(_KEY).sum() > clones.duplicated(_KEY).sum()
+                  or obs_n.duplicated(_KEY).sum() > obs.duplicated(_KEY).sum())
+    if f_norm > f_raw and not collisions:
+        found = pd.concat([obs["barcode"], clones["barcode"]]).astype(str).str.extract(r"(-\d+)$")[0]
+        suffixes = tuple(sorted(found.dropna().unique()))
+        used_obs, used_clones = obs_n, clones_n
+        n_final, f_final = n_norm, f_norm
+    else:
+        n_final, f_final = n_raw, f_raw
+    sentence = (f"Barcode VDJ (cellule con TRB) ritrovati nei metadati per paziente, compartimento e "
+                f"barcode: {n_final:,}/{len(clones):,} ({f_final:.1%}).")
+    if suffixes:
+        n_v = int(clones["barcode"].astype(str).str.contains(_SUFFIX_RE).sum())
+        n_o = int(obs["barcode"].astype(str).str.contains(_SUFFIX_RE).sum())
+        sentence += (f" Normalizzato il suffisso {', '.join(suffixes)}: rimosso da {n_v:,} barcode VDJ e da "
+                     f"{n_o:,} barcode dei metadati (prima della normalizzazione: {f_raw:.1%}).")
+    elif f_norm > f_raw and collisions:
+        sentence += (" La rimozione del suffisso -N avrebbe aumentato il match ma avrebbe fuso barcode "
+                     "diversi: non applicata.")
+    if f_final < min_fraction:
+        ex_v = clones["barcode"].astype(str).head(3).tolist()
+        ex_o = obs["barcode"].astype(str).head(3).tolist()
+        raise ValueError(
+            f"solo il {f_final:.1%} dei barcode VDJ e' stato ritrovato nei metadati (soglia "
+            f"{min_fraction:.0%}), anche dopo l'eventuale normalizzazione del suffisso -N. Esempi "
+            f"VDJ: {ex_v}; esempi metadati: {ex_o}. Controlla che paziente e compartimento del "
+            f"manifest coincidano con quelli dell'AnnData e che i barcode abbiano lo stesso formato.")
+    return used_obs, used_clones, BarcodeMatch(len(clones), n_final, f_final, suffixes, sentence)
 
 
 # --------------------------------------------------------------------------- #
@@ -487,6 +558,8 @@ class TcrValidationResult:
     flag_coverage: float | None = None
     # Tasso d'errore secondo le convenzioni richieste (Pulizia 1), con nome e definizione.
     conventions: dict[str, ConventionResult] | None = None
+    # Esito del controllo del match dei barcode VDJ <-> metadati (Pulizia 2).
+    barcode_match: BarcodeMatch | None = None
 
 
 def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> str:
@@ -598,6 +671,7 @@ def run_tcr_validation(
         pos_df = compute_marker_positivity(adata, marker_map, gene_col=gene_col).reset_index(drop=True)
         obs = pd.concat([obs, pos_df], axis=1)
 
+    obs, clones, bmatch = match_barcodes(obs, clones)
     cells = obs.merge(clones, on=["patient", "compartment", "barcode"], how="inner")
     if cells.empty:
         raise ValueError(
@@ -648,4 +722,5 @@ def run_tcr_validation(
         n_cells_with_tcr=len(cells), n_clones_total=int(cells["clone_id"].nunique()),
         discordance=discordance, marker_error=marker_error, narrative=narrative,
         cell_flags=flags, flag_coverage=coverage, conventions=conventions,
+        barcode_match=bmatch,
     )

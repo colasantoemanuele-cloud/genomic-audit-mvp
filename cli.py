@@ -127,6 +127,7 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
         clone_error_labels=_csv_list(args.clone_error_labels),
         clone_marker_priority=_csv_list(args.clone_marker_priority),
     )
+    print(result.barcode_match.sentence)
     print(result.narrative)
     if result.flag_coverage is not None:
         print(f"Flag per cellula valutabili (audit_label_vs_reference non NA): "

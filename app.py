@@ -286,6 +286,8 @@ with tab_b:
 
     result_b = st.session_state.tcr_result
     if result_b is not None:
+        if result_b.barcode_match is not None:
+            st.caption(result_b.barcode_match.sentence)
         st.markdown(f"**{result_b.narrative}**")
         d = result_b.discordance
         if d.sufficient:
