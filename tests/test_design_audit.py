@@ -127,3 +127,26 @@ def test_not_estimable_without_units_says_pvalue_undefined():
                           roles={"patient": "patient", "protocol": "protocol"})
     assert c.classification == "non stimabile" and c.min_pvalue is None
     assert "p-value minimo non definito" in c.sentence
+
+
+def test_missing_values_are_an_explicit_level_not_silently_dropped():
+    """Regressione (validazione esterna, GSE132465): lo stadio manca per i campioni normali.
+    Prima i mancanti venivano scartati da crosstab/groupby ma contati in n: l'audit riportava
+    'paziente determina lo stadio' (falso: i pazienti appaiati hanno stadio e mancante) e non
+    produceva il Cramér V per una tabella valutabile."""
+    import io
+    rows = []
+    for p in range(12):
+        rows.append({"patient": f"P{p}", "tissue": "Tumor", "stage": str(1 + p % 3)})
+        if p < 6:
+            rows.append({"patient": f"P{p}", "tissue": "Normal", "stage": None})
+    csv = pd.DataFrame(rows).to_csv(index=False)
+    sheet = pd.read_csv(io.StringIO(csv), dtype=str)  # come la CLI
+    assert sheet["stage"].isna().sum() == 6
+    res = run_design_audit(sheet, patient_col="patient", tissue_col="tissue", outcome_cols=["stage"])
+    facts = {(f.kind, f.factors) for f in res.findings}
+    assert ("esito-determinato", ("patient", "stage")) not in facts
+    pair = next(p for p in res.pairs if {p.factor_a, p.factor_b} == {"tissue", "stage"})
+    assert pair.n_levels_b == 4 or pair.n_levels_a == 4  # 3 stadi + "NA"
+    assert pair.cramer_v is not None
+    assert any("\"NA\"" in n and "'stage' (6 righe)" in n for n in res.notes)

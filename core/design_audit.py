@@ -137,6 +137,20 @@ class DesignAuditResult:
 # --------------------------------------------------------------------------- #
 # Input
 # --------------------------------------------------------------------------- #
+MISSING_LEVEL = "NA"
+
+
+def as_levels(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Converte i fattori in stringhe con i valori mancanti come livello esplicito "NA".
+    Senza questo passaggio (con pandas >= 3, ``astype(str)`` lascia i mancanti come
+    mancanti) le righe con un valore mancante venivano scartate in silenzio da crosstab e
+    groupby, ma contate nel numero di unita'. Ritorna anche il conteggio dei mancanti per
+    colonna, da dichiarare."""
+    missing = {c: int(df[c].isna().sum()) for c in df.columns if df[c].isna().any()}
+    out = df.astype(object).where(df.notna(), MISSING_LEVEL).astype(str)
+    return out, missing
+
+
 def sample_sheet_from_obs(obs: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     """Riduce una tabella a livello di cellula (es. ``adata.obs``) alle combinazioni
     distinte dei fattori indicati: le cellule non sono unita' indipendenti del disegno.
@@ -145,7 +159,7 @@ def sample_sheet_from_obs(obs: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     missing = [c for c in cols if c not in obs.columns]
     if missing:
         raise ValueError(f"colonne non trovate nei metadati: {missing}")
-    return obs[cols].astype(str).drop_duplicates().reset_index(drop=True)
+    return as_levels(obs[cols])[0].drop_duplicates().reset_index(drop=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -349,7 +363,7 @@ def assess_comparison(
     - In ogni caso, un fattore tecnico che separa perfettamente i due livelli rende il
       confronto non stimabile.
     """
-    s = sheet.astype(str)
+    s = as_levels(sheet)[0]
     level_a, level_b = str(level_a), str(level_b)
     if factor not in s.columns:
         raise ValueError(f"fattore '{factor}' non trovato")
@@ -658,7 +672,7 @@ def run_design_audit(
     if missing:
         raise ValueError(f"colonne non trovate nei metadati: {missing}")
 
-    s = sheet[list(roles)].astype(str).reset_index(drop=True)
+    s, missing = as_levels(sheet[list(roles)].reset_index(drop=True))
     outcome_like = ([tissue_col] if tissue_col else []) + outcome_cols
     pairs, findings = _pairs_and_findings(s, roles, outcome_like, v_threshold)
     findings += _technical_unit_findings(s, roles, patient_col, tissue_col)
@@ -667,6 +681,10 @@ def run_design_audit(
              for f, a, b in (comparisons or [])]
 
     notes = []
+    if missing:
+        notes.append("Valori mancanti trattati come livello esplicito \"NA\": " + ", ".join(
+            f"'{c}' ({n} righe)" for c, n in missing.items()) + ". Un livello \"NA\" condiviso "
+            "da piu' righe e' trattato come un valore uguale per tutte.")
     if "protocol" in technical_cols:
         notes.append(PROTOCOL_NOTE)
     notes.append("Le unita' di questo audit sono le righe della tabella dei metadati (campioni o "
