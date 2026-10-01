@@ -17,7 +17,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from core.cd8_propagation import CD8PropagationResult
+from core.cd8_propagation import SCENARIO_WARNING, CD8PropagationResult, refusal_notes
 from core.design_audit import DesignAuditResult
 from core.leakage_audit import LeakageAuditResult, ModelComparisonResult
 from core.tcr_validation import MarkerErrorResult, TcrValidationResult
@@ -343,10 +343,7 @@ def _cd8_section(r: CD8PropagationResult) -> str:
         f"<h2>Frazione di CD8 nel compartimento '{html.escape(r.target_compartment)}': "
         f"effetto dell'errore di annotazione</h2>",
         '<div class="card verdict-warn">' if r.refused_reason is None else '<div class="card verdict-no">',
-        '<p class="narrative">Per ogni paziente: frazione di cellule etichettate CD8 sul totale delle '
-        "cellule etichettate CD4 o CD8 in questo compartimento (denominatore dichiarato), e intervallo "
-        "plausibile dopo aver tenuto conto dell'errore di annotazione misurato con il Modulo B. Tre "
-        "scenari di errore (0.5x, 1x, 2x) sono sempre riportati: nessuno e' \"il risultato\".</p>",
+        f'<p class="narrative">{html.escape(SCENARIO_WARNING)}</p>',
     ]
     if r.refused_reason:
         parts.append(f'<p class="narrative"><b>Intervalli non prodotti:</b> {html.escape(r.refused_reason)}.</p>')
@@ -365,9 +362,11 @@ def _cd8_section(r: CD8PropagationResult) -> str:
     parts.append("<table><tr><th>Paziente</th><th>n (CD4+CD8)</th><th>Riportata [IC95% conteggi]</th>"
                  "<th>Errore 0.5x</th><th>Errore 1x</th><th>Errore 2x</th></tr>")
 
+    notes = refusal_notes(r)
+
     def cell(iv):
         return (f"{iv.low:.2f}–{iv.high:.2f}" if iv.low is not None
-                else f"non prodotto: {html.escape(iv.refused_reason or '')}")
+                else f"non prodotto <sup>[{notes[iv.refused_reason]}]</sup>")
     for p in r.patients:
         rep = (f"{p.reported:.2f} [{p.naive_low:.2f}–{p.naive_high:.2f}]" if p.naive_low is not None
                else ("—" if p.reported is None else f"{p.reported:.2f}"))
@@ -375,6 +374,9 @@ def _cd8_section(r: CD8PropagationResult) -> str:
                      f"<td>{rep}</td>" + "".join(f"<td>{cell(p.scenarios[k])}</td>" for k in sorted(p.scenarios))
                      + "</tr>")
     parts.append("</table>")
+    if notes:
+        parts.append('<p class="narrative">' + "<br>".join(
+            f"[{n}] {html.escape(reason)}" for reason, n in notes.items()) + "</p>")
     parts.append(f'<p class="narrative"><i>{html.escape(r.assumptions)}</i></p>')
     parts.append("</div>")
     return "".join(parts)

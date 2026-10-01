@@ -27,7 +27,7 @@ from pathlib import Path
 import anndata as ad
 import pandas as pd
 
-from core.cd8_propagation import cd8_fraction_intervals
+from core.cd8_propagation import cd8_fraction_intervals, format_cd8_text
 from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
 from core.leakage_audit import run_leakage_audit
 from core.report import save_report
@@ -142,7 +142,7 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
             celltype_col=args.celltype_col, reference_col="audit_reference_label",
             target_compartment=args.cd8_compartment, cd4_label=args.cd4_label,
             cd8_label=args.cd8_label, n_boot=args.n_boot, seed=args.seed)
-        print(cd8.narrative)
+        print(format_cd8_text(cd8))
     out = save_report(args.out, tcr_result=result, dataset_name=Path(args.h5ad).stem,
                       cd8_result=cd8)
     print(f"[ok] report scritto in {out}")
@@ -184,7 +184,7 @@ def _cmd_demo(args: argparse.Namespace) -> None:
         compartment_col="tissue", celltype_col="celltype", reference_col="audit_reference_label",
         target_compartment="Tumor", seed=args.seed)
     print("\n=== Frazione di CD8 nel tumore (dataset sintetico) ===")
-    print(cd8_result.narrative)
+    print(format_cd8_text(cd8_result))
 
     out = save_report(args.out, leakage_result=leakage_result, tcr_result=tcr_result,
                        dataset_name="demo sintetico", design_result=design_result,

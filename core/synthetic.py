@@ -384,6 +384,7 @@ def make_cd8_fraction_dataset(
     fraction_range: tuple[float, float] = (0.2, 0.7),
     reference_fraction: float = 0.3,
     seed: int = 0,
+    reference_error_factor: float = 1.0,
 ) -> tuple[pd.DataFrame, dict[str, float]]:
     """Cellule T del compartimento 'Tumor' con frazione VERA di CD8 nota per paziente
     (``truth``: paziente -> frazione latente) ed errore di annotazione iniettato con
@@ -392,7 +393,10 @@ def make_cd8_fraction_dataset(
     ``reference_fraction`` delle cellule, scelta a caso e indipendentemente da identita' ed
     errore, ha un'identita' di riferimento (= identita' vera: simula i cloni condivisi con
     il sangue, con l'assunzione che siano rappresentativi). Colonne come l'output dei flag
-    del Modulo B: patient, compartment, celltype, audit_reference_label."""
+    del Modulo B: patient, compartment, celltype, audit_reference_label.
+
+    ``reference_error_factor`` (B3) rompe di proposito quell'assunzione: l'errore delle
+    cellule CON riferimento e' moltiplicato per questo fattore, quello delle altre no."""
     rng = np.random.default_rng(seed)
     rows, truth = [], {}
     for p in range(n_patients):
@@ -402,12 +406,17 @@ def make_cd8_fraction_dataset(
         n = int(rng.integers(cells_range[0], cells_range[1] + 1))
         is_cd8 = rng.random(n) < pi
         u = rng.random(n)
+        has_ref_draw = rng.random(n)
+        has_ref = has_ref_draw < reference_fraction
+        # errore delle cellule con riferimento moltiplicato per reference_error_factor (B3):
+        # nessuna estrazione casuale in piu', quindi con fattore 1 i dati sono identici a prima
+        f = np.where(has_ref, reference_error_factor, 1.0)
+        e84, e48, eo = p_cd8_to_cd4 * f, p_cd4_to_cd8 * f, p_to_other * f
         called = np.where(
             is_cd8,
-            np.where(u < p_cd8_to_cd4, "CD4T", np.where(u < p_cd8_to_cd4 + p_to_other, "NK", "CD8T")),
-            np.where(u < p_cd4_to_cd8, "CD8T", np.where(u < p_cd4_to_cd8 + p_to_other, "NK", "CD4T")),
+            np.where(u < e84, "CD4T", np.where(u < e84 + eo, "NK", "CD8T")),
+            np.where(u < e48, "CD8T", np.where(u < e48 + eo, "NK", "CD4T")),
         )
-        has_ref = rng.random(n) < reference_fraction
         ref = np.where(is_cd8, "CD8T", "CD4T").astype(object)
         ref[~has_ref] = pd.NA
         for c, r in zip(called, ref):

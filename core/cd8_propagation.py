@@ -62,12 +62,24 @@ ASSUMPTIONS_TEXT = (
     "(2) La matrice di confusione e' stimata solo sui cloni condivisi con il sangue, che per "
     "costruzione sono quelli espansi (almeno 3 cellule nel sangue e identita' netta), ed e' "
     "unica per tutti i pazienti (pooled), non per paziente. Nei dati originali (PDAC, "
-    "GSE278694) l'errore di annotazione cresce con la dimensione del clone (rho = +0.177): la "
-    "direzione plausibile del bias e' quindi una SOVRASTIMA dell'errore sui cloni non "
-    "condivisi, ma non e' stata verificata, perche' quelle cellule non hanno riferimento. Per "
-    "questo sono riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali e' "
-    "\"il risultato\". (3) Le cellule etichettate CD4 o CD8 sono vere cellule T; doppietti "
+    "GSE278694) l'errore di annotazione cresce con la dimensione del clone (rho = +0.177): "
+    "e' quindi possibile che la matrice SOVRASTIMI l'errore dei cloni non condivisi, ma non "
+    "e' verificabile, perche' quelle cellule non hanno riferimento. In simulazione nessuno "
+    "scenario copre il valore vero in tutti i casi: se i cloni condivisi sbagliano 2-4 volte "
+    "piu' degli altri lo scenario 1x scende fino al 28% di copertura e lo 0.5x resta intorno "
+    "al 92-95%; se sbagliano quanto gli altri, lo 0.5x scende all'88%. Per questo sono "
+    "riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali e' \"il "
+    "risultato\". (3) Le cellule etichettate CD4 o CD8 sono vere cellule T; doppietti "
     "e altre cellule non-T etichettate CD4/CD8 non sono modellati."
+)
+
+
+SCENARIO_WARNING = (
+    "Per ogni paziente: frazione di cellule etichettate CD8 sul totale delle cellule etichettate "
+    "CD4 o CD8 nel compartimento (denominatore dichiarato), intervallo dei soli conteggi (senza "
+    "correzione) e intervalli plausibili al 95% dopo la correzione per l'errore di annotazione, in "
+    "tre scenari di errore sui cloni non condivisi con il sangue (0.5x, 1x, 2x). Nessuno scenario "
+    "e' \"il risultato\": la loro distanza mostra quanto la conclusione dipende dall'assunzione."
 )
 
 
@@ -297,8 +309,7 @@ def cd8_fraction_intervals(
             f"{naive_lo:.2f}-{naive_hi:.2f}, senza correzione). Intervallo plausibile al 95% "
             f"tenendo conto dell'errore di annotazione misurato, per scenario di errore sui cloni "
             f"non condivisi con il sangue -- " + "; ".join(_fmt_interval(ivs[k]) for k in scenarios)
-            + ". Nessuno scenario e' \"il risultato\": la loro distanza mostra quanto la "
-            "conclusione dipende dall'assunzione.")
+            + ".")
         patients.append(PatientCD8(pid, n4, n8, reported, naive_lo, naive_hi, ivs, sentence))
 
     matrix = None
@@ -311,8 +322,48 @@ def cd8_fraction_intervals(
     else:
         head = (f"Matrice di confusione stimata su {len(rdf)} cellule con identita' di riferimento "
                 f"da {n_ref_pat} pazienti (pooled fra pazienti), J = {J_hat:.2f}.")
-    narrative = " ".join([head] + [p.sentence for p in patients] + [ASSUMPTIONS_TEXT])
+    narrative = " ".join([head, SCENARIO_WARNING, ASSUMPTIONS_TEXT])
     return CD8PropagationResult(
         target_compartment=str(target_compartment), n_reference_cells=int(len(rdf)),
         n_reference_patients=n_ref_pat, matrix=matrix, youden_j=J_hat, refused_reason=refused,
         patients=patients, assumptions=ASSUMPTIONS_TEXT, narrative=narrative)
+
+
+def refusal_notes(result: CD8PropagationResult) -> dict[str, int]:
+    """Motivi di rifiuto distinti -> numero della nota, nell'ordine in cui compaiono."""
+    notes: dict[str, int] = {}
+    for p in result.patients:
+        for k in sorted(p.scenarios):
+            r = p.scenarios[k].refused_reason
+            if r is not None and r not in notes:
+                notes[r] = len(notes) + 1
+    return notes
+
+
+def format_cd8_text(result: CD8PropagationResult) -> str:
+    """Testo per la CLI: intestazione e avvertenze UNA volta, poi una tabella con una riga per
+    paziente; i motivi dei rifiuti come note numerate sotto la tabella."""
+    notes = refusal_notes(result)
+
+    def cell(iv: ScenarioInterval) -> str:
+        return (f"{iv.low:.2f}-{iv.high:.2f}" if iv.low is not None
+                else f"non prodotto [{notes[iv.refused_reason]}]")
+
+    scen = sorted({k for p in result.patients for k in p.scenarios})
+    header = ["paziente", "n CD4+CD8", "riportata", "IC95% conteggi"] + [f"{k:g}x" for k in scen]
+    rows = []
+    for p in result.patients:
+        rows.append([p.patient, str(p.n_cd4_called + p.n_cd8_called),
+                     "-" if p.reported is None else f"{p.reported:.2f}",
+                     "-" if p.naive_low is None else f"{p.naive_low:.2f}-{p.naive_high:.2f}"]
+                    + [cell(p.scenarios[k]) for k in scen])
+    widths = [max(len(r[i]) for r in [header] + rows) for i in range(len(header))]
+    line = lambda r: "  ".join(v.ljust(w) for v, w in zip(r, widths))  # noqa: E731
+    head = result.narrative.split(SCENARIO_WARNING)[0].strip()
+    out = [f"Frazione di CD8 nel compartimento '{result.target_compartment}'", head, SCENARIO_WARNING, "",
+           line(header), line(["-" * w for w in widths])] + [line(r) for r in rows]
+    if notes:
+        out.append("")
+        out += [f"[{n}] {reason}" for reason, n in notes.items()]
+    out += ["", result.assumptions]
+    return "\n".join(out)

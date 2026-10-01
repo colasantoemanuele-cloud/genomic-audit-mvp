@@ -410,3 +410,102 @@ Cosa produce il metodo, senza interpretazione:
 | **Totale** | 199.184 | 25.232 | 8.275 | 569 | **4,15** | 7,15 |
 
 Il PBMC e' sempre NA per costruzione, perche' e' il compartimento di riferimento. Nel tumore il 93,8% delle cellule non e' verificabile con questo schema.
+
+---
+
+## Prompt finale — Parte B: correzioni minori
+
+Suite completa **prima** della Parte B (dopo la Parte A): **53 passed, 2 xfailed** (`logs/pytest_prima_parteB.txt`). **Dopo**: **66 passed, 2 xfailed** in 555 s (`logs/pytest_dopo_parteB.txt`). I 13 test nuovi sono 5 di B1, 2 di B2 e 6 di B3; nessun FAILED.
+
+Dopo quell'esecuzione ho cambiato solo il testo delle assunzioni (vedi B3). Ho rieseguito i test che leggono quel testo (`test_cd8_format.py` e la parte non di copertura di `test_cd8_propagation_calibration.py`): 10 passed.
+
+### File toccati
+- `core/cd8_propagation.py`:
+  - B1: nuovi `SCENARIO_WARNING`, `refusal_notes` e `format_cd8_text`; `narrative` non ripete piu' le frasi per paziente; la frase per paziente non ripete l'avvertenza.
+  - B3: attenuata la frase sulla direzione del bias in `ASSUMPTIONS_TEXT`.
+  - Nessun calcolo modificato.
+- `core/report.py` (B1): l'avvertenza compare una volta, i rifiuti sono note numerate sotto la tabella.
+- `cli.py` (B1): stampa `format_cd8_text`.
+- `core/design_audit.py` (B2): `ComparisonAssessment` ha due campi opzionali in coda, `min_pvalue` e `min_pvalue_test`; nuova costante `MIN_PVALUE_NOTE`; le frasi dei confronti sono estese. Soglie e classificazione sono invariate.
+- `core/synthetic.py` (B3): nuovo parametro `reference_error_factor` (default 1.0) in `make_cd8_fraction_dataset`. Le estrazioni casuali sono le stesse, quindi con fattore 1 i dati sono identici; lo verifica il fixture di regressione di B1, che passa.
+- Test nuovi: `tests/test_cd8_format.py`, `tests/test_cd8_robustness.py`, `tests/fixtures/cd8_regression.py` e `cd8_regression_baseline.json` (generato prima della modifica B1). In `tests/test_design_audit.py` due test nuovi.
+- `README.md` (limite di B3), `NOTE.md` (note dalla validazione reale).
+- **`core/stats.py` e `core/tcr_validation.py`: NON toccati** nella Parte A ne' nella Parte B.
+
+### B1 — output tabellare della frazione di CD8
+I numeri sono identici al fixture pre-modifica (3 configurazioni, tolleranza 1e-12), compresa una configurazione con scenario 2x rifiutato. Anche i numeri sui dati reali coincidono con quelli dell'esecuzione precedente. Output reale CLI su GSE278694 (`validation/results/cli_tcr_real_B1.txt`):
+
+```
+Frazione di CD8 nel compartimento 'Tumor'
+Matrice di confusione stimata su 4851 cellule con identita' di riferimento da 10 pazienti (pooled fra pazienti), J = 0.48.
+Per ogni paziente: frazione di cellule etichettate CD8 sul totale delle cellule etichettate CD4 o CD8 nel compartimento (denominatore dichiarato), intervallo dei soli conteggi (senza correzione) e intervalli plausibili al 95% dopo la correzione per l'errore di annotazione, in tre scenari di errore sui cloni non condivisi con il sangue (0.5x, 1x, 2x). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione.
+
+paziente  n CD4+CD8  riportata  IC95% conteggi  0.5x       1x         2x              
+--------  ---------  ---------  --------------  ---------  ---------  ----------------
+PA01      2802       0.61       0.59-0.63       0.44-0.53  0.00-0.35  non prodotto [1]
+PA02      3311       0.65       0.64-0.67       0.50-0.58  0.06-0.41  non prodotto [1]
+PA04      3485       0.48       0.46-0.50       0.25-0.37  0.00-0.14  non prodotto [1]
+PA05      1575       0.72       0.70-0.74       0.59-0.67  0.23-0.53  non prodotto [1]
+PA06      1827       0.51       0.49-0.54       0.29-0.41  0.00-0.19  non prodotto [1]
+PA07      3164       0.67       0.65-0.69       0.52-0.60  0.10-0.44  non prodotto [1]
+PA08      4255       0.69       0.68-0.70       0.55-0.62  0.15-0.47  non prodotto [1]
+PA09      2990       0.46       0.45-0.48       0.22-0.35  0.00-0.11  non prodotto [1]
+PA10      2114       0.48       0.46-0.50       0.25-0.37  0.00-0.15  non prodotto [1]
+PA11      5745       0.57       0.55-0.58       0.37-0.47  0.00-0.27  non prodotto [1]
+PA12      3537       0.67       0.65-0.68       0.52-0.59  0.10-0.43  non prodotto [1]
+PA13      3501       0.46       0.44-0.47       0.21-0.34  0.00-0.11  non prodotto [1]
+PA14      571        0.54       0.50-0.58       0.31-0.46  0.00-0.24  non prodotto [1]
+
+[1] con errore 2x la probabilita' di errore stimata supera 1
+```
+(Segue, una sola volta, il paragrafo "Assunzioni". Il testo stampato in questa esecuzione e' quello precedente all'attenuazione di B3.)
+
+### B2 — dicitura dei confronti
+La classificazione e' invariata; ogni confronto riporta ora unita', p-value minimo e la frase fissa. Output reale sul foglio GSE278694:
+
+> Confronto 'tissue': Tumor vs Adjacent_normal: stimabile con bassa potenza, […] Unita' indipendenti: 5; p-value minimo raggiungibile con un test esatto di Wilcoxon appaiato: 0.062. Il p-value minimo non misura la potenza: con questa numerosita' solo effetti grandi sono rilevabili.
+> Confronto 'protocol': scRNA vs snRNA: non stimabile -- […] Unita' indipendenti: 0; p-value minimo non definito (nessun test possibile).
+
+Decisione: con 0 unita' il p-value minimo non esiste, e il testo lo dice al posto della frase fissa.
+
+### B3 — robustezza a un errore non rappresentativo (`tests/test_cd8_robustness.py`)
+Configurazione: 200 repliche × 10 pazienti = 2000 intervalli per caso. L'errore delle cellule con riferimento e' f volte quello delle altre. Copertura dell'IC 95%:
+
+| Errore di base | f | 0.5x | 1x | 2x |
+|---|---|---|---|---|
+| basso (0.05/0.05, altro 0.02) | 1 | 0.938 | 0.944 | 0.929 |
+| basso | 2 | 0.939 | 0.931 | 0.799 |
+| basso | 4 | 0.949 | 0.835 | 0.500 (solo 20 prodotti, 1980 rifiutati) |
+| alto (CD4→CD8 0.10, CD8→CD4 0.03, altro 0.04) | 1 | 0.878 | 0.944 | 0.755 |
+| alto | 2 | 0.923 | 0.839 | 0.270 |
+| alto | 4 | 0.945 | 0.285 | non calcolabile (2000 rifiutati) |
+
+Quale scenario copre il valore vero:
+- con f = 1 (errore rappresentativo), lo scenario 1x;
+- con f = 2 e f = 4, lo scenario 0.5x, che e' il piu' vicino al fattore corretto (0.3f+0.7)/f = 0.65 e 0.475;
+- **nessuno scenario garantisce la copertura nominale in tutti i casi.** Lo scenario 1x scende fino a 0.285; lo 0.5x scende a 0.878 quando l'errore e' rappresentativo.
+
+L'ho scritto nel README come limite, senza toccare la banda. Prima di aggiungere la seconda base d'errore, la sola base "bassa" dava una misura troppo favorevole: con errori piccoli la distorsione e' piccola rispetto all'ampiezza degli intervalli.
+
+Frase sulla "direzione plausibile del bias": riformulata in modo meno sicuro ("e' quindi possibile che la matrice sovrastimi…, non verificabile"), con i numeri della simulazione. Lo 0.5x non e' molto sotto la copertura dichiarata quando il bias va davvero in quella direzione, ma lo e' quando non ci va: ho applicato la lettura prudente.
+
+### Limiti della Parte B
+- B3 misura solo errori fino a CD4→CD8 = 0.40 (base "alta" × 4). Nel tumore reale la matrice stimata ha 0.45 gia' a 1x; i casi intermedi (es. f = 3) non sono misurati.
+- Nel report HTML la colonna del p-value minimo non e' separata: sta nella frase del confronto.
+- Nell'app la tabella CD8 mostra "non prodotto" senza la nota con il motivo (B1 chiedeva CLI e report).
+
+---
+
+## Riepilogo del prompt finale
+
+- **Commit:**
+  - `8bb3d1a` Parte A (parziale), prima dell'interruzione per limite di utilizzo;
+  - `2f03461` Parte A: validazione su dati reali;
+  - il commit "Parte B: correzioni" contiene questa sezione.
+- **Discrepanze con la tesi:**
+  - la discordanza entro compartimento (0.124 contro 0.107) dipende dal filtro sulle sole cellule linfoidi;
+  - il tasso d'errore nel tumore (0.093 contro 0.195) dipende da come sono trattate le cellule NK (+0.070) e dall'unita' di conteggio, clone-compartimento invece di cellula (+0.033);
+  - l'Adjacent_normal non ha IC perche' 4 pazienti < 5.
+
+  Tutte le differenze sono spiegate da definizioni o soglie, riprodotte esattamente e senza tarare parametri.
+- **Dati reali:** nessun sottocampionamento (picco 6,1 GB). Serve un passo manuale di normalizzazione dei barcode (annotato in NOTE.md).

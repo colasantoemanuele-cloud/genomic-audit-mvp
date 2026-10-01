@@ -98,3 +98,32 @@ def test_protocol_note_present_only_when_protocol_declared():
     without = run_design_audit(sheet, patient_col="patient")
     assert any("snRNA" in n for n in with_p.notes)
     assert not any("snRNA" in n for n in without.notes)
+
+
+def test_every_comparison_reports_units_and_min_pvalue_with_fixed_note():
+    """B2: la classe non cambia; il testo riporta unita', p-value minimo e la frase fissa."""
+    from core.design_audit import MIN_PVALUE_NOTE
+    rows = []
+    for p in range(8):
+        for t in ("Tumor", "Normal"):
+            rows.append({"patient": f"P{p}", "tissue": t, "resp": "R" if p < 4 else "NR"})
+    sheet = pd.DataFrame(rows)
+    res = run_design_audit(sheet, patient_col="patient", tissue_col="tissue", outcome_cols=["resp"],
+                           comparisons=[("tissue", "Tumor", "Normal"), ("resp", "R", "NR")])
+    paired, between = res.comparisons
+    assert paired.classification == "stimabile"  # 8 coppie: classe invariata
+    assert paired.min_pvalue == 2 / 2 ** 8 and paired.min_pvalue_test == "Wilcoxon appaiato"
+    assert between.classification == "stimabile con bassa potenza"  # 4 contro 4 < 5
+    assert abs(between.min_pvalue - 2 / 70) < 1e-12 and between.min_pvalue_test == "Mann-Whitney"
+    for c in (paired, between):
+        assert MIN_PVALUE_NOTE in c.sentence
+        assert f"Unita' indipendenti: {c.n_units}" in c.sentence
+        assert f"{c.min_pvalue:.3f}" in c.sentence
+
+
+def test_not_estimable_without_units_says_pvalue_undefined():
+    sheet = pd.DataFrame({"patient": ["P1", "P2", "P3"], "protocol": ["sc", "sn", "sc"]})
+    c = assess_comparison(sheet, "protocol", "sc", "sn", "patient",
+                          roles={"patient": "patient", "protocol": "protocol"})
+    assert c.classification == "non stimabile" and c.min_pvalue is None
+    assert "p-value minimo non definito" in c.sentence

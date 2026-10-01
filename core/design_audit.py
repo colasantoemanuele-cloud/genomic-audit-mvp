@@ -45,6 +45,8 @@ CRAMER_V_THRESHOLD = 0.5
 MIN_ROWS_FOR_V = 10
 MIN_EXPECTED_PER_CELL = 2.0
 ALPHA = 0.05
+MIN_PVALUE_NOTE = ("Il p-value minimo non misura la potenza: con questa numerosita' solo effetti "
+                   "grandi sono rilevabili.")
 MIN_CELLS_PER_UNIT_DEFAULT = 20
 N_HVG_DEFAULT = 1000
 TECHNICAL_ROLES = ("library", "batch", "chemistry", "protocol", "date")
@@ -96,6 +98,9 @@ class ComparisonAssessment:
     classification: str  # stimabile | stimabile con bassa potenza | non stimabile
     reasons: tuple[str, ...]
     sentence: str
+    # p-value minimo raggiungibile da un test esatto con queste unita' (None se non definito)
+    min_pvalue: float | None = None
+    min_pvalue_test: str | None = None
 
 
 @dataclass(frozen=True)
@@ -372,15 +377,17 @@ def assess_comparison(
         excluded = len((pats_a | pats_b) - both)
         if excluded:
             reasons.append(f"{excluded} pazienti con un solo livello esclusi dal confronto appaiato")
-        low_power = units < min_units or wilcoxon_min_pvalue(units) > ALPHA
+        min_p, min_p_test = wilcoxon_min_pvalue(units), "Wilcoxon appaiato"
+        low_power = units < min_units or min_p > ALPHA
         power_txt = (f"con {units} pazienti appaiati anche un test di Wilcoxon esatto non puo' "
-                     f"scendere sotto p = {wilcoxon_min_pvalue(units):.3f}" if low_power else "")
+                     f"scendere sotto p = {min_p:.3f}" if low_power else "")
     else:
         sub = rows
         if role == "outcome":
             design = "fra pazienti"
             units = min(len(pats_a), len(pats_b))
             floor = _mann_whitney_min_pvalue(len(pats_a), len(pats_b))
+            min_p, min_p_test = floor, "Mann-Whitney"
             low_power = units < min_units or floor > ALPHA
             power_txt = (f"con {len(pats_a)} contro {len(pats_b)} pazienti il p-value minimo "
                          f"raggiungibile da un test di Mann-Whitney esatto e' {floor:.3f}"
@@ -392,15 +399,19 @@ def assess_comparison(
                       f"(fattore confuso con il paziente)")
             return ComparisonAssessment(
                 factor, level_a, level_b, "-", 0, len(pats_a), len(pats_b), "non stimabile",
-                (reason,), f"Confronto {label}: non stimabile -- {reason}.")
+                (reason,), f"Confronto {label}: non stimabile -- {reason}. Unita' indipendenti: "
+                           f"0; p-value minimo non definito (nessun test possibile).")
 
+    tail = (f" Unita' indipendenti: {units}; p-value minimo raggiungibile con un test esatto di "
+            f"{min_p_test}: {min_p:.3f}. {MIN_PVALUE_NOTE}")
     confounders = _technical_confounders(sub, factor, roles)
     if confounders:
         reason = (f"il fattore tecnico {', '.join(repr(c) for c in confounders)} separa "
                   f"perfettamente i due livelli (fattore confuso con il batch)")
         return ComparisonAssessment(
             factor, level_a, level_b, design, units, len(pats_a), len(pats_b), "non stimabile",
-            tuple(reasons + [reason]), f"Confronto {label}: non stimabile -- {reason}.")
+            tuple(reasons + [reason]), f"Confronto {label}: non stimabile -- {reason}." + tail,
+            min_p, min_p_test)
 
     for c, v in _partial_confounders(sub, factor, roles, v_threshold):
         reasons.append(f"'{c}' e' fortemente associato al confronto (Cramér V = {v:.2f})")
@@ -421,8 +432,9 @@ def assess_comparison(
     extra = [r for r in reasons if r != power_txt]
     if extra:
         sentence += " Attenzione: " + "; ".join(extra) + "."
+    sentence += tail
     return ComparisonAssessment(factor, level_a, level_b, design, units, len(pats_a),
-                                len(pats_b), cls, tuple(reasons), sentence)
+                                len(pats_b), cls, tuple(reasons), sentence, min_p, min_p_test)
 
 
 # --------------------------------------------------------------------------- #

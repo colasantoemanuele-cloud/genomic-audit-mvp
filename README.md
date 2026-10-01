@@ -84,6 +84,18 @@ include lo zero).
   Quest'ultima assunzione non e' verificabile: nei dati PDAC originali l'errore cresce con
   la dimensione del clone. La matrice e' unica per tutti i pazienti. Doppietti e cellule
   non-T etichettate CD4/CD8 non sono modellati.
+  **Nessuno dei tre scenari garantisce la copertura nominale in tutti i casi** (misura B3,
+  `tests/test_cd8_robustness.py`, 2000 intervalli per caso, errore asimmetrico CD4->CD8 0.10,
+  CD8->CD4 0.03, altro 0.04). Copertura dell'IC 95%:
+  - errore dei cloni condivisi uguale a quello degli altri: 0.5x 0.878; 1x 0.944; 2x 0.755;
+  - errore dei cloni condivisi doppio: 0.5x 0.923; 1x 0.839; 2x 0.270;
+  - errore dei cloni condivisi quadruplo: 0.5x 0.945; 1x 0.285; 2x mai calcolabile.
+
+  Lo scenario che copre il valore vero dipende quindi da quanto i cloni condivisi sono
+  rappresentativi, cosa che sui dati non si puo' verificare. Sui dati reali di GSE278694
+  la matrice stimata nel tumore ha P(chiamata CD8 | vera CD4) = 0.45, un errore molto
+  piu' alto di quelli simulati: li' lo scenario 2x non e' calcolabile e l'intervallo 1x
+  arriva a 0 in 8 pazienti su 13.
 
 ## Installazione
 
