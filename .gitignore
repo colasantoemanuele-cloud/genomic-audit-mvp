@@ -17,3 +17,6 @@ data/synthetic/*
 
 # risultati della validazione su dati reali: piccoli e da versionare
 !validation/results/
+
+# validazione esterna: dati scaricati (pesanti), non versionati
+validation_esterna/data/
