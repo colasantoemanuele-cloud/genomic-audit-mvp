@@ -43,3 +43,22 @@ impegno.
 - **Controllo "unita'-tecnica" generalizzato.** Oggi si verifica solo la corrispondenza 1:1
   di un fattore tecnico con la coppia paziente-tessuto; si potrebbe estendere a qualunque
   combinazione di fattori biologici.
+
+## Emerse dalla validazione su dati reali (GSE278694, Parte A)
+
+- **Normalizzazione dei barcode.** Nell'`obs` di GSE278694 il barcode e' la sola sequenza di 16 nt,
+  mentre nei CSV VDJ di Cell Ranger e' "AAAC...-1". Il Modulo B richiede una corrispondenza
+  esatta: sui dati reali ho dovuto preparare copie dei CSV VDJ senza il suffisso. Un'opzione
+  esplicita (es. `--strip-barcode-suffix`) eviterebbe il passaggio manuale.
+- **Export di dimensioni elevate.** `export_audited` scrive la copia `.h5ad` senza compressione:
+  2,9 GB per un input di 845 MB. Si potrebbe usare `compression="gzip"`, oppure esportare
+  solo `obs` + flag.
+- **Definizione del tasso d'errore rispetto alla tesi.** `marker_error_rate` esclude le cellule
+  etichettate NK; la tesi le conta come errore (+0,070 nel tumore) e conta per coppia
+  clone-compartimento invece che per cellula (+0,033). Sono scelte entrambe difendibili;
+  un'opzione per la definizione della tesi renderebbe i due numeri confrontabili senza
+  script esterni. Non implementata: cambierebbe una stima calibrata.
+- **Frazione di CD8 sui dati reali.** Nel tumore la matrice stimata ha P(chiamata CD8 | vera
+  CD4) = 0,45: con questa matrice lo scenario 1x porta l'intervallo a toccare 0 in 8 pazienti
+  su 13, e lo scenario 2x non e' calcolabile. Prima di usare la correzione su dati reali
+  andrebbe verificato se i cloni condivisi con il sangue sono rappresentativi (vedi B3).

@@ -356,3 +356,57 @@ Una segnalazione: le librerie della coorte che GEO chiama "snRNA" si chiamano `*
 - Scenario 2x: non prodotto per i pazienti visti ("probabilita' di errore stimata supera 1").
 - Scenario 1x: sposta fortemente verso il basso la frazione di CD8 (es. PA01: riportata 0,61, 1x 0,00–0,35).
 - Flag valutabili: 4,2% di tutte le cellule; manca il dettaglio per compartimento.
+
+### A3 — Frazione di CD8 sui dati reali (completata dopo l'interruzione)
+
+`validation/gse278694_cd8_flags.py` ricalcola sui flag esportati dalla CLI con gli stessi parametri (2000 repliche, seme 0). I numeri coincidono con l'output CLI (`validation/results/cli_tcr_real.txt`).
+
+Matrice di confusione pooled nel tumore: 4.851 cellule con identita' di riferimento, da 10 pazienti.
+
+| | chiamata CD4T | chiamata CD8T | chiamata altro |
+|---|---|---|---|
+| vera CD4T | 0,425 | 0,447 | 0,127 |
+| vera CD8T | 0,006 | 0,913 | 0,081 |
+
+J = 0,48, sopra la soglia di 0,2.
+
+Intervalli prodotti per scenario, su 13 pazienti con tumore (PA15 ha solo PBMC):
+
+| Scenario | Intervalli prodotti | Motivo del rifiuto |
+|---|---|---|
+| 0.5x | 13/13 | — |
+| 1x | 13/13 | — |
+| 2x | 0/13 | "con errore 2x la probabilita' di errore stimata supera 1": l'errore stimato sulle vere CD4 e' 1 − 0,425 = 0,575, e raddoppiato supera 1 |
+
+| Paziente | n CD4T+CD8T | Riportata | IC95% soli conteggi | 0.5x | 1x | 2x |
+|---|---|---|---|---|---|---|
+| PA01 | 2802 | 0,61 | 0,59–0,63 | 0,44–0,53 | 0,00–0,35 | non prodotto |
+| PA02 | 3311 | 0,65 | 0,64–0,67 | 0,50–0,58 | 0,06–0,41 | non prodotto |
+| PA04 | 3485 | 0,48 | 0,46–0,50 | 0,25–0,37 | 0,00–0,14 | non prodotto |
+| PA05 | 1575 | 0,72 | 0,70–0,74 | 0,59–0,67 | 0,23–0,53 | non prodotto |
+| PA06 | 1827 | 0,51 | 0,49–0,54 | 0,29–0,41 | 0,00–0,19 | non prodotto |
+| PA07 | 3164 | 0,67 | 0,65–0,69 | 0,52–0,60 | 0,10–0,44 | non prodotto |
+| PA08 | 4255 | 0,69 | 0,68–0,70 | 0,55–0,62 | 0,15–0,47 | non prodotto |
+| PA09 | 2990 | 0,46 | 0,45–0,48 | 0,22–0,35 | 0,00–0,11 | non prodotto |
+| PA10 | 2114 | 0,48 | 0,46–0,50 | 0,25–0,37 | 0,00–0,15 | non prodotto |
+| PA11 | 5745 | 0,57 | 0,55–0,58 | 0,37–0,47 | 0,00–0,27 | non prodotto |
+| PA12 | 3537 | 0,67 | 0,65–0,68 | 0,52–0,59 | 0,10–0,43 | non prodotto |
+| PA13 | 3501 | 0,46 | 0,44–0,47 | 0,21–0,34 | 0,00–0,11 | non prodotto |
+| PA14 | 571 | 0,54 | 0,50–0,58 | 0,31–0,46 | 0,00–0,24 | non prodotto |
+
+Cosa produce il metodo, senza interpretazione:
+- In tutti i 13 pazienti gli intervalli 0.5x e 1x stanno sotto la frazione riportata.
+- In 8 pazienti su 13 l'intervallo 1x arriva a 0,00, cioe' viene troncato al bordo.
+- Il motivo e' che la matrice attribuisce il 45% delle vere CD4 (per marcatori nel sangue) all'etichetta CD8T nel tumore.
+- Se questa matrice, stimata sui cloni condivisi con il sangue, valga anche per gli altri cloni non e' verificabile su questi dati: e' il tema di B3.
+
+### A4 — Copertura dei flag (`validation/results/a4_flag_coverage.csv`)
+
+| Compartimento | Cellule | Con riferimento | Valutabili (non NA) | Discordanti | % valutabili | % valutabili fra CD4T+CD8T |
+|---|---|---|---|---|---|---|
+| Adjacent_normal | 38.264 | 3.921 | 3.858 | 160 | 10,08 | 15,61 |
+| PBMC | 89.506 | 16.460 | 0 | 0 | 0,00 | 0,00 |
+| Tumor | 71.414 | 4.851 | 4.417 | 409 | 6,19 | 11,36 |
+| **Totale** | 199.184 | 25.232 | 8.275 | 569 | **4,15** | 7,15 |
+
+Il PBMC e' sempre NA per costruzione, perche' e' il compartimento di riferimento. Nel tumore il 93,8% delle cellule non e' verificabile con questo schema.
