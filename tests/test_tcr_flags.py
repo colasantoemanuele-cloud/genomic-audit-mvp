@@ -52,9 +52,21 @@ def _assert_close(a, b, path="") -> None:
 
 @pytest.mark.parametrize("name", list(CONFIGS))
 def test_regression_identical_to_baseline(name):
+    """Numeri identici al riferimento (1e-12). Il testo narrativo e' cambiato volutamente in
+    Pulizia 1 (ogni tasso d'errore dice la sua convenzione): la parte sulla discordanza deve
+    restare identica, e la parte sul tasso d'errore deve contenere gli stessi numeri."""
     baseline = json.loads(BASELINE_PATH.read_text())[name]
     current = json.loads(json.dumps(summarize(run_config(name)[2]), ensure_ascii=False, default=int))
+    old_text, new_text = baseline.pop("narrative"), current.pop("narrative")
     _assert_close(baseline, current, name)
+    split = " Tasso d'errore"
+    assert new_text.split(split)[0] == old_text.split(split)[0]
+    if baseline["marker_error"] is not None:
+        for comp, r in baseline["marker_error"]["by_compartment"].items():
+            assert f"'{comp}': {r['mean']:.3f}" in new_text
+        assert "[cell] per cellula" in new_text
+    else:
+        assert new_text == old_text
 
 
 def test_flags_mean_equals_marker_error_rate_exactly():

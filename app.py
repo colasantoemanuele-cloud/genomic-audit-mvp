@@ -296,11 +296,22 @@ with tab_b:
         else:
             st.warning("Numerosita' insufficiente per una stima affidabile (servono almeno 5 pazienti).")
 
-        if result_b.marker_error is not None and result_b.marker_error.by_compartment:
+        if result_b.conventions:
             st.subheader("Tasso d'errore per compartimento (marcatori canonici)")
-            rows = [{"compartimento": comp, "tasso d'errore": r.mean, "IC95% basso": r.ci_low,
-                     "IC95% alto": r.ci_high, "pazienti": r.n_groups, "sufficiente": r.sufficient}
-                    for comp, r in result_b.marker_error.by_compartment.items()]
+            st.markdown("Ogni numero e' riportato con la sua convenzione; le convenzioni sono affiancate.")
+            for c in result_b.conventions.values():
+                st.markdown(f"- **{c.name}**: {c.definition}")
+            rows = []
+            for c in result_b.conventions.values():
+                for comp, r in c.by_compartment.items():
+                    rows.append({"convenzione": c.name, "compartimento": comp, "tasso d'errore": f"{r.mean:.3f}",
+                                 "IC95%": f"[{r.ci_low:.3f}, {r.ci_high:.3f}]" if r.sufficient
+                                 else f"non prodotto ({r.n_groups} pazienti)", "pazienti": r.n_groups})
+                for (a, b), (r, n_cl) in c.paired_differences.items():
+                    rows.append({"convenzione": c.name, "compartimento": f"{a} − {b} (stessi cloni, {n_cl})",
+                                 "tasso d'errore": f"{r.mean:+.3f}",
+                                 "IC95%": f"[{r.ci_low:+.3f}, {r.ci_high:+.3f}]" if r.sufficient
+                                 else f"non prodotto ({r.n_groups} pazienti)", "pazienti": r.n_groups})
             st.dataframe(pd.DataFrame(rows), hide_index=True)
 
         if result_b.cell_flags is not None:

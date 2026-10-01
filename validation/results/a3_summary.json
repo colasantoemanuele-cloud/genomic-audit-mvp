@@ -1,0 +1,28 @@
+{
+ "J": 0.4814095724480163,
+ "cellule_di_riferimento": 4851,
+ "pazienti_di_riferimento": 10,
+ "matrice": {
+  "chiamata CD4T": {
+   "vera CD4T": 0.4254,
+   "vera CD8T": 0.0055
+  },
+  "chiamata CD8T": {
+   "vera CD4T": 0.4474,
+   "vera CD8T": 0.9132
+  },
+  "chiamata altro": {
+   "vera CD4T": 0.1272,
+   "vera CD8T": 0.0813
+  }
+ },
+ "intervalli_prodotti_per_scenario": {
+  "0.5x": 13,
+  "1x": 13,
+  "2x": 0
+ },
+ "pazienti": 13,
+ "rifiuti": [
+  "con errore 2x la probabilita' di errore stimata supera 1"
+ ]
+}

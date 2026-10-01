@@ -277,6 +277,124 @@ def marker_error_rate(
 
 
 # --------------------------------------------------------------------------- #
+# (B2) Convenzioni del tasso d'errore: "per cellula" (MVP) e "per clone" (tesi)
+# --------------------------------------------------------------------------- #
+CONVENTIONS = ("cell", "clone")
+
+
+@dataclass(frozen=True)
+class ConventionResult:
+    """Tasso d'errore per compartimento secondo una convenzione dichiarata, piu' le
+    differenze appaiate fra compartimenti (stessi cloni)."""
+    name: str
+    definition: str
+    by_compartment: dict[str, BootstrapResult]
+    paired_differences: dict[tuple[str, str], tuple[BootstrapResult, int]]
+
+
+def _paired_differences(units: pd.DataFrame, n_boot: int, seed: int,
+                        min_patients_for_ci: int) -> dict[tuple[str, str], tuple[BootstrapResult, int]]:
+    """``units``: colonne patient, clone, compartment, error (una riga per unita').
+    Per ogni coppia di compartimenti giudicati: errore medio del clone in A meno quello in B,
+    sui cloni presenti in entrambi; cluster bootstrap sui pazienti. Valore: (risultato,
+    numero di cloni)."""
+    out = {}
+    per = units.groupby(["patient", "clone", "compartment"], observed=True).error.mean().unstack("compartment")
+    comps = sorted(per.columns, key=lambda c: (c != "Tumor", c))
+    for i in range(len(comps)):
+        for j in range(i + 1, len(comps)):
+            a, b = comps[i], comps[j]
+            d = per.dropna(subset=[a, b]).reset_index()
+            if d.empty:
+                continue
+            res = cluster_bootstrap((d[a] - d[b]).values, d["patient"].values, n_boot=n_boot,
+                                    seed=seed, min_groups=min_patients_for_ci)
+            out[(a, b)] = (res, len(d))
+    return out
+
+
+def _cell_units(cells: pd.DataFrame, reference_identity: pd.DataFrame,
+                reference_compartment: str) -> pd.DataFrame:
+    """Unita' della convenzione "per cellula": stessi filtri di ``marker_error_rate``."""
+    if reference_identity.empty:
+        return pd.DataFrame(columns=["patient", "clone", "compartment", "error"])
+    j = cells.merge(reference_identity, on=["patient", "clone_id"], how="inner")
+    j = j[j["compartment"] != reference_compartment]
+    j = j[j["celltype"].isin(reference_identity["reference_identity"].unique())]
+    return pd.DataFrame({"patient": j["patient"].values, "clone": j["clone_id"].values,
+                         "compartment": j["compartment"].values,
+                         "error": (j["celltype"].astype(str) != j["reference_identity"].astype(str)).values.astype(float)})
+
+
+def clone_level_units(
+    cells: pd.DataFrame,
+    marker_labels: list[str],
+    reference_compartment: str,
+    error_labels: list[str] | None = None,
+    marker_priority: list[str] | None = None,
+    min_cells: int = MIN_CELLS_MARKER_DEFAULT,
+    min_margin: float = MIN_MARGIN_DEFAULT,
+) -> pd.DataFrame:
+    """Unita' della convenzione "per clone" (definizione della tesi, 10_loco.py schema blood).
+
+    - Si considerano solo le cellule con etichetta in ``marker_labels`` + ``error_labels``
+      (``error_labels=None``: tutte le etichette).
+    - Positivita' ai marcatori: se ``marker_priority`` e' dato, una cellula positiva ai
+      marcatori di un'etichetta e' considerata negativa per tutte le etichette che seguono
+      nell'ordine (tesi: CD8T prima di CD4T, cioe' CD4 positivo solo se CD8A e CD8B negativi).
+    - Identita' del clone dal solo compartimento di riferimento (>= ``min_cells`` cellule,
+      margine >= ``min_margin``), come ``assign_reference_identity``.
+    - Un'unita' per coppia (clone, compartimento giudicato) con >= ``min_cells`` cellule;
+      etichetta = etichetta di maggioranza; errore se diversa dall'identita'. Le etichette
+      fuori mappa contano come errore.
+    """
+    x = cells if error_labels is None else cells[cells["celltype"].isin(list(marker_labels) + list(error_labels))]
+    x = x.copy()
+    if marker_priority:
+        taken = np.zeros(len(x), dtype=bool)
+        for lab in marker_priority:
+            col = f"pos_{lab}"
+            x[col] = x[col].values & ~taken
+            taken |= x[col].values
+    ref = assign_reference_identity(x, marker_labels, reference_compartment=reference_compartment,
+                                    min_cells=min_cells, min_margin=min_margin)
+    if ref.empty:
+        return pd.DataFrame(columns=["patient", "clone", "compartment", "error"])
+    t = x[x["compartment"] != reference_compartment].merge(ref[["patient", "clone_id", "reference_identity"]],
+                                                            on=["patient", "clone_id"])
+    rows = []
+    for (pat, clone, comp), g in t.groupby(["patient", "clone_id", "compartment"], observed=True):
+        if len(g) < min_cells:
+            continue
+        lab = g["celltype"].value_counts().index[0]
+        rows.append({"patient": pat, "clone": clone, "compartment": comp,
+                     "error": float(lab != g["reference_identity"].iloc[0])})
+    return pd.DataFrame(rows, columns=["patient", "clone", "compartment", "error"])
+
+
+def _summarize_units(units: pd.DataFrame, n_boot: int, seed: int,
+                     min_patients_for_ci: int) -> dict[str, BootstrapResult]:
+    out = {}
+    for comp, g in units.groupby("compartment", observed=True):
+        out[str(comp)] = cluster_bootstrap(g["error"].values.astype(float), g["patient"].values,
+                                           n_boot=n_boot, seed=seed, min_groups=min_patients_for_ci)
+    return out
+
+
+def convention_definition(name: str, error_labels: list[str] | None = None,
+                          marker_priority: list[str] | None = None) -> str:
+    if name == "cell":
+        return ("per cellula: ogni cellula giudicata e' un'unita'; etichette fuori dalla mappa "
+                "dei marcatori escluse")
+    labels = "tutte" if error_labels is None else (", ".join(error_labels) or "nessuna")
+    prio = ("positivita' non esclusiva" if not marker_priority else
+            "positivita' esclusiva in ordine " + " > ".join(marker_priority))
+    return ("per clone: un'unita' per coppia clone-compartimento con almeno 3 cellule, etichetta "
+            f"di maggioranza; etichette fuori mappa contate come errore (etichette ammesse fuori "
+            f"mappa: {labels}); {prio}")
+
+
+# --------------------------------------------------------------------------- #
 # (C) Flag per cellula (Intervento 2)
 # --------------------------------------------------------------------------- #
 FLAG_COLUMNS = ("audit_reference_label", "audit_label_vs_reference")
@@ -367,6 +485,8 @@ class TcrValidationResult:
     cell_flags: pd.DataFrame | None = None
     # Frazione delle cellule di adata con audit_label_vs_reference valutabile (non NA).
     flag_coverage: float | None = None
+    # Tasso d'errore secondo le convenzioni richieste (Pulizia 1), con nome e definizione.
+    conventions: dict[str, ConventionResult] | None = None
 
 
 def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> str:
@@ -406,6 +526,31 @@ def _marker_narrative(m: MarkerErrorResult | None, min_patients_for_ci: int) -> 
     return "".join(parts)
 
 
+def _conventions_narrative(conv: dict[str, ConventionResult] | None, reference_compartment: str,
+                           min_patients_for_ci: int) -> str:
+    if not conv:
+        return ""
+    parts = [f" Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori "
+             f"(riferimento: compartimento '{reference_compartment}'), secondo "
+             f"{len(conv)} convenzion{'i' if len(conv) > 1 else 'e'} dichiarat{'e' if len(conv) > 1 else 'a'}:"]
+    for c in conv.values():
+        parts.append(f" [{c.name}] {c.definition} --")
+        if not c.by_compartment:
+            parts.append(" nessuna unita' valutabile.")
+        for comp, res in c.by_compartment.items():
+            if not res.sufficient:
+                parts.append(f" '{comp}': {res.mean:.3f}, IC non prodotto ({res.n_groups} pazienti, "
+                             f"ne servono almeno {min_patients_for_ci}).")
+            else:
+                parts.append(f" '{comp}': {res.mean:.3f} (IC95% [{res.ci_low:.3f}, {res.ci_high:.3f}], "
+                             f"{res.n_groups} pazienti).")
+        for (a, b), (res, n_cl) in c.paired_differences.items():
+            ci = (f"IC95% [{res.ci_low:+.3f}, {res.ci_high:+.3f}]" if res.sufficient
+                  else f"IC non prodotto ({res.n_groups} pazienti)")
+            parts.append(f" Differenza '{a}' - '{b}' sugli stessi cloni: {res.mean:+.3f}, {ci}, {n_cl} cloni.")
+    return "".join(parts)
+
+
 def run_tcr_validation(
     adata: ad.AnnData,
     contigs: pd.DataFrame,
@@ -420,12 +565,19 @@ def run_tcr_validation(
     marker_map: dict[str, list[str]] | None = None,
     reference_compartment: str | None = None,
     gene_col: str | None = None,
+    convention: str = "both",
+    clone_error_labels: list[str] | None = None,
+    clone_marker_priority: list[str] | None = None,
 ) -> TcrValidationResult:
     """Esegue il Modulo B. ``contigs`` e' l'output gia' filtrato di ``parse_vdj_contigs``.
 
     ``marker_map`` e ``reference_compartment`` sono opzionali: se entrambi forniti, viene
-    calcolato anche il tasso d'errore per compartimento via marcatori canonici.
+    calcolato anche il tasso d'errore per compartimento via marcatori canonici, secondo
+    ``convention`` ("cell", "clone" o "both", default: entrambe affiancate). ``marker_error``
+    (convenzione per cellula) e' calcolato comunque, invariato.
     """
+    if convention not in ("cell", "clone", "both"):
+        raise ValueError(f"convention deve essere cell, clone o both, non '{convention}'")
     clones = build_clonotypes(contigs)
 
     obs = adata.obs[[patient_col, compartment_col, celltype_col, barcode_col]].copy()
@@ -471,11 +623,29 @@ def run_tcr_validation(
         flags.index = adata.obs_names
         coverage = float(flags["audit_label_vs_reference"].notna().mean()) if adata.n_obs else 0.0
 
-    narrative = _discordance_narrative(discordance, min_patients_for_ci) + \
-        _marker_narrative(marker_error, min_patients_for_ci)
+    conventions = None
+    if marker_map and reference_compartment:
+        conventions = {}
+        if convention in ("cell", "both"):
+            units = _cell_units(cells, ref_identity, reference_compartment)
+            conventions["cell"] = ConventionResult(
+                "cell", convention_definition("cell"), dict(marker_error.by_compartment),
+                _paired_differences(units, n_boot, seed, min_patients_for_ci))
+        if convention in ("clone", "both"):
+            units = clone_level_units(cells, list(marker_map), reference_compartment,
+                                      error_labels=clone_error_labels,
+                                      marker_priority=clone_marker_priority)
+            conventions["clone"] = ConventionResult(
+                "clone", convention_definition("clone", clone_error_labels, clone_marker_priority),
+                _summarize_units(units, n_boot, seed, min_patients_for_ci),
+                _paired_differences(units, n_boot, seed, min_patients_for_ci))
+
+    narrative = _discordance_narrative(discordance, min_patients_for_ci) + (
+        _conventions_narrative(conventions, reference_compartment, min_patients_for_ci)
+        if conventions is not None else _marker_narrative(marker_error, min_patients_for_ci))
 
     return TcrValidationResult(
         n_cells_with_tcr=len(cells), n_clones_total=int(cells["clone_id"].nunique()),
         discordance=discordance, marker_error=marker_error, narrative=narrative,
-        cell_flags=flags, flag_coverage=coverage,
+        cell_flags=flags, flag_coverage=coverage, conventions=conventions,
     )

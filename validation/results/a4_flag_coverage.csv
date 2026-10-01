@@ -1,0 +1,5 @@
+tissue,cellule,con_riferimento,valutabili,discordanti,% valutabili,% valutabili fra CD4T+CD8T
+Adjacent_normal,38264,3921,3858,160,10.08,15.61
+PBMC,89506,16460,0,0,0.0,0.0
+Tumor,71414,4851,4417,409,6.19,11.36
+Totale,199184,25232,8275,569,4.15,7.15

@@ -1,0 +1,215 @@
+{
+ "cellule_con_TRB": 105809,
+ "discordanza": {
+  "MVP (tutte le cellule con TCR)": {
+   "cellule": 105809,
+   "coppie": 1124,
+   "pazienti": 11,
+   "d_within": 0.12399414932895836,
+   "eccesso": 0.058651661475632444,
+   "ic": [
+    0.03430766107530081,
+    0.09826435089746388
+   ]
+  },
+  "tesi (solo CD4T/CD8T/NK)": {
+   "cellule": 104964,
+   "coppie": 1114,
+   "pazienti": 11,
+   "d_within": 0.10699673760294877,
+   "eccesso": 0.05895091450139665,
+   "ic": [
+    0.03419465850754311,
+    0.10037066533624239
+   ]
+  }
+ },
+ "errore_solo_sangue": {
+  "S0 MVP (per cellula, tutte le cellule con TCR, CD4>0 non esclusivo, etichette CD4T/CD8T)": {
+   "Tumor": {
+    "errore": 0.0925967851482907,
+    "ic": [
+     0.04968936199794189,
+     0.1436319299198728
+    ],
+    "unita": 4417,
+    "pazienti": 10,
+    "ic_mvp_prodotto": true
+   },
+   "Adjacent_normal": {
+    "errore": 0.041472265422498704,
+    "ic": [
+     0.016666666666666666,
+     0.05733082706766917
+    ],
+    "unita": 3858,
+    "pazienti": 4,
+    "ic_mvp_prodotto": false
+   },
+   "Tumor-Adjacent": {
+    "diff": 0.020997220687155507,
+    "ic": [
+     -0.035002523309310266,
+     0.07531934730688193
+    ],
+    "cloni": 132,
+    "pazienti": 4
+   }
+  },
+  "S1 + solo cellule etichettate CD4T/CD8T/NK (anche nel riferimento)": {
+   "Tumor": {
+    "errore": 0.09310266332802185,
+    "ic": [
+     0.04973255131781785,
+     0.144588319512285
+    ],
+    "unita": 4393,
+    "pazienti": 10,
+    "ic_mvp_prodotto": true
+   },
+   "Adjacent_normal": {
+    "errore": 0.04160166406656266,
+    "ic": [
+     0.016666666666666666,
+     0.057655954631379965
+    ],
+    "unita": 3846,
+    "pazienti": 4,
+    "ic_mvp_prodotto": false
+   },
+   "Tumor-Adjacent": {
+    "diff": 0.02115750481453837,
+    "ic": [
+     -0.03560601509050527,
+     0.07531934730688193
+    ],
+    "cloni": 131,
+    "pazienti": 4
+   }
+  },
+  "S2 + CD4 positivo solo se CD8A e CD8B negativi (regola esclusiva della tesi)": {
+   "Tumor": {
+    "errore": 0.09225850650833524,
+    "ic": [
+     0.04780607381557768,
+     0.1441156616007141
+    ],
+    "unita": 4379,
+    "pazienti": 10,
+    "ic_mvp_prodotto": true
+   },
+   "Adjacent_normal": {
+    "errore": 0.04284601402233186,
+    "ic": [
+     0.016666666666666666,
+     0.05987741631305988
+    ],
+    "unita": 3851,
+    "pazienti": 4,
+    "ic_mvp_prodotto": false
+   },
+   "Tumor-Adjacent": {
+    "diff": 0.020997220687155507,
+    "ic": [
+     -0.03500252330931026,
+     0.07531934730688193
+    ],
+    "cloni": 132,
+    "pazienti": 4
+   }
+  },
+  "S3 + etichetta NK contata come errore": {
+   "Tumor": {
+    "errore": 0.16262902886033284,
+    "ic": [
+     0.1249911806208843,
+     0.1914654612334591
+    ],
+    "unita": 4747,
+    "pazienti": 10,
+    "ic_mvp_prodotto": true
+   },
+   "Adjacent_normal": {
+    "errore": 0.052929085303186026,
+    "ic": [
+     0.02800658978583196,
+     0.06134492933685355
+    ],
+    "unita": 3892,
+    "pazienti": 4,
+    "ic_mvp_prodotto": false
+   },
+   "Tumor-Adjacent": {
+    "diff": 0.08065763862036025,
+    "ic": [
+     0.0315448443767663,
+     0.1262623761322689
+    ],
+    "cloni": 135,
+    "pazienti": 4
+   }
+  },
+  "S4 + almeno 3 cellule del clone anche nel compartimento giudicato": {
+   "Tumor": {
+    "errore": 0.15554553651938682,
+    "ic": [
+     0.11590431779404954,
+     0.18442878516472855
+    ],
+    "unita": 4436,
+    "pazienti": 10,
+    "ic_mvp_prodotto": true
+   },
+   "Adjacent_normal": {
+    "errore": 0.05245213742460005,
+    "ic": [
+     0.02901023890784983,
+     0.061420345489443376
+    ],
+    "unita": 3813,
+    "pazienti": 4,
+    "ic_mvp_prodotto": false
+   },
+   "Tumor-Adjacent": {
+    "diff": 0.061863928909013224,
+    "ic": [
+     0.024859833903061512,
+     0.10626884291615528
+    ],
+    "cloni": 88,
+    "pazienti": 4
+   }
+  },
+  "S5 + unita' = coppia clone-compartimento con l'etichetta maggioritaria (= tesi)": {
+   "Tumor": {
+    "errore": 0.1951219512195122,
+    "ic": [
+     0.12300170068027211,
+     0.27365049812586306
+    ],
+    "unita": 287,
+    "pazienti": 10,
+    "ic_mvp_prodotto": true
+   },
+   "Adjacent_normal": {
+    "errore": 0.059322033898305086,
+    "ic": [
+     0.0,
+     0.08391608391608392
+    ],
+    "unita": 118,
+    "pazienti": 4,
+    "ic_mvp_prodotto": false
+   },
+   "Tumor-Adjacent": {
+    "diff": 0.07954545454545454,
+    "ic": [
+     0.020833333333333332,
+     0.17045454545454544
+    ],
+    "cloni": 88,
+    "pazienti": 4
+   }
+  }
+ }
+}

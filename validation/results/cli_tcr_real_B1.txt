@@ -1,0 +1,26 @@
+Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.059 (IC95% [+0.034, +0.098], su 1,124 coppie clone-compartimenti da 11 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 869 cloni risolti): 'Adjacent_normal': numerosita' insufficiente (4 pazienti, ne servono almeno 5). 'Tumor': 0.093 (IC95% [0.050, 0.144], 10 pazienti).
+Flag per cellula valutabili (audit_label_vs_reference non NA): 4.2% delle cellule.
+Frazione di CD8 nel compartimento 'Tumor'
+Matrice di confusione stimata su 4851 cellule con identita' di riferimento da 10 pazienti (pooled fra pazienti), J = 0.48.
+Per ogni paziente: frazione di cellule etichettate CD8 sul totale delle cellule etichettate CD4 o CD8 nel compartimento (denominatore dichiarato), intervallo dei soli conteggi (senza correzione) e intervalli plausibili al 95% dopo la correzione per l'errore di annotazione, in tre scenari di errore sui cloni non condivisi con il sangue (0.5x, 1x, 2x). Nessuno scenario e' "il risultato": la loro distanza mostra quanto la conclusione dipende dall'assunzione.
+
+paziente  n CD4+CD8  riportata  IC95% conteggi  0.5x       1x         2x              
+--------  ---------  ---------  --------------  ---------  ---------  ----------------
+PA01      2802       0.61       0.59-0.63       0.44-0.53  0.00-0.35  non prodotto [1]
+PA02      3311       0.65       0.64-0.67       0.50-0.58  0.06-0.41  non prodotto [1]
+PA04      3485       0.48       0.46-0.50       0.25-0.37  0.00-0.14  non prodotto [1]
+PA05      1575       0.72       0.70-0.74       0.59-0.67  0.23-0.53  non prodotto [1]
+PA06      1827       0.51       0.49-0.54       0.29-0.41  0.00-0.19  non prodotto [1]
+PA07      3164       0.67       0.65-0.69       0.52-0.60  0.10-0.44  non prodotto [1]
+PA08      4255       0.69       0.68-0.70       0.55-0.62  0.15-0.47  non prodotto [1]
+PA09      2990       0.46       0.45-0.48       0.22-0.35  0.00-0.11  non prodotto [1]
+PA10      2114       0.48       0.46-0.50       0.25-0.37  0.00-0.15  non prodotto [1]
+PA11      5745       0.57       0.55-0.58       0.37-0.47  0.00-0.27  non prodotto [1]
+PA12      3537       0.67       0.65-0.68       0.52-0.59  0.10-0.43  non prodotto [1]
+PA13      3501       0.46       0.44-0.47       0.21-0.34  0.00-0.11  non prodotto [1]
+PA14      571        0.54       0.50-0.58       0.31-0.46  0.00-0.24  non prodotto [1]
+
+[1] con errore 2x la probabilita' di errore stimata supera 1
+
+Assunzioni. (1) L'identita' di riferimento stimata dal sangue e' considerata corretta. (2) La matrice di confusione e' stimata solo sui cloni condivisi con il sangue, che per costruzione sono quelli espansi (almeno 3 cellule nel sangue e identita' netta), ed e' unica per tutti i pazienti (pooled), non per paziente. Nei dati originali (PDAC, GSE278694) l'errore di annotazione cresce con la dimensione del clone (rho = +0.177): la direzione plausibile del bias e' quindi una SOVRASTIMA dell'errore sui cloni non condivisi, ma non e' stata verificata, perche' quelle cellule non hanno riferimento. Per questo sono riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali e' "il risultato". (3) Le cellule etichettate CD4 o CD8 sono vere cellule T; doppietti e altre cellule non-T etichettate CD4/CD8 non sono modellati.
+[ok] report scritto in out/tcr_real_B1.html

@@ -14,3 +14,6 @@ results/
 data/synthetic/*
 !data/synthetic/.gitkeep
 .pytest_cache/
+
+# risultati della validazione su dati reali: piccoli e da versionare
+!validation/results/

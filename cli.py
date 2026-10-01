@@ -104,6 +104,10 @@ def _cmd_leakage(args: argparse.Namespace) -> None:
     print(f"[ok] report scritto in {out}")
 
 
+def _csv_list(value: str | None) -> list[str] | None:
+    return None if value is None else [x.strip() for x in value.split(",") if x.strip()]
+
+
 def _cmd_tcr(args: argparse.Namespace) -> None:
     adata = ad.read_h5ad(args.h5ad)
     manifest = pd.read_csv(args.vdj_manifest)
@@ -119,7 +123,9 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
         adata, contigs, patient_col=args.patient_col, compartment_col=args.compartment_col,
         celltype_col=args.celltype_col, barcode_col=args.barcode_col,
         n_boot=args.n_boot, seed=args.seed, marker_map=marker_map,
-        reference_compartment=args.reference_compartment,
+        reference_compartment=args.reference_compartment, convention=args.convention,
+        clone_error_labels=_csv_list(args.clone_error_labels),
+        clone_marker_priority=_csv_list(args.clone_marker_priority),
     )
     print(result.narrative)
     if result.flag_coverage is not None:
@@ -240,6 +246,16 @@ def main() -> None:
                         help="JSON {\"etichetta\": [\"gene1\", \"gene2\"]}, opzionale")
     p_tcr.add_argument("--reference-compartment", default=None,
                         help="richiesto insieme a --marker-map per il tasso d'errore per compartimento")
+    p_tcr.add_argument("--convention", choices=["both", "cell", "clone"], default="both",
+                        help="definizione del tasso d'errore: 'cell' (per cellula, etichette fuori "
+                             "mappa escluse), 'clone' (per clone-compartimento, etichette fuori mappa "
+                             "contate come errore) o 'both' (default: entrambe affiancate)")
+    p_tcr.add_argument("--clone-error-labels", default=None,
+                       help="convenzione 'clone': etichette fuori mappa ammesse e contate come errore, "
+                            "separate da virgola (default: tutte; la tesi usa NK)")
+    p_tcr.add_argument("--clone-marker-priority", default=None,
+                       help="convenzione 'clone': ordine di positivita' esclusiva, es. CD8T,CD4T "
+                            "(default: positivita' non esclusiva)")
     p_tcr.add_argument("--export-flags", action="store_true",
                         help="scrive <nome>_audited.h5ad (copia con i flag) e <nome>_audit_flags.csv "
                              "nella cartella di --out; richiede --marker-map")

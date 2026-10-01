@@ -1,0 +1,14 @@
+paziente,n_CD4T+CD8T,riportata,IC_conteggi,0.5x,1x,2x
+PA01,2802,0.6124197002141327,0.59-0.63,0.44-0.53,0.00-0.35,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA02,3311,0.6535789791603746,0.64-0.67,0.50-0.58,0.06-0.41,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA04,3485,0.4800573888091822,0.46-0.50,0.25-0.37,0.00-0.14,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA05,1575,0.7206349206349206,0.70-0.74,0.59-0.67,0.23-0.53,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA06,1827,0.5134099616858238,0.49-0.54,0.29-0.41,0.00-0.19,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA07,3164,0.6700379266750948,0.65-0.69,0.52-0.60,0.10-0.44,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA08,4255,0.690011750881316,0.68-0.70,0.55-0.62,0.15-0.47,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA09,2990,0.462876254180602,0.45-0.48,0.22-0.35,0.00-0.11,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA10,2114,0.48297067171239355,0.46-0.50,0.25-0.37,0.00-0.15,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA11,5745,0.5662315056570931,0.55-0.58,0.37-0.47,0.00-0.27,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA12,3537,0.667232117613797,0.65-0.68,0.52-0.59,0.10-0.43,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA13,3501,0.45672664952870606,0.44-0.47,0.21-0.34,0.00-0.11,non prodotto: con errore 2x la probabilita' di errore stimata supera 1
+PA14,571,0.5376532399299475,0.50-0.58,0.31-0.46,0.00-0.24,non prodotto: con errore 2x la probabilita' di errore stimata supera 1

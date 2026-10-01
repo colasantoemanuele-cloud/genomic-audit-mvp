@@ -295,21 +295,43 @@ def _tcr_section(result: TcrValidationResult) -> str:
             )
         html_parts.append("</table>")
 
-    if result.marker_error is not None and result.marker_error.by_compartment:
+    if result.conventions:
         html_parts.append("<h3>Tasso d'errore per compartimento (marcatori canonici)</h3>")
+        ref = result.marker_error.reference_compartment if result.marker_error else ""
         html_parts.append(
             f'<p class="narrative">Identita\' di riferimento del clone stimata SOLO dal compartimento '
-            f"'{html.escape(result.marker_error.reference_compartment)}' "
-            f"({result.marker_error.n_resolved_clones} cloni risolti), confrontata con l'etichetta "
-            f"assegnata negli altri compartimenti.</p>"
-        )
-        chart2 = _marker_error_chart(result.marker_error)
-        if chart2:
-            html_parts.append(f'<img src="{chart2}" alt="Tasso d\'errore per compartimento">')
-        html_parts.append("<table><tr><th>Compartimento</th><th>Tasso d'errore [IC95%]</th><th>Pazienti</th></tr>")
-        for comp, res in result.marker_error.by_compartment.items():
-            val = f"{res.mean:.3f} [{res.ci_low:.3f}, {res.ci_high:.3f}]" if res.sufficient else "numerosita' insufficiente"
-            html_parts.append(f"<tr><td>{html.escape(comp)}</td><td>{val}</td><td>{res.n_groups}</td></tr>")
+            f"'{html.escape(ref)}', confrontata con l'etichetta assegnata negli altri compartimenti. "
+            f"Lo stesso confronto puo' essere contato in modi diversi: ogni numero e' riportato con la "
+            f"sua convenzione, e le convenzioni sono affiancate.</p><ul>"
+            + "".join(f"<li><b>{html.escape(c.name)}</b>: {html.escape(c.definition)}</li>"
+                      for c in result.conventions.values()) + "</ul>")
+        if result.marker_error is not None:
+            chart2 = _marker_error_chart(result.marker_error)
+            if chart2 and "cell" in result.conventions:
+                html_parts.append(f'<img src="{chart2}" alt="Tasso d\'errore per compartimento (per cellula)">')
+        names = list(result.conventions)
+        comps = sorted({c for conv in result.conventions.values() for c in conv.by_compartment})
+
+        def fmt(res):
+            if res is None:
+                return "—"
+            if not res.sufficient:
+                return f"{res.mean:.3f} (IC non prodotto, {res.n_groups} pazienti)"
+            return f"{res.mean:.3f} [{res.ci_low:.3f}, {res.ci_high:.3f}], {res.n_groups} pazienti"
+        html_parts.append("<table><tr><th>Compartimento</th>" + "".join(
+            f"<th>convenzione {html.escape(n)}</th>" for n in names) + "</tr>")
+        for comp in comps:
+            html_parts.append(f"<tr><td>{html.escape(comp)}</td>" + "".join(
+                f"<td>{fmt(result.conventions[n].by_compartment.get(comp))}</td>" for n in names) + "</tr>")
+        pairs = sorted({p for conv in result.conventions.values() for p in conv.paired_differences})
+        for a, b in pairs:
+            cells_txt = []
+            for n in names:
+                v = result.conventions[n].paired_differences.get((a, b))
+                cells_txt.append("—" if v is None else
+                                 (fmt(v[0]).replace(f"{v[0].mean:.3f}", f"{v[0].mean:+.3f}", 1) + f", {v[1]} cloni"))
+            html_parts.append(f"<tr><td>differenza {html.escape(a)} − {html.escape(b)} (stessi cloni)</td>"
+                              + "".join(f"<td>{t}</td>" for t in cells_txt) + "</tr>")
         html_parts.append("</table>")
 
     if result.cell_flags is not None:
