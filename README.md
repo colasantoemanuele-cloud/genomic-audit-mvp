@@ -29,6 +29,18 @@ forest, gradient boosting), con la correzione di Nadeau-Bengio (anticonservativa
 versione non corretta, perche' i training set dei fold si sovrappongono) e il test di
 Wilcoxon appaiato, segnalando quando le due conclusioni divergono.
 
+Motore pensato per dati reali: la matrice resta sparsa; in ogni fold, e stimati sul solo
+training, si calcolano log-CPM, i 2.000 geni piu' variabili e (per random forest e gradient
+boosting) 50 componenti SVD. Il training e' limitato a 20.000 cellule per fold con
+sottocampionamento stratificato per paziente, dichiarato. La macro-F1 e' calcolata sulle sole
+classi presenti nel fold di test, e le classi assenti sono dichiarate. I fold della
+regressione logistica girano in parallelo, con risultati identici a quelli sequenziali.
+Tempi misurati su questa workstation (12 core): GSE125449 reale (9.946 cellule, 18.372 geni,
+19 pazienti) 6,7 minuti; dati sintetici con 25.000 cellule, 20.000 geni e 20 pazienti 6,2
+minuti, misurati prima della parallelizzazione dei fold. In entrambi i casi il confronto fra
+modelli e' incluso. `--rapido` lo esclude. Mostra anche la stabilita' delle spiegazioni
+(Jaccard fra i 50 geni principali dei fold), una misura descrittiva.
+
 **Modulo B -- Validazione dell'annotazione via TCR.** Usa il repertorio T-cell receptor
 come ancora indipendente dal clustering: se le cellule dello stesso clone T (stessa
 sequenza CDR3 della catena TRB) ricevono etichette di tipo cellulare diverse a seconda
@@ -118,14 +130,26 @@ Richiede [uv](https://docs.astral.sh/uv/).
 uv sync --extra dev
 ```
 
-## Demo (senza dati propri)
+## Web app locale (demo con un clic)
 
 ```bash
-# interfaccia web
-uv run streamlit run app.py
-# spunta "Usa dati sintetici di esempio" per una demo senza upload
+uv run audit-sc serve          # apre http://localhost:8501
+```
 
-# oppure da riga di comando
+L'app ascolta solo su `localhost`, con la telemetria di Streamlit disattivata: nessun dato e
+nessuna statistica d'uso lasciano la macchina. Nella barra laterale ci sono due modalita':
+- **Demo immediata:** un clic carica metadati reali GEO per il disegno e un sottoinsieme
+  reale di GSE125449 per il Modulo A (`data/demo/`); il Modulo B usa dati sintetici
+  dichiarati;
+- **Carica studio:** percorsi locali o upload di CSV/TSV, `.h5ad`, cartelle 10x Matrix
+  Market e manifest VDJ.
+
+Le sezioni sono Disegno, Modulo A, Modulo B e Verdetto. Il verdetto a semaforo usa regole
+dichiarate in `core/verdict.py` ed e' esportabile in Markdown o HTML.
+
+## Demo da riga di comando
+
+```bash
 uv run python cli.py demo --out results/demo_report.html
 ```
 
@@ -146,7 +170,7 @@ uv run python cli.py design --meta campioni.csv --patient-col patient --tissue-c
     --technical batch=run --technical protocol=protocol \
     --compare tissue:Tumor:Adjacent_normal --out results/design_report.html
 
-# Modulo A
+# Modulo A (--rapido: senza confronto fra modelli; --max-train-cells: limite per fold)
 uv run python cli.py leakage --h5ad dati.h5ad \
     --target-col tissue --patient-col patient_id --out results/leakage_report.html
 
@@ -162,9 +186,8 @@ uv run python cli.py tcr --h5ad dati.h5ad --vdj-manifest vdj_manifest.csv \
 # --cd8-compartment -> intervalli sulla frazione di CD8 per paziente nel report
 ```
 
-Oppure `uv run streamlit run app.py` senza la spunta "dati sintetici", per caricare i
-file da interfaccia web (upload guidato, selezione colonne, editor per l'associazione
-file VDJ -> paziente/compartimento).
+Oppure `uv run audit-sc serve`, modalita' "Carica studio", per fare lo stesso
+dall'interfaccia web. Tutti i comandi sono disponibili anche come `uv run audit-sc <comando>`.
 
 ## Test
 

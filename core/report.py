@@ -201,11 +201,13 @@ def _leakage_section(result: LeakageAuditResult) -> str:
             "significativo, e' un'informazione utile, non un errore dello strumento.</p>"
         )
     else:
-        html_parts.append(
-            f'<p class="narrative">Confronto multi-modello non eseguito: servono almeno '
-            f"{result.n_patients} pazienti in piu' per una valutazione LeaveOneGroupOut robusta "
-            f"(soglia di default: 8 pazienti).</p>"
-        )
+        settings = getattr(result, "settings", {}) or {}
+        if settings.get("min_patients_for_model_comparison", 8) <= result.n_patients:
+            why = "escluso su richiesta (opzione --rapido)."
+        else:
+            why = (f"servono almeno {settings.get('min_patients_for_model_comparison', 8)} pazienti, "
+                   f"questo dataset ne ha {result.n_patients}.")
+        html_parts.append(f'<p class="narrative">Confronto fra modelli non eseguito: {why}</p>')
     return "".join(html_parts)
 
 
@@ -467,3 +469,71 @@ def save_report(
                                       cd8_result),
                         encoding="utf-8")
     return out_path
+
+
+# --------------------------------------------------------------------------- #
+# Report Markdown (export della web app e della CLI)
+# --------------------------------------------------------------------------- #
+def render_markdown_report(
+    design_result: DesignAuditResult | None = None,
+    leakage_result: LeakageAuditResult | None = None,
+    tcr_result: TcrValidationResult | None = None,
+    cd8_result: CD8PropagationResult | None = None,
+    dataset_name: str = "dataset",
+) -> str:
+    """Report in Markdown: verdetto per sezione con la regola che lo produce, numeri con la loro
+    definizione e limiti dichiarati. Stesse frasi del report HTML."""
+    from core.verdict import design_verdict, leakage_verdict, standing_limits, tcr_verdict
+
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    md = [f"# Report di audit — {dataset_name}", "",
+          f"Generato il {now}. Strumento diagnostico locale: non e' una certificazione.", ""]
+    verdicts = []
+    if design_result is not None:
+        verdicts.append(design_verdict(design_result))
+    if leakage_result is not None:
+        verdicts.append(leakage_verdict(leakage_result))
+    if tcr_result is not None:
+        verdicts.append(tcr_verdict(tcr_result))
+    if verdicts:
+        md += ["## Verdetto di audit", "", "| Sezione | Esito | Motivi |", "|---|---|---|"]
+        md += [f"| {v.section} | **{v.color.upper()}** | {'; '.join(v.reasons)} |" for v in verdicts]
+        md += [""] + [f"- *Regola {v.section}*: {v.rule}" for v in verdicts] + [""]
+    if design_result is not None:
+        md += ["## Audit del disegno", "", design_result.narrative, ""]
+        if design_result.comparisons:
+            md += ["| Confronto | Classe | Unita' | p-value minimo |", "|---|---|---|---|"]
+            for c in design_result.comparisons:
+                mp = "—" if c.min_pvalue is None else f"{c.min_pvalue:.3f}"
+                md.append(f"| {c.factor}: {c.level_a} vs {c.level_b} | {c.classification} | {c.n_units} | {mp} |")
+            md.append("")
+        md += [f"> {n}" for n in design_result.notes] + [""]
+    if leakage_result is not None:
+        r = leakage_result
+        md += ["## Modulo A — Leakage per paziente", "", r.narrative, "",
+               "| Schema | macro-F1 media | dev. std | fold |", "|---|---|---|---|",
+               f"| split per paziente (onesto) | {r.grouped.mean:.3f} | {r.grouped.std:.3f} | {len(r.grouped.fold_scores)} |",
+               f"| split casuale (controllo negativo) | {r.random.mean:.3f} | {r.random.std:.3f} | {len(r.random.fold_scores)} |",
+               "", "Definizione: macro-F1 calcolata sulle sole classi presenti nel fold di test; "
+               "le classi assenti sono dichiarate. Nessun intervallo di confidenza: i punteggi dei "
+               "fold sono correlati e un intervallo non sarebbe calibrato.", ""]
+        if r.xai is not None:
+            md += [f"Stabilita' delle spiegazioni (descrittiva): Jaccard medio fra i {r.xai.k} geni "
+                   f"principali dei fold = {r.xai.grouped_mean:.3f} con split per paziente, "
+                   f"{r.xai.random_mean:.3f} con split casuale.", ""]
+        if r.model_comparison is not None:
+            mc = r.model_comparison
+            md += ["| Modello (LeaveOneGroupOut) | macro-F1 | p Nadeau-Bengio vs migliore |", "|---|---|---|"]
+            md += [f"| {mc.best_model} (migliore) | {mc.scores[mc.best_model].mean:.3f} | — |"]
+            md += [f"| {c.model} | {c.mean_macro_f1:.3f} | {c.p_nadeau_bengio:.3f} |" for c in mc.comparisons]
+            md.append("")
+    if tcr_result is not None:
+        md += ["## Modulo B — Validazione via TCR", ""]
+        if tcr_result.barcode_match is not None:
+            md += [tcr_result.barcode_match.sentence, ""]
+        md += [tcr_result.narrative, ""]
+    if cd8_result is not None:
+        from core.cd8_propagation import format_cd8_text
+        md += ["## Frazione di CD8 (sperimentale)", "", "```", format_cd8_text(cd8_result), "```", ""]
+    md += ["## Limiti dichiarati", ""] + [f"- {x}" for x in standing_limits(cd8_result)] + [""]
+    return "\n".join(md)

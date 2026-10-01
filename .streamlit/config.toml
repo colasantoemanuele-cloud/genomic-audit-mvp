@@ -1,0 +1,16 @@
+# Web app locale: nessun dato e nessuna statistica d'uso lasciano la macchina.
+[browser]
+gatherUsageStats = false
+
+[server]
+address = "localhost"
+port = 8501
+maxUploadSize = 2000
+
+[theme]
+base = "light"
+primaryColor = "#1f3a5f"
+backgroundColor = "#f7f8fa"
+secondaryBackgroundColor = "#e9edf2"
+textColor = "#1c2430"
+font = "sans serif"

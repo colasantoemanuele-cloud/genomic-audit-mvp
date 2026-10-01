@@ -1,0 +1,34 @@
+gsm,title,source,platform,patient_id,tumor stage,tissue type,region,pathologic
+GSM3868425,SMC01-T,SMC01_Colorectal cancer,GPL20301,SMC01,2,Colorectal cancer,rectum,Well differentiated
+GSM3868426,SMC02-T,SMC02_Colorectal cancer,GPL20301,SMC02,3,Colorectal cancer,rectum,Well differentiated
+GSM3868427,SMC03-T,SMC03_Colorectal cancer,GPL20301,SMC03,3,Colorectal cancer,hepatic flexure,Poorly differntiated
+GSM3868428,SMC04-T,SMC04_Colorectal cancer,GPL20301,SMC04,3,Colorectal cancer,sigmoid,Moderately differenttiated
+GSM3868429,SMC05-T,SMC05_Colorectal cancer,GPL20301,SMC05,2,Colorectal cancer,ascending,Well differentiated with mucin production (<10%)
+GSM3868430,SMC06-T,SMC06_Colorectal cancer,GPL20301,SMC06,3,Colorectal cancer,hepatic flexure,Well differentiated
+GSM3868431,SMC07-T,SMC07_Colorectal cancer,GPL20301,SMC07,1,Colorectal cancer,ascending,Well differentiated
+GSM3868432,SMC08-T,SMC08_Colorectal cancer,GPL20301,SMC08,3,Colorectal cancer,sigmoid,Moderately differenttiated
+GSM3868433,SMC09-T,SMC09_Colorectal cancer,GPL20301,SMC09,2,Colorectal cancer,sigmoid,Well differentiated
+GSM3868434,SMC10-T,SMC10_Colorectal cancer,GPL20301,SMC10,2,Colorectal cancer,ascending,Moderately differenttiated
+GSM3868435,SMC11-T,SMC11_Colorectal cancer,GPL20301,SMC11,3,Colorectal cancer,sigmoid,Well differentiated
+GSM3868436,SMC14-T,SMC14_Colorectal cancer,GPL20301,SMC14,3,Colorectal cancer,rectosigmoid,Moderately differenttiated
+GSM3868437,SMC15-T,SMC15_Colorectal cancer,GPL20301,SMC15,2,Colorectal cancer,sigmoid,Well differentiated
+GSM3868438,SMC16-T,SMC16_Colorectal cancer,GPL20301,SMC16,3,Colorectal cancer,ascending,Moderately differenttiated
+GSM3868439,SMC17-T,SMC17_Colorectal cancer,GPL20301,SMC17,3,Colorectal cancer,hepatic flexure,Mucinous adenocarcinoma
+GSM3868440,SMC18-T,SMC18_Colorectal cancer,GPL20301,SMC18,2,Colorectal cancer,sigmoid,Moderately differenttiated
+GSM3868441,SMC19-T,SMC19_Colorectal cancer,GPL20301,SMC19,3,Colorectal cancer,ascending,Moderately differenttiated
+GSM3868442,SMC20-T,SMC20_Colorectal cancer,GPL20301,SMC20,3,Colorectal cancer,ascending,Mucinous adenocarcinoma
+GSM3868443,SMC21-T,SMC21_Colorectal cancer,GPL20301,SMC21,4,Colorectal cancer,rectum,Moderately differenttiated
+GSM3868444,SMC22-T,SMC22_Colorectal cancer,GPL20301,SMC22,3,Colorectal cancer,sigmoid,Moderately differenttiated
+GSM3868445,SMC23-T,SMC23_Colorectal cancer,GPL20301,SMC23,3,Colorectal cancer,ascending,Moderately differenttiated
+GSM3868446,SMC24-T,SMC24_Colorectal cancer,GPL20301,SMC24,1,Colorectal cancer,ascending,Well differentiated with mucin production (10%)
+GSM3868447,SMC25-T,SMC25_Colorectal cancer,GPL20301,SMC25,4,Colorectal cancer,sigmoid,Moderately differenttiated
+GSM3868448,SMC01-N,SMC01_Normal mucosa,GPL20301,SMC01,,Normal mucosa,,
+GSM3868449,SMC02-N,SMC02_Normal mucosa,GPL20301,SMC02,,Normal mucosa,,
+GSM3868450,SMC03-N,SMC03_Normal mucosa,GPL20301,SMC03,,Normal mucosa,,
+GSM3868451,SMC04-N,SMC04_Normal mucosa,GPL20301,SMC04,,Normal mucosa,,
+GSM3868452,SMC05-N,SMC05_Normal mucosa,GPL20301,SMC05,,Normal mucosa,,
+GSM3868453,SMC06-N,SMC06_Normal mucosa,GPL20301,SMC06,,Normal mucosa,,
+GSM3868454,SMC07-N,SMC07_Normal mucosa,GPL20301,SMC07,,Normal mucosa,,
+GSM3868455,SMC08-N,SMC08_Normal mucosa,GPL20301,SMC08,,Normal mucosa,,
+GSM3868456,SMC09-N,SMC09_Normal mucosa,GPL20301,SMC09,,Normal mucosa,,
+GSM3868457,SMC10-N,SMC10_Normal mucosa,GPL20301,SMC10,,Normal mucosa,,

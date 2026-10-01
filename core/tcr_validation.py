@@ -725,3 +725,35 @@ def run_tcr_validation(
         cell_flags=flags, flag_coverage=coverage, conventions=conventions,
         barcode_match=bmatch,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Descrittivo: cellule con TCR per etichetta (web app)
+# --------------------------------------------------------------------------- #
+T_LABEL_HINTS = ("CD4", "CD8", "T cell", "Treg", "MAIT", "gdT", "T_")
+
+
+def tcr_by_celltype(adata: ad.AnnData, contigs: pd.DataFrame, patient_col: str,
+                    compartment_col: str, celltype_col: str, barcode_col: str) -> pd.DataFrame:
+    """Per ogni etichetta di tipo cellulare: cellule totali, cellule con catena TRB rilevata e
+    quante di queste appartengono a un clone espanso (>= 2 cellule nello stesso paziente).
+
+    E' una tabella DESCRITTIVA. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) puo'
+    essere un doppietto, RNA ambientale o un errore di annotazione: la tabella non distingue fra
+    questi casi e non classifica le singole cellule. Usa la stessa corrispondenza dei barcode
+    del Modulo B (``match_barcodes``)."""
+    obs = adata.obs[[patient_col, compartment_col, celltype_col, barcode_col]].astype(str).reset_index(drop=True)
+    obs.columns = ["patient", "compartment", "celltype", "barcode"]
+    clones = build_clonotypes(contigs)
+    obs, clones, _ = match_barcodes(obs, clones)
+    size = clones.groupby(["patient", "clone_id"]).barcode.transform("size")
+    clones = clones.assign(expanded=size >= 2)
+    j = obs.merge(clones, on=["patient", "compartment", "barcode"], how="left")
+    out = j.groupby("celltype").agg(
+        cellule=("barcode", "size"),
+        con_TRB=("clone_id", lambda s: int(s.notna().sum())),
+        in_cloni_espansi=("expanded", lambda s: int(s.fillna(False).astype(bool).sum())),
+    )
+    out["% con TRB"] = (100 * out["con_TRB"] / out["cellule"]).round(1)
+    out["etichetta T"] = [any(h.lower() in str(c).lower() for h in T_LABEL_HINTS) for c in out.index]
+    return out.sort_values(["etichetta T", "% con TRB"], ascending=[True, False])

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Esecuzione da riga di comando del motore analitico (core/), senza Streamlit.
+"""Esecuzione da riga di comando del motore analitico (core/). `serve` avvia la web app locale.
 
 Esempi:
     python cli.py demo --out results/demo_report.html
@@ -92,16 +92,50 @@ def _cmd_design(args: argparse.Namespace) -> None:
     print(f"[ok] report scritto in {out}")
 
 
+class _ProgressLine:
+    """Avanzamento su una sola riga aggiornata (su terminale) o una riga per passo (su file)."""
+
+    def __init__(self) -> None:
+        self.tty = sys.stderr.isatty()
+
+    def __call__(self, msg: str) -> None:
+        if self.tty and msg.startswith("["):
+            sys.stderr.write("\r\033[K" + msg)
+        else:
+            sys.stderr.write(("\n" if self.tty else "") + msg + "\n")
+        sys.stderr.flush()
+
+    def close(self) -> None:
+        if self.tty:
+            sys.stderr.write("\n")
+
+
 def _cmd_leakage(args: argparse.Namespace) -> None:
     adata = ad.read_h5ad(args.h5ad)
+    progress = _ProgressLine()
     result = run_leakage_audit(
         adata, target_col=args.target_col, patient_col=args.patient_col,
         n_folds=args.n_folds, min_patients_for_model_comparison=args.min_patients_for_model_comparison,
-        seed=args.seed,
+        seed=args.seed, benchmark=not args.rapido,
+        max_train_cells=args.max_train_cells or None, progress=progress,
     )
+    progress.close()
     print(result.narrative)
+    print(f"Tempo di esecuzione: {result.elapsed_seconds:.0f} s.")
     out = save_report(args.out, leakage_result=result, dataset_name=Path(args.h5ad).stem)
     print(f"[ok] report scritto in {out}")
+
+
+def _cmd_serve(args: argparse.Namespace) -> None:
+    """Avvia Streamlit legato a localhost, con la telemetria disattivata: nessun dato (ne'
+    statistica d'uso) lascia la macchina."""
+    import subprocess
+    app = Path(__file__).resolve().parent / "app.py"
+    cmd = [sys.executable, "-m", "streamlit", "run", str(app),
+           "--server.address", "localhost", "--server.port", str(args.port),
+           "--browser.gatherUsageStats", "false", "--server.headless", "false"]
+    print(f"Web app su http://localhost:{args.port} (Ctrl+C per fermare)")
+    raise SystemExit(subprocess.call(cmd, cwd=str(app.parent)))
 
 
 def _csv_list(value: str | None) -> list[str] | None:
@@ -232,8 +266,17 @@ def main() -> None:
     p_leak.add_argument("--n-folds", type=int, default=5)
     p_leak.add_argument("--min-patients-for-model-comparison", type=int, default=8)
     p_leak.add_argument("--seed", type=int, default=0)
+    p_leak.add_argument("--rapido", "--no-benchmark", dest="rapido", action="store_true",
+                        help="salta il confronto fra modelli: solo il classificatore di riferimento")
+    p_leak.add_argument("--max-train-cells", type=int, default=20_000,
+                        help="limite di cellule nel training di ogni fold, con sottocampionamento "
+                             "stratificato per paziente (0 = nessun limite)")
     p_leak.add_argument("--out", default="results/leakage_report.html", type=Path)
     p_leak.set_defaults(func=_cmd_leakage)
+
+    p_serve = sub.add_parser("serve", help="avvia la web app locale (solo su questa macchina)")
+    p_serve.add_argument("--port", type=int, default=8501)
+    p_serve.set_defaults(func=_cmd_serve)
 
     p_tcr = sub.add_parser("tcr", help="Modulo B: validazione dell'annotazione via TCR")
     p_tcr.add_argument("--h5ad", required=True, type=Path)

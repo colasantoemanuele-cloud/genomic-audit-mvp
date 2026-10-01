@@ -389,8 +389,9 @@ wheels = [
 [[package]]
 name = "genomic-audit"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
+    { name = "altair" },
     { name = "anndata" },
     { name = "matplotlib" },
     { name = "numpy" },
@@ -407,6 +408,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "altair", specifier = ">=5" },
     { name = "anndata", specifier = ">=0.10" },
     { name = "matplotlib", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26" },

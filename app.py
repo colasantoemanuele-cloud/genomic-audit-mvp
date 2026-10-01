@@ -1,387 +1,500 @@
-"""Interfaccia Streamlit -- file sottile: tutta la logica sta in core/, qui solo upload,
-scelte dell'utente e visualizzazione. Eseguibile con: streamlit run app.py
+"""Web app locale di genomic-audit. Avvio: `audit-sc serve` (oppure `python cli.py serve`).
+
+Tutta la logica sta in core/: qui solo caricamento dei dati, scelte dell'utente e
+visualizzazione. L'app gira su localhost con la telemetria di Streamlit disattivata
+(.streamlit/config.toml e opzioni di `serve`): nessun dato e nessuna statistica d'uso
+lasciano la macchina.
 """
 
 from __future__ import annotations
 
+import html
 import json
 import tempfile
 from pathlib import Path
 
+import altair as alt
 import anndata as ad
+import numpy as np
 import pandas as pd
 import streamlit as st
 
 from core.cd8_propagation import EXPERIMENTAL_NOTE, cd8_fraction_intervals
-from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
-from core.leakage_audit import run_leakage_audit
-from core.report import render_report
-from core.synthetic import (
-    make_gse278694_like_sheet,
-    make_leakage_dataset,
-    make_tcr_validation_dataset,
-)
-from core.tcr_validation import export_audited, parse_vdj_contigs, run_tcr_validation
+from core.design_audit import TECHNICAL_ROLES, run_design_audit
+from core.io import load_matrix_market, read_table
+from core.leakage_audit import GAP_ALERT, run_leakage_audit
+from core.report import render_markdown_report, render_report
+from core.synthetic import make_tcr_validation_dataset
+from core.tcr_validation import parse_vdj_contigs, run_tcr_validation, tcr_by_celltype
+from core.verdict import design_verdict, leakage_verdict, standing_limits, tcr_verdict
+
+ROOT = Path(__file__).resolve().parent
+DEMO = ROOT / "data" / "demo"
+
+DEMO_DESIGN = {
+    "GSE132465 — carcinoma colorettale (23 pazienti, tumore e mucosa normale)": dict(
+        file="GSE132465_samples.csv", patient="patient_id", tissue="tissue type",
+        technical={"library": "gsm", "batch": "platform"}, outcomes=["tumor stage", "region"],
+        comparisons=[("tissue type", "Colorectal cancer", "Normal mucosa"), ("tumor stage", "2", "3")]),
+    "GSE131907 — adenocarcinoma polmonare (44 pazienti, 7 tessuti)": dict(
+        file="GSE131907_samples.csv", patient="patient id", tissue="tissue origin abbrevation",
+        technical={"library": "gsm", "batch": "platform"}, outcomes=["tumor stage"],
+        comparisons=[("tissue origin abbrevation", "tLung", "nLung"),
+                     ("tissue origin abbrevation", "mLN", "nLN"),
+                     ("tissue origin abbrevation", "tLung", "mBrain")]),
+    "GSE125449 — tumori primitivi del fegato (19 pazienti, 2 piattaforme)": dict(
+        file="GSE125449_samples.csv", patient="patient_from_title", tissue=None,
+        technical={"library": "gsm", "batch": "platform"}, outcomes=["cancer type"],
+        comparisons=[("cancer type", "Hepatocellular carcinoma", "Intrahepatic cholangiocarcinoma"),
+                     ("platform", "GPL18573", "GPL20301")]),
+}
 
 st.set_page_config(page_title="Audit genomico — coorti piccole", layout="wide")
-st.title("Audit genomico per coorti cliniche piccole")
-st.caption(
-    "Prototipo per un singolo studio pilota. Tutto gira in locale: nessun dato lascia questa macchina."
-)
+st.markdown("""
+<style>
+.badge{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-weight:600;font-size:.85rem;color:#fff}
+.b-verde{background:#2e7d4f}.b-giallo{background:#b7860b}.b-rosso{background:#b3261e}.b-grigio{background:#6b7785}
+.card{background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:.9rem 1.1rem;margin:.4rem 0}
+.small{color:#5b6573;font-size:.88rem}
+table.sem{border-collapse:collapse;width:100%}
+table.sem td,table.sem th{border-bottom:1px solid #e3e7ec;padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style>""", unsafe_allow_html=True)
 
-for key in ("design_result", "leakage_result", "tcr_result", "cd8_result"):
-    if key not in st.session_state:
-        st.session_state[key] = None
-
-
-@st.cache_resource(show_spinner=False)
-def _read_h5ad(raw_bytes: bytes) -> ad.AnnData:
-    with tempfile.NamedTemporaryFile(suffix=".h5ad", delete=False) as tmp:
-        tmp.write(raw_bytes)
-        tmp_path = tmp.name
-    return ad.read_h5ad(tmp_path)
+COLOR_OF = {"stimabile": "verde", "stimabile con bassa potenza": "giallo", "non stimabile": "rosso"}
 
 
-use_demo = st.checkbox(
-    "Usa dati sintetici di esempio (nessun upload richiesto)",
-    help="Genera al volo due dataset sintetici, uno per modulo, con un effetto noto "
-         "gia' iniettato -- utile per vedere subito cosa fa lo strumento.",
-)
+def badge(color: str, text: str) -> str:
+    return f'<span class="badge b-{color}">{html.escape(text)}</span>'
 
-adata = None
-if use_demo:
-    st.info(
-        "Modalita' demo: il Modulo A e il Modulo B usano ciascuno un dataset sintetico "
-        "dedicato, costruito apposta per mostrare chiaramente l'effetto che quel modulo misura."
-    )
-else:
-    uploaded = st.file_uploader("File AnnData (.h5ad)", type=["h5ad"])
-    if uploaded is not None:
-        with st.spinner("Carico il file..."):
-            adata = _read_h5ad(uploaded.getvalue())
-        st.success(f"{adata.n_obs:,} cellule, {adata.n_vars:,} geni.")
 
-tab_d, tab_a, tab_b = st.tabs(["Audit del disegno", "Modulo A — Leakage per paziente",
-                               "Modulo B — Validazione via TCR"])
+for k in ("design", "leakage", "tcr", "cd8", "tcr_table", "dataset_name", "b_ctx", "a_ctx", "d_ctx",
+          "autorun", "run_design", "run_a", "run_b"):
+    if k not in st.session_state:
+        st.session_state[k] = None
+
 
 # --------------------------------------------------------------------------- #
-with tab_d:
-    st.markdown(
-        "Legge **solo i metadati** (una riga per campione o libreria) e segnala quali fattori "
-        "sono confusi fra loro e quali confronti il disegno permette davvero, con quante unita' "
-        "indipendenti. Non usa l'espressione genica."
-    )
-    sheet = None
-    if use_demo:
-        sheet = make_gse278694_like_sheet()
-        st.caption("Metadati sintetici con la struttura di GSE278694: 14 pazienti scRNA-seq "
-                   "(una libreria per coppia paziente-tessuto) e 8 pazienti snRNA-seq disgiunti.")
-        d_patient, d_tissue = "patient", "tissue"
-        d_technical = {"protocol": "protocol", "library": "library"}
-        d_outcomes: list[str] = []
-        d_comparisons = [("tissue", "Tumor", "Adjacent_normal"), ("protocol", "scRNA", "snRNA")]
+# Barra laterale: modalita'
+# --------------------------------------------------------------------------- #
+with st.sidebar:
+    st.markdown("### Audit genomico")
+    st.caption("Strumento locale per coorti cliniche piccole. Nessun dato lascia questa macchina.")
+    mode = st.radio("Modalita'", ["Demo immediata", "Carica studio"], key="mode")
+    if mode == "Demo immediata":
+        demo_design = st.selectbox("Disegno dimostrativo (metadati reali GEO)", list(DEMO_DESIGN))
+        rapido_demo = st.checkbox("Modulo A rapido (senza confronto fra modelli)", value=False)
+        if st.button("Carica la demo", type="primary", width="stretch"):
+            st.session_state.update(design=None, leakage=None, tcr=None, cd8=None, tcr_table=None)
+            cfg = DEMO_DESIGN[demo_design]
+            st.session_state.d_ctx = dict(sheet=read_table(DEMO / cfg["file"]), **cfg)
+            st.session_state.a_ctx = dict(adata=ad.read_h5ad(DEMO / "GSE125449_demo.h5ad"),
+                                          target="Type", patient="patient", rapido=rapido_demo,
+                                          label="GSE125449, sottoinsieme reale: 10 pazienti, 1.861 cellule")
+            adata_b, contigs_b = make_tcr_validation_dataset(seed=0)
+            st.session_state.b_ctx = dict(adata=adata_b, contigs=contigs_b, patient="patient_id",
+                                          compartment="tissue", celltype="celltype", barcode="barcode",
+                                          markers={"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]},
+                                          reference="PBMC", label="dati SINTETICI (nessun dato TCR reale incluso)")
+            st.session_state.dataset_name = "demo"
+            st.session_state.autorun = True
+        st.caption("Disegno e Modulo A usano dati reali pubblici (GEO). Il Modulo B usa dati sintetici "
+                   "dichiarati: il progetto non include dati TCR reali.")
     else:
-        meta_file = st.file_uploader("CSV dei metadati (opzionale se hai caricato un .h5ad)",
-                                     type=["csv"], key="meta_csv")
-        if meta_file is not None:
-            sheet = pd.read_csv(meta_file, dtype=str)
-        elif adata is not None:
-            sheet = adata.obs.astype(str)
+        st.caption("Indica i percorsi locali (consigliato per file grandi) oppure carica i file.")
+        st.session_state.dataset_name = st.text_input("Nome dello studio", value="studio")
+
+st.title("Audit genomico per coorti cliniche piccole")
+st.markdown('<p class="small">Unita\' statistica indipendente: il paziente. Ogni numero e\' '
+            'accompagnato dalla sua definizione e dai suoi limiti; lo strumento segnala, non corregge '
+            'le etichette.</p>', unsafe_allow_html=True)
+
+tab_d, tab_a, tab_b, tab_v = st.tabs(["1 · Disegno sperimentale", "2 · Modulo A — Leakage",
+                                      "3 · Modulo B — Verifica TCR", "Verdetto e report"])
+
+
+# --------------------------------------------------------------------------- #
+# Caricamento dati in modalita' studio
+# --------------------------------------------------------------------------- #
+def load_matrix_ui(key: str):
+    kind = st.radio("Formato della matrice", ["AnnData (.h5ad)", "Cartella 10x (Matrix Market)"],
+                    horizontal=True, key=f"{key}_kind")
+    if kind.startswith("AnnData"):
+        path = st.text_input("Percorso del file .h5ad", key=f"{key}_path")
+        up = st.file_uploader("...oppure carica il file .h5ad", type=["h5ad"], key=f"{key}_up")
+        if path:
+            return ad.read_h5ad(path)
+        if up is not None:
+            with tempfile.NamedTemporaryFile(suffix=".h5ad", delete=False) as tmp:
+                tmp.write(up.getvalue())
+            return ad.read_h5ad(tmp.name)
+        return None
+    folder = st.text_input("Cartella con matrix.mtx, barcodes.tsv, features.tsv (anche .gz)", key=f"{key}_mtx")
+    meta = st.text_input("Tabella dei metadati per cellula (CSV/TSV)", key=f"{key}_meta")
+    if folder and meta:
+        m = read_table(meta)
+        bcol = st.selectbox("Colonna dei barcode nei metadati", list(m.columns), key=f"{key}_bcol")
+        return load_matrix_market(folder, m, bcol)
+    return None
+
+
+def verdict_line(v) -> None:
+    st.markdown(f'{badge(v.color, v.color.upper())} &nbsp; <span class="small">{html.escape(v.rule)}</span>',
+                unsafe_allow_html=True)
+
+
+# --------------------------------------------------------------------------- #
+# Tab 1: disegno
+# --------------------------------------------------------------------------- #
+def factor_matrix_chart(res) -> alt.Chart:
+    rows = []
+    facts = {(f.factors[0], f.factors[1]): f.kind for f in res.findings if len(f.factors) == 2}
+    for p in res.pairs:
+        if p.one_to_one or p.a_nested_in_b or p.b_nested_in_a:
+            stato = "struttura (annidamento/coincidenza/esito)"
+        elif p.cramer_v is None:
+            stato = "non valutabile"
+        elif p.v_alarm:
+            stato = "associazione forte (V >= 0.5)"
+        else:
+            stato = "associazione debole"
+        v = "" if p.cramer_v is None else f"{p.cramer_v:.2f}"
+        for a, b in ((p.factor_a, p.factor_b), (p.factor_b, p.factor_a)):
+            rows.append({"fattore 1": a, "fattore 2": b, "stato": stato, "V": v,
+                         "dettaglio": facts.get((a, b), facts.get((b, a), "")), "frase": p.sentence})
+    df = pd.DataFrame(rows)
+    scale = alt.Scale(domain=["struttura (annidamento/coincidenza/esito)", "associazione forte (V >= 0.5)",
+                              "associazione debole", "non valutabile"],
+                      range=["#b3261e", "#d08a1e", "#2e7d4f", "#aab4bf"])
+    base = alt.Chart(df).encode(x=alt.X("fattore 1:N", title=None), y=alt.Y("fattore 2:N", title=None))
+    return (base.mark_rect(stroke="white").encode(
+        color=alt.Color("stato:N", scale=scale, legend=alt.Legend(orient="bottom", title=None)),
+        tooltip=["fattore 1", "fattore 2", "stato", "V", "dettaglio", "frase"])
+        + base.mark_text(color="white", fontWeight="bold").encode(text="V:N")).properties(height=320)
+
+
+with tab_d:
+    st.markdown("Legge **solo i metadati** (una riga per campione): quali fattori sono confusi e quali "
+                "confronti il disegno permette, con quante unita' indipendenti. Utilizzabile anche "
+                "prima di sequenziare.")
+    ctx = st.session_state.d_ctx if mode == "Demo immediata" else None
+    if mode == "Carica studio":
+        src = st.file_uploader("Metadati per campione (CSV/TSV)", type=["csv", "tsv", "txt"], key="d_up")
+        path = st.text_input("...oppure percorso locale", key="d_path")
+        sheet = read_table(src) if src is not None else (read_table(path) if path else None)
         if sheet is not None:
             cols = list(sheet.columns)
-            d_patient = st.selectbox("Colonna paziente", cols, key="d_patient")
-            d_tissue = st.selectbox("Colonna tessuto/compartimento (opzionale)", [""] + cols,
-                                    key="d_tissue") or None
-            d_technical = {}
-            for role in TECHNICAL_ROLES:
-                c = st.selectbox(f"Colonna '{role}' (opzionale)", [""] + cols, key=f"d_{role}")
-                if c:
-                    d_technical[role] = c
-            d_outcomes = st.multiselect("Colonne di esito (opzionali)", cols, key="d_outcomes")
-            comp_text = st.text_area(
-                "Confronti da valutare, uno per riga: colonna:livello_a:livello_b",
-                value="", key="d_comparisons")
-            d_comparisons = []
-            for line in comp_text.splitlines():
-                parts = [x.strip() for x in line.split(":")]
-                if len(parts) == 3 and all(parts):
-                    d_comparisons.append(tuple(parts))
-                elif line.strip():
-                    st.error(f"Riga non valida (serve colonna:livello_a:livello_b): {line}")
-            used = [d_patient] + ([d_tissue] if d_tissue else []) + list(d_technical.values()) + d_outcomes
-            if meta_file is None:
-                sheet = sample_sheet_from_obs(sheet, list(dict.fromkeys(used)))
-                st.caption(f"Metadati ridotti da cellule a {len(sheet)} combinazioni distinte dei fattori scelti.")
-        else:
-            st.info("Carica un CSV di metadati o un file .h5ad, oppure attiva i dati sintetici.")
-
-    if sheet is not None and st.button("Esegui audit del disegno", type="primary"):
+            c1, c2 = st.columns(2)
+            patient = c1.selectbox("Colonna paziente", cols, key="d_pat")
+            tissue = c2.selectbox("Colonna tessuto/condizione (opzionale)", [""] + cols, key="d_tis") or None
+            technical = {}
+            for col_ui, role in zip(st.columns(len(TECHNICAL_ROLES)), TECHNICAL_ROLES):
+                val = col_ui.selectbox(role, [""] + cols, key=f"d_{role}")
+                if val:
+                    technical[role] = val
+            outcomes = st.multiselect("Colonne di esito", cols, key="d_out")
+            comp_txt = st.text_area("Confronti, uno per riga: colonna:livello_a:livello_b", key="d_cmp")
+            comps = [tuple(x.strip() for x in line.split(":")) for line in comp_txt.splitlines()
+                     if len(line.split(":")) == 3]
+            if st.button("Esegui audit del disegno", type="primary"):
+                st.session_state.d_ctx = dict(sheet=sheet, patient=patient, tissue=tissue, technical=technical,
+                                              outcomes=outcomes, comparisons=comps)
+                st.session_state.design = None
+                st.session_state.run_design = True
+                ctx = st.session_state.d_ctx
+    if ctx is not None and st.session_state.design is None and (
+            st.session_state.autorun or st.session_state.run_design):
         try:
-            st.session_state.design_result = run_design_audit(
-                sheet, patient_col=d_patient, tissue_col=d_tissue, technical_cols=d_technical,
-                outcome_cols=d_outcomes, comparisons=d_comparisons,
-            )
+            st.session_state.design = run_design_audit(
+                ctx["sheet"], patient_col=ctx["patient"], tissue_col=ctx["tissue"],
+                technical_cols=ctx["technical"], outcome_cols=ctx["outcomes"], comparisons=ctx["comparisons"])
         except ValueError as e:
             st.error(str(e))
+        st.session_state.run_design = False
+    res = st.session_state.design
+    if res is None:
+        st.info("Carica la demo dalla barra laterale oppure scegli 'Carica studio'.")
+    else:
+        verdict_line(design_verdict(res))
+        st.subheader("Confronti: semafori di fattibilita'")
+        rows = "".join(
+            f"<tr><td>{html.escape(c.factor)}: {html.escape(c.level_a)} vs {html.escape(c.level_b)}</td>"
+            f"<td>{badge(COLOR_OF[c.classification], c.classification)}</td><td>{c.n_units}</td>"
+            f"<td>{'—' if c.min_pvalue is None else f'{c.min_pvalue:.3f}'}</td>"
+            f"<td class='small'>{html.escape(c.sentence)}</td></tr>" for c in res.comparisons)
+        st.markdown("<table class='sem'><tr><th>Confronto</th><th>Classe</th><th>Unita' indipendenti</th>"
+                    f"<th>p-value minimo</th><th>Spiegazione</th></tr>{rows}</table>", unsafe_allow_html=True)
+        c1, c2 = st.columns([3, 2])
+        with c1:
+            st.subheader("Matrice dei fattori")
+            if res.pairs:
+                st.altair_chart(factor_matrix_chart(res), width="stretch")
+            st.caption("Numero = Cramér V corretto (Bergsma); vuoto = non valutabile su una tabella troppo "
+                       "piccola. Passa il mouse sulle celle per la frase completa.")
+        with c2:
+            st.subheader("Fatti strutturali")
+            for f in res.findings:
+                if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica"):
+                    st.markdown(f"- {f.sentence}")
+            for n in res.notes:
+                st.caption(n)
 
-    result_d = st.session_state.design_result
-    if result_d is not None:
-        if result_d.comparisons:
-            st.subheader("Confronti richiesti")
-            st.dataframe(pd.DataFrame([
-                {"confronto": f"{c.factor}: {c.level_a} vs {c.level_b}", "classe": c.classification,
-                 "disegno": c.design, "unita' indipendenti": c.n_units, "spiegazione": c.sentence}
-                for c in result_d.comparisons]), hide_index=True)
-        st.subheader("Fatti strutturali")
-        structural = [f for f in result_d.findings
-                      if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica")]
-        for f in structural:
-            st.markdown(f"- {f.sentence}")
-        if not structural:
-            st.markdown("Nessun annidamento, coincidenza o esito determinato da un singolo fattore.")
-        st.subheader("Associazione fra coppie di fattori")
-        st.dataframe(pd.DataFrame([
-            {"coppia": f"{p.factor_a} × {p.factor_b}",
-             "Cramér V": "non valutabile" if p.cramer_v is None else f"{p.cramer_v:.3f}",
-             "spiegazione": p.sentence} for p in result_d.pairs]), hide_index=True)
-        for note in result_d.notes:
-            st.caption(note)
 
 # --------------------------------------------------------------------------- #
+# Tab 2: Modulo A
+# --------------------------------------------------------------------------- #
+def folds_chart(r) -> alt.Chart:
+    df = pd.concat([
+        pd.DataFrame({"schema": "per paziente (onesto)", "fold": range(1, len(r.grouped.fold_scores) + 1),
+                      "macro-F1": r.grouped.fold_scores}),
+        pd.DataFrame({"schema": "casuale (leakage)", "fold": range(1, len(r.random.fold_scores) + 1),
+                      "macro-F1": r.random.fold_scores})])
+    summ = df.groupby("schema")["macro-F1"].agg(["mean", "std"]).reset_index()
+    summ["lo"], summ["hi"] = summ["mean"] - summ["std"], summ["mean"] + summ["std"]
+    color = alt.Color("schema:N", scale=alt.Scale(domain=["per paziente (onesto)", "casuale (leakage)"],
+                                                  range=["#1f3a5f", "#c0392b"]), legend=None)
+    y = alt.Y("schema:N", title=None)
+    pts = alt.Chart(df).mark_circle(size=90, opacity=.75).encode(
+        x=alt.X("macro-F1:Q", scale=alt.Scale(zero=False)), y=y, color=color,
+        tooltip=["schema", "fold", alt.Tooltip("macro-F1:Q", format=".3f")])
+    bars = alt.Chart(summ).mark_rule(strokeWidth=3).encode(x="lo:Q", x2="hi:Q", y=y, color=color)
+    mean = alt.Chart(summ).mark_tick(thickness=4, size=28).encode(
+        x="mean:Q", y=y, color=color,
+        tooltip=[alt.Tooltip("mean:Q", format=".3f", title="media"), alt.Tooltip("std:Q", format=".3f", title="dev. std")])
+    return (bars + mean + pts).properties(height=180)
+
+
+def jaccard_chart(m: np.ndarray, title: str) -> alt.Chart:
+    n = m.shape[0]
+    df = pd.DataFrame([{"fold i": f"F{i + 1}", "fold j": f"F{j + 1}", "Jaccard": float(m[i, j])}
+                       for i in range(n) for j in range(n)])
+    return alt.Chart(df).mark_rect().encode(
+        x=alt.X("fold i:N", title=None), y=alt.Y("fold j:N", title=None),
+        color=alt.Color("Jaccard:Q", scale=alt.Scale(domain=[0, 1], scheme="blues")),
+        tooltip=["fold i", "fold j", alt.Tooltip("Jaccard:Q", format=".2f")]).properties(title=title, height=220)
+
+
 with tab_a:
-    st.markdown(
-        "Confronta una valutazione onesta (split per paziente) con un controllo negativo "
-        "(split casuale sulle cellule, che ignora il paziente) per un task di classificazione "
-        "a tua scelta."
-    )
-    if use_demo:
-        leakage_adata = make_leakage_dataset(seed=0)
-        target_col, patient_col = "label", "patient_id"
-        st.caption(f"Dataset sintetico: {leakage_adata.n_obs:,} cellule, {len(leakage_adata.obs.patient_id.unique())} pazienti.")
-    elif adata is not None:
-        leakage_adata = adata
-        cols = list(adata.obs.columns)
-        target_col = st.selectbox("Colonna target (etichetta da classificare)", cols, key="target_col")
-        patient_col = st.selectbox("Colonna identificativo paziente", cols, key="patient_col")
+    st.markdown("Quanto una valutazione che non separa i pazienti fra training e test **sovrastima** "
+                "l'accuratezza di un classificatore cellulare, e quanto ne **sottostima** l'incertezza.")
+    a_ctx = st.session_state.a_ctx if mode == "Demo immediata" else None
+    if mode == "Carica studio":
+        adata = load_matrix_ui("a")
+        if adata is not None:
+            cols = list(adata.obs.columns)
+            c1, c2, c3 = st.columns(3)
+            target = c1.selectbox("Colonna target (etichetta da classificare)", cols, key="a_t")
+            patient = c2.selectbox("Colonna paziente", cols, key="a_p")
+            rapido = c3.checkbox("Rapido (senza confronto fra modelli)", key="a_r")
+            if st.button("Esegui Modulo A", type="primary"):
+                st.session_state.a_ctx = dict(adata=adata, target=target, patient=patient, rapido=rapido,
+                                              label=st.session_state.dataset_name)
+                st.session_state.leakage = None
+                st.session_state.run_a = True
+                a_ctx = st.session_state.a_ctx
+    if a_ctx is not None and st.session_state.leakage is None and (
+            st.session_state.autorun or st.session_state.run_a):
+        bar = st.progress(0.0, text="Modulo A in esecuzione...")
+        state = {"total": None}
+
+        def cb(msg: str) -> None:
+            if msg.startswith("Modulo A:"):
+                state["total"] = int(msg.split("Addestramenti previsti: ")[1].split()[0].rstrip("."))
+                bar.progress(0.0, text=msg)
+            elif msg.startswith("[") and state["total"]:
+                done = int(msg[1:msg.index("/")])
+                bar.progress(min(done / state["total"], 1.0), text=msg)
+        try:
+            st.session_state.leakage = run_leakage_audit(
+                a_ctx["adata"], target_col=a_ctx["target"], patient_col=a_ctx["patient"],
+                benchmark=not a_ctx["rapido"], progress=cb)
+        except ValueError as e:
+            st.error(str(e))
+        bar.empty()
+        st.session_state.run_a = False
+    r = st.session_state.leakage
+    if r is None:
+        st.info("Carica la demo dalla barra laterale oppure scegli 'Carica studio'.")
     else:
-        leakage_adata = None
-        st.info("Carica un file .h5ad o attiva i dati sintetici di esempio per procedere.")
+        verdict_line(leakage_verdict(r))
+        if a_ctx:
+            st.caption(f"Dataset: {a_ctx.get('label', '')}. {r.n_cells:,} cellule, {r.n_patients} pazienti, "
+                       f"{r.n_classes} classi; tempo di calcolo {r.elapsed_seconds:.0f} s.")
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("macro-F1 per paziente (onesta)", f"{r.grouped.mean:.3f}", f"± {r.grouped.std:.3f}", delta_color="off")
+        m2.metric("macro-F1 casuale (leakage)", f"{r.random.mean:.3f}", f"± {r.random.std:.3f}", delta_color="off")
+        m3.metric("Divario", f"{r.gap:+.3f}", f"soglia di allarme {GAP_ALERT:g}", delta_color="off")
+        m4.metric("Incertezza sottostimata", f"{r.std_ratio:.1f}x" if np.isfinite(r.std_ratio) else "—",
+                  "dev. std onesta / casuale", delta_color="off")
+        st.altair_chart(folds_chart(r), width="stretch")
+        st.caption("Punti = singoli fold; tacca = media; barra = media ± 1 deviazione standard fra fold. "
+                   "Non e' un intervallo di confidenza: i punteggi dei fold sono correlati (i training si "
+                   "sovrappongono) e un intervallo non sarebbe calibrato. Definizione: macro-F1 sulle "
+                   "sole classi presenti nel fold di test.")
+        st.markdown(r.narrative)
+        if r.grouped.n_folds_with_absent_classes:
+            st.subheader("Classi assenti dai fold di test (split per paziente)")
+            st.dataframe(pd.DataFrame({"fold": range(1, len(r.grouped.absent_classes) + 1),
+                                       "classi assenti": [", ".join(a) or "—" for a in r.grouped.absent_classes]}),
+                         hide_index=True)
+        if r.xai is not None and r.xai.grouped_matrix.shape[0] > 1:
+            st.subheader("Stabilita' delle spiegazioni (descrittiva)")
+            c1, c2 = st.columns(2)
+            c1.altair_chart(jaccard_chart(r.xai.grouped_matrix, f"split per paziente — media {r.xai.grouped_mean:.2f}"),
+                            width="stretch")
+            c2.altair_chart(jaccard_chart(r.xai.random_matrix, f"split casuale — media {r.xai.random_mean:.2f}"),
+                            width="stretch")
+            st.caption(f"Jaccard fra i {r.xai.k} geni con coefficiente piu' grande della regressione logistica "
+                       "nei diversi fold. Se togliere pazienti cambia i geni scelti piu' di quanto lo cambi "
+                       "togliere cellule a caso, l'informazione e' organizzata per paziente. Misura descrittiva, "
+                       "senza test statistico.")
+        if r.model_comparison is not None:
+            mc = r.model_comparison
+            st.subheader("Confronto fra modelli (un paziente alla volta fuori)")
+            rows = [{"modello": mc.best_model + " (migliore)", "macro-F1": round(mc.scores[mc.best_model].mean, 3),
+                     "p Nadeau-Bengio": "—", "p Wilcoxon": "—", "nota": ""}]
+            rows += [{"modello": c.model, "macro-F1": round(c.mean_macro_f1, 3),
+                      "p Nadeau-Bengio": f"{c.p_nadeau_bengio:.3f}", "p Wilcoxon": f"{c.p_wilcoxon:.3f}",
+                      "nota": c.note} for c in mc.comparisons]
+            st.dataframe(pd.DataFrame(rows), hide_index=True)
+            st.caption("Regressione logistica sui 2.000 geni piu' variabili; random forest e gradient boosting "
+                       "su 50 componenti SVD. Geni e componenti sono stimati sul solo training di ogni fold.")
 
-    if leakage_adata is not None:
-        n_folds = st.slider("Numero di fold", min_value=3, max_value=10, value=5, key="n_folds")
-        if st.button("Esegui Modulo A", type="primary"):
-            with st.spinner("Eseguo l'audit del leakage (puo' richiedere qualche minuto se ci sono molti pazienti)..."):
-                try:
-                    st.session_state.leakage_result = run_leakage_audit(
-                        leakage_adata, target_col=target_col, patient_col=patient_col, n_folds=n_folds,
-                    )
-                except ValueError as e:
-                    st.error(str(e))
 
-    result = st.session_state.leakage_result
-    if result is not None:
-        st.markdown(f"**{result.narrative}**")
-        c1, c2, c3 = st.columns(3)
-        c1.metric("macro-F1 — split per paziente (onesto)", f"{result.grouped.mean:.3f}", f"± {result.grouped.std:.3f}")
-        c2.metric("macro-F1 — split casuale (controllo negativo)", f"{result.random.mean:.3f}", f"± {result.random.std:.3f}")
-        c3.metric("Divario sulla media", f"{result.gap:+.3f}")
-
-        if result.model_comparison is not None:
-            st.subheader("Confronto fra modelli (LeaveOneGroupOut)")
-            mc = result.model_comparison
-            rows = [{"modello": name, "macro-F1 medio": s.mean, "dev. standard": s.std}
-                    for name, s in mc.scores.items()]
-            st.dataframe(pd.DataFrame(rows).sort_values("macro-F1 medio", ascending=False), hide_index=True)
-            st.caption(f"Modello migliore: **{mc.best_model}**")
-            comp_rows = [{"modello": c.model, "Δ vs migliore": c.delta_vs_best,
-                          "p (Nadeau-Bengio)": c.p_nadeau_bengio, "p (Wilcoxon)": c.p_wilcoxon,
-                          "nota": c.note} for c in mc.comparisons]
-            st.dataframe(pd.DataFrame(comp_rows), hide_index=True)
-        else:
-            st.caption(
-                f"Confronto multi-modello non eseguito (servono almeno 8 pazienti; questo "
-                f"dataset ne ha {result.n_patients})."
-            )
-
+# --------------------------------------------------------------------------- #
+# Tab 3: Modulo B
 # --------------------------------------------------------------------------- #
 with tab_b:
-    st.markdown(
-        "Misura, tramite il repertorio T-cell receptor, quanto le etichette di tipo cellulare "
-        "assegnate dal clustering sono coerenti per uno stesso clone attraverso i compartimenti "
-        "tissutali (es. sangue vs tumore)."
-    )
-    if use_demo:
-        tcr_adata, tcr_contigs = make_tcr_validation_dataset(seed=0)
-        patient_col_b, compartment_col_b, celltype_col_b, barcode_col_b = (
-            "patient_id", "tissue", "celltype", "barcode")
-        marker_map = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
-        reference_compartment = "PBMC"
-        st.caption(
-            f"Dataset sintetico: {tcr_adata.n_obs:,} cellule, discordanza cross-compartimento "
-            f"iniettata nel compartimento 'Tumor'."
-        )
-        run_ready = True
-    elif adata is not None:
-        cols = list(adata.obs.columns)
-        patient_col_b = st.selectbox("Colonna paziente", cols, key="patient_col_b")
-        compartment_col_b = st.selectbox("Colonna compartimento tissutale", cols, key="compartment_col_b")
-        celltype_col_b = st.selectbox("Colonna etichetta di tipo cellulare", cols, key="celltype_col_b")
-        barcode_col_b = st.selectbox("Colonna barcode cellula", cols, key="barcode_col_b")
-
-        st.markdown("**File VDJ Cell Ranger** (uno o piu' CSV)")
-        uploaded_vdj = st.file_uploader("CSV VDJ", type=["csv"], accept_multiple_files=True, key="vdj_files")
-        run_ready = False
-        tcr_adata, tcr_contigs = adata, None
-        if uploaded_vdj:
-            manifest = pd.DataFrame({
-                "file": [f.name for f in uploaded_vdj],
-                "patient": ["" for _ in uploaded_vdj],
-                "compartment": ["" for _ in uploaded_vdj],
-            })
-            st.caption("Indica paziente e compartimento per ciascun file (i CSV Cell Ranger non li contengono).")
-            edited = st.data_editor(manifest, hide_index=True, key="vdj_manifest_editor")
-            patient_filled = edited["patient"].fillna("").astype(str).str.strip() != ""
-            compartment_filled = edited["compartment"].fillna("").astype(str).str.strip() != ""
-            if patient_filled.all() and compartment_filled.all():
-                with tempfile.TemporaryDirectory() as tmp_dir:
-                    files = []
-                    for f, row in zip(uploaded_vdj, edited.itertuples()):
-                        p = Path(tmp_dir) / f.name
-                        p.write_bytes(f.getvalue())
-                        files.append((p, str(row.patient), str(row.compartment)))
-                    tcr_contigs = parse_vdj_contigs(files)
-                run_ready = True
-
-        st.markdown("**Marcatori canonici (opzionale)** -- per il tasso d'errore per compartimento")
-        marker_json = st.text_area(
-            "Mappa etichetta -> geni marcatori, in JSON",
-            value='{"CD8T": ["CD8A", "CD8B"], "CD4T": ["CD4"]}',
-            help="Lascia vuoto per saltare questa parte opzionale.",
-        )
-        marker_map = None
-        if marker_json.strip():
+    st.markdown("Usa il repertorio **TCR** come identita' indipendente dal trascrittoma: le cellule dello "
+                "stesso clone T dovrebbero avere la stessa etichetta in ogni compartimento.")
+    b_ctx = st.session_state.b_ctx if mode == "Demo immediata" else None
+    if mode == "Carica studio":
+        adata_b = load_matrix_ui("b")
+        if adata_b is not None:
+            cols = list(adata_b.obs.columns)
+            c = st.columns(4)
+            sel = dict(patient=c[0].selectbox("Paziente", cols, key="b_p"),
+                       compartment=c[1].selectbox("Compartimento", cols, key="b_c"),
+                       celltype=c[2].selectbox("Tipo cellulare", cols, key="b_t"),
+                       barcode=c[3].selectbox("Barcode", cols, key="b_b"))
+            man = st.text_input("Manifest VDJ (CSV con colonne path,patient,compartment)", key="b_man")
+            markers = st.text_area("Mappa marcatori (JSON)", value='{"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}', key="b_mk")
+            comps = sorted(adata_b.obs[sel["compartment"]].astype(str).unique())
+            ref = st.selectbox("Compartimento di riferimento (sangue)", comps, key="b_ref")
+            if man and st.button("Esegui Modulo B", type="primary"):
+                m = read_table(man)
+                contigs = parse_vdj_contigs([(Path(x.path), str(x.patient), str(x.compartment)) for x in m.itertuples()])
+                st.session_state.b_ctx = dict(adata=adata_b, contigs=contigs, markers=json.loads(markers),
+                                              reference=ref, label=st.session_state.dataset_name, **sel)
+                st.session_state.tcr = None
+                st.session_state.run_b = True
+                b_ctx = st.session_state.b_ctx
+    if b_ctx is not None and st.session_state.tcr is None and (
+            st.session_state.autorun or st.session_state.run_b):
+        with st.spinner("Modulo B in esecuzione..."):
             try:
-                marker_map = json.loads(marker_json)
-            except json.JSONDecodeError as e:
-                st.error(f"JSON non valido nella mappa marcatori: {e}")
-        compartment_options = [""] + sorted(adata.obs[compartment_col_b].astype(str).unique())
-        reference_compartment = st.selectbox(
-            "Compartimento di riferimento (tipicamente il sangue)", compartment_options,
-        ) or None
-    else:
-        run_ready = False
-        tcr_adata = tcr_contigs = None
-        st.info("Carica un file .h5ad o attiva i dati sintetici di esempio per procedere.")
-
-    if run_ready and st.button("Esegui Modulo B", type="primary"):
-        with st.spinner("Costruisco i clonotipi e calcolo la discordanza (cluster bootstrap: puo' richiedere qualche secondo)..."):
-            try:
-                st.session_state.tcr_result = run_tcr_validation(
-                    tcr_adata, tcr_contigs, patient_col=patient_col_b, compartment_col=compartment_col_b,
-                    celltype_col=celltype_col_b, barcode_col=barcode_col_b,
-                    marker_map=marker_map, reference_compartment=reference_compartment,
-                )
+                st.session_state.tcr = run_tcr_validation(
+                    b_ctx["adata"], b_ctx["contigs"], patient_col=b_ctx["patient"],
+                    compartment_col=b_ctx["compartment"], celltype_col=b_ctx["celltype"],
+                    barcode_col=b_ctx["barcode"], marker_map=b_ctx["markers"],
+                    reference_compartment=b_ctx["reference"])
+                st.session_state.tcr_table = tcr_by_celltype(
+                    b_ctx["adata"], b_ctx["contigs"], b_ctx["patient"], b_ctx["compartment"],
+                    b_ctx["celltype"], b_ctx["barcode"])
             except ValueError as e:
                 st.error(str(e))
-
-    result_b = st.session_state.tcr_result
-    if result_b is not None:
-        if result_b.barcode_match is not None:
-            st.caption(result_b.barcode_match.sentence)
-        st.markdown(f"**{result_b.narrative}**")
-        d = result_b.discordance
-        if d.sufficient:
-            c1, c2 = st.columns(2)
-            c1.metric("Eccesso di discordanza", f"{d.mean_excess:+.3f}")
-            c2.metric("IC95%", f"[{d.ci_low:+.3f}, {d.ci_high:+.3f}]")
-            st.dataframe(d.by_compartment_pair, hide_index=True)
-        else:
-            st.warning("Numerosita' insufficiente per una stima affidabile (servono almeno 5 pazienti).")
-
-        if result_b.conventions:
-            st.subheader("Tasso d'errore per compartimento (marcatori canonici)")
-            st.markdown("Ogni numero e' riportato con la sua convenzione; le convenzioni sono affiancate.")
-            for c in result_b.conventions.values():
+        st.session_state.run_b = False
+    t = st.session_state.tcr
+    if t is None:
+        st.info("Carica la demo dalla barra laterale oppure scegli 'Carica studio'.")
+    else:
+        verdict_line(tcr_verdict(t))
+        if b_ctx:
+            st.caption(f"Dataset: {b_ctx.get('label', '')}.")
+        if t.barcode_match is not None:
+            st.caption(t.barcode_match.sentence)
+        d = t.discordance
+        m1, m2 = st.columns(2)
+        m1.metric("Eccesso di discordanza fra compartimenti", f"{d.mean_excess:+.3f}")
+        m2.metric("IC 95% (bootstrap sui pazienti)",
+                  f"[{d.ci_low:+.3f}, {d.ci_high:+.3f}]" if d.sufficient else "non prodotto")
+        st.markdown(t.narrative)
+        if t.conventions:
+            st.subheader("Tasso d'errore dell'annotazione per compartimento")
+            for c in t.conventions.values():
                 st.markdown(f"- **{c.name}**: {c.definition}")
             rows = []
-            for c in result_b.conventions.values():
-                for comp, r in c.by_compartment.items():
-                    rows.append({"convenzione": c.name, "compartimento": comp, "tasso d'errore": f"{r.mean:.3f}",
-                                 "IC95%": f"[{r.ci_low:.3f}, {r.ci_high:.3f}]" if r.sufficient
-                                 else f"non prodotto ({r.n_groups} pazienti)", "pazienti": r.n_groups})
-                for (a, b), (r, n_cl) in c.paired_differences.items():
-                    rows.append({"convenzione": c.name, "compartimento": f"{a} − {b} (stessi cloni, {n_cl})",
-                                 "tasso d'errore": f"{r.mean:+.3f}",
-                                 "IC95%": f"[{r.ci_low:+.3f}, {r.ci_high:+.3f}]" if r.sufficient
-                                 else f"non prodotto ({r.n_groups} pazienti)", "pazienti": r.n_groups})
+            for c in t.conventions.values():
+                for comp, b in c.by_compartment.items():
+                    rows.append({"convenzione": c.name, "compartimento": comp, "tasso d'errore": f"{b.mean:.3f}",
+                                 "IC 95%": f"[{b.ci_low:.3f}, {b.ci_high:.3f}]" if b.sufficient
+                                 else f"non prodotto ({b.n_groups} pazienti)", "pazienti": b.n_groups})
             st.dataframe(pd.DataFrame(rows), hide_index=True)
-
-        if result_b.cell_flags is not None:
-            st.subheader("Flag per cellula")
-            st.markdown(
-                f"Cellule valutabili: **{result_b.flag_coverage:.1%}**. Le altre sono NA: non "
-                "verificabili (nessun TCR, clone senza riferimento, etichetta fuori dalla mappa "
-                "dei marcatori, o compartimento di riferimento). NA non significa \"corretta\"; "
-                "le etichette originali non vengono modificate."
-            )
-            st.download_button(
-                "Scarica i flag per cellula (CSV)",
-                result_b.cell_flags.to_csv(index_label="obs_name"),
-                file_name="audit_flags.csv", mime="text/csv",
-            )
-            if st.button("Prepara la copia .h5ad con i flag"):
-                with tempfile.TemporaryDirectory() as tmp_dir:
-                    try:
-                        h5ad_path, _ = export_audited(tcr_adata, result_b, Path(tmp_dir) / "dati")
-                        st.session_state.audited_h5ad = h5ad_path.read_bytes()
-                    except ValueError as e:
-                        st.error(str(e))
-            if st.session_state.get("audited_h5ad"):
-                st.download_button("Scarica dati_audited.h5ad", st.session_state.audited_h5ad,
-                                   file_name="dati_audited.h5ad")
-
-            st.subheader("Frazione di CD8: effetto dell'errore di annotazione")
+        if st.session_state.tcr_table is not None:
+            st.subheader("Cellule con TCR per etichetta (contaminazioni cross-lineage)")
+            st.dataframe(st.session_state.tcr_table)
+            st.caption("Tabella descrittiva. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) puo' essere un "
+                       "doppietto, RNA ambientale o un errore di annotazione: la tabella non li distingue e non "
+                       "classifica le singole cellule.")
+        if t.cell_flags is not None and b_ctx is not None:
+            st.download_button("Scarica i flag per cellula (CSV)", t.cell_flags.to_csv(index_label="obs_name"),
+                               file_name="audit_flags.csv", mime="text/csv")
+            st.caption(f"Cellule con flag valutabile: {t.flag_coverage:.1%}. NA = non verificabile, non 'corretta'.")
+            st.subheader("Frazione di CD8 validata dal repertorio")
             st.warning(EXPERIMENTAL_NOTE)
-            comp_options = sorted(tcr_adata.obs[compartment_col_b].astype(str).unique())
-            cd8_comp = st.selectbox("Compartimento", comp_options,
-                                    index=comp_options.index("Tumor") if "Tumor" in comp_options else 0,
-                                    key="cd8_comp")
-            labels = list(marker_map) if marker_map else ["CD4T", "CD8T"]
-            c1, c2 = st.columns(2)
-            cd4_label = c1.selectbox("Etichetta CD4", labels, index=0, key="cd4_label")
-            cd8_label = c2.selectbox("Etichetta CD8", labels, index=min(1, len(labels) - 1), key="cd8_label")
-            if st.button("Calcola gli intervalli sulla frazione di CD8"):
-                obs_flags = tcr_adata.obs.join(result_b.cell_flags)
-                st.session_state.cd8_result = cd8_fraction_intervals(
-                    obs_flags, patient_col=patient_col_b, compartment_col=compartment_col_b,
-                    celltype_col=celltype_col_b, reference_col="audit_reference_label",
-                    target_compartment=cd8_comp, cd4_label=cd4_label, cd8_label=cd8_label)
-            cd8_res = st.session_state.cd8_result
-            if cd8_res is not None:
-                if cd8_res.refused_reason:
-                    st.warning(f"Intervalli non prodotti: {cd8_res.refused_reason}.")
-                elif cd8_res.matrix is not None:
-                    st.caption(f"Matrice di confusione (pooled fra {cd8_res.n_reference_patients} pazienti, "
-                               f"J = {cd8_res.youden_j:.2f})")
-                    st.dataframe(cd8_res.matrix.round(3))
+            comps = sorted(b_ctx["adata"].obs[b_ctx["compartment"]].astype(str).unique())
+            comps = [c for c in comps if c != b_ctx["reference"]]
+            cd8_comp = st.selectbox("Compartimento", comps, key="cd8_comp")
+            if st.button("Calcola gli intervalli"):
+                obs_flags = b_ctx["adata"].obs.join(t.cell_flags)
+                labels = list(b_ctx["markers"])
+                st.session_state.cd8 = cd8_fraction_intervals(
+                    obs_flags, b_ctx["patient"], b_ctx["compartment"], b_ctx["celltype"],
+                    "audit_reference_label", cd8_comp, cd4_label=labels[0], cd8_label=labels[-1])
+            cd8 = st.session_state.cd8
+            if cd8 is not None:
+                if cd8.refused_reason:
+                    st.error(f"Intervalli non prodotti: {cd8.refused_reason}.")
 
-                def _iv(iv):
-                    return (f"{iv.low:.2f}–{iv.high:.2f}" if iv.low is not None
-                            else f"non prodotto: {iv.refused_reason}")
-                st.dataframe(pd.DataFrame([
-                    {"paziente": p.patient, "n (CD4+CD8)": p.n_cd4_called + p.n_cd8_called,
-                     "riportata": "—" if p.reported is None else f"{p.reported:.2f}",
-                     "errore 0.5x": _iv(p.scenarios[0.5]), "errore 1x": _iv(p.scenarios[1.0]),
-                     "errore 2x": _iv(p.scenarios[2.0])} for p in cd8_res.patients]), hide_index=True)
-                st.caption(cd8_res.assumptions)
+                def iv(x):
+                    return f"{x.low:.2f}–{x.high:.2f}" if x.low is not None else f"non prodotto: {x.refused_reason}"
+                st.dataframe(pd.DataFrame([{
+                    "paziente": p.patient, "n CD4+CD8": p.n_cd4_called + p.n_cd8_called,
+                    "riportata": "—" if p.reported is None else f"{p.reported:.2f}",
+                    "errore 0.5x": iv(p.scenarios[0.5]), "errore 1x": iv(p.scenarios[1.0]),
+                    "errore 2x": iv(p.scenarios[2.0])} for p in cd8.patients]), hide_index=True)
+                st.caption(cd8.assumptions)
+
 
 # --------------------------------------------------------------------------- #
-st.divider()
-if any(st.session_state[k] is not None for k in ("design_result", "leakage_result", "tcr_result", "cd8_result")):
-    report_html = render_report(
-        leakage_result=st.session_state.leakage_result, tcr_result=st.session_state.tcr_result,
-        dataset_name="demo sintetico" if use_demo else "dataset caricato",
-        design_result=st.session_state.design_result, cd8_result=st.session_state.cd8_result,
-    )
-    st.download_button("Scarica report HTML completo", report_html, file_name="report_audit.html",
-                        mime="text/html")
+# Verdetto e report
+# --------------------------------------------------------------------------- #
+with tab_v:
+    verdicts = []
+    if st.session_state.design is not None:
+        verdicts.append(design_verdict(st.session_state.design))
+    if st.session_state.leakage is not None:
+        verdicts.append(leakage_verdict(st.session_state.leakage))
+    if st.session_state.tcr is not None:
+        verdicts.append(tcr_verdict(st.session_state.tcr))
+    if not verdicts:
+        st.info("Esegui almeno una sezione per ottenere il verdetto.")
+    for v in verdicts:
+        st.markdown(f'<div class="card"><b>{html.escape(v.section)}</b> &nbsp; {badge(v.color, v.color.upper())}'
+                    f'<ul>{"".join(f"<li>{html.escape(x)}</li>" for x in v.reasons)}</ul>'
+                    f'<span class="small">Regola: {html.escape(v.rule)}</span></div>', unsafe_allow_html=True)
+    st.subheader("Limiti dichiarati")
+    for x in standing_limits(st.session_state.cd8):
+        st.markdown(f"- {x}")
+    if verdicts:
+        name = st.session_state.dataset_name or "studio"
+        md = render_markdown_report(st.session_state.design, st.session_state.leakage, st.session_state.tcr,
+                                    st.session_state.cd8, dataset_name=name)
+        page = render_report(leakage_result=st.session_state.leakage, tcr_result=st.session_state.tcr,
+                             dataset_name=name, design_result=st.session_state.design,
+                             cd8_result=st.session_state.cd8)
+        c1, c2 = st.columns(2)
+        c1.download_button("Scarica il report (Markdown)", md, file_name=f"report_{name}.md", mime="text/markdown")
+        c2.download_button("Scarica il report (HTML, stampabile in PDF dal browser)", page,
+                           file_name=f"report_{name}.html", mime="text/html")
+
+st.session_state.autorun = False

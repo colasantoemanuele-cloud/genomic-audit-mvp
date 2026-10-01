@@ -3,7 +3,7 @@ name = "genomic-audit"
 version = "0.1.0"
 description = "Audit del leakage per paziente e validazione dell'annotazione via TCR per coorti cliniche piccole"
 authors = [
-    { name = "Emanuele", email = "emanuele@localhost" }
+    { name = "Emanuele" }
 ]
 requires-python = ">=3.12"
 dependencies = [
@@ -14,15 +14,27 @@ dependencies = [
     "scikit-learn>=1.4",
     "scipy>=1.12",
     "streamlit>=1.35",
+    "altair>=5",
 ]
+
+[project.scripts]
+audit-sc = "cli:main"
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
 ]
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["core"]
+py-modules = ["cli", "app"]
+
 [tool.uv]
-package = false
+package = true
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
