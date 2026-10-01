@@ -516,8 +516,8 @@ def cell_flags(
 
 def export_audited(adata: ad.AnnData, result: "TcrValidationResult",
                    out_prefix: str | Path) -> tuple[Path, Path]:
-    """Scrive ``<prefisso>_audited.h5ad`` (COPIA di adata con le due colonne di flag in
-    obs e le definizioni in uns['genomic_audit_flags']) e ``<prefisso>_audit_flags.csv``
+    """Scrive ``<prefisso>_audited.h5ad`` (COPIA compressa gzip di adata con le due colonne
+    di flag in obs e le definizioni in uns['genomic_audit_flags']) e ``<prefisso>_audit_flags.csv``
     (obs_names + flag). L'AnnData passato non viene modificato; le colonne esistenti non
     vengono sovrascritte (errore se una colonna di flag esiste gia')."""
     if result.cell_flags is None:
@@ -536,7 +536,8 @@ def export_audited(adata: ad.AnnData, result: "TcrValidationResult",
         copy.obs[c] = result.cell_flags[c].values
     copy.obs["audit_reference_label"] = copy.obs["audit_reference_label"].astype("category")
     copy.uns["genomic_audit_flags"] = dict(FLAG_DEFINITIONS)
-    copy.write_h5ad(h5ad_path)
+    # gzip: senza compressione la copia di GSE278694 occupava 2.9 GB (input 845 MB)
+    copy.write_h5ad(h5ad_path, compression="gzip")
     result.cell_flags.to_csv(csv_path, index_label="obs_name")
     return h5ad_path, csv_path
 

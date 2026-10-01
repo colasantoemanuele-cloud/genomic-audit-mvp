@@ -365,7 +365,8 @@ with tab_b:
                     st.dataframe(cd8_res.matrix.round(3))
 
                 def _iv(iv):
-                    return f"{iv.low:.2f}–{iv.high:.2f}" if iv.low is not None else "non prodotto"
+                    return (f"{iv.low:.2f}–{iv.high:.2f}" if iv.low is not None
+                            else f"non prodotto: {iv.refused_reason}")
                 st.dataframe(pd.DataFrame([
                     {"paziente": p.patient, "n (CD4+CD8)": p.n_cd4_called + p.n_cd8_called,
                      "riportata": "—" if p.reported is None else f"{p.reported:.2f}",
