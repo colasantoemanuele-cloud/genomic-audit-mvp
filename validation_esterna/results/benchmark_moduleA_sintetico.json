@@ -1,0 +1,21 @@
+{
+ "dataset": "sintetico",
+ "cellule": 25000,
+ "geni": 20000,
+ "pazienti": 20,
+ "secondi": 373.6,
+ "entro_10_minuti": true,
+ "raggruppato": 1.0,
+ "casuale": 1.0,
+ "divario": 0.0,
+ "logo": {
+  "logreg": 1.0,
+  "random_forest": 1.0,
+  "hist_gb": 1.0
+ },
+ "fold_con_classi_assenti": 0,
+ "xai_jaccard": [
+  0.4832020877421751,
+  0.7147066022285444
+ ]
+}

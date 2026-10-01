@@ -1,0 +1,11 @@
+Modulo A: 9,946 cellule, 18,372 geni, 19 pazienti, 8 classi. Addestramenti previsti: 67.
+[1/67] split per paziente, fold 1/5 -- trascorsi 14 s, stima residua 906 s
+[2/67] split per paziente, fold 2/5 -- trascorsi 25 s, stima residua 821 s
+[3/67] split per paziente, fold 3/5 -- trascorsi 37 s, stima residua 800 s
+[4/67] split per paziente, fold 4/5 -- trascorsi 51 s, stima residua 808 s
+[5/67] split per paziente, fold 5/5 -- trascorsi 69 s, stima residua 857 s
+[6/67] split casuale, fold 1/5 -- trascorsi 85 s, stima residua 862 s
+[7/67] split casuale, fold 2/5 -- trascorsi 98 s, stima residua 841 s
+[8/67] split casuale, fold 3/5 -- trascorsi 113 s, stima residua 836 s
+[9/67] split casuale, fold 4/5 -- trascorsi 126 s, stima residua 813 s
+[10/67] split casuale, fold 5/5 -- trascorsi 140 s, stima residua 798 s

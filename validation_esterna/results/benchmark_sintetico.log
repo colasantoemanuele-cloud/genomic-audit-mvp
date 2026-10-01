@@ -1,0 +1,93 @@
+generazione: 44 s
+Modulo A: 25,000 cellule, 20,000 geni, 20 pazienti, 4 classi. Addestramenti previsti: 70.
+[1/70] split per paziente, fold 1/5 -- trascorsi 2 s, stima residua 159 s
+[2/70] split per paziente, fold 2/5 -- trascorsi 4 s, stima residua 152 s
+[3/70] split per paziente, fold 3/5 -- trascorsi 7 s, stima residua 147 s
+[4/70] split per paziente, fold 4/5 -- trascorsi 9 s, stima residua 143 s
+[5/70] split per paziente, fold 5/5 -- trascorsi 11 s, stima residua 141 s
+[6/70] split casuale, fold 1/5 -- trascorsi 13 s, stima residua 139 s
+[7/70] split casuale, fold 2/5 -- trascorsi 15 s, stima residua 136 s
+[8/70] split casuale, fold 3/5 -- trascorsi 17 s, stima residua 134 s
+[9/70] split casuale, fold 4/5 -- trascorsi 19 s, stima residua 131 s
+[10/70] split casuale, fold 5/5 -- trascorsi 22 s, stima residua 129 s
+[11/70] confronto modelli: logreg, fold 1/20 -- trascorsi 24 s, stima residua 126 s
+[12/70] confronto modelli: logreg, fold 2/20 -- trascorsi 26 s, stima residua 124 s
+[13/70] confronto modelli: logreg, fold 3/20 -- trascorsi 28 s, stima residua 121 s
+[14/70] confronto modelli: logreg, fold 4/20 -- trascorsi 30 s, stima residua 118 s
+[15/70] confronto modelli: logreg, fold 5/20 -- trascorsi 32 s, stima residua 116 s
+[16/70] confronto modelli: logreg, fold 6/20 -- trascorsi 33 s, stima residua 113 s
+[17/70] confronto modelli: logreg, fold 7/20 -- trascorsi 35 s, stima residua 111 s
+[18/70] confronto modelli: logreg, fold 8/20 -- trascorsi 38 s, stima residua 108 s
+[19/70] confronto modelli: logreg, fold 9/20 -- trascorsi 39 s, stima residua 106 s
+[20/70] confronto modelli: logreg, fold 10/20 -- trascorsi 41 s, stima residua 104 s
+[21/70] confronto modelli: logreg, fold 11/20 -- trascorsi 43 s, stima residua 101 s
+[22/70] confronto modelli: logreg, fold 12/20 -- trascorsi 45 s, stima residua 99 s
+[23/70] confronto modelli: logreg, fold 13/20 -- trascorsi 47 s, stima residua 97 s
+[24/70] confronto modelli: logreg, fold 14/20 -- trascorsi 49 s, stima residua 95 s
+[25/70] confronto modelli: logreg, fold 15/20 -- trascorsi 51 s, stima residua 93 s
+[26/70] confronto modelli: logreg, fold 16/20 -- trascorsi 53 s, stima residua 90 s
+[27/70] confronto modelli: logreg, fold 17/20 -- trascorsi 55 s, stima residua 88 s
+[28/70] confronto modelli: logreg, fold 18/20 -- trascorsi 57 s, stima residua 85 s
+[29/70] confronto modelli: logreg, fold 19/20 -- trascorsi 59 s, stima residua 83 s
+[30/70] confronto modelli: logreg, fold 20/20 -- trascorsi 61 s, stima residua 81 s
+[31/70] confronto modelli: random_forest, fold 1/20 -- trascorsi 68 s, stima residua 85 s
+[32/70] confronto modelli: random_forest, fold 2/20 -- trascorsi 74 s, stima residua 88 s
+[33/70] confronto modelli: random_forest, fold 3/20 -- trascorsi 81 s, stima residua 91 s
+[34/70] confronto modelli: random_forest, fold 4/20 -- trascorsi 88 s, stima residua 94 s
+[35/70] confronto modelli: random_forest, fold 5/20 -- trascorsi 96 s, stima residua 96 s
+[36/70] confronto modelli: random_forest, fold 6/20 -- trascorsi 104 s, stima residua 98 s
+[37/70] confronto modelli: random_forest, fold 7/20 -- trascorsi 110 s, stima residua 99 s
+[38/70] confronto modelli: random_forest, fold 8/20 -- trascorsi 117 s, stima residua 99 s
+[39/70] confronto modelli: random_forest, fold 9/20 -- trascorsi 124 s, stima residua 99 s
+[40/70] confronto modelli: random_forest, fold 10/20 -- trascorsi 131 s, stima residua 99 s
+[41/70] confronto modelli: random_forest, fold 11/20 -- trascorsi 138 s, stima residua 98 s
+[42/70] confronto modelli: random_forest, fold 12/20 -- trascorsi 145 s, stima residua 97 s
+[43/70] confronto modelli: random_forest, fold 13/20 -- trascorsi 152 s, stima residua 95 s
+[44/70] confronto modelli: random_forest, fold 14/20 -- trascorsi 159 s, stima residua 94 s
+[45/70] confronto modelli: random_forest, fold 15/20 -- trascorsi 166 s, stima residua 92 s
+[46/70] confronto modelli: random_forest, fold 16/20 -- trascorsi 173 s, stima residua 90 s
+[47/70] confronto modelli: random_forest, fold 17/20 -- trascorsi 180 s, stima residua 88 s
+[48/70] confronto modelli: random_forest, fold 18/20 -- trascorsi 187 s, stima residua 86 s
+[49/70] confronto modelli: random_forest, fold 19/20 -- trascorsi 193 s, stima residua 83 s
+[50/70] confronto modelli: random_forest, fold 20/20 -- trascorsi 200 s, stima residua 80 s
+[51/70] confronto modelli: hist_gb, fold 1/20 -- trascorsi 212 s, stima residua 79 s
+[52/70] confronto modelli: hist_gb, fold 2/20 -- trascorsi 225 s, stima residua 78 s
+[53/70] confronto modelli: hist_gb, fold 3/20 -- trascorsi 234 s, stima residua 75 s
+[54/70] confronto modelli: hist_gb, fold 4/20 -- trascorsi 242 s, stima residua 72 s
+[55/70] confronto modelli: hist_gb, fold 5/20 -- trascorsi 250 s, stima residua 68 s
+[56/70] confronto modelli: hist_gb, fold 6/20 -- trascorsi 258 s, stima residua 65 s
+[57/70] confronto modelli: hist_gb, fold 7/20 -- trascorsi 266 s, stima residua 61 s
+[58/70] confronto modelli: hist_gb, fold 8/20 -- trascorsi 274 s, stima residua 57 s
+[59/70] confronto modelli: hist_gb, fold 9/20 -- trascorsi 283 s, stima residua 53 s
+[60/70] confronto modelli: hist_gb, fold 10/20 -- trascorsi 291 s, stima residua 48 s
+[61/70] confronto modelli: hist_gb, fold 11/20 -- trascorsi 299 s, stima residua 44 s
+[62/70] confronto modelli: hist_gb, fold 12/20 -- trascorsi 307 s, stima residua 40 s
+[63/70] confronto modelli: hist_gb, fold 13/20 -- trascorsi 315 s, stima residua 35 s
+[64/70] confronto modelli: hist_gb, fold 14/20 -- trascorsi 324 s, stima residua 30 s
+[65/70] confronto modelli: hist_gb, fold 15/20 -- trascorsi 332 s, stima residua 26 s
+[66/70] confronto modelli: hist_gb, fold 16/20 -- trascorsi 340 s, stima residua 21 s
+[67/70] confronto modelli: hist_gb, fold 17/20 -- trascorsi 348 s, stima residua 16 s
+[68/70] confronto modelli: hist_gb, fold 18/20 -- trascorsi 357 s, stima residua 10 s
+[69/70] confronto modelli: hist_gb, fold 19/20 -- trascorsi 365 s, stima residua 5 s
+[70/70] confronto modelli: hist_gb, fold 20/20 -- trascorsi 374 s, stima residua 0 s
+{
+ "dataset": "sintetico",
+ "cellule": 25000,
+ "geni": 20000,
+ "pazienti": 20,
+ "secondi": 373.6,
+ "entro_10_minuti": true,
+ "raggruppato": 1.0,
+ "casuale": 1.0,
+ "divario": 0.0,
+ "logo": {
+  "logreg": 1.0,
+  "random_forest": 1.0,
+  "hist_gb": 1.0
+ },
+ "fold_con_classi_assenti": 0,
+ "xai_jaccard": [
+  0.4832020877421751,
+  0.7147066022285444
+ ]
+}

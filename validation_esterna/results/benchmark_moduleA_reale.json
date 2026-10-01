@@ -1,0 +1,21 @@
+{
+ "dataset": "reale",
+ "cellule": 9946,
+ "geni": 18372,
+ "pazienti": 19,
+ "secondi": 403.1,
+ "entro_10_minuti": true,
+ "raggruppato": 0.777640179913546,
+ "casuale": 0.8948344820651398,
+ "divario": 0.11719430215159388,
+ "logo": {
+  "logreg": 0.7711638057980308,
+  "random_forest": 0.765572290231095,
+  "hist_gb": 0.7867638373824469
+ },
+ "fold_con_classi_assenti": 0,
+ "xai_jaccard": [
+  0.27449887141284307,
+  0.3017012379548466
+ ]
+}

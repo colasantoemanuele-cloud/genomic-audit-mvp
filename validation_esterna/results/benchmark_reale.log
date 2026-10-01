@@ -1,0 +1,89 @@
+Modulo A: 9,946 cellule, 18,372 geni, 19 pazienti, 8 classi. Addestramenti previsti: 67.
+[1/67] split per paziente, fold 1/5 -- trascorsi 12 s, stima residua 791 s
+[2/67] split per paziente, fold 2/5 -- trascorsi 12 s, stima residua 389 s
+[3/67] split per paziente, fold 3/5 -- trascorsi 12 s, stima residua 256 s
+[4/67] split per paziente, fold 4/5 -- trascorsi 12 s, stima residua 189 s
+[5/67] split per paziente, fold 5/5 -- trascorsi 12 s, stima residua 154 s
+[6/67] split casuale, fold 1/5 -- trascorsi 24 s, stima residua 245 s
+[7/67] split casuale, fold 2/5 -- trascorsi 24 s, stima residua 206 s
+[8/67] split casuale, fold 3/5 -- trascorsi 24 s, stima residua 178 s
+[9/67] split casuale, fold 4/5 -- trascorsi 24 s, stima residua 155 s
+[10/67] split casuale, fold 5/5 -- trascorsi 24 s, stima residua 137 s
+[11/67] confronto modelli: logreg, fold 1/19 -- trascorsi 51 s, stima residua 258 s
+[12/67] confronto modelli: logreg, fold 2/19 -- trascorsi 51 s, stima residua 232 s
+[13/67] confronto modelli: logreg, fold 3/19 -- trascorsi 51 s, stima residua 210 s
+[14/67] confronto modelli: logreg, fold 4/19 -- trascorsi 51 s, stima residua 192 s
+[15/67] confronto modelli: logreg, fold 5/19 -- trascorsi 51 s, stima residua 175 s
+[16/67] confronto modelli: logreg, fold 6/19 -- trascorsi 51 s, stima residua 161 s
+[17/67] confronto modelli: logreg, fold 7/19 -- trascorsi 52 s, stima residua 152 s
+[18/67] confronto modelli: logreg, fold 8/19 -- trascorsi 52 s, stima residua 141 s
+[19/67] confronto modelli: logreg, fold 9/19 -- trascorsi 52 s, stima residua 131 s
+[20/67] confronto modelli: logreg, fold 10/19 -- trascorsi 52 s, stima residua 121 s
+[21/67] confronto modelli: logreg, fold 11/19 -- trascorsi 52 s, stima residua 113 s
+[22/67] confronto modelli: logreg, fold 12/19 -- trascorsi 56 s, stima residua 114 s
+[23/67] confronto modelli: logreg, fold 13/19 -- trascorsi 60 s, stima residua 115 s
+[24/67] confronto modelli: logreg, fold 14/19 -- trascorsi 62 s, stima residua 112 s
+[25/67] confronto modelli: logreg, fold 15/19 -- trascorsi 62 s, stima residua 105 s
+[26/67] confronto modelli: logreg, fold 16/19 -- trascorsi 62 s, stima residua 98 s
+[27/67] confronto modelli: logreg, fold 17/19 -- trascorsi 62 s, stima residua 92 s
+[28/67] confronto modelli: logreg, fold 18/19 -- trascorsi 62 s, stima residua 87 s
+[29/67] confronto modelli: logreg, fold 19/19 -- trascorsi 62 s, stima residua 82 s
+[30/67] confronto modelli: random_forest, fold 1/19 -- trascorsi 69 s, stima residua 85 s
+[31/67] confronto modelli: random_forest, fold 2/19 -- trascorsi 75 s, stima residua 87 s
+[32/67] confronto modelli: random_forest, fold 3/19 -- trascorsi 81 s, stima residua 89 s
+[33/67] confronto modelli: random_forest, fold 4/19 -- trascorsi 87 s, stima residua 90 s
+[34/67] confronto modelli: random_forest, fold 5/19 -- trascorsi 94 s, stima residua 91 s
+[35/67] confronto modelli: random_forest, fold 6/19 -- trascorsi 100 s, stima residua 91 s
+[36/67] confronto modelli: random_forest, fold 7/19 -- trascorsi 106 s, stima residua 91 s
+[37/67] confronto modelli: random_forest, fold 8/19 -- trascorsi 112 s, stima residua 91 s
+[38/67] confronto modelli: random_forest, fold 9/19 -- trascorsi 118 s, stima residua 90 s
+[39/67] confronto modelli: random_forest, fold 10/19 -- trascorsi 124 s, stima residua 89 s
+[40/67] confronto modelli: random_forest, fold 11/19 -- trascorsi 130 s, stima residua 88 s
+[41/67] confronto modelli: random_forest, fold 12/19 -- trascorsi 136 s, stima residua 86 s
+[42/67] confronto modelli: random_forest, fold 13/19 -- trascorsi 142 s, stima residua 85 s
+[43/67] confronto modelli: random_forest, fold 14/19 -- trascorsi 149 s, stima residua 83 s
+[44/67] confronto modelli: random_forest, fold 15/19 -- trascorsi 157 s, stima residua 82 s
+[45/67] confronto modelli: random_forest, fold 16/19 -- trascorsi 164 s, stima residua 80 s
+[46/67] confronto modelli: random_forest, fold 17/19 -- trascorsi 170 s, stima residua 78 s
+[47/67] confronto modelli: random_forest, fold 18/19 -- trascorsi 176 s, stima residua 75 s
+[48/67] confronto modelli: random_forest, fold 19/19 -- trascorsi 181 s, stima residua 72 s
+[49/67] confronto modelli: hist_gb, fold 1/19 -- trascorsi 193 s, stima residua 71 s
+[50/67] confronto modelli: hist_gb, fold 2/19 -- trascorsi 204 s, stima residua 69 s
+[51/67] confronto modelli: hist_gb, fold 3/19 -- trascorsi 215 s, stima residua 67 s
+[52/67] confronto modelli: hist_gb, fold 4/19 -- trascorsi 226 s, stima residua 65 s
+[53/67] confronto modelli: hist_gb, fold 5/19 -- trascorsi 237 s, stima residua 63 s
+[54/67] confronto modelli: hist_gb, fold 6/19 -- trascorsi 249 s, stima residua 60 s
+[55/67] confronto modelli: hist_gb, fold 7/19 -- trascorsi 261 s, stima residua 57 s
+[56/67] confronto modelli: hist_gb, fold 8/19 -- trascorsi 273 s, stima residua 54 s
+[57/67] confronto modelli: hist_gb, fold 9/19 -- trascorsi 284 s, stima residua 50 s
+[58/67] confronto modelli: hist_gb, fold 10/19 -- trascorsi 296 s, stima residua 46 s
+[59/67] confronto modelli: hist_gb, fold 11/19 -- trascorsi 308 s, stima residua 42 s
+[60/67] confronto modelli: hist_gb, fold 12/19 -- trascorsi 319 s, stima residua 37 s
+[61/67] confronto modelli: hist_gb, fold 13/19 -- trascorsi 331 s, stima residua 33 s
+[62/67] confronto modelli: hist_gb, fold 14/19 -- trascorsi 342 s, stima residua 28 s
+[63/67] confronto modelli: hist_gb, fold 15/19 -- trascorsi 354 s, stima residua 23 s
+[64/67] confronto modelli: hist_gb, fold 16/19 -- trascorsi 369 s, stima residua 17 s
+[65/67] confronto modelli: hist_gb, fold 17/19 -- trascorsi 380 s, stima residua 12 s
+[66/67] confronto modelli: hist_gb, fold 18/19 -- trascorsi 392 s, stima residua 6 s
+[67/67] confronto modelli: hist_gb, fold 19/19 -- trascorsi 403 s, stima residua 0 s
+{
+ "dataset": "reale",
+ "cellule": 9946,
+ "geni": 18372,
+ "pazienti": 19,
+ "secondi": 403.1,
+ "entro_10_minuti": true,
+ "raggruppato": 0.777640179913546,
+ "casuale": 0.8948344820651398,
+ "divario": 0.11719430215159388,
+ "logo": {
+  "logreg": 0.7711638057980308,
+  "random_forest": 0.765572290231095,
+  "hist_gb": 0.7867638373824469
+ },
+ "fold_con_classi_assenti": 0,
+ "xai_jaccard": [
+  0.27449887141284307,
+  0.3017012379548466
+ ]
+}
