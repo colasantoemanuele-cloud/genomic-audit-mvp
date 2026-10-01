@@ -74,6 +74,14 @@ ASSUMPTIONS_TEXT = (
 )
 
 
+EXPERIMENTAL_NOTE = (
+    "FUNZIONE SPERIMENTALE. Nei test di robustezza (cloni condivisi con il sangue che sbagliano "
+    "piu' o meno degli altri) nessuno dei tre scenari garantisce la copertura nominale "
+    "dell'intervallo al 95%. Sui dati reali su cui e' stata provata (GSE278694) gli intervalli "
+    "sono risultati molto ampi, e lo scenario 2x non era calcolabile. Gli intervalli non vanno "
+    "letti come una stima della frazione vera di CD8."
+)
+
 SCENARIO_WARNING = (
     "Per ogni paziente: frazione di cellule etichettate CD8 sul totale delle cellule etichettate "
     "CD4 o CD8 nel compartimento (denominatore dichiarato), intervallo dei soli conteggi (senza "
@@ -360,7 +368,8 @@ def format_cd8_text(result: CD8PropagationResult) -> str:
     widths = [max(len(r[i]) for r in [header] + rows) for i in range(len(header))]
     line = lambda r: "  ".join(v.ljust(w) for v, w in zip(r, widths))  # noqa: E731
     head = result.narrative.split(SCENARIO_WARNING)[0].strip()
-    out = [f"Frazione di CD8 nel compartimento '{result.target_compartment}'", head, SCENARIO_WARNING, "",
+    out = [f"Frazione di CD8 nel compartimento '{result.target_compartment}'", EXPERIMENTAL_NOTE, "",
+           head, SCENARIO_WARNING, "",
            line(header), line(["-" * w for w in widths])] + [line(r) for r in rows]
     if notes:
         out.append("")

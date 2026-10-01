@@ -509,3 +509,78 @@ Frase sulla "direzione plausibile del bias": riformulata in modo meno sicuro ("e
 
   Tutte le differenze sono spiegate da definizioni o soglie, riprodotte esattamente e senza tarare parametri.
 - **Dati reali:** nessun sottocampionamento (picco 6,1 GB). Serve un passo manuale di normalizzazione dei barcode (annotato in NOTE.md).
+
+---
+
+## Pulizia finale (4 correzioni)
+
+Suite **prima**: 66 passed, 2 xfailed (`logs/pytest_prima_pulizia.txt`). **Dopo**: **74 passed, 2 xfailed**, 0 FAILED, 0 SKIPPED, 580 s (`logs/pytest_dopo_pulizia.txt`). I 3 test sui dati reali sono stati eseguiti: i dati di `pdac-ml` sono presenti su questa macchina; dove mancano, il test viene saltato e ne dichiara il motivo.
+
+**File toccati:**
+- `core/tcr_validation.py` (punti 1, 2, 3: solo aggiunte, piu' la compressione nell'export);
+- `cli.py`, `core/report.py`, `app.py`, `core/cd8_propagation.py` (solo testo: avvertenza sperimentale);
+- `.gitignore`, `README.md`, `NOTE.md`;
+- test: `tests/test_tcr_flags.py` (regressione: i numeri restano a 1e-12, il testo narrativo e' cambiato di proposito), `tests/test_real_data_gse278694.py`, `tests/test_barcode_match.py`, `tests/test_cd8_format.py`;
+- `validation/gse278694_cd8_diagnostic.py` e `validation/results/*`.
+
+**`core/stats.py` NON toccato** (`git diff cf61e76 -- core/stats.py` e' vuoto).
+
+### 1. Convenzioni affiancate
+Output reale (`cli.py tcr` su GSE278694 con `--clone-error-labels NK --clone-marker-priority CD8T,CD4T`, file `validation/results/cli_tcr_real_conventions_tesi.txt`):
+
+> [cell] per cellula: ogni cellula giudicata e' un'unita'; etichette fuori dalla mappa dei marcatori escluse -- 'Adjacent_normal': 0.041, IC non prodotto (4 pazienti, ne servono almeno 5). 'Tumor': 0.093 (IC95% [0.050, 0.144], 10 pazienti). Differenza 'Tumor' - 'Adjacent_normal' sugli stessi cloni: +0.021, IC non prodotto (4 pazienti), 132 cloni. [clone] per clone: un'unita' per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza; etichette fuori mappa contate come errore (etichette ammesse fuori mappa: NK); positivita' esclusiva in ordine CD8T > CD4T -- 'Adjacent_normal': 0.059, IC non prodotto (4 pazienti, ne servono almeno 5). 'Tumor': 0.195 (IC95% [0.123, 0.274], 10 pazienti). Differenza 'Tumor' - 'Adjacent_normal' sugli stessi cloni: +0.080, IC non prodotto (4 pazienti), 88 cloni.
+
+Il test sui dati reali verifica la riproduzione esatta (tolleranza 1e-12): Tumor 0.1951 [0.1230; 0.2737], Adjacent 0.0593, Tumor − Adj +0.0795 su 88 cloni. Con i default della convenzione per clone (tutte le etichette fuori mappa contate come errore, positivita' non esclusiva) il tumore e' 0.197 [0.124; 0.276].
+
+Decisioni:
+- servono due parametri dichiarati (`--clone-error-labels`, `--clone-marker-priority`), perche' senza uno dei due la riproduzione non e' esatta (0.1979 senza l'esclusivita', 0.1938 senza il filtro sulle etichette);
+- default `--convention both`;
+- l'IC della differenza non e' prodotto perche' ci sono 4 pazienti, sotto la soglia di 5 dell'MVP;
+- i flag per cellula restano nella convenzione per cellula.
+
+### 2. Match dei barcode
+Output reale con i file VDJ originali di `pdac-ml`, senza preparazione manuale:
+
+> Barcode VDJ (cellule con TRB) ritrovati nei metadati per paziente, compartimento e barcode: 105,809/123,280 (85.8%). Normalizzato il suffisso -1: rimosso da 123,280 barcode VDJ e da 0 barcode dei metadati (prima della normalizzazione: 0.0%).
+
+I numeri sono identici a quelli ottenuti prima con i barcode preparati a mano.
+
+Decisioni:
+- la chiave di match resta (paziente, compartimento, barcode);
+- la normalizzazione si applica solo se aumenta il match e non fonde barcode diversi (es. "-1" e "-2" dello stesso campione);
+- sotto il 50% viene sollevato un errore con 3 esempi per lato.
+
+Test sintetici: stesso suffisso sui due lati, nessuna normalizzazione (100%); suffisso solo sul lato VDJ, normalizzato e dichiarato, con numeri e flag identici; collisione, normalizzazione rifiutata ed errore; nessun match, errore "solo il 0.0%…" con esempi.
+
+### 3. Export compresso e motivi di rifiuto nell'app
+- `sc_raw_audited.h5ad` su GSE278694: **2,904,147,974 byte senza compressione → 844,778,382 con gzip** (−71%; l'input e' 844,714,396 byte). I flag riletti sono identici. Il tempo della CLI con export passa da 69 s a 95 s.
+- Nell'app la colonna dello scenario rifiutato mostra ora il motivo, verificato con AppTest sulla demo: "non prodotto: matrice di confusione mal condizionata (J = -0.51; …)".
+
+### 4. Frazione di CD8: "sperimentale" + diagnostica
+L'avvertenza fissa `EXPERIMENTAL_NOTE` compare in cima alla sezione in CLI (seconda riga), nel report HTML (prima della tabella, verificato da test) e nell'app (`st.warning`). Nessun calcolo e' cambiato.
+
+Diagnostica (`validation/gse278694_cd8_diagnostic.py`, tumore, 10 pazienti):
+
+| Margine | Min cellule nel sangue | Cloni di riferimento (CD4/CD8) | Cloni usati nel tumore | P(chiamata CD8 \| vera CD4) | P(chiamata CD4 \| vera CD8) | J | Cloni CD4 rif. con ≥1 cellula CD8A+ nel sangue |
+|---|---|---|---|---|---|---|---|
+| 0.20 | 3 | 869 (264/605) | 525 | 0.447 | 0.006 | 0.481 | 22.0% (58/264) |
+| 0.20 | 5 | 496 (143/353) | 361 | 0.443 | 0.005 | 0.476 | 35.7% (51/143) |
+| 0.40 | 3 | 774 (181/593) | 476 | 0.429 | 0.006 | 0.496 | 20.4% (37/181) |
+| 0.40 | 5 | 452 (106/346) | 327 | 0.446 | 0.005 | 0.469 | 31.1% (33/106) |
+
+Interpretazione prudente:
+- Il 45% **non scende** con soglie piu' stringenti (0.429–0.447): non e' spiegato da margine e numero minimo di cellule.
+- Questo non lo rende un risultato biologico. La diagnostica non tocca altri aspetti del riferimento, cioe' la positivita' definita come "conta > 0" (sensibile al dropout di CD4 e all'RNA ambientale) e il fatto che dal 20 al 36% dei cloni "CD4" di riferimento ha almeno una cellula CD8A+ nel sangue.
+- La quota con almeno una cellula CD8A+ cresce con il minimo di cellule, come ci si aspetta da un "almeno una" su piu' cellule.
+- Annotato in NOTE.md come punto aperto.
+
+### Anomalie
+- **Errore mio nella Parte A.** `.gitignore` conteneva `results/`, che escludeva anche `validation/results/`. Nei commit della Parte A gli output reali NON erano versionati, anche se il resoconto li indicava cosi'. Corretto in Pulizia 1, con un'eccezione in `.gitignore` e i file aggiunti.
+- Nel test della collisione ho usato `DataFrame._append`, che non esiste in questa versione di pandas: corretto in `pd.concat`.
+
+### Limiti
+- La convenzione per clone e' riprodotta esattamente solo con i parametri della tesi. I suoi default (tutte le etichette fuori mappa, positivita' non esclusiva) danno numeri vicini ma diversi.
+- La soglia del 50% sul match dei barcode e' una scelta mia, non calibrata.
+- La normalizzazione tratta solo il suffisso "-N", non altri formati (prefissi di campione, ecc.).
+- La compressione allunga l'export di circa 26 s su questo dataset.
+- La diagnostica del punto 4 non spiega il 45%: esclude solo due cause.

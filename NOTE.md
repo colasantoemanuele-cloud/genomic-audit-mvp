@@ -46,14 +46,16 @@ impegno.
 
 ## Emerse dalla validazione su dati reali (GSE278694, Parte A)
 
-- **Normalizzazione dei barcode.** Nell'`obs` di GSE278694 il barcode e' la sola sequenza di 16 nt,
+- *(Risolto in Pulizia 2: match dei barcode riportato, suffisso -N normalizzato e dichiarato.)*
+  **Normalizzazione dei barcode.** Nell'`obs` di GSE278694 il barcode e' la sola sequenza di 16 nt,
   mentre nei CSV VDJ di Cell Ranger e' "AAAC...-1". Il Modulo B richiede una corrispondenza
   esatta: sui dati reali ho dovuto preparare copie dei CSV VDJ senza il suffisso. Un'opzione
   esplicita (es. `--strip-barcode-suffix`) eviterebbe il passaggio manuale.
-- **Export di dimensioni elevate.** `export_audited` scrive la copia `.h5ad` senza compressione:
+- *(Risolto in Pulizia 3: export con gzip, 2,9 GB -> 845 MB.)* **Export di dimensioni elevate.** `export_audited` scrive la copia `.h5ad` senza compressione:
   2,9 GB per un input di 845 MB. Si potrebbe usare `compression="gzip"`, oppure esportare
   solo `obs` + flag.
-- **Definizione del tasso d'errore rispetto alla tesi.** `marker_error_rate` esclude le cellule
+- *(Risolto in Pulizia 1: convenzioni "per cellula" e "per clone" affiancate.)*
+  **Definizione del tasso d'errore rispetto alla tesi.** `marker_error_rate` esclude le cellule
   etichettate NK; la tesi le conta come errore (+0,070 nel tumore) e conta per coppia
   clone-compartimento invece che per cellula (+0,033). Sono scelte entrambe difendibili;
   un'opzione per la definizione della tesi renderebbe i due numeri confrontabili senza
@@ -62,3 +64,12 @@ impegno.
   CD4) = 0,45: con questa matrice lo scenario 1x porta l'intervallo a toccare 0 in 8 pazienti
   su 13, e lo scenario 2x non e' calcolabile. Prima di usare la correzione su dati reali
   andrebbe verificato se i cloni condivisi con il sangue sono rappresentativi (vedi B3).
+
+## Emerse dalla pulizia finale
+
+- **P(chiamata CD8 | vera CD4) = 0,45 nel tumore non dipende dalle soglie del riferimento**
+  (0,429-0,447 con margine 0,20/0,40 e minimo 3/5 cellule nel sangue). Restano da verificare
+  altri aspetti del riferimento che la diagnostica non tocca: la positivita' come "conta > 0"
+  (sensibile al dropout di CD4 e all'RNA ambientale; la tesi in 10_loco.py prova una soglia
+  sull'ambient), e il fatto che dal 20% al 36% dei cloni "CD4" di riferimento ha almeno una
+  cellula CD8A+ nel sangue.

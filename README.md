@@ -41,6 +41,19 @@ etichetta -> geni marcatori canonici, calcola anche il tasso d'errore per compar
 usando come riferimento un solo compartimento (tipicamente il sangue), per evitare la
 circolarita' di stimare il riferimento sugli stessi dati che poi si giudicano.
 
+**Modulo B -- Convenzioni del tasso d'errore.** Il tasso d'errore rispetto al riferimento
+dal sangue e' riportato con due convenzioni affiancate, ciascuna con nome e definizione
+(`--convention both|cell|clone`, default `both`):
+- *per cellula* (etichette fuori mappa escluse);
+- *per clone* (un'unita' per coppia clone-compartimento con almeno 3 cellule, etichetta di
+  maggioranza, etichette fuori mappa contate come errore).
+
+Con `--clone-error-labels NK --clone-marker-priority CD8T,CD4T` la convenzione per clone
+riproduce esattamente i numeri della tesi su GSE278694 (tumore 0,1951 contro 0,093 per
+cellula). Prima di ogni calcolo il Modulo B riporta la frazione di barcode VDJ ritrovati nei
+metadati e normalizza, dichiarandolo, il suffisso "-N" quando serve. Sotto il 50% di match
+si ferma con un errore.
+
 **Modulo B -- Flag per cellula.** Con la mappa dei marcatori e il compartimento di
 riferimento, il Modulo B scrive in una COPIA dell'AnnData (`<nome>_audited.h5ad`) e in un
 CSV due colonne per cellula: `audit_reference_label`, l'identita' del clone stimata nel
@@ -48,7 +61,7 @@ sangue, e `audit_label_vs_reference`, True/False se l'etichetta assegnata discor
 concorda. Il valore e' `NA` dove la cellula non era verificabile. La media dei flag
 valutabili di un compartimento coincide esattamente con il tasso d'errore del Modulo B.
 
-**Modulo B -- Frazione di CD8 con l'errore propagato.** Per ogni paziente, nel
+**Modulo B -- Frazione di CD8 con l'errore propagato (SPERIMENTALE).** Per ogni paziente, nel
 compartimento scelto: frazione di cellule etichettate CD8 sul totale delle CD4+CD8, e
 intervallo plausibile al 95% dopo l'inversione di una matrice di confusione con direzione
 (vera CD4/CD8 -> chiamata CD4/CD8/altro), stimata sulle cellule con identita' di

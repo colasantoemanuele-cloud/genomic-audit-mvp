@@ -17,7 +17,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from core.cd8_propagation import SCENARIO_WARNING, CD8PropagationResult, refusal_notes
+from core.cd8_propagation import (
+    EXPERIMENTAL_NOTE,
+    SCENARIO_WARNING,
+    CD8PropagationResult,
+    refusal_notes,
+)
 from core.design_audit import DesignAuditResult
 from core.leakage_audit import LeakageAuditResult, ModelComparisonResult
 from core.tcr_validation import MarkerErrorResult, TcrValidationResult
@@ -367,6 +372,7 @@ def _cd8_section(r: CD8PropagationResult) -> str:
         f"<h2>Frazione di CD8 nel compartimento '{html.escape(r.target_compartment)}': "
         f"effetto dell'errore di annotazione</h2>",
         '<div class="card verdict-warn">' if r.refused_reason is None else '<div class="card verdict-no">',
+        f'<p class="narrative"><span class="tag tag-warn">sperimentale</span> <b>{html.escape(EXPERIMENTAL_NOTE)}</b></p>',
         f'<p class="narrative">{html.escape(SCENARIO_WARNING)}</p>',
     ]
     if r.refused_reason:

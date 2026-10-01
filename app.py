@@ -12,7 +12,7 @@ import anndata as ad
 import pandas as pd
 import streamlit as st
 
-from core.cd8_propagation import cd8_fraction_intervals
+from core.cd8_propagation import EXPERIMENTAL_NOTE, cd8_fraction_intervals
 from core.design_audit import TECHNICAL_ROLES, run_design_audit, sample_sheet_from_obs
 from core.leakage_audit import run_leakage_audit
 from core.report import render_report
@@ -341,6 +341,7 @@ with tab_b:
                                    file_name="dati_audited.h5ad")
 
             st.subheader("Frazione di CD8: effetto dell'errore di annotazione")
+            st.warning(EXPERIMENTAL_NOTE)
             comp_options = sorted(tcr_adata.obs[compartment_col_b].astype(str).unique())
             cd8_comp = st.selectbox("Compartimento", comp_options,
                                     index=comp_options.index("Tumor") if "Tumor" in comp_options else 0,

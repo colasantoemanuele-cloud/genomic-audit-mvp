@@ -13,7 +13,7 @@ import json
 
 import pytest
 
-from core.cd8_propagation import ASSUMPTIONS_TEXT, SCENARIO_WARNING, format_cd8_text
+from core.cd8_propagation import ASSUMPTIONS_TEXT, EXPERIMENTAL_NOTE, SCENARIO_WARNING, format_cd8_text
 from core.report import render_report
 from tests.fixtures.cd8_regression import BASELINE_PATH, CONFIGS, run_config, summarize
 from tests.test_tcr_flags import _assert_close
@@ -45,3 +45,12 @@ def test_html_section_states_warning_and_reasons_once():
     assert page.count("Nessuno scenario") == 1
     assert page.count("matrice di confusione mal condizionata") == 1
     assert page.count("<tr><td>P0") == len(res.patients)
+
+
+def test_experimental_note_at_top_of_cli_and_html():
+    res = run_config("simmetrico")
+    txt = format_cd8_text(res)
+    assert txt.splitlines()[1] == EXPERIMENTAL_NOTE and txt.count(EXPERIMENTAL_NOTE) == 1
+    page = render_report(cd8_result=res, dataset_name="test")
+    section = page[page.index("Frazione di CD8 nel compartimento"):]
+    assert section.index("FUNZIONE SPERIMENTALE") < section.index("<table>")

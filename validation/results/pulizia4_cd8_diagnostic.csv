@@ -1,0 +1,5 @@
+margine,min cellule sangue,cloni di riferimento (tutti),cloni CD4 / CD8 di riferimento,cloni usati nel tumore,cellule tumore con riferimento,pazienti,P(chiamata CD8 | vera CD4),P(chiamata CD4 | vera CD8),J,cloni CD4 rif. con >=1 cellula CD8A+ nel sangue
+0.2,3,869,264 / 605,525,4851,10,0.447,0.006,0.481,22.0% (58/264)
+0.2,5,496,143 / 353,361,3636,10,0.443,0.005,0.476,35.7% (51/143)
+0.4,3,774,181 / 593,476,4649,10,0.429,0.006,0.496,20.4% (37/181)
+0.4,5,452,106 / 346,327,3494,10,0.446,0.005,0.469,31.1% (33/106)
