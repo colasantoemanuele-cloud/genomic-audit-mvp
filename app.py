@@ -358,6 +358,13 @@ with tab_a:
             st.dataframe(pd.DataFrame(rows), hide_index=True)
             st.caption("Regressione logistica sui 2.000 geni piu' variabili; random forest e gradient boosting "
                        "su 50 componenti SVD. Geni e componenti sono stimati sul solo training di ogni fold.")
+            ref = mc.scores["logreg"]
+            if ref.n_folds_with_absent_classes:
+                with st.expander(f"Classi assenti dal paziente lasciato fuori: {ref.n_folds_with_absent_classes} "
+                                 f"fold su {len(ref.fold_scores)} (macro-F1 calcolata sulle classi presenti)"):
+                    st.dataframe(pd.DataFrame({"fold (paziente)": range(1, len(ref.absent_classes) + 1),
+                                               "classi assenti": [", ".join(a) or "—" for a in ref.absent_classes]}),
+                                 hide_index=True)
 
 
 # --------------------------------------------------------------------------- #

@@ -139,3 +139,26 @@ Su questa coorte si valutano A1-A4 con gli stessi criteri della sezione 3. Il te
 dell'esecuzione sul dataset completo e' riportato come risultato. L'esecuzione completa resta
 attiva a priorita' minima: se termina, i suoi numeri saranno riportati. L'audit del disegno
 non cambia: e' gia' stato valutato sui dataset completi.
+
+## 6. Nuovo motore del Modulo A (2026-10-02), deciso dall'utente dopo la sezione 5
+
+Dopo la sezione 5 l'utente ha chiesto di correggere l'architettura del Modulo A, giudicata
+non praticabile su dati reali, e di rifare la validazione sul dataset COMPLETO GSE125449 (19
+pazienti). La coorte ridotta della sezione 5 resta solo come dataset della demo.
+
+I criteri A1-A4 restano invariati. Cambia la pipeline dichiarata che lo script indipendente
+(A2) deve riprodurre, perche' e' cambiato lo strumento:
+- log-CPM a 1e4 per cellula;
+- i 2000 geni con varianza piu' alta dei valori log-CPM, stimata sul SOLO training del fold
+  (a parita' vince l'indice piu' basso);
+- StandardScaler senza centratura;
+- LogisticRegression(C=1, class_weight="balanced", max_iter=1000, seme 0);
+- StratifiedGroupKFold a min(5, n pazienti) fold, shuffle, seme 0;
+- training limitato a 20.000 cellule per fold (non attivo su GSE125449: training < 20.000);
+- macro-F1 calcolata sulle classi presenti nel fold di test (y_true), come richiesto
+  dall'utente; le classi assenti sono dichiarate.
+
+A2 confronta le macro-F1 per fold dello strumento con quelle dello script indipendente (split
+per paziente, split casuale e LeaveOneGroupOut della regressione logistica), con differenza
+assoluta ≤ 0.02. A4(c) e' ora atteso come gestito: un fold perfetto con una classe assente deve
+valere 1.0 e la classe assente deve essere dichiarata.

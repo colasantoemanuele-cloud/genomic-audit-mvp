@@ -23,6 +23,7 @@ pdac-ml/src/11_model_zoo.py.
 from __future__ import annotations
 
 import time
+import warnings
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
@@ -33,6 +34,7 @@ import scipy.sparse as sp
 from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.decomposition import TruncatedSVD
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.model_selection import LeaveOneGroupOut, StratifiedGroupKFold, StratifiedKFold
@@ -165,6 +167,7 @@ class SchemeSummary:
     absent_classes: list[list[str]] = field(default_factory=list)
     n_train_before_cap: list[int] = field(default_factory=list)
     top_genes: list[list[str]] = field(default_factory=list)
+    not_converged: list[bool] = field(default_factory=list)
 
     @property
     def mean(self) -> float:
@@ -177,6 +180,10 @@ class SchemeSummary:
     @property
     def n_folds_with_absent_classes(self) -> int:
         return sum(bool(a) for a in self.absent_classes)
+
+    @property
+    def n_not_converged(self) -> int:
+        return sum(self.not_converged)
 
     @property
     def capped(self) -> bool:
@@ -219,10 +226,13 @@ def _fit_fold(X, y, groups, tr, te, i, classes, make_pipe, max_train, seed, gene
             f"i pazienti del test non resta nessuna cellula delle altre classi. Succede quando una "
             f"classe compare in un solo paziente: servono almeno 2 pazienti per classe.")
     pipe = make_pipe()
-    pipe.fit(X[tr], y[tr])
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", ConvergenceWarning)
+        pipe.fit(X[tr], y[tr])
+    not_converged = any(issubclass(w.category, ConvergenceWarning) for w in caught)
     s, a = fold_macro_f1(y[te], pipe.predict(X[te]), classes)
     top = _top_genes(pipe, gene_names, N_TOP_GENES_XAI) if gene_names is not None else None
-    return s, a, len(tr), len(te), n_before, top
+    return s, a, len(tr), len(te), n_before, top, not_converged
 
 
 def _run_folds(X, y, groups, splits, classes, make_pipe, label: str, clock: _Clock,
@@ -238,8 +248,9 @@ def _run_folds(X, y, groups, splits, classes, make_pipe, label: str, clock: _Clo
             delayed(_fit_fold)(*a) for a in args)
     else:
         results = (_fit_fold(*a) for a in args)
-    scores, n_train, n_test, absent, before, tops = [], [], [], [], [], []
-    for i, (s, a, ntr, nte, nb, top) in enumerate(results):
+    scores, n_train, n_test, absent, before, tops, nc = [], [], [], [], [], [], []
+    for i, (s, a, ntr, nte, nb, top, not_conv) in enumerate(results):
+        nc.append(bool(not_conv))
         scores.append(s)
         absent.append(a)
         n_train.append(ntr)
@@ -249,7 +260,8 @@ def _run_folds(X, y, groups, splits, classes, make_pipe, label: str, clock: _Clo
             tops.append(top)
         clock.step(f"{label}, fold {i + 1}/{len(splits)}")
     return SchemeSummary(scheme=label, fold_scores=scores, n_train=n_train, n_test=n_test,
-                         absent_classes=absent, n_train_before_cap=before, top_genes=tops)
+                         absent_classes=absent, n_train_before_cap=before, top_genes=tops,
+                         not_converged=nc)
 
 
 @dataclass(frozen=True)
@@ -387,6 +399,13 @@ def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_r
             f"In {grouped.n_folds_with_absent_classes} fold su {len(grouped.fold_scores)} dello "
             f"split per paziente alcune classi non compaiono nel test: la macro-F1 di quei fold "
             f"e' calcolata sulle sole classi presenti (le classi assenti sono elencate nel report).")
+    nc = grouped.n_not_converged + random_.n_not_converged
+    if nc:
+        parts.append(
+            f"In {nc} fold su {len(grouped.fold_scores) + len(random_.fold_scores)} il classificatore "
+            f"non ha raggiunto la convergenza entro il numero massimo di iterazioni: i punteggi di "
+            f"quei fold vanno letti con cautela (succede tipicamente quando il segnale e' debole o "
+            f"assente).")
     if grouped.capped or random_.capped:
         parts.append(
             f"Il training e' stato limitato a {max(grouped.n_train + random_.n_train):,} cellule "

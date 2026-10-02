@@ -1,0 +1,221 @@
+{
+ "GSE132465": {
+  "D1": true,
+  "exit_code": 0,
+  "D2": true,
+  "fatti_audit": [
+   [
+    "annidamento",
+    "region",
+    "tissue type"
+   ],
+   [
+    "annidamento",
+    "tumor stage",
+    "tissue type"
+   ],
+   [
+    "unita'-tecnica",
+    "gsm"
+   ]
+  ],
+  "fatti_indipendenti": [
+   [
+    "annidamento",
+    "region",
+    "tissue type"
+   ],
+   [
+    "annidamento",
+    "tumor stage",
+    "tissue type"
+   ],
+   [
+    "unita'-tecnica",
+    "gsm"
+   ]
+  ],
+  "solo_audit": [],
+  "solo_indipendenti": [],
+  "D3": true,
+  "confronti": [
+   {
+    "confronto": "tissue type: Colorectal cancer vs Normal mucosa",
+    "classe audit": "stimabile",
+    "classe indipendente": "stimabile",
+    "unita' audit": 10,
+    "unita' indipendenti": 10,
+    "coincide": true
+   },
+   {
+    "confronto": "tumor stage: 2 vs 3",
+    "classe audit": "stimabile",
+    "classe indipendente": "stimabile",
+    "unita' audit": 6,
+    "unita' indipendenti": 6,
+    "coincide": true
+   }
+  ],
+  "D4": true,
+  "cramer_v": [
+   {
+    "coppia": "patient_id x tissue type",
+    "V audit": null,
+    "V indipendente": null,
+    "coincide": true
+   },
+   {
+    "coppia": "patient_id x tumor stage",
+    "V audit": null,
+    "V indipendente": null,
+    "coincide": true
+   },
+   {
+    "coppia": "patient_id x region",
+    "V audit": null,
+    "V indipendente": null,
+    "coincide": true
+   },
+   {
+    "coppia": "tissue type x tumor stage",
+    "V audit": 0.9503819266229829,
+    "V indipendente": 0.9503819266229829,
+    "coincide": true
+   },
+   {
+    "coppia": "tissue type x region",
+    "V audit": 0.9332565252573828,
+    "V indipendente": 0.9332565252573828,
+    "coincide": true
+   },
+   {
+    "coppia": "tumor stage x region",
+    "V audit": null,
+    "V indipendente": null,
+    "coincide": true
+   }
+  ]
+ },
+ "GSE131907": {
+  "D1": true,
+  "exit_code": 0,
+  "D2": true,
+  "fatti_audit": [
+   [
+    "esito-determinato",
+    "patient id",
+    "tumor stage"
+   ],
+   [
+    "unita'-tecnica",
+    "gsm"
+   ]
+  ],
+  "fatti_indipendenti": [
+   [
+    "esito-determinato",
+    "patient id",
+    "tumor stage"
+   ],
+   [
+    "unita'-tecnica",
+    "gsm"
+   ]
+  ],
+  "solo_audit": [],
+  "solo_indipendenti": [],
+  "D3": true,
+  "confronti": [
+   {
+    "confronto": "tissue origin abbrevation: tLung vs nLung",
+    "classe audit": "stimabile",
+    "classe indipendente": "stimabile",
+    "unita' audit": 10,
+    "unita' indipendenti": 10,
+    "coincide": true
+   },
+   {
+    "confronto": "tissue origin abbrevation: mLN vs nLN",
+    "classe audit": "non stimabile",
+    "classe indipendente": "non stimabile",
+    "unita' audit": 0,
+    "unita' indipendenti": 0,
+    "coincide": true
+   },
+   {
+    "confronto": "tissue origin abbrevation: tLung vs mBrain",
+    "classe audit": "non stimabile",
+    "classe indipendente": "non stimabile",
+    "unita' audit": 0,
+    "unita' indipendenti": 0,
+    "coincide": true
+   },
+   {
+    "confronto": "tumor stage: I vs IV",
+    "classe audit": "stimabile",
+    "classe indipendente": "stimabile",
+    "unita' audit": 17,
+    "unita' indipendenti": 17,
+    "coincide": true
+   }
+  ],
+  "D4": true,
+  "cramer_v": [
+   {
+    "coppia": "patient id x tissue origin abbrevation",
+    "V audit": null,
+    "V indipendente": null,
+    "coincide": true
+   },
+   {
+    "coppia": "patient id x tumor stage",
+    "V audit": null,
+    "V indipendente": null,
+    "coincide": true
+   },
+   {
+    "coppia": "tissue origin abbrevation x tumor stage",
+    "V audit": 0.48540610595914535,
+    "V indipendente": 0.48540610595914535,
+    "coincide": true
+   }
+  ]
+ },
+ "GSE125449": {
+  "D1": true,
+  "exit_code": 0,
+  "D2": true,
+  "fatti_audit": [],
+  "fatti_indipendenti": [],
+  "solo_audit": [],
+  "solo_indipendenti": [],
+  "D3": true,
+  "confronti": [
+   {
+    "confronto": "cancer type: Hepatocellular carcinoma vs Intrahepatic cholangiocarcinoma",
+    "classe audit": "stimabile",
+    "classe indipendente": "stimabile",
+    "unita' audit": 9,
+    "unita' indipendenti": 9,
+    "coincide": true
+   },
+   {
+    "confronto": "platform: GPL18573 vs GPL20301",
+    "classe audit": "non stimabile",
+    "classe indipendente": "non stimabile",
+    "unita' audit": 0,
+    "unita' indipendenti": 0,
+    "coincide": true
+   }
+  ],
+  "D4": true,
+  "cramer_v": [
+   {
+    "coppia": "platform x cancer type",
+    "V audit": 0.16944463577770047,
+    "V indipendente": 0.16944463577770047,
+    "coincide": true
+   }
+  ]
+ }
+}

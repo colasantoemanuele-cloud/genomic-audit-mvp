@@ -584,3 +584,29 @@ Interpretazione prudente:
 - La normalizzazione tratta solo il suffisso "-N", non altri formati (prefissi di campione, ecc.).
 - La compressione allunga l'export di circa 26 s su questo dataset.
 - La diagnostica del punto 4 non spiega il 45%: esclude solo due cause.
+
+---
+
+## Motore del Modulo A per dati reali, web app e validazione esterna
+
+Il report completo, con criteri × dataset, output reali, difetti e verdetto, e' in
+`validation_esterna/REPORT.md`. In sintesi:
+
+- **Modulo A riscritto per dati reali:**
+  - matrice sparsa; dentro ogni fold, e sul solo training, log-CPM, 2.000 HVG e SVD a 50
+    componenti;
+  - macro-F1 sulle classi presenti nel fold di test;
+  - training limitato a 20.000 cellule per fold e fold in parallelo, con risultati identici;
+  - fail-fast su conteggi non interi e su una classe presente in un solo paziente;
+  - non convergenza dichiarata.
+
+  Su GSE125449 completo (9.946 cellule, 19 pazienti) impiega 403 s; prima non terminava dopo
+  5,5 h.
+- **Web app locale** (`uv run audit-sc serve`): demo con un clic, caricamento di studi reali,
+  semafori con regole dichiarate, export Markdown e HTML; solo localhost, telemetria spenta.
+- **Validazione esterna:** audit del disegno D1-D4 superati su 3 dataset GEO (GSE132465,
+  GSE131907, GSE125449), dopo la correzione dei valori mancanti. Modulo A A1-A4 superati su
+  GSE125449 completo. La prima esecuzione era NON PRONTO, e i criteri sono stati modificati
+  due volte su decisione dell'utente: entrambe le cose sono dichiarate.
+- **Suite finale:** 97 passed, 2 xfailed (calibrazioni conservative note), 0 failed
+  (`logs/pytest_finale.txt`). `core/stats.py` non e' stato modificato.

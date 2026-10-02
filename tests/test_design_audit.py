@@ -150,3 +150,20 @@ def test_missing_values_are_an_explicit_level_not_silently_dropped():
     assert pair.n_levels_b == 4 or pair.n_levels_a == 4  # 3 stadi + "NA"
     assert pair.cramer_v is not None
     assert any("\"NA\"" in n and "'stage' (6 righe)" in n for n in res.notes)
+
+
+def test_strong_v_with_structural_relation_is_not_described_as_below_threshold():
+    """Regressione (validazione esterna, GSE132465): V = 0.95 con un annidamento veniva
+    descritto come 'sotto la soglia di 0.5'."""
+    rows = []
+    for p in range(12):
+        rows.append({"patient": f"P{p}", "tissue": "Tumor", "stage": str(1 + p % 3)})
+        if p < 6:
+            rows.append({"patient": f"P{p}", "tissue": "Normal", "stage": None})
+    res = run_design_audit(pd.DataFrame(rows), patient_col="patient", tissue_col="tissue",
+                           outcome_cols=["stage"])
+    pair = next(p for p in res.pairs if {p.factor_a, p.factor_b} == {"tissue", "stage"})
+    assert pair.cramer_v is not None and pair.cramer_v >= 0.5
+    assert pair.a_nested_in_b or pair.b_nested_in_a
+    assert "sotto la soglia" not in pair.sentence
+    assert "strutturale" in pair.sentence

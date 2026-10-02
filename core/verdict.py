@@ -24,8 +24,9 @@ RULES = {
     "Modulo A": (
         f"Rosso: lo split casuale sovrastima la macro-F1 dello split per paziente di piu' di "
         f"{GAP_ALERT:g} (qualunque valutazione che non separa i pazienti e' inaffidabile su questi "
-        f"dati). Giallo: classi assenti da almeno un fold di test, training sottocampionato, oppure "
-        f"confronto fra modelli non eseguito. Verde: nessuna delle condizioni precedenti."),
+        f"dati). Giallo: classi assenti da almeno un fold di test, training sottocampionato, "
+        f"classificatore non convergente in almeno un fold, oppure confronto fra modelli non "
+        f"eseguito. Verde: nessuna delle condizioni precedenti."),
     "Modulo B": (
         "Rosso: l'eccesso di discordanza fra compartimenti ha un intervallo al 95% interamente sopra "
         "lo zero (errore sistematico di annotazione). Giallo: numerosita' insufficiente per un "
@@ -71,6 +72,9 @@ def leakage_verdict(r: LeakageAuditResult) -> SectionVerdict:
         yellow.append("training sottocampionato per paziente")
     if r.model_comparison is None:
         yellow.append("confronto fra modelli non eseguito")
+    nc = r.grouped.n_not_converged + r.random.n_not_converged
+    if nc:
+        yellow.append(f"classificatore non convergente in {nc} fold")
     if yellow:
         color = color if color == ROSSO else GIALLO
         reasons += yellow

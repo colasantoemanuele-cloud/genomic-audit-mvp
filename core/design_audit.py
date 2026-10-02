@@ -191,7 +191,11 @@ def _nested(sheet: pd.DataFrame, a: str, b: str) -> bool:
 
 
 def _pair_sentence(a: str, b: str, n: int, r: int, c: int, v: float | None, alarm: bool,
-                   v_threshold: float) -> str:
+                   v_threshold: float, structural: bool = False) -> str:
+    if v is not None and structural:
+        return (f"'{a}' e '{b}': Cramér V corretto = {v:.2f} su {n} unita'. La relazione fra i due "
+                f"fattori e' strutturale (annidamento o coincidenza, vedi i fatti strutturali): "
+                f"l'associazione e' riportata li', non come allarme separato.")
     if v is None:
         return (f"'{a}' e '{b}': Cramér V non valutabile ({n} unita' per {r}x{c} celle; servono "
                 f"almeno {MIN_ROWS_FOR_V} unita' e {MIN_EXPECTED_PER_CELL:g} unita' attese per "
@@ -243,7 +247,8 @@ def _pairs_and_findings(
                 factor_a=a, factor_b=b, n_rows=n, n_levels_a=int(sheet[a].nunique()),
                 n_levels_b=int(sheet[b].nunique()), cramer_v=v, v_alarm=alarm,
                 a_nested_in_b=a_in_b, b_nested_in_a=b_in_a, one_to_one=one_to_one, table=table,
-                sentence=_pair_sentence(a, b, n, r, c, v, alarm, v_threshold),
+                sentence=_pair_sentence(a, b, n, r, c, v, alarm, v_threshold,
+                                        structural=a_in_b or b_in_a),
             ))
             if one_to_one:
                 findings.append(StructuralFinding(

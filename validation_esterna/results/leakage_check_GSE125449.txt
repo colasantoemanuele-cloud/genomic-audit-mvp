@@ -1,0 +1,14 @@
+{
+ "raggruppato": {
+  "standard": 0.7880181366592326,
+  "tutte_le_classi": 0.7880181366592326
+ },
+ "casuale": {
+  "standard": 0.9060332060328253,
+  "tutte_le_classi": 0.9060332060328253
+ },
+ "logo_logreg": {
+  "standard": 0.7592761977063056,
+  "tutte_le_classi": 0.7053001224620158
+ }
+}

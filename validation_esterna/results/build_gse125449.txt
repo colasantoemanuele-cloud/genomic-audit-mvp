@@ -1,0 +1,46 @@
+             That means the default return type will be a sparse array.
+             Unless you use * instead of @, ** for matrix power, or you depend
+             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.
+             See the spmatrix to sparray migration guide for details.
+             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html
+             
+  X = scipy.io.mmread(DATA / f"GSE125449_{name}_matrix.mtx.gz").T.tocsr()
+             That means the default return type will be a sparse array.
+             Unless you use * instead of @, ** for matrix power, or you depend
+             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.
+             See the spmatrix to sparray migration guide for details.
+             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html
+             
+  X = scipy.io.mmread(DATA / f"GSE125449_{name}_matrix.mtx.gz").T.tocsr()
+geni Set1 20124, Set2 19572, in comune 18372
+9946 cellule, 18372 geni, 19 pazienti, 19 campioni
+Type
+T cell            2835
+Malignant cell    1992
+HPC-like          1102
+TEC               1097
+B cell             993
+CAF                981
+TAM                752
+unclassified       194
+Type     B cell  CAF  HPC-like  Malignant cell  T cell  TAM  TEC  unclassified
+patient                                                                       
+LCP18        19    0         1               0      90    6    0             8
+LCP21         6  284         3               0     171    9  219            12
+LCP23         0    7        12              46       0    0   61            25
+LCP25         2   24        52             111      10    4    4             0
+LCP26         0   12        10             174       8   89    4             2
+LCP28         0    5         0               0     100    0    4            15
+LCP29         0  146        55              34     532   16  152             4
+LCP30       558   14        10              25     116   58   11            13
+LCP34         5   44        14              43      57   23   48             4
+LCP35         3   37         7               0      70   13    3             6
+LCP37         0    2        21              60      38    5    4             2
+LCP38         3  180        43             228      21  155  412             4
+LCP39         7   13        40              24     273   82    5             1
+LCP42       200   15         6              34     136   86   14            17
+LCP46         2   15        42             464      11   43    6             2
+LCP56         0    1        10              82      39    3    1             1
+LCP60       150    2         5              47    1068   86    2            58
+LCP65        14    2        94             412       8   44    6             9
+LCP66        24  178       677             208      87   30  141            11

@@ -122,3 +122,20 @@ def test_parallel_folds_give_identical_results():
     assert par.grouped.top_genes == seq.grouped.top_genes
     for m in seq.model_comparison.scores:
         assert par.model_comparison.scores[m].fold_scores == seq.model_comparison.scores[m].fold_scores
+
+
+def test_non_convergence_is_declared_not_hidden():
+    a = _small()
+    rng = np.random.default_rng(0)
+    a.obs["label"] = rng.permutation(a.obs["label"].astype(str).values)  # nessun segnale
+    import core.leakage_audit as la
+    orig = la._reference_model
+    la._reference_model = lambda seed: orig(seed).set_params(max_iter=2)  # forza la non convergenza
+    try:
+        r = run_leakage_audit(a, "label", "patient_id", benchmark=False)
+    finally:
+        la._reference_model = orig
+    assert r.grouped.n_not_converged + r.random.n_not_converged > 0
+    assert "non ha raggiunto la convergenza" in r.narrative
+    from core.verdict import leakage_verdict
+    assert any("non convergente" in x for x in leakage_verdict(r).reasons)

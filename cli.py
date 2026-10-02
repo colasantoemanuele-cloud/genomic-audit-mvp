@@ -130,11 +130,17 @@ def _cmd_serve(args: argparse.Namespace) -> None:
     """Avvia Streamlit legato a localhost, con la telemetria disattivata: nessun dato (ne'
     statistica d'uso) lascia la macchina."""
     import subprocess
+    import threading
+    import webbrowser
     app = Path(__file__).resolve().parent / "app.py"
+    url = f"http://localhost:{args.port}"
+    # headless: niente richiesta interattiva di email al primo avvio; il browser lo apre questo comando
     cmd = [sys.executable, "-m", "streamlit", "run", str(app),
            "--server.address", "localhost", "--server.port", str(args.port),
-           "--browser.gatherUsageStats", "false", "--server.headless", "false"]
-    print(f"Web app su http://localhost:{args.port} (Ctrl+C per fermare)")
+           "--browser.gatherUsageStats", "false", "--server.headless", "true"]
+    print(f"Web app su {url} (Ctrl+C per fermare)", flush=True)
+    if not args.no_browser:
+        threading.Timer(3.0, lambda: webbrowser.open(url)).start()
     raise SystemExit(subprocess.call(cmd, cwd=str(app.parent)))
 
 
@@ -276,6 +282,7 @@ def main() -> None:
 
     p_serve = sub.add_parser("serve", help="avvia la web app locale (solo su questa macchina)")
     p_serve.add_argument("--port", type=int, default=8501)
+    p_serve.add_argument("--no-browser", action="store_true", help="non aprire il browser")
     p_serve.set_defaults(func=_cmd_serve)
 
     p_tcr = sub.add_parser("tcr", help="Modulo B: validazione dell'annotazione via TCR")

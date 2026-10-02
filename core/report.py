@@ -527,6 +527,12 @@ def render_markdown_report(
             md += [f"| {mc.best_model} (migliore) | {mc.scores[mc.best_model].mean:.3f} | — |"]
             md += [f"| {c.model} | {c.mean_macro_f1:.3f} | {c.p_nadeau_bengio:.3f} |" for c in mc.comparisons]
             md.append("")
+            ref = mc.scores[next(iter(mc.scores))]
+            if ref.n_folds_with_absent_classes:
+                md += [f"Classi assenti dal paziente lasciato fuori in {ref.n_folds_with_absent_classes} fold su "
+                       f"{len(ref.fold_scores)} (macro-F1 calcolata sulle classi presenti): "
+                       + "; ".join(f"fold {i + 1}: {', '.join(a)}" for i, a in enumerate(ref.absent_classes) if a),
+                       ""]
     if tcr_result is not None:
         md += ["## Modulo B — Validazione via TCR", ""]
         if tcr_result.barcode_match is not None:

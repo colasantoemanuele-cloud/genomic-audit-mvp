@@ -1,0 +1,14 @@
+pazienti scelti: ['LCP18', 'LCP21', 'LCP25', 'LCP26', 'LCP29', 'LCP30', 'LCP34', 'LCP56', 'LCP60', 'LCP65']
+1861 cellule, 18372 geni, 10 pazienti
+Type     B cell  CAF  HPC-like  Malignant cell  T cell  TAM  TEC  unclassified
+patient                                                                       
+LCP18        19    0         1               0      90    6    0             8
+LCP21         0   78         0               0      44    4   72             2
+LCP25         2   23        51             106      10    4    4             0
+LCP26         0    5         8             122       3   56    4             2
+LCP29         0   28        10               7     120    4   30             1
+LCP30       135    5         6               5      24   15    4             6
+LCP34         4   38        11              38      48   19   38             4
+LCP56         0    1        10              82      39    3    1             1
+LCP60        20    0         0               7     148   11    1            13
+LCP65         5    1        41             136       1   11    3             2

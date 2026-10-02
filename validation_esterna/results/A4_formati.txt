@@ -1,0 +1,10 @@
+{
+ "obs_dtype_originale": {
+  "Type": "category",
+  "patient": "category"
+ },
+ "X_originale_sparsa": true,
+ "A4a_densa_identica": true,
+ "A4b_stringhe_identica": true,
+ "A4b_categoriche_identica": true
+}

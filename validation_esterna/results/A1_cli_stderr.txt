@@ -1,0 +1,91 @@
+Modulo A: 9,946 cellule, 18,372 geni, 19 pazienti, 8 classi. Addestramenti previsti: 67.
+[1/67] split per paziente, fold 1/5 -- trascorsi 12 s, stima residua 768 s
+[2/67] split per paziente, fold 2/5 -- trascorsi 12 s, stima residua 378 s
+[3/67] split per paziente, fold 3/5 -- trascorsi 12 s, stima residua 248 s
+[4/67] split per paziente, fold 4/5 -- trascorsi 12 s, stima residua 183 s
+[5/67] split per paziente, fold 5/5 -- trascorsi 12 s, stima residua 144 s
+[6/67] split casuale, fold 1/5 -- trascorsi 23 s, stima residua 231 s
+[7/67] split casuale, fold 2/5 -- trascorsi 23 s, stima residua 195 s
+[8/67] split casuale, fold 3/5 -- trascorsi 23 s, stima residua 168 s
+[9/67] split casuale, fold 4/5 -- trascorsi 23 s, stima residua 147 s
+[10/67] split casuale, fold 5/5 -- trascorsi 23 s, stima residua 130 s
+[11/67] confronto modelli: logreg, fold 1/19 -- trascorsi 39 s, stima residua 197 s
+[12/67] confronto modelli: logreg, fold 2/19 -- trascorsi 39 s, stima residua 177 s
+[13/67] confronto modelli: logreg, fold 3/19 -- trascorsi 44 s, stima residua 182 s
+[14/67] confronto modelli: logreg, fold 4/19 -- trascorsi 44 s, stima residua 166 s
+[15/67] confronto modelli: logreg, fold 5/19 -- trascorsi 44 s, stima residua 154 s
+[16/67] confronto modelli: logreg, fold 6/19 -- trascorsi 44 s, stima residua 142 s
+[17/67] confronto modelli: logreg, fold 7/19 -- trascorsi 44 s, stima residua 131 s
+[18/67] confronto modelli: logreg, fold 8/19 -- trascorsi 44 s, stima residua 121 s
+[19/67] confronto modelli: logreg, fold 9/19 -- trascorsi 44 s, stima residua 112 s
+[20/67] confronto modelli: logreg, fold 10/19 -- trascorsi 44 s, stima residua 104 s
+[21/67] confronto modelli: logreg, fold 11/19 -- trascorsi 44 s, stima residua 97 s
+[22/67] confronto modelli: logreg, fold 12/19 -- trascorsi 50 s, stima residua 103 s
+[23/67] confronto modelli: logreg, fold 13/19 -- trascorsi 50 s, stima residua 96 s
+[24/67] confronto modelli: logreg, fold 14/19 -- trascorsi 52 s, stima residua 93 s
+[25/67] confronto modelli: logreg, fold 15/19 -- trascorsi 52 s, stima residua 87 s
+[26/67] confronto modelli: logreg, fold 16/19 -- trascorsi 53 s, stima residua 83 s
+[27/67] confronto modelli: logreg, fold 17/19 -- trascorsi 53 s, stima residua 78 s
+[28/67] confronto modelli: logreg, fold 18/19 -- trascorsi 53 s, stima residua 73 s
+[29/67] confronto modelli: logreg, fold 19/19 -- trascorsi 53 s, stima residua 69 s
+[30/67] confronto modelli: random_forest, fold 1/19 -- trascorsi 58 s, stima residua 71 s
+[31/67] confronto modelli: random_forest, fold 2/19 -- trascorsi 63 s, stima residua 73 s
+[32/67] confronto modelli: random_forest, fold 3/19 -- trascorsi 69 s, stima residua 75 s
+[33/67] confronto modelli: random_forest, fold 4/19 -- trascorsi 74 s, stima residua 76 s
+[34/67] confronto modelli: random_forest, fold 5/19 -- trascorsi 79 s, stima residua 77 s
+[35/67] confronto modelli: random_forest, fold 6/19 -- trascorsi 84 s, stima residua 77 s
+[36/67] confronto modelli: random_forest, fold 7/19 -- trascorsi 89 s, stima residua 77 s
+[37/67] confronto modelli: random_forest, fold 8/19 -- trascorsi 94 s, stima residua 77 s
+[38/67] confronto modelli: random_forest, fold 9/19 -- trascorsi 100 s, stima residua 76 s
+[39/67] confronto modelli: random_forest, fold 10/19 -- trascorsi 105 s, stima residua 75 s
+[40/67] confronto modelli: random_forest, fold 11/19 -- trascorsi 110 s, stima residua 74 s
+[41/67] confronto modelli: random_forest, fold 12/19 -- trascorsi 115 s, stima residua 73 s
+[42/67] confronto modelli: random_forest, fold 13/19 -- trascorsi 120 s, stima residua 71 s
+[43/67] confronto modelli: random_forest, fold 14/19 -- trascorsi 125 s, stima residua 70 s
+[44/67] confronto modelli: random_forest, fold 15/19 -- trascorsi 130 s, stima residua 68 s
+[45/67] confronto modelli: random_forest, fold 16/19 -- trascorsi 135 s, stima residua 66 s
+[46/67] confronto modelli: random_forest, fold 17/19 -- trascorsi 140 s, stima residua 64 s
+[47/67] confronto modelli: random_forest, fold 18/19 -- trascorsi 145 s, stima residua 62 s
+[48/67] confronto modelli: random_forest, fold 19/19 -- trascorsi 150 s, stima residua 59 s
+[49/67] confronto modelli: hist_gb, fold 1/19 -- trascorsi 159 s, stima residua 58 s
+[50/67] confronto modelli: hist_gb, fold 2/19 -- trascorsi 168 s, stima residua 57 s
+[51/67] confronto modelli: hist_gb, fold 3/19 -- trascorsi 177 s, stima residua 56 s
+[52/67] confronto modelli: hist_gb, fold 4/19 -- trascorsi 186 s, stima residua 54 s
+[53/67] confronto modelli: hist_gb, fold 5/19 -- trascorsi 195 s, stima residua 51 s
+[54/67] confronto modelli: hist_gb, fold 6/19 -- trascorsi 204 s, stima residua 49 s
+[55/67] confronto modelli: hist_gb, fold 7/19 -- trascorsi 213 s, stima residua 46 s
+[56/67] confronto modelli: hist_gb, fold 8/19 -- trascorsi 222 s, stima residua 44 s
+[57/67] confronto modelli: hist_gb, fold 9/19 -- trascorsi 231 s, stima residua 41 s
+[58/67] confronto modelli: hist_gb, fold 10/19 -- trascorsi 240 s, stima residua 37 s
+[59/67] confronto modelli: hist_gb, fold 11/19 -- trascorsi 249 s, stima residua 34 s
+[60/67] confronto modelli: hist_gb, fold 12/19 -- trascorsi 258 s, stima residua 30 s
+[61/67] confronto modelli: hist_gb, fold 13/19 -- trascorsi 267 s, stima residua 26 s
+[62/67] confronto modelli: hist_gb, fold 14/19 -- trascorsi 276 s, stima residua 22 s
+[63/67] confronto modelli: hist_gb, fold 15/19 -- trascorsi 285 s, stima residua 18 s
+[64/67] confronto modelli: hist_gb, fold 16/19 -- trascorsi 294 s, stima residua 14 s
+[65/67] confronto modelli: hist_gb, fold 17/19 -- trascorsi 303 s, stima residua 9 s
+[66/67] confronto modelli: hist_gb, fold 18/19 -- trascorsi 312 s, stima residua 5 s
+[67/67] confronto modelli: hist_gb, fold 19/19 -- trascorsi 321 s, stima residua 0 s
+	Command being timed: "uv run audit-sc leakage --h5ad validation_esterna/data/GSE125449.h5ad --target-col Type --patient-col patient --out validation_esterna/results/leakage_GSE125449.html"
+	User time (seconds): 1766.46
+	System time (seconds): 31.76
+	Percent of CPU this job got: 555%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:23.73
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1215880
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 24
+	Minor (reclaiming a frame) page faults: 1362544
+	Voluntary context switches: 8061360
+	Involuntary context switches: 156549
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 312
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

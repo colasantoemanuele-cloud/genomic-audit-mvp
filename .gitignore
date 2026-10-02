@@ -20,3 +20,4 @@ data/synthetic/*
 
 # validazione esterna: dati scaricati (pesanti), non versionati
 validation_esterna/data/
+!validation_esterna/results/

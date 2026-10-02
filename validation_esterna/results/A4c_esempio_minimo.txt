@@ -1,0 +1,1 @@
+fold perfetto, classe c assente e mai predetta -> _macro_f1 dello strumento: 0.6666666666666666 | macro-F1 standard sklearn: 1.0
