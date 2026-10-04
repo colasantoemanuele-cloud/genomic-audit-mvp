@@ -9,6 +9,7 @@ Tumor 0.1951 [0.1230; 0.2737], Adjacent_normal 0.0593, differenza Tumor - Adjace
 from __future__ import annotations
 
 import re
+import os
 from pathlib import Path
 
 import anndata as ad
@@ -17,7 +18,9 @@ import pytest
 
 from core.tcr_validation import parse_vdj_contigs, run_tcr_validation
 
-PDAC = Path("/home/nemo/Uni/PROGETTO_ML/pdac-ml")
+# Dati reali di GSE278694: non inclusi nella repo. Cartella indicata da GSE278694_DIR, altrimenti
+# una cartella "pdac-ml" accanto a questa repo. Se i dati mancano, i test vengono saltati.
+PDAC = Path(os.environ.get("GSE278694_DIR", Path(__file__).resolve().parents[2] / "pdac-ml"))
 H5AD = PDAC / "data/interim/sc_raw.h5ad"
 TCR = PDAC / "data/raw/tcr"
 TISSUE = {"Tumor": "Tumor", "Normal": "Adjacent_normal", "PBMC": "PBMC"}

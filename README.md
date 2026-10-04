@@ -35,12 +35,12 @@ pytest
 ```
 
 Entrambe le strade sono state provate su un clone pulito della repo pubblica
-(`logs/installazione_pulita.txt`): la demo impiega circa 3 minuti, la suite circa
-16 minuti su 12 core (i test di calibrazione simulano centinaia di repliche), con esito
-`97 passed, 2 xfailed`. I 2 `xfail` sono calibrazioni conservative note e dichiarate (vedi
-[Test](#test)). I 3 test di `tests/test_real_data_gse278694.py` richiedono i dati di GSE278694,
-che la repo non include: senza quei dati vengono saltati, e l'esito atteso è
-`94 passed, 3 skipped, 2 xfailed`.
+(`docs/sviluppo/logs/installazione_pulita.txt`): la demo impiega circa 3 minuti, la suite fra 11
+e 16 minuti su 12 core (i test di calibrazione simulano centinaia di repliche). Esito della
+suite attuale: `115 passed, 2 xfailed` (`docs/sviluppo/logs/pytest_rifinitura.txt`). I 2 `xfail`
+sono calibrazioni conservative note e dichiarate (vedi [Test](#test)). I 3 test di
+`tests/test_real_data_gse278694.py` richiedono i dati di GSE278694, che la repo non include:
+senza quei dati vengono saltati, e l'esito atteso è `112 passed, 3 skipped, 2 xfailed`.
 
 Per l'interfaccia web locale: `uv run audit-sc serve` (oppure `audit-sc serve` nel venv), che
 apre `http://localhost:8501`.
@@ -104,7 +104,7 @@ Il report HTML della demo, con la «Sintesi dei controlli» in apertura:
 | [GSE132465](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132465), carcinoma colorettale | audit del disegno, criteri D1-D4, contro uno script indipendente che non importa nulla da `core/` | prima esecuzione: **D2 e D4 falliti** (un difetto nella lettura dei valori mancanti, corretto nel commit `7bb30ca`); dopo la correzione: soddisfatti |
 | [GSE131907](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131907), adenocarcinoma polmonare | audit del disegno, criteri D1-D4 | soddisfatti dalla prima esecuzione |
 | [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449), tumori primitivi del fegato | audit del disegno (D1-D4) e Modulo A (A1-A4: esecuzione, verifica indipendente, controllo negativo con 20 permutazioni, robustezza di formato) | disegno: soddisfatti. Modulo A, prima esecuzione: **A1 non terminato dopo 5 h 26 min, A4c fallito**; con il motore riscritto: A1-A4 soddisfatti |
-| [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | Modulo B e audit del disegno sui dati reali; riproduzione dei numeri della tesi | numeri riprodotti (`REPORT_INTERVENTI.md`); non fa parte della validazione esterna |
+| [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | Modulo B e audit del disegno sui dati reali; riproduzione dei numeri della tesi | numeri riprodotti (`docs/sviluppo/REPORT_INTERVENTI.md`); non fa parte della validazione esterna |
 
 **Verdetto della validazione esterna, nelle due versioni:** con i criteri originali, scritti
 prima di toccare i dati, **NON PRONTO** (prima esecuzione); con i criteri modificati due volte
@@ -206,7 +206,7 @@ include lo zero).
 - **Audit del disegno:** non guarda l'espressione genica e non stima effetti biologici.
   La scomposizione della varianza su pseudobulk (paziente/tessuto/batch) esiste in
   `core/design_audit.py` ma NON è esposta: la calibrazione del suo intervallo è fuori
-  banda per la quota del tessuto (vedi `NOTE.md`). Il Cramér V a soglia 0.5 ha potenza
+  banda per la quota del tessuto (vedi `docs/sviluppo/NOTE.md`). Il Cramér V a soglia 0.5 ha potenza
   0.46 a V = 0.5: un'associazione moderata spesso non viene segnalata. Non verifica che una
   colonna dichiarata come esito sia davvero a livello di paziente.
 - **Flag per cellula:** non correggono nulla, e le etichette originali non vengono mai
@@ -345,7 +345,7 @@ del tessuto è `xfail(strict=True)`) e `tests/test_cd8_propagation_calibration.p
 `tests/test_tcr_flags.py` verifica che i flag coincidano esattamente con il tasso d'errore
 e che l'output del Modulo B sia identico a quello precedente alla modifica
 (`tests/fixtures/tcr_regression_baseline.json`). Il resoconto degli interventi, con tutti i
-numeri misurati, è in `REPORT_INTERVENTI.md`.
+numeri misurati, è in `docs/sviluppo/REPORT_INTERVENTI.md`.
 
 `tests/test_synthetic_data.py` verifica invece, end-to-end, che gli effetti iniettati nei
 generatori sintetici (`core/synthetic.py`) vengano effettivamente rilevati dai due moduli.
@@ -353,7 +353,8 @@ generatori sintetici (`core/synthetic.py`) vengano effettivamente rilevati dai d
 `tests/test_verdict.py` fissa le regole della «Sintesi dei controlli»: il verde non compare mai
 per un controllo non valutabile, non stimabile, rifiutato o non eseguito, e i testi non
 contengono giudizi. `tests/test_real_data_gse278694.py` gira solo se i dati reali di GSE278694
-sono presenti sulla macchina; altrimenti i suoi 3 test vengono saltati.
+sono presenti sulla macchina (cartella indicata dalla variabile d'ambiente `GSE278694_DIR`,
+oppure una cartella `pdac-ml` accanto alla repo); altrimenti i suoi 3 test vengono saltati.
 
 ## Struttura
 
@@ -394,10 +395,12 @@ validation_esterna/   validazione esterna su tre dataset GEO
   results/            output reali versionati (i dati scaricati non sono versionati)
 docs/
   img/                immagini del README
-  sviluppo/accenti.py conversione degli apostrofi in lettere accentate (strumento di sviluppo)
-REPORT_INTERVENTI.md  registro di sviluppo: ogni intervento con file toccati, test e numeri
-NOTE.md               idee scartate, rimandate o emerse durante il lavoro
-logs/                 output delle suite di test a ogni fase
+  sviluppo/           documenti interni di sviluppo, conservati perché mostrano il metodo
+    REPORT_INTERVENTI.md  registro di sviluppo: ogni intervento con file toccati, test e numeri
+    NOTE.md               idee scartate, rimandate o emerse durante il lavoro
+    logs/                 output delle suite di test a ogni fase e della prova di installazione pulita
+    accenti.py            conversione degli apostrofi in lettere accentate (strumento di sviluppo)
+LICENSE               licenza MIT
 ```
 
 ## Provenienza della logica statistica
@@ -427,3 +430,8 @@ Chi usa i dati citati in questa repo deve citare gli articoli di origine, non qu
 
 I dati GEO in `data/demo/` sono dati pubblici ridistribuiti in forma ridotta per la demo: origine
 e riduzione sono descritte in [`data/demo/README.md`](data/demo/README.md).
+
+## Licenza
+
+Codice distribuito con licenza [MIT](LICENSE). I dati in `data/demo/` restano dei rispettivi
+autori e sono ridistribuiti alle condizioni di NCBI GEO (vedi `data/demo/README.md`).

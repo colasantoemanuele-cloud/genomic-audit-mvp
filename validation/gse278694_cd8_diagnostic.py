@@ -13,6 +13,7 @@ Uso:
 
 from __future__ import annotations
 
+import os
 import argparse
 from pathlib import Path
 
@@ -29,7 +30,9 @@ from core.tcr_validation import (
     parse_vdj_contigs,
 )
 
-H5AD = Path("/home/nemo/Uni/PROGETTO_ML/pdac-ml/data/interim/sc_raw.h5ad")
+# Dati reali di GSE278694: non inclusi nella repo. Cartella indicata da GSE278694_DIR, altrimenti
+# una cartella "pdac-ml" accanto a questa repo.
+H5AD = Path(os.environ.get("GSE278694_DIR", Path(__file__).resolve().parents[2] / "pdac-ml")) / "data/interim/sc_raw.h5ad"
 MARKERS = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
 
 

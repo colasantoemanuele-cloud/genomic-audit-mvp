@@ -6,4 +6,4 @@ Audit del disegno su 33 unita' (righe dei metadati) e 6 fattori. 5 fatti struttu
  - 'tissue type' e 'region': Cramér V non valutabile (33 unita' per 1x5 celle; servono almeno 10 unita' e 2 unita' attese per cella). Un numero su una tabella cosi' piccola sarebbe instabile.
  - 'tumor stage' e 'region': Cramér V non valutabile (33 unita' per 4x5 celle; servono almeno 10 unita' e 2 unita' attese per cella). Un numero su una tabella cosi' piccola sarebbe instabile.
  * Le unita' di questo audit sono le righe della tabella dei metadati (campioni o librerie), non le cellule: le cellule dello stesso campione non sono osservazioni indipendenti del disegno.
-[ok] report scritto in /home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/validation_esterna/results/design_GSE132465.html
+[ok] report scritto in validation_esterna/results/design_GSE132465.html

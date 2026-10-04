@@ -1,0 +1,52 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: <repo>
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.14.2, zarr-3.3.0
+collected 117 items
+
+tests/test_app_and_io.py ..........                                      [  8%]
+tests/test_barcode_match.py ....                                         [ 11%]
+tests/test_cd8_format.py ......                                          [ 17%]
+tests/test_cd8_propagation_calibration.py .......                        [ 23%]
+tests/test_cd8_robustness.py ......                                      [ 28%]
+tests/test_design_audit.py ............                                  [ 38%]
+tests/test_design_audit_calibration.py ......x....                       [ 47%]
+tests/test_leakage_engine.py ...........                                 [ 57%]
+tests/test_real_data_gse278694.py ...                                    [ 59%]
+tests/test_stats_calibration.py .x........                               [ 68%]
+tests/test_synthetic_data.py .........                                   [ 76%]
+tests/test_tcr_flags.py ..........                                       [ 84%]
+tests/test_verdict.py ..................                                 [100%]
+
+=============================== warnings summary ===============================
+tests/test_app_and_io.py::test_matrix_market_loader_aligns_metadata_and_dedups_genes[False]
+tests/test_app_and_io.py::test_matrix_market_loader_aligns_metadata_and_dedups_genes[True]
+tests/test_app_and_io.py::test_matrix_market_loader_refuses_missing_metadata
+  <repo>/core/io.py:49: DeprecationWarning: The default value for `spmatrix` is changing to `False` in v1.20.
+               That means the default return type will be a sparse array.
+               Unless you use * instead of @, ** for matrix power, or you depend
+               on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.
+               See the spmatrix to sparray migration guide for details.
+               https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html
+               
+    X = scipy.io.mmread(_first(folder, ["matrix.mtx"]))
+
+tests/test_app_and_io.py: 5 warnings
+tests/test_barcode_match.py: 4 warnings
+tests/test_cd8_propagation_calibration.py: 1 warning
+tests/test_design_audit_calibration.py: 1 warning
+tests/test_leakage_engine.py: 8 warnings
+tests/test_synthetic_data.py: 8 warnings
+tests/test_tcr_flags.py: 14 warnings
+  <conda>/lib/python3.13/functools.py:934: ImplicitModificationWarning: Transforming to str index.
+    return dispatch(args[0].__class__)(*args, **kw)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========== 115 passed, 2 xfailed, 44 warnings in 665.51s (0:11:05) ============
+
+real	11m7.757s
+user	18m15.424s
+sys	0m33.989s
+exit 0

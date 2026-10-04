@@ -3,8 +3,10 @@ name = "genomic-audit"
 version = "0.1.0"
 description = "Audit del leakage per paziente e validazione dell'annotazione via TCR per coorti cliniche piccole"
 authors = [
-    { name = "Emanuele" }
+    { name = "Emanuele Colasanto" }
 ]
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = [
     "anndata>=0.10",
@@ -26,7 +28,7 @@ dev = [
 ]
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]

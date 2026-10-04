@@ -1,6 +1,7 @@
 # Validazione esterna di genomic-audit-mvp
 
-Criteri: `validation_esterna/CRITERI.md`.
+Criteri: `validation_esterna/CRITERI.md`. (Il file cita `REPORT_INTERVENTI.md` e i `logs/`: oggi sono
+in `docs/sviluppo/`. `CRITERI.md` non è stato aggiornato di proposito, per lasciarlo com'era.)
 - Sezioni 1-4: scritte e committate prima di toccare i dati esterni (commit `0b5a847`).
 - Sezione 5: coorte ridotta, decisa dall'utente (commit `b08b2d2`).
 - Sezione 6: nuovo motore del Modulo A, deciso dall'utente (commit `0662a40`).
@@ -116,7 +117,7 @@ Confronto fra modelli (LeaveOneGroupOut): regressione logistica 0.771, random fo
 | Classi assenti non dichiarate per i fold del confronto fra modelli | onestà dell'output | elenco nell'app e nel report Markdown | commit finale |
 | Telemetria di Streamlit attiva per default; richiesta interattiva di email al primo avvio | privacy e usabilità | `gatherUsageStats=false`, solo localhost, avvio headless; verificato che il server ascolta solo su 127.0.0.1 e rifiuta le connessioni dall'IP di rete | `6938623` e commit finale |
 
-Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: 97 passed, 2 xfailed, 0 failed, 0 skipped in 473 s (logs/pytest_finale.txt).
+Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: 97 passed, 2 xfailed, 0 failed, 0 skipped in 473 s (docs/sviluppo/logs/pytest_finale.txt).
 
 ## 5. Risultati descrittivi (non criteri)
 

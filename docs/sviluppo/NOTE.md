@@ -3,7 +3,7 @@
 Nessuna delle voci qui sotto è implementata. Sono annotate per non perderle, non come
 impegno.
 
-## Scartate (dalla valutazione strategica per l'IRCCS De Bellis)
+## Scartate (dalla valutazione strategica per un laboratorio partner)
 
 - **Modulo CNV / field effect sui margini chirurgici.** Doppione di inferCNV, CopyKAT e
   Numbat; il passaggio "tessuto adiacente -> margine chirurgico" non è sostenuto dai dati

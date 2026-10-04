@@ -610,3 +610,146 @@ Il report completo, con criteri × dataset, output reali, difetti e verdetto, è
   due volte su decisione dell'utente: entrambe le cose sono dichiarate.
 - **Suite finale:** 97 passed, 2 xfailed (calibrazioni conservative note), 0 failed
   (`logs/pytest_finale.txt`). `core/stats.py` non è stato modificato.
+
+---
+
+## Rifinitura finale della repo pubblica (2026-10-04)
+
+Trasparenza, documentazione e igiene. Nessuna nuova funzionalità e nessuna modifica ai calcoli:
+`core/stats.py` e `validation_esterna/CRITERI.md` sono identici byte per byte a prima; negli
+altri moduli di calcolo la differenza è la sola conversione dei testi in lettere accentate
+(verificato file per file). Cinque commit, `Rifinitura 0` … `Rifinitura 4`, sul ramo
+`rifinitura`.
+
+### 0. Prova di installazione pulita
+
+Clone dell'URL pubblico (commit `0662a40`) in una cartella vuota, senza modificare nulla. Output
+in `docs/sviluppo/logs/installazione_pulita.txt`.
+
+| Strada | Installazione | `cli.py demo` | `pytest` |
+|---|---|---|---|
+| uv, seguendo il README | `uv sync --extra dev`: 0,9 s (cache di uv già presente) | exit 0, 2 min 59 s, report di 126.588 byte | 97 passed, 2 xfailed in 938 s |
+| venv + `pip install -e ".[dev]"` | exit 0, 3 min 01 s | exit 0, 3 min 02 s | 97 passed, 2 xfailed in 970 s |
+
+Entrambe funzionano. Mancanze del README, corrette al punto 3: la strada con pip non era
+documentata; il requisito Python >= 3.12 non era scritto; non era detto che i 3 test sui dati
+reali di GSE278694 girano solo dove quei dati esistono (usavano un percorso assoluto della
+macchina di sviluppo). I tempi sono un limite superiore: la macchina eseguiva anche altro.
+
+### 1. Trasparenza della validazione esterna
+
+File: `validation_esterna/REPORT.md` e `REPORT_template.md` (nuove sezioni 6 e 7),
+`make_report.py`, `criteri_originali.py` (nuovo), `indipendenti/leakage_check.py` (opzione
+`--pipeline originale`), nuovi file in `results/`.
+
+Il codice attuale è stato rivalutato con le tre versioni dei criteri senza modificarlo: cambia
+solo la regola nello script di verifica.
+
+| Criteri | Dataset del Modulo A | Codice | A1 | A2 (tolleranza 0,02) | A3 | A4 | Tutti soddisfatti |
+|---|---|---|---|---|---|---|---|
+| O, originali (`0b5a847`) | completo | prima esecuzione | NO: non terminato in 5 h 26 min | non valutabile | non valutabile | A4c NO (0,667 invece di 1,0) | **NO** |
+| M1, sezione 5 (`b08b2d2`) | ridotto | motore precedente, rieseguito oggi | non concluso: interrotto dopo 45 min | — | — | — | non determinato |
+| O, originali | completo | finale | OK | OK: 0.7776 contro 0.7880 (0.0104); LeaveOneGroupOut 0.7712 contro 0.7593 (0.0119) | OK | OK | sì |
+| M1, sezione 5 | ridotto | finale | OK, 156 s | **NO**: LeaveOneGroupOut 0.7530 contro 0.7127 (0.0403) | OK | OK | **NO** |
+| M2, sezione 6 (`0662a40`) | completo | finale | OK | OK: 0.7776 contro 0.7779; 0.7712 contro 0.7695 | OK | OK | sì |
+
+Audit del disegno: i criteri D1-D4 non sono mai cambiati. Prima esecuzione: GSE132465 falliva D2
+e D4; dopo la correzione `7bb30ca`: soddisfatti su tutti e tre i dataset (rieseguito oggi con i
+testi attuali: fatti strutturali, classi e V identici).
+
+**Verdetto con i criteri originali: NON PRONTO** (prima esecuzione, l'unica fatta senza conoscere
+i risultati). **Verdetto con i criteri modificati: PRONTO.** Il codice finale soddisfa anche i
+criteri originali, ma solo alla lettera per A2 (a parità di definizione della macro-F1 la
+differenza LeaveOneGroupOut è 0.0212, oltre la tolleranza), e questa rivalutazione è successiva
+ai risultati. Con la prima modifica (coorte ridotta) il codice finale non soddisfa A2. Inoltre la
+sezione 6 dei criteri è stata committata insieme ai risultati finali: git non dimostra che sia
+stata scritta prima.
+
+### 2. Sintesi dei controlli (ex «verdetto a semaforo»)
+
+File: `core/verdict.py`, `core/report.py`, `app.py`, `tests/test_verdict.py` (nuovo, 18 test),
+`tests/test_app_and_io.py`, `tests/test_leakage_engine.py`, README. Nessun calcolo e nessuna
+soglia è cambiata.
+
+Prima: un colore per sezione (verde, giallo, rosso).
+- Disegno: rosso se un confronto è non stimabile; giallo con bassa potenza o Cramér V >= 0.5;
+  altrimenti verde, **anche senza confronti richiesti e con V non valutabili**.
+- Modulo A: rosso se il divario supera 0.05 («qualunque valutazione che non separa i pazienti è
+  inaffidabile»); giallo per classi assenti, training sottocampionato, non convergenza o
+  confronto fra modelli non eseguito; altrimenti verde.
+- Modulo B: rosso se l'intervallo dell'eccesso di discordanza è sopra lo zero («errore
+  sistematico di annotazione»); giallo con numerosità insufficiente o tasso senza intervallo;
+  verde altrimenti.
+
+Dopo: nessun colore per sezione o per studio; una riga per controllo, con quattro stati: verde
+«stima affidabile», giallo «stima con limiti», rosso «stima non possibile con questi dati»,
+grigio «controllo non eseguito o non valutabile». Le soglie sono le stesse (0.05 sul divario,
+0.5 sul V, 5 pazienti, classi dell'audit del disegno). Che cosa cambia nella visualizzazione:
+- confronto fra modelli non eseguito, V non valutabile, nessun confronto richiesto, tasso
+  d'errore non calcolato, frazione di CD8 rifiutata: grigio, mai verde;
+- numerosità insufficiente nel Modulo B: da giallo a rosso («stima non possibile»);
+- intervallo dell'eccesso di discordanza sopra lo zero: da rosso a giallo, con un testo che
+  dice che cosa si può stimare invece di «errore sistematico»;
+- frazione di CD8: entra nella sintesi, mai verde;
+- report HTML: sintesi in apertura; il bordo verde di una scheda compare solo se tutti i
+  controlli della sezione sono verdi.
+
+La tabella completa delle regole, con le soglie, è nel README.
+
+### 3. README e lettere accentate
+
+README riscritto nell'ordine richiesto, con tutti i contenuti tecnici di prima. Estratti di
+output reali: disegno su GSE278694 (confronto scRNA/snRNA non stimabile), Modulo A su GSE125449
+(0.778 contro 0.895, divario +0.117), Modulo B su GSE278694 (0.093 per cellula, 0.195 per
+clone). Screenshot in `docs/img/report_demo.png`.
+
+Accenti: `docs/sviluppo/accenti.py` converte un elenco esplicito di parole (non ogni «vocale +
+apostrofo», perché l'apostrofo chiude anche le citazioni come 'tissue type'). Convertiti i
+file `.md` e `.py`. Non convertiti di proposito: `CRITERI.md` (resta com'era), `core/stats.py`
+(13 righe di commenti con l'apostrofo: il file non è stato toccato), gli output grezzi storici
+in `results/` e in `logs/`. La baseline `tests/fixtures/tcr_regression_baseline.json` cambia
+solo in 4 righe di testo narrativo; i numeri sono identici.
+
+Output rigenerati con i testi attuali: audit del disegno sui tre dataset esterni, A1 sul
+dataset completo (stessi numeri: 0.778, 0.895, +0.117; 419 s), disegno su GSE278694.
+
+### 4. Igiene
+
+- **Percorsi assoluti nei file attuali:** erano in 10 file (4 script o test con il percorso dei
+  dati di GSE278694, 6 output versionati, di cui uno con 200 righe di avvisi). Rimossi: gli
+  script leggono ora `GSE278694_DIR` oppure una cartella `pdac-ml` accanto alla repo; negli
+  output i percorsi sono relativi o sostituiti da `<tmp>`. Ricerca finale della cartella home,
+  della cartella temporanea e del nome utente nei file tracciati: 0 risultati.
+- **Cronologia** (non riscritta): il percorso della home, con il nome utente, compare in 6
+  commit (`8bb3d1a`, `2f03461`, `61e9ab9`, `aa3af26`, `bbe7bd0`, `0662a40`); un percorso
+  temporaneo in `61e9ab9`; il nome di un istituto in `NOTE.md`, dal commit `2ba6b89` fino a
+  questa rifinitura. L'indirizzo email dell'autore non compare in nessun file, ma è nei metadati
+  di tutti i commit. Nessun token, chiave o password, né nei file né nella cronologia.
+- **Nomi di istituti:** in `NOTE.md` la «valutazione strategica» citava un istituto per nome;
+  ora dice «per un laboratorio partner». Nessun altro nome di istituto o di persona nei file.
+- **File più pesanti:** `data/demo/GSE125449_demo.h5ad` 8,4 MB; `uv.lock` 378 kB;
+  `docs/img/report_demo.png` 231 kB; `validation_esterna/results/A3_perm.txt` 117 kB;
+  `docs/sviluppo/REPORT_INTERVENTI.md` 65 kB; `validation_esterna/results/leakage_GSE125449.html`
+  64 kB; `core/tcr_validation.py` 39 kB; `core/design_audit.py` 34 kB; `core/report.py` 32 kB;
+  `app.py` 31 kB.
+- `data/demo/README.md`: accessioni, articoli, riduzione, dicitura sui dati pubblici
+  ridistribuiti.
+- `REPORT_INTERVENTI.md`, `NOTE.md` e `logs/` spostati in `docs/sviluppo/`.
+- `LICENSE` MIT; `pyproject.toml` con autore e licenza.
+
+### Suite
+
+- Prima (clone pulito del commit `0662a40`): 97 passed, 2 xfailed.
+- Dopo: 115 passed, 2 xfailed, 0 failed, 0 skipped in 666 s (`docs/sviluppo/logs/pytest_rifinitura.txt`). I test in più sono i 18 di
+  `tests/test_verdict.py`. I 2 xfail sono le calibrazioni conservative già note. Su una macchina
+  senza i dati di GSE278694 i 3 test di `test_real_data_gse278694.py` vengono saltati.
+
+### Limiti e punti aperti
+
+- Il riferimento completo dell'articolo di GSE278694 (Chen et al., *Cancer Cell* 2025) è
+  riportato come nel progetto di tesi: titolo e pagine sono da completare.
+- A3 e A4 sul dataset completo non sono stati rieseguiti dopo le ultime modifiche ai messaggi
+  (sono stati eseguiti sulla coorte ridotta).
+- Il motore precedente sulla coorte ridotta è stato interrotto dopo 45 minuti: l'esito dei
+  criteri M1 con il codice di allora resta non determinato.
+- La cronologia pubblica contiene ancora i percorsi e il nome dell'istituto indicati sopra.

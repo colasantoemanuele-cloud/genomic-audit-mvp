@@ -1,6 +1,6 @@
-/home/nemo/miniforge3/lib/python3.13/functools.py:934: ImplicitModificationWarning: Transforming to str index.
+<home>/miniforge3/lib/python3.13/functools.py:934: ImplicitModificationWarning: Transforming to str index.
   return dispatch(args[0].__class__)(*args, **kw)
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/scipy/stats/_wilcoxon.py:192: RuntimeWarning: invalid value encountered in scalar divide
+.venv/lib/python3.13/site-packages/scipy/stats/_wilcoxon.py:192: RuntimeWarning: invalid value encountered in scalar divide
   z = (r_plus - mn) / se
 	Command being timed: "uv run python -m validation_esterna.benchmark_moduleA sintetico"
 	User time (seconds): 1655.26

@@ -1,4 +1,4 @@
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -7,7 +7,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -16,7 +16,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -25,7 +25,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -34,7 +34,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -43,7 +43,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -52,7 +52,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -61,7 +61,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -70,7 +70,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -79,7 +79,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -88,7 +88,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -97,7 +97,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -106,7 +106,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -115,7 +115,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -124,7 +124,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -133,7 +133,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -142,7 +142,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -151,7 +151,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -160,7 +160,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -169,7 +169,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -178,7 +178,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -187,7 +187,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -196,7 +196,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -205,7 +205,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -214,7 +214,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -223,7 +223,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -232,7 +232,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -241,7 +241,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -250,7 +250,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -259,7 +259,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -268,7 +268,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -277,7 +277,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -286,7 +286,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -295,7 +295,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -304,7 +304,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -313,7 +313,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -322,7 +322,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -331,7 +331,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -340,7 +340,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -349,7 +349,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -358,7 +358,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -367,7 +367,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -376,7 +376,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -385,7 +385,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -394,7 +394,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -403,7 +403,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -412,7 +412,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -421,7 +421,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -430,7 +430,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -439,7 +439,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -448,7 +448,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -457,7 +457,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -466,7 +466,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -475,7 +475,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -484,7 +484,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -493,7 +493,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -502,7 +502,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -511,7 +511,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -520,7 +520,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -529,7 +529,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -538,7 +538,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -547,7 +547,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -556,7 +556,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -565,7 +565,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -574,7 +574,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -583,7 +583,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -592,7 +592,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -601,7 +601,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -610,7 +610,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -619,7 +619,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -628,7 +628,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -637,7 +637,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -646,7 +646,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -655,7 +655,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -664,7 +664,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -673,7 +673,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -682,7 +682,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -691,7 +691,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -700,7 +700,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -709,7 +709,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -718,7 +718,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -727,7 +727,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -736,7 +736,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -745,7 +745,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -754,7 +754,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -763,7 +763,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -772,7 +772,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -781,7 +781,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -790,7 +790,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -799,7 +799,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -808,7 +808,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -817,7 +817,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -826,7 +826,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -835,7 +835,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -844,7 +844,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -853,7 +853,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -862,7 +862,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -871,7 +871,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -880,7 +880,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -889,7 +889,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -898,7 +898,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -907,7 +907,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -916,7 +916,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -925,7 +925,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -934,7 +934,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -943,7 +943,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -952,7 +952,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -961,7 +961,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -970,7 +970,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -979,7 +979,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -988,7 +988,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -997,7 +997,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1006,7 +1006,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1015,7 +1015,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1024,7 +1024,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1033,7 +1033,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1042,7 +1042,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1051,7 +1051,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1060,7 +1060,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1069,7 +1069,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1078,7 +1078,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1087,7 +1087,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1096,7 +1096,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1105,7 +1105,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1114,7 +1114,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1123,7 +1123,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1132,7 +1132,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1141,7 +1141,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1150,7 +1150,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1159,7 +1159,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1168,7 +1168,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1177,7 +1177,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1186,7 +1186,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1195,7 +1195,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1204,7 +1204,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1213,7 +1213,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1222,7 +1222,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1231,7 +1231,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1240,7 +1240,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1249,7 +1249,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1258,7 +1258,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1267,7 +1267,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1276,7 +1276,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1285,7 +1285,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1294,7 +1294,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1303,7 +1303,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1312,7 +1312,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1321,7 +1321,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1330,7 +1330,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1339,7 +1339,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1348,7 +1348,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1357,7 +1357,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1366,7 +1366,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1375,7 +1375,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1384,7 +1384,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1393,7 +1393,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1402,7 +1402,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1411,7 +1411,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1420,7 +1420,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1429,7 +1429,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1438,7 +1438,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1447,7 +1447,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1456,7 +1456,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1465,7 +1465,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1474,7 +1474,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1483,7 +1483,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1492,7 +1492,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1501,7 +1501,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1510,7 +1510,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1519,7 +1519,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1528,7 +1528,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1537,7 +1537,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1546,7 +1546,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1555,7 +1555,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1564,7 +1564,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1573,7 +1573,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1582,7 +1582,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1591,7 +1591,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1600,7 +1600,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1609,7 +1609,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1618,7 +1618,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1627,7 +1627,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1636,7 +1636,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1645,7 +1645,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1654,7 +1654,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1663,7 +1663,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1672,7 +1672,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1681,7 +1681,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1690,7 +1690,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1699,7 +1699,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1708,7 +1708,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1717,7 +1717,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1726,7 +1726,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1735,7 +1735,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1744,7 +1744,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1753,7 +1753,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1762,7 +1762,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1771,7 +1771,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1780,7 +1780,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).
@@ -1789,7 +1789,7 @@ You might also want to scale the data as shown in:
 Please also refer to the documentation for alternative solver options:
     https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
   n_iter_i = _check_optimize_result(
-/home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+.venv/lib/python3.13/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
 STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
 
 Increase the number of iterations to improve the convergence (max_iter=1000).

@@ -1,6 +1,7 @@
 # Validazione esterna di genomic-audit-mvp
 
-Criteri: `validation_esterna/CRITERI.md`.
+Criteri: `validation_esterna/CRITERI.md`. (Il file cita `REPORT_INTERVENTI.md` e i `logs/`: oggi sono
+in `docs/sviluppo/`. `CRITERI.md` non è stato aggiornato di proposito, per lasciarlo com'era.)
 - Sezioni 1-4: scritte e committate prima di toccare i dati esterni (commit `0b5a847`).
 - Sezione 5: coorte ridotta, decisa dall'utente (commit `b08b2d2`).
 - Sezione 6: nuovo motore del Modulo A, deciso dall'utente (commit `0662a40`).

@@ -3,4 +3,4 @@ Audit del disegno su 58 unita' (righe dei metadati) e 5 fattori. 2 fatti struttu
  - 'patient id' e 'tumor stage': Cramér V non valutabile (58 unita' per 44x4 celle; servono almeno 10 unita' e 2 unita' attese per cella). Un numero su una tabella cosi' piccola sarebbe instabile.
  - 'tissue origin abbrevation' e 'tumor stage': Cramér V corretto = 0.49 su 58 unita', sotto la soglia di 0.5: nessuna segnalazione (non significa che il disegno sia perfettamente bilanciato).
  * Le unita' di questo audit sono le righe della tabella dei metadati (campioni o librerie), non le cellule: le cellule dello stesso campione non sono osservazioni indipendenti del disegno.
-[ok] report scritto in /home/nemo/Uni/PROGETTO_ML/genomic-audit-mvp/validation_esterna/results/design_GSE131907.html
+[ok] report scritto in validation_esterna/results/design_GSE131907.html

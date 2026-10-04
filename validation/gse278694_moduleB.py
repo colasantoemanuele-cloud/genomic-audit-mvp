@@ -15,6 +15,7 @@ suffisso "-1", perché in sc_raw.h5ad il barcode è la sola sequenza di 16 nt).
 
 from __future__ import annotations
 
+import os
 import argparse
 import json
 from pathlib import Path
@@ -26,7 +27,9 @@ import pandas as pd
 from core.stats import cluster_bootstrap
 from core.tcr_validation import build_clonotypes, pairwise_excess_discordance, parse_vdj_contigs
 
-H5AD = Path("/home/nemo/Uni/PROGETTO_ML/pdac-ml/data/interim/sc_raw.h5ad")
+# Dati reali di GSE278694: non inclusi nella repo. Cartella indicata da GSE278694_DIR, altrimenti
+# una cartella "pdac-ml" accanto a questa repo.
+H5AD = Path(os.environ.get("GSE278694_DIR", Path(__file__).resolve().parents[2] / "pdac-ml")) / "data/interim/sc_raw.h5ad"
 N_BOOT, SEED = 2000, 0
 LYMPHOID = ("CD4T", "CD8T", "NK")
 

@@ -10,6 +10,7 @@ Uso:
 
 from __future__ import annotations
 
+import os
 import argparse
 import json
 from pathlib import Path
@@ -19,7 +20,9 @@ import pandas as pd
 
 from core.cd8_propagation import cd8_fraction_intervals
 
-H5AD = Path("/home/nemo/Uni/PROGETTO_ML/pdac-ml/data/interim/sc_raw.h5ad")
+# Dati reali di GSE278694: non inclusi nella repo. Cartella indicata da GSE278694_DIR, altrimenti
+# una cartella "pdac-ml" accanto a questa repo.
+H5AD = Path(os.environ.get("GSE278694_DIR", Path(__file__).resolve().parents[2] / "pdac-ml")) / "data/interim/sc_raw.h5ad"
 
 
 def main() -> None:
