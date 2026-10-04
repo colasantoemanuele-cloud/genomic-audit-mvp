@@ -1,0 +1,22 @@
+{
+ "raggruppato": {
+  "classi_del_test": 0.7880181366592326,
+  "standard": 0.7880181366592326,
+  "tutte_le_classi": 0.7880181366592326
+ },
+ "casuale": {
+  "classi_del_test": 0.9060332060328253,
+  "standard": 0.9060332060328253,
+  "tutte_le_classi": 0.9060332060328253
+ },
+ "logo_logreg": {
+  "classi_del_test": 0.7924098292240696,
+  "standard": 0.7592761977063056,
+  "tutte_le_classi": 0.7053001224620158
+ }
+}
+
+real	3m36.647s
+user	9m55.032s
+sys	0m4.707s
+exit 0

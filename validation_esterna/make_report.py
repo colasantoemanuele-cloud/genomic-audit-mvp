@@ -42,6 +42,27 @@ def main() -> None:
                 f"{len(v['fatti_indipendenti'])} indipendenti | {ok(v['D3'])}: {comps} | {ok(v['D4'])}: "
                 f"{len(v['cramer_v'])} coppie, {nv} non valutabili, valori coincidenti entro 1e-9 |")
 
+    co = json.loads((R / "criteri_originali.json").read_text())
+
+    def corow(key, a1_txt):
+        v = co[key]
+        ok = lambda b: "OK" if b else "**NO**"  # noqa: E731
+        nomi = {"raggruppato": "split per paziente", "logo_logreg": "LeaveOneGroupOut", "casuale": "split casuale"}
+        a2 = "; ".join(f"{nomi[n]} {r['strumento']:.4f} contro {r['indipendente']:.4f} (diff {r['diff']:.4f})"
+                       for n, r in v["A2"]["confronti"].items())
+        a3, a4c = v["A3"], v["A4c"]
+        dataset = "completo, 19 pazienti" if "completo" in v["dataset"] else "ridotto, 10 pazienti"
+        return (f"| {key} | {dataset} | codice finale | {ok(v['A1'])}: {a1_txt} | {ok(v['A2']['esito'])}: {a2} | "
+                f"{ok(a3['esito'])}: media {a3['media']:.4f}, atteso {a3['atteso']:.3f}, tag in {a3['tag_leakage']}/20 | "
+                f"{ok(v['A4ab'])} | {ok(a4c['esito'])}: {a4c['fold_con_classi_assenti']} fold con classi assenti; "
+                f"strumento {a4c['strumento']:.4f}, classi presenti {a4c['classi_presenti']:.4f}, assenti come zero "
+                f"{a4c['assenti_come_zero']:.4f} | {'sì' if v['tutti_i_criteri_A'] else '**NO**'} |")
+
+    def logo(key):
+        r = co[key]["A2"]["confronti"]["logo_logreg"]
+        return (f"{r['strumento']:.4f} contro {r['indipendente']:.4f}, differenza {r['diff']:.4f}",
+                f"{r['diff_altre_metriche']['classi_del_test']:.4f}")
+
     a1 = (R / "A1_cli_stdout.txt").read_text().strip()
     text = (HERE / "REPORT_template.md").read_text()
     repl = {
@@ -68,6 +89,11 @@ def main() -> None:
         "GAP_TXT": f"{bm['divario']:+.3f}** ({bm['casuale']:.3f} contro {bm['raggruppato']:.3f})",
         "XAI_TXT": f"{bm['xai_jaccard'][0]:.3f} fra fold per paziente, {bm['xai_jaccard'][1]:.3f} fra fold casuali",
         "SINT_S": f"{bs['secondi']:.0f}", "SUITE_FINALE": suite,
+        "CO_ROW_O": corow("O", "exit 0, 324 s"), "CO_ROW_M1": corow("M1", "exit 0, 156 s"),
+        "CO_ROW_M2": corow("M2", "exit 0, 324 s"),
+        "O_LOGO_TXT": logo("O")[0], "O_LOGO_LIKE": logo("O")[1],
+        "M1_LOGO_TXT": logo("M1")[0], "M1_LOGO_LIKE": logo("M1")[1],
+        "M1_PRIMA": (R / "motore_precedente_ridotta.txt").read_text().strip(),
     }
     for k, v in repl.items():
         text = text.replace("{{" + k + "}}", v)

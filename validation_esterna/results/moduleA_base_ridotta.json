@@ -1,0 +1,87 @@
+{
+ "grouped": [
+  0.6182586907998803,
+  0.7583720951535918,
+  0.8486191910807761,
+  0.8226242374934845,
+  0.7704828789957829
+ ],
+ "random": [
+  0.8839942646631291,
+  0.8462789817657257,
+  0.8570055861454183,
+  0.8771335689196857,
+  0.8681430899293177
+ ],
+ "grouped_mean": 0.7636714187047031,
+ "random_mean": 0.8665110982846553,
+ "gap": 0.10283967957995221,
+ "tag_leakage_rilevabile": true,
+ "narrative": "Split per paziente (valutazione onesta): macro-F1 = 0.764 ± 0.089 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perche' mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.867 ± 0.015. Divario sulla media: +0.103 -- lo split casuale sovrastima l'accuratezza reale del modello di circa 0.103 punti di macro-F1. La deviazione standard fra fold e' 5.9x piu' ampia nello split onesto: lo split casuale sottostima l'incertezza reale sulla performance di quel fattore.",
+ "logo": {
+  "logreg": [
+   0.7157263501525797,
+   0.7407446808510638,
+   0.8113177095264307,
+   0.862012987012987,
+   0.7231292517006802,
+   0.8032215186247444,
+   0.757832468889345,
+   0.9172289698605488,
+   0.5577376827376826,
+   0.6415318627450981
+  ],
+  "random_forest": [
+   0.5811401386873085,
+   0.6961486264962489,
+   0.8131092329597313,
+   0.7303961084938191,
+   0.7282197446329112,
+   0.810580143127313,
+   0.7521036634392798,
+   0.8981173864894796,
+   0.5581568190263843,
+   0.5864079656277705
+  ],
+  "hist_gb": [
+   0.5991313227193626,
+   0.7576822564657115,
+   0.6573250570308546,
+   0.7301849827472384,
+   0.7169598517424605,
+   0.8120569275140886,
+   0.71480098821494,
+   0.9116446578631453,
+   0.522657870716123,
+   0.6690303407284539
+  ]
+ },
+ "logo_mean": {
+  "logreg": 0.753048348210116,
+  "random_forest": 0.7154379828980245,
+  "hist_gb": 0.7091474255742378
+ },
+ "best_model": "logreg",
+ "comparisons": [
+  {
+   "model": "random_forest",
+   "mean_macro_f1": 0.7154379828980245,
+   "delta_vs_best": -0.0376103653120915,
+   "p_nadeau_bengio": 0.16783801978268498,
+   "p_wilcoxon": 0.10546875,
+   "wilcoxon_floor": 0.001953125,
+   "divergent": false,
+   "note": ""
+  },
+  {
+   "model": "hist_gb",
+   "mean_macro_f1": 0.7091474255742378,
+   "delta_vs_best": -0.04390092263587819,
+   "p_nadeau_bengio": 0.18404503862222343,
+   "p_wilcoxon": 0.130859375,
+   "wilcoxon_floor": 0.001953125,
+   "divergent": false,
+   "note": ""
+  }
+ ]
+}

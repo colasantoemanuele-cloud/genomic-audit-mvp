@@ -1,0 +1,176 @@
+{
+ "O": {
+  "criteri": "sezioni 1-4 (0b5a847)",
+  "dataset": "GSE125449 completo (19 pazienti)",
+  "A1": true,
+  "A2": {
+   "metrica_indipendente": "standard",
+   "confronti": {
+    "raggruppato": {
+     "strumento": 0.777640179913546,
+     "indipendente": 0.7880181366592326,
+     "diff": 0.010377956745686645,
+     "diff_altre_metriche": {
+      "classi_del_test": 0.010377956745686645,
+      "tutte_le_classi": 0.010377956745686645
+     }
+    },
+    "logo_logreg": {
+     "strumento": 0.7711638057980308,
+     "indipendente": 0.7592761977063056,
+     "diff": 0.011887608091725177,
+     "diff_altre_metriche": {
+      "classi_del_test": 0.021246023426038763,
+      "tutte_le_classi": 0.065863683336015
+     }
+    }
+   },
+   "esito": true
+  },
+  "A3": {
+   "media": 0.11921422641874355,
+   "atteso": 0.125,
+   "tag_leakage": 0,
+   "esito": true
+  },
+  "A4ab": true,
+  "A4c": {
+   "fold_con_classi_assenti": 7,
+   "strumento": 0.7711638057980308,
+   "classi_presenti": 0.7695322919752995,
+   "assenti_come_zero": 0.6870451732074582,
+   "esito": true
+  },
+  "tutti_i_criteri_A": true
+ },
+ "M1": {
+  "criteri": "sezioni 1-5 (b08b2d2)",
+  "dataset": "GSE125449 ridotto (10 pazienti, 1.861 cellule)",
+  "A1": true,
+  "A2": {
+   "metrica_indipendente": "standard",
+   "confronti": {
+    "raggruppato": {
+     "strumento": 0.7636714187047031,
+     "indipendente": 0.7507169822302469,
+     "diff": 0.012954436474456266,
+     "diff_altre_metriche": {
+      "classi_del_test": 0.012954436474456266,
+      "tutte_le_classi": 0.012954436474456266
+     }
+    },
+    "logo_logreg": {
+     "strumento": 0.753048348210116,
+     "indipendente": 0.7127093469474662,
+     "diff": 0.040339001262649776,
+     "diff_altre_metriche": {
+      "classi_del_test": 0.01680429864642552,
+      "tutte_le_classi": 0.12466017447289668
+     }
+    }
+   },
+   "esito": false
+  },
+  "A3": {
+   "media": 0.1203581905925268,
+   "atteso": 0.125,
+   "tag_leakage": 0,
+   "esito": true
+  },
+  "A4ab": true,
+  "A4c": {
+   "fold_con_classi_assenti": 7,
+   "strumento": 0.753048348210116,
+   "classi_presenti": 0.753048348210116,
+   "assenti_come_zero": 0.6430661310027793,
+   "esito": true
+  },
+  "A2_pipeline_sezione6": {
+   "metrica_indipendente": "classi_del_test",
+   "confronti": {
+    "raggruppato": {
+     "strumento": 0.7636714187047031,
+     "indipendente": 0.7636714187047031,
+     "diff": 0.0,
+     "diff_altre_metriche": {
+      "standard": 0.0,
+      "tutte_le_classi": 0.0
+     }
+    },
+    "logo_logreg": {
+     "strumento": 0.753048348210116,
+     "indipendente": 0.753048348210116,
+     "diff": 0.0,
+     "diff_altre_metriche": {
+      "standard": 0.011928772502542984,
+      "tutte_le_classi": 0.1099822172073367
+     }
+    },
+    "casuale": {
+     "strumento": 0.8665110982846553,
+     "indipendente": 0.8665110982846553,
+     "diff": 0.0,
+     "diff_altre_metriche": {
+      "standard": 0.0,
+      "tutte_le_classi": 0.0
+     }
+    }
+   },
+   "esito": true
+  },
+  "tutti_i_criteri_A": false
+ },
+ "M2": {
+  "criteri": "sezioni 1-4 e 6 (0662a40)",
+  "dataset": "GSE125449 completo (19 pazienti)",
+  "A1": true,
+  "A2": {
+   "metrica_indipendente": "classi_del_test",
+   "confronti": {
+    "raggruppato": {
+     "strumento": 0.777640179913546,
+     "indipendente": 0.777887105883895,
+     "diff": 0.0002469259703490323,
+     "diff_altre_metriche": {
+      "standard": 0.0002469259703490323,
+      "tutte_le_classi": 0.0002469259703490323
+     }
+    },
+    "logo_logreg": {
+     "strumento": 0.7711638057980308,
+     "indipendente": 0.7695322919752995,
+     "diff": 0.0016315138227313009,
+     "diff_altre_metriche": {
+      "standard": 0.03554800774974376,
+      "tutte_le_classi": 0.08411863259057262
+     }
+    },
+    "casuale": {
+     "strumento": 0.8948344820651398,
+     "indipendente": 0.8948586880925674,
+     "diff": 2.4206027427586818e-05,
+     "diff_altre_metriche": {
+      "standard": 2.4206027427586818e-05,
+      "tutte_le_classi": 2.4206027427586818e-05
+     }
+    }
+   },
+   "esito": true
+  },
+  "A3": {
+   "media": 0.11921422641874355,
+   "atteso": 0.125,
+   "tag_leakage": 0,
+   "esito": true
+  },
+  "A4ab": true,
+  "A4c": {
+   "fold_con_classi_assenti": 7,
+   "strumento": 0.7711638057980308,
+   "classi_presenti": 0.7695322919752995,
+   "assenti_come_zero": 0.6870451732074582,
+   "esito": true
+  },
+  "tutti_i_criteri_A": true
+ }
+}

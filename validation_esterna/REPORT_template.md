@@ -2,10 +2,12 @@
 
 Criteri: `validation_esterna/CRITERI.md`.
 - Sezioni 1-4: scritte e committate prima di toccare i dati esterni (commit `0b5a847`).
-- Sezione 5: coorte ridotta, decisa dall'utente.
-- Sezione 6: nuovo motore del Modulo A, deciso dall'utente.
+- Sezione 5: coorte ridotta, decisa dall'utente (commit `b08b2d2`).
+- Sezione 6: nuovo motore del Modulo A, deciso dall'utente (commit `0662a40`).
 
 Le sezioni 5 e 6 sono state aggiunte DOPO aver visto dei risultati, e sono dichiarate come tali.
+**Verdetto con i criteri originali: NON PRONTO. Verdetto con i criteri modificati: PRONTO.**
+Testo dei criteri prima e dopo, motivi ed esiti con entrambe le versioni: sezioni 6 e 7.
 
 Ambiente: `.venv` del progetto gestito con uv (anndata 0.13.2, scikit-learn 1.9.0, pandas 3.0.5).
 Workstation locale con 12 core e 31 GB di RAM. Numeri e output di questo documento sono
@@ -112,20 +114,131 @@ Tempi:
   della parallelizzazione dei fold. Su questi dati il segnale e' troppo facile (macro-F1 = 1,0):
   la misura vale per i tempi, non per l'accuratezza.
 
-## 6. Verdetto
+## 6. Criteri originali e modifiche
 
-**PRONTO**, secondo i criteri: dopo le correzioni dichiarate, tutti i criteri D1-D4 sono
-soddisfatti sui 3 dataset del disegno, e tutti i criteri A1-A4 sul dataset del Modulo A.
+I criteri sono stati scritti prima di toccare i dati esterni (sezioni 1-4 di `CRITERI.md`, commit
+`0b5a847`) e poi modificati **due volte dopo aver visto dei risultati**. Criteri cambiati dopo
+aver visto i risultati tolgono valore a una validazione: per questo qui sotto ci sono, per
+ciascuna modifica, il testo prima e dopo, il motivo, e l'esito di ogni dataset con entrambe le
+versioni. `CRITERI.md` non è stato ritoccato in questa revisione, neppure nella forma.
 
-Il verdetto vale con queste precisazioni, che ne fanno parte:
-- La prima esecuzione era **NON PRONTO** (GSE132465: D2 e D4; Modulo A: A1 non terminato, A4c
-  fallito).
-- I criteri sono stati modificati due volte DOPO aver visto dei risultati, per decisione
-  dell'utente (sezioni 5 e 6 di CRITERI.md).
-- A3 e A4 sono stati eseguiti prima delle ultime modifiche, che aggiungono soltanto messaggi
-  e controlli: dichiarazione della non convergenza, errore esplicito per una classe in un solo
-  paziente, classi assenti nel confronto fra modelli. I calcoli non sono cambiati, ma A3 e A4
-  non sono stati rieseguiti dopo queste modifiche.
+Tre versioni dei criteri:
+- **O** = sezioni 1-4, commit `0b5a847` (2026-10-01): gli originali;
+- **M1** = O + sezione 5, commit `b08b2d2` (2026-10-02): prima modifica;
+- **M2** = O + sezione 6, commit `0662a40` (2026-10-02): seconda modifica, quella usata per il
+  verdetto finale. La sezione 6 annulla la 5 (si torna al dataset completo).
+
+I criteri D1-D4 dell'audit del disegno **non sono mai stati modificati**: le due modifiche
+riguardano solo il Modulo A.
+
+### Modifica 1 — coorte ridotta per il Modulo A (sezione 5, commit `b08b2d2`)
+
+- **Prima** (sezione 1, commit `0b5a847`): il Modulo A si valuta su un dataset con «M3. Almeno 8
+  pazienti» e «M5. Se ci sono più di 50.000 cellule: sottocampionamento stratificato per
+  paziente». GSE125449 ha 9.946 cellule: andava quindi valutato **intero** (19 pazienti), con
+  A1-A4.
+- **Dopo** (sezione 5): «10 pazienti estratti a caso fra i 19 di GSE125449 (numpy
+  default_rng(0), scelta senza reinserimento); per ciascun paziente al massimo 200 cellule
+  estratte a caso [...]. Su questa coorte si valutano A1-A4 con gli stessi criteri della
+  sezione 3.» Risultato: 10 pazienti, 1.861 cellule.
+- **Motivo:** sul dataset completo `cli.py leakage` non era terminato dopo 5 h 26 min reali
+  (18 h 52 min di CPU).
+- **Che cosa era già noto quando è stata scritta:** che A1 non terminava sul dataset completo.
+  La modifica rende il criterio più facile da soddisfare (meno dati) e va letta così.
+
+### Modifica 2 — pipeline dichiarata del nuovo motore (sezione 6, commit `0662a40`)
+
+- **Prima** (sezione 3, A2, commit `0b5a847`): lo script indipendente riesegue «CPM a 1e4 +
+  log1p, StandardScaler senza centratura; LogisticRegression(C=1, class_weight="balanced",
+  max_iter=1000, seme 0); macro-F1», cioè **tutti i geni** e la macro-F1 standard di
+  scikit-learn, e confronta le medie (split per paziente e LeaveOneGroupOut) con tolleranza
+  0,02. A4(c): se rivela un difetto nel calcolo della metrica, «mi fermo e lo riporto senza
+  correggerlo».
+- **Dopo** (sezione 6): la pipeline che lo script indipendente deve riprodurre diventa quella
+  del nuovo motore: «i 2000 geni con varianza più alta dei valori log-CPM, stimata sul SOLO
+  training del fold» e «macro-F1 calcolata sulle classi presenti nel fold di test». A2
+  confronta i punteggi per fold (anche dello split casuale), stessa tolleranza 0,02. A4(c) è
+  «ora atteso come gestito». Il dataset torna a essere GSE125449 completo.
+- **Motivo:** l'utente ha chiesto di correggere l'architettura del Modulo A, non praticabile su
+  dati reali, e di correggere la macro-F1 che contava come zero le classi assenti.
+- **Che cosa era già noto quando è stata scritta:** tutti gli esiti della prima esecuzione,
+  compreso il fallimento di A4(c). Inoltre la sezione 6 è stata committata **nello stesso
+  commit** dei risultati finali (`0662a40`): la cronologia di git non permette di dimostrare
+  che sia stata scritta prima di ottenerli. Con questa modifica lo strumento e lo script che lo
+  verifica sono stati cambiati insieme: A2 secondo M2 verifica che due implementazioni della
+  stessa pipeline coincidano, non che la pipeline sia quella dichiarata all'inizio.
+
+### Esiti con ciascuna versione dei criteri
+
+**Audit del disegno** (criteri D1-D4 identici in O, M1 e M2):
+
+| Dataset | Prima esecuzione | Dopo la correzione dei valori mancanti (`7bb30ca`) |
+|---|---|---|
+| GSE132465 | **NON soddisfatti: D2 e D4 falliti** (due fatti strutturali falsi, due V mancanti) | D1-D4 soddisfatti |
+| GSE131907 | D1-D4 soddisfatti | D1-D4 soddisfatti |
+| GSE125449 | D1-D4 soddisfatti | D1-D4 soddisfatti |
+
+Qui non è cambiato il criterio: è stato corretto un difetto dello strumento, trovato proprio dai
+criteri originali.
+
+**Modulo A** (GSE125449). «Prima esecuzione» = motore di allora; «codice finale» = motore
+attuale, rivalutato in questa revisione senza modificarlo: è cambiata solo la regola di
+valutazione nello script di verifica (`criteri_originali.py`, `leakage_check.py --pipeline
+originale`; numeri in `results/criteri_originali.json`).
+
+| Criteri | Dataset | Codice | A1 | A2 (tolleranza 0,02) | A3 | A4a, A4b | A4c | Tutti soddisfatti |
+|---|---|---|---|---|---|---|---|---|
+| O | completo, 19 pazienti | prima esecuzione | **NO**: non terminato dopo 5 h 26 min | non valutabile (nessun output) | non valutabile | non valutabili | **NO**: fold perfetto con una classe assente = 0,667 invece di 1,0 | **NO** |
+| M1 | ridotto, 10 pazienti | motore precedente | {{M1_PRIMA}} |
+{{CO_ROW_O}}
+{{CO_ROW_M1}}
+{{CO_ROW_M2}}
+
+Due precisazioni sulla riga «O, codice finale», perché non venga letta come più favorevole di
+quanto è:
+- A2 è soddisfatto alla lettera, con poco margine. Il criterio originale confronta la media
+  dello strumento con la macro-F1 **standard** dello script indipendente su tutti i geni:
+  LeaveOneGroupOut {{O_LOGO_TXT}}. Ma lo strumento finale calcola la macro-F1 sulle sole classi
+  presenti nel fold: con la stessa definizione dai due lati la differenza è {{O_LOGO_LIKE}},
+  **oltre** la tolleranza. Le due differenze (selezione dei geni e definizione della metrica)
+  hanno segno opposto e in parte si compensano.
+- È una rivalutazione fatta **dopo** aver visto i risultati e dopo aver riscritto lo strumento:
+  non ha il valore di un test scritto in anticipo.
+
+Sulla riga «M1, codice finale»: A2 **fallisce** sul confronto LeaveOneGroupOut
+({{M1_LOGO_TXT}}). In 7 fold su 10 il paziente lasciato fuori non ha tutte le classi, e lì la
+macro-F1 standard dello script e quella sulle classi presenti dello strumento divergono; con la
+stessa definizione dai due lati la differenza è {{M1_LOGO_LIKE}}. Il criterio, così come era
+scritto, non è soddisfatto.
+
+## 7. Verdetto, con i criteri originali e con quelli modificati
+
+**Con i criteri originali (O, commit `0b5a847`): NON PRONTO.** È l'esito della prima esecuzione,
+l'unica fatta senza conoscere i risultati: GSE132465 falliva D2 e D4; il Modulo A non terminava
+(A1) e contava come zero le classi assenti (A4c). Secondo i criteri stessi («Non esistono
+verdetti parziali favorevoli») questo è il verdetto della validazione pre-dichiarata.
+
+**Con i criteri modificati (M2, sezione 6, commit `0662a40`): PRONTO.** Dopo le correzioni
+dichiarate nella sezione 4, tutti i criteri D1-D4 sono soddisfatti sui 3 dataset del disegno e
+tutti i criteri A1-A4 sul dataset completo del Modulo A.
+
+Fra i due:
+- il codice finale, rivalutato con i criteri originali O, li soddisfa tutti (A2 con le riserve
+  scritte sopra);
+- il codice finale, rivalutato con la prima modifica M1 (coorte ridotta), **non** soddisfa A2.
+
+Che cosa si può concludere: i difetti trovati dai criteri originali sono stati corretti e il
+codice corretto supera gli stessi controlli. Che cosa **non** si può concludere: che lo strumento
+abbia superato una validazione indipendente al primo tentativo. Non l'ha superata.
+
+Altre precisazioni che fanno parte del verdetto:
+- A3 e A4 sul dataset completo sono stati eseguiti prima delle ultime modifiche, che aggiungono
+  soltanto messaggi e controlli: dichiarazione della non convergenza, errore esplicito per una
+  classe in un solo paziente, classi assenti nel confronto fra modelli. I calcoli non sono
+  cambiati, ma A3 e A4 sul dataset completo non sono stati rieseguiti dopo queste modifiche.
+  Sulla coorte ridotta A1, A3 e A4 sono stati eseguiti con il codice attuale (riga M1).
+- Il verdetto riguarda la correttezza e la generalità del codice sull'audit del disegno e sul
+  Modulo A. Non riguarda il Modulo B.
 
 ## Cosa questa validazione non dimostra
 

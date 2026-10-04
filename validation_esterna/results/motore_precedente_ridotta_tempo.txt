@@ -1,0 +1,8 @@
+# Motore precedente (commit b08b2d2) sulla coorte ridotta, rieseguito il 2026-10-04 in un worktree temporaneo:
+# timeout 2700 python cli.py leakage --h5ad data/demo/GSE125449_demo.h5ad --target-col Type --patient-col patient
+# stdout: 0 byte. Exit status 124 = interrotto dal limite di 45 minuti imposto in questa revisione.
+	User time (seconds): 9695.90
+	System time (seconds): 1754.10
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 45:00.06
+	Maximum resident set size (kbytes): 1989620
+	Exit status: 124

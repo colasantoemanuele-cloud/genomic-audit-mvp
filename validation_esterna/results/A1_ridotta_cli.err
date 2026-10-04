@@ -1,0 +1,64 @@
+Modulo A: 1,861 cellule, 18,372 geni, 10 pazienti, 8 classi. Addestramenti previsti: 40.
+[1/40] split per paziente, fold 1/5 -- trascorsi 5 s, stima residua 206 s
+[2/40] split per paziente, fold 2/5 -- trascorsi 5 s, stima residua 101 s
+[3/40] split per paziente, fold 3/5 -- trascorsi 5 s, stima residua 65 s
+[4/40] split per paziente, fold 4/5 -- trascorsi 6 s, stima residua 50 s
+[5/40] split per paziente, fold 5/5 -- trascorsi 6 s, stima residua 39 s
+[6/40] split casuale, fold 1/5 -- trascorsi 8 s, stima residua 48 s
+[7/40] split casuale, fold 2/5 -- trascorsi 8 s, stima residua 40 s
+[8/40] split casuale, fold 3/5 -- trascorsi 8 s, stima residua 34 s
+[9/40] split casuale, fold 4/5 -- trascorsi 9 s, stima residua 30 s
+[10/40] split casuale, fold 5/5 -- trascorsi 9 s, stima residua 26 s
+[11/40] confronto modelli: logreg, fold 1/10 -- trascorsi 16 s, stima residua 43 s
+[12/40] confronto modelli: logreg, fold 2/10 -- trascorsi 16 s, stima residua 38 s
+[13/40] confronto modelli: logreg, fold 3/10 -- trascorsi 17 s, stima residua 35 s
+[14/40] confronto modelli: logreg, fold 4/10 -- trascorsi 17 s, stima residua 31 s
+[15/40] confronto modelli: logreg, fold 5/10 -- trascorsi 17 s, stima residua 28 s
+[16/40] confronto modelli: logreg, fold 6/10 -- trascorsi 18 s, stima residua 26 s
+[17/40] confronto modelli: logreg, fold 7/10 -- trascorsi 18 s, stima residua 24 s
+[18/40] confronto modelli: logreg, fold 8/10 -- trascorsi 18 s, stima residua 21 s
+[19/40] confronto modelli: logreg, fold 9/10 -- trascorsi 18 s, stima residua 19 s
+[20/40] confronto modelli: logreg, fold 10/10 -- trascorsi 18 s, stima residua 18 s
+[21/40] confronto modelli: random_forest, fold 1/10 -- trascorsi 21 s, stima residua 19 s
+[22/40] confronto modelli: random_forest, fold 2/10 -- trascorsi 24 s, stima residua 20 s
+[23/40] confronto modelli: random_forest, fold 3/10 -- trascorsi 27 s, stima residua 20 s
+[24/40] confronto modelli: random_forest, fold 4/10 -- trascorsi 30 s, stima residua 20 s
+[25/40] confronto modelli: random_forest, fold 5/10 -- trascorsi 33 s, stima residua 20 s
+[26/40] confronto modelli: random_forest, fold 6/10 -- trascorsi 36 s, stima residua 19 s
+[27/40] confronto modelli: random_forest, fold 7/10 -- trascorsi 39 s, stima residua 19 s
+[28/40] confronto modelli: random_forest, fold 8/10 -- trascorsi 42 s, stima residua 18 s
+[29/40] confronto modelli: random_forest, fold 9/10 -- trascorsi 45 s, stima residua 17 s
+[30/40] confronto modelli: random_forest, fold 10/10 -- trascorsi 48 s, stima residua 16 s
+[31/40] confronto modelli: hist_gb, fold 1/10 -- trascorsi 60 s, stima residua 17 s
+[32/40] confronto modelli: hist_gb, fold 2/10 -- trascorsi 70 s, stima residua 18 s
+[33/40] confronto modelli: hist_gb, fold 3/10 -- trascorsi 82 s, stima residua 17 s
+[34/40] confronto modelli: hist_gb, fold 4/10 -- trascorsi 94 s, stima residua 17 s
+[35/40] confronto modelli: hist_gb, fold 5/10 -- trascorsi 104 s, stima residua 15 s
+[36/40] confronto modelli: hist_gb, fold 6/10 -- trascorsi 114 s, stima residua 13 s
+[37/40] confronto modelli: hist_gb, fold 7/10 -- trascorsi 124 s, stima residua 10 s
+[38/40] confronto modelli: hist_gb, fold 8/10 -- trascorsi 136 s, stima residua 7 s
+[39/40] confronto modelli: hist_gb, fold 9/10 -- trascorsi 148 s, stima residua 4 s
+[40/40] confronto modelli: hist_gb, fold 10/10 -- trascorsi 156 s, stima residua 0 s
+	Command being timed: "uv run python cli.py leakage --h5ad data/demo/GSE125449_demo.h5ad --target-col Type --patient-col patient --out validation_esterna/results/leakage_ridotta.html"
+	User time (seconds): 612.49
+	System time (seconds): 25.64
+	Percent of CPU this job got: 396%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:40.87
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 492748
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 8
+	Minor (reclaiming a frame) page faults: 878704
+	Voluntary context switches: 4097864
+	Involuntary context switches: 173977
+	Swaps: 0
+	File system inputs: 552
+	File system outputs: 184
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,13 @@
+{
+ "K": 8,
+ "atteso_1_su_K": 0.125,
+ "media_raggruppata": 0.1203581905925268,
+ "min_max_raggruppata": [
+  0.10169630795104594,
+  0.14094510088101464
+ ],
+ "media_divario": 0.0030981970685976987,
+ "permutazioni_con_tag_leakage": 0,
+ "A3_i": true,
+ "A3_ii": true
+}

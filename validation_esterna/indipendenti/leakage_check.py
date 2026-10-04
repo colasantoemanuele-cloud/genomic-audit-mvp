@@ -16,6 +16,11 @@ Per ogni fold registra tre macro-F1:
 - "tutte_le_classi": labels = tutte le classi del dataset, zero_division=0. Una classe assente
   dal fold e mai predetta conta come F1 = 0.
 Il confronto fra le due mostra se una classe assente viene contata come zero.
+
+Con `--pipeline originale` lo script applica invece la pipeline dichiarata nei criteri
+ORIGINALI (CRITERI.md, sezione 3, commit 0b5a847): tutti i geni, senza selezione dei 2000 a
+varianza piu' alta. Serve a valutare lo strumento attuale anche con i criteri scritti prima di
+vedere i dati (REPORT.md, sezione "Criteri originali e modifiche").
 """
 
 from __future__ import annotations
@@ -49,9 +54,12 @@ def hvg_columns(Xtr, n_top=2000):
     return np.sort(np.argsort(-v, kind="stable")[: min(n_top, Xtr.shape[1])])
 
 
+N_TOP = 2000  # None = tutti i geni (pipeline dei criteri originali)
+
+
 def fit_predict(X, y, tr, te, seed=0):
-    cols = hvg_columns(X[tr])
-    X = X[:, cols]
+    if N_TOP is not None:
+        X = X[:, hvg_columns(X[tr], N_TOP)]
     sc = StandardScaler(with_mean=False).fit(X[tr])
     clf = LogisticRegression(C=1.0, class_weight="balanced", max_iter=1000, random_state=seed)
     clf.fit(sc.transform(X[tr]), y[tr])
@@ -77,7 +85,10 @@ def main() -> None:
     ap.add_argument("--patient-col", required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--no-logo", action="store_true")
+    ap.add_argument("--pipeline", choices=["sezione6", "originale"], default="sezione6")
     a = ap.parse_args()
+    global N_TOP
+    N_TOP = 2000 if a.pipeline == "sezione6" else None
     adata = ad.read_h5ad(a.h5ad)
     obs = adata.obs
     keep = obs[a.target_col].notna().values
@@ -86,7 +97,7 @@ def main() -> None:
     X = log_cpm(adata.X[keep])
     classes = np.array(sorted(np.unique(y)))
     n_pat = len(np.unique(g))
-    res = {"n_cellule": int(len(y)), "n_pazienti": n_pat, "classi": classes.tolist()}
+    res = {"pipeline": a.pipeline, "n_cellule": int(len(y)), "n_pazienti": n_pat, "classi": classes.tolist()}
 
     sgkf = StratifiedGroupKFold(n_splits=min(5, n_pat), shuffle=True, random_state=0)
     res["raggruppato"] = fold_scores(X, y, list(sgkf.split(X, y, groups=g)), classes)
