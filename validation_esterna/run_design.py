@@ -23,6 +23,7 @@ from validation_esterna.indipendenti import design_check as ind
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = Path(__file__).parent / "results"
+REL = RES.relative_to(ROOT)  # percorsi relativi nella riga di comando: nessun percorso assoluto negli output
 
 CONFIGS = {
     "GSE132465": dict(
@@ -44,7 +45,7 @@ CONFIGS = {
 
 
 def cli_args(gse: str, cfg: dict) -> list[str]:
-    a = [sys.executable, "cli.py", "design", "--meta", str(RES / f"{gse}_samples.csv"),
+    a = [sys.executable, "cli.py", "design", "--meta", str(REL / f"{gse}_samples.csv"),
          "--patient-col", cfg["patient"]]
     if cfg["tissue"]:
         a += ["--tissue-col", cfg["tissue"]]
@@ -54,7 +55,7 @@ def cli_args(gse: str, cfg: dict) -> list[str]:
         a += ["--outcome-col", o]
     for f, x, y in cfg["comparisons"]:
         a += ["--compare", f"{f}:{x}:{y}"]
-    return a + ["--out", str(RES / f"design_{gse}.html")]
+    return a + ["--out", str(REL / f"design_{gse}.html")]
 
 
 def tool_facts(res) -> set[tuple]:
@@ -62,7 +63,7 @@ def tool_facts(res) -> set[tuple]:
     for f in res.findings:
         if f.kind == "uno-a-uno":
             out.add(("uno-a-uno",) + tuple(f.factors))
-        elif f.kind in ("annidamento", "esito-determinato", "unita'-tecnica"):
+        elif f.kind in ("annidamento", "esito-determinato", "unità-tecnica"):
             out.add((f.kind,) + tuple(f.factors))
     return out
 
@@ -96,8 +97,8 @@ def main() -> None:
         for c, (f, x, y) in zip(res.comparisons, cfg["comparisons"]):
             cls_i, units_i = ind.classify(df, roles, cfg["patient"], f, x, y)
             comp_rows.append({"confronto": f"{f}: {x} vs {y}", "classe audit": c.classification,
-                              "classe indipendente": cls_i, "unita' audit": c.n_units,
-                              "unita' indipendenti": units_i,
+                              "classe indipendente": cls_i, "unità audit": c.n_units,
+                              "unità indipendenti": units_i,
                               "coincide": c.classification == cls_i and c.n_units == units_i})
         # D4
         v_ind = ind.cramer_v_expected(df, roles)

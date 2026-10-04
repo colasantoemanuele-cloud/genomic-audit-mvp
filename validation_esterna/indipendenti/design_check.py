@@ -1,7 +1,7 @@
 """Verifica indipendente dell'audit del disegno (criteri D2, D3, D4).
 
 NON importa nulla da core/: reimplementa, a partire dalle regole dichiarate in CRITERI.md, i
-fatti strutturali, le classi dei confronti e la valutabilita' del Cramér V. Lettura dei
+fatti strutturali, le classi dei confronti e la valutabilità del Cramér V. Lettura dei
 metadati identica a quella documentata della CLI: CSV letto come stringhe e valori mancanti
 trattati come il livello "nan".
 """
@@ -52,7 +52,7 @@ def structural_facts(df: pd.DataFrame, roles: dict[str, str], outcome_like: list
             if r in TECHNICAL and df[c].nunique() >= 2:
                 t = pd.DataFrame({"t": df[c], "u": combo})
                 if nested(t, "t", "u") and nested(t, "u", "t"):
-                    facts.add(("unita'-tecnica", c))
+                    facts.add(("unità-tecnica", c))
     return facts
 
 

@@ -10,7 +10,7 @@ Uso:
     python -m validation.gse278694_moduleB --vdj-manifest <manifest.csv> --out <dir>
 
 ``manifest.csv``: path,patient,compartment dei CSV VDJ (copie con il barcode senza il
-suffisso "-1", perche' in sc_raw.h5ad il barcode e' la sola sequenza di 16 nt).
+suffisso "-1", perché in sc_raw.h5ad il barcode è la sola sequenza di 16 nt).
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ LYMPHOID = ("CD4T", "CD8T", "NK")
 
 
 def load_cells(manifest: Path) -> pd.DataFrame:
-    """Una riga per cellula con TCR (TRB): stessa ingestione e stessa merge dell'MVP, piu' le
+    """Una riga per cellula con TCR (TRB): stessa ingestione e stessa merge dell'MVP, più le
     conte grezze di CD4, CD8A, CD8B."""
     adata = ad.read_h5ad(H5AD)
     obs = adata.obs[["patients", "tissue", "all_celltype", "barcode"]].astype(str).reset_index(drop=True)
@@ -57,7 +57,7 @@ def discordance(cells: pd.DataFrame, lymphoid_only: bool) -> dict:
 
 def error_units(cells: pd.DataFrame, *, lymphoid_only: bool, exclusive_cd4: bool, nk_as_error: bool,
                 min_target: int, unit: str) -> pd.DataFrame:
-    """Unita' di errore (cellule o coppie clone-compartimento) con l'identita' dal solo sangue.
+    """Unità di errore (cellule o coppie clone-compartimento) con l'identità dal solo sangue.
     Con tutte le opzioni a False/0/'cell' coincide con marker_error_rate dell'MVP."""
     x = cells[cells.celltype.isin(LYMPHOID)].copy() if lymphoid_only else cells.copy()
     x["cd8_pos"] = (x.CD8A > 0) | (x.CD8B > 0)
@@ -110,7 +110,7 @@ LADDER = [
      dict(lymphoid_only=True, exclusive_cd4=True, nk_as_error=True, min_target=1, unit="cell")),
     ("S4 + almeno 3 cellule del clone anche nel compartimento giudicato",
      dict(lymphoid_only=True, exclusive_cd4=True, nk_as_error=True, min_target=3, unit="cell")),
-    ("S5 + unita' = coppia clone-compartimento con l'etichetta maggioritaria (= tesi)",
+    ("S5 + unità = coppia clone-compartimento con l'etichetta maggioritaria (= tesi)",
      dict(lymphoid_only=True, exclusive_cd4=True, nk_as_error=True, min_target=3, unit="clone")),
 ]
 

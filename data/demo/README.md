@@ -1,7 +1,7 @@
 # Dati della demo
 
-Dati pubblici di NCBI GEO, usati dalla modalita' "Demo immediata" della web app. Nessun dato
-clinico identificabile: solo identificativi di campione/paziente gia' pubblicati.
+Dati pubblici di NCBI GEO, usati dalla modalità "Demo immediata" della web app. Nessun dato
+clinico identificabile: solo identificativi di campione/paziente già pubblicati.
 
 | File | Origine | Contenuto |
 |---|---|---|

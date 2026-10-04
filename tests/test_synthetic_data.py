@@ -66,7 +66,7 @@ def test_tcr_validation_detects_injected_discordance():
     assert result.n_cells_with_tcr > 0
     assert result.discordance.sufficient
     assert result.discordance.ci_low > 0, (
-        f"l'eccesso iniettato non e' rilevato: IC95%=[{result.discordance.ci_low:.3f}, "
+        f"l'eccesso iniettato non è rilevato: IC95%=[{result.discordance.ci_low:.3f}, "
         f"{result.discordance.ci_high:.3f}]"
     )
     assert "eccesso di discordanza" in result.narrative
@@ -76,10 +76,10 @@ def test_tcr_validation_no_injected_effect_is_not_significant():
     """Controllo negativo: senza eccesso iniettato (stesso mislabel rate ovunque),
     l'eccesso misurato deve restare piccolo in valore assoluto -- di un ordine di
     grandezza sotto l'effetto iniettato nel test precedente (~0.3). Non si richiede che
-    l'IC includa esattamente lo zero su un singolo seme: cluster_bootstrap e' gia'
+    l'IC includa esattamente lo zero su un singolo seme: cluster_bootstrap è già
     validato come calibrato (~2-8% di falsi positivi sotto H0, vedi
     test_stats_calibration.py), quindi un'occasionale esclusione dello zero per puro
-    rumore campionario e' attesa, non un bug."""
+    rumore campionario è attesa, non un bug."""
     adata, contigs = make_tcr_validation_dataset(
         n_patients=12, n_clones_per_patient=15, injected_excess=0.0, seed=0)
     result = run_tcr_validation(
@@ -124,10 +124,10 @@ def test_tcr_validation_insufficient_patients_flagged():
 
 def test_tcr_narrative_handles_significant_negative_excess():
     """Regressione: un IC interamente negativo (es. [-0.010, -0.001]) esclude lo zero
-    esattamente quanto uno interamente positivo -- non e' "non distinguibile dal rumore".
+    esattamente quanto uno interamente positivo -- non è "non distinguibile dal rumore".
     Osservato realmente su un dataset con injected_excess=0.0 e pochi pazienti (n=6):
     la vecchia narrativa (if ci_low > 0 ... else "l'intervallo include lo zero") lo
-    descriveva in modo scorretto perche' controllava solo il lato positivo."""
+    descriveva in modo scorretto perché controllava solo il lato positivo."""
     d = DiscordanceResult(
         n_pairs=90, n_patients=6, mean_excess=-0.005,
         ci_low=-0.010, ci_high=-0.001, sufficient=True,

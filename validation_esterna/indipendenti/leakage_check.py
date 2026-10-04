@@ -2,8 +2,8 @@
 
 Riesegue con scikit-learn la valutazione raggruppata per paziente secondo le regole dichiarate
 (CRITERI.md, sezione 6): StratifiedGroupKFold a min(5, n pazienti) fold con shuffle e seme 0;
-CPM a 1e4 + log1p; 2000 geni a varianza piu' alta stimati sul solo training (parita' ->
-indice piu' basso); StandardScaler senza centratura; LogisticRegression(C=1,
+CPM a 1e4 + log1p; 2000 geni a varianza più alta stimati sul solo training (parità ->
+indice più basso); StandardScaler senza centratura; LogisticRegression(C=1,
 class_weight="balanced", max_iter=1000, seme 0). Riesegue anche lo split casuale
 (StratifiedKFold, controllo negativo) e, con almeno 8 pazienti, LeaveOneGroupOut per la
 regressione logistica.
@@ -19,7 +19,7 @@ Il confronto fra le due mostra se una classe assente viene contata come zero.
 
 Con `--pipeline originale` lo script applica invece la pipeline dichiarata nei criteri
 ORIGINALI (CRITERI.md, sezione 3, commit 0b5a847): tutti i geni, senza selezione dei 2000 a
-varianza piu' alta. Serve a valutare lo strumento attuale anche con i criteri scritti prima di
+varianza più alta. Serve a valutare lo strumento attuale anche con i criteri scritti prima di
 vedere i dati (REPORT.md, sezione "Criteri originali e modifiche").
 """
 
@@ -48,7 +48,7 @@ def log_cpm(X):
 
 
 def hvg_columns(Xtr, n_top=2000):
-    """Indici delle colonne a varianza piu' alta, calcolati sul solo training."""
+    """Indici delle colonne a varianza più alta, calcolati sul solo training."""
     m = np.asarray(Xtr.mean(axis=0)).ravel()
     v = np.asarray(Xtr.multiply(Xtr).mean(axis=0)).ravel() - m ** 2
     return np.sort(np.argsort(-v, kind="stable")[: min(n_top, Xtr.shape[1])])

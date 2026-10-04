@@ -9,7 +9,7 @@ un artefatto.
 Motore pensato per dati reali (decine di migliaia di cellule, ~20-30k geni):
 - la matrice resta SPARSA (CSR) dall'inizio alla fine: nessuna conversione globale in denso;
 - dentro ogni fold, e stimati SOLO sul training: log-CPM (per cellula), selezione dei 2000
-  geni a varianza piu' alta (HVG), standardizzazione senza centratura e, per i modelli
+  geni a varianza più alta (HVG), standardizzazione senza centratura e, per i modelli
   non lineari, TruncatedSVD a 50 componenti (come pdac-ml/src/11_model_zoo.py);
 - training limitato a ``max_train_cells`` cellule per fold con sottocampionamento
   stratificato per paziente (seme fisso, dichiarato nell'output);
@@ -59,7 +59,7 @@ Progress = Callable[[str], None]
 # Trasformatori (tutti sparsi)
 # --------------------------------------------------------------------------- #
 class LogCPM(BaseEstimator, TransformerMixin):
-    """CPM + log1p per cellula. Stateless (non guarda le altre cellule): non puo'
+    """CPM + log1p per cellula. Stateless (non guarda le altre cellule): non può
     causare leakage, ma resta in Pipeline per garantire l'ordine delle operazioni."""
 
     def __init__(self, target_sum: float = 1e4):
@@ -78,9 +78,9 @@ class LogCPM(BaseEstimator, TransformerMixin):
 
 
 class HVGSelector(BaseEstimator, TransformerMixin):
-    """Seleziona gli ``n_top`` geni con varianza piu' alta (sui valori log-CPM), stimata SOLO
+    """Seleziona gli ``n_top`` geni con varianza più alta (sui valori log-CPM), stimata SOLO
     sulle cellule passate a ``fit`` (il training del fold): nessuna informazione del test
-    entra nella scelta. In caso di parita' vince l'indice di gene piu' basso (deterministico).
+    entra nella scelta. In caso di parità vince l'indice di gene più basso (deterministico).
     Lavora sulla matrice sparsa, senza densificarla."""
 
     def __init__(self, n_top: int = N_HVG_DEFAULT):
@@ -130,7 +130,7 @@ def _model_registry(seed: int) -> dict[str, tuple[BaseEstimator, bool]]:
 def fold_macro_f1(y_true: np.ndarray, y_pred: np.ndarray,
                   all_classes: np.ndarray) -> tuple[float, list[str]]:
     """Macro-F1 sulle sole classi presenti nel fold di test (``y_true``). Una classe del
-    dataset assente dal fold non entra nella media (non vale F1 = 0) ed e' restituita nella
+    dataset assente dal fold non entra nella media (non vale F1 = 0) ed è restituita nella
     lista delle classi assenti, da dichiarare. Le predizioni di una classe assente restano
     errori: abbassano il recall delle classi presenti."""
     present = np.unique(y_true)
@@ -238,7 +238,7 @@ def _fit_fold(X, y, groups, tr, te, i, classes, make_pipe, max_train, seed, gene
 def _run_folds(X, y, groups, splits, classes, make_pipe, label: str, clock: _Clock,
                max_train: int, seed: int, gene_names: np.ndarray | None,
                n_jobs: int = 1) -> SchemeSummary:
-    """Esegue i fold, in parallelo se ``n_jobs`` > 1 (stessi risultati: ogni fold e'
+    """Esegue i fold, in parallelo se ``n_jobs`` > 1 (stessi risultati: ogni fold è
     deterministico e indipendente dagli altri). L'avanzamento segue l'ordine dei fold."""
     args = [(X, y, groups, tr, te, i, classes, make_pipe, max_train, seed, gene_names)
             for i, (tr, te) in enumerate(splits)]
@@ -305,8 +305,8 @@ def _compare(scores: dict[str, SchemeSummary]) -> ModelComparisonResult:
             if sig_nb and not sig_w and p_w >= floor - 1e-12 and floor > ALPHA:
                 note = (f"Nadeau-Bengio trova una differenza significativa, Wilcoxon no -- ma con "
                         f"{k_nonzero} coppie non nulle il p-value minimo raggiungibile da Wilcoxon "
-                        f"e' {floor:.3f} > 0.05: strutturalmente incapace di essere significativo "
-                        f"con cosi' pochi fold, indipendentemente dalla dimensione dell'effetto.")
+                        f"è {floor:.3f} > 0.05: strutturalmente incapace di essere significativo "
+                        f"con così pochi fold, indipendentemente dalla dimensione dell'effetto.")
             else:
                 note = "Le due conclusioni divergono a soglia 0.05: da riportare, non da ignorare."
         comparisons.append(PairwiseComparison(
@@ -318,13 +318,13 @@ def _compare(scores: dict[str, SchemeSummary]) -> ModelComparisonResult:
 
 
 # --------------------------------------------------------------------------- #
-# Stabilita' delle spiegazioni (descrittiva)
+# Stabilità delle spiegazioni (descrittiva)
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
 class XaiStability:
-    """Jaccard fra i ``k`` geni con coefficiente piu' grande della regressione logistica nei
+    """Jaccard fra i ``k`` geni con coefficiente più grande della regressione logistica nei
     diversi fold. Misura DESCRITTIVA, senza inferenza: se rimuovere pazienti cambia i geni
-    scelti piu' di quanto lo cambi rimuovere cellule a caso, l'informazione e' organizzata per
+    scelti più di quanto lo cambi rimuovere cellule a caso, l'informazione è organizzata per
     paziente."""
     k: int
     grouped_matrix: np.ndarray
@@ -374,7 +374,7 @@ def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_r
     parts = [
         f"Split per paziente (valutazione onesta): macro-F1 = {grouped.mean:.3f} ± {grouped.std:.3f} "
         f"su {len(grouped.fold_scores)} fold.",
-        f"Split casuale sulle cellule (controllo negativo, NON una valutazione valida perche' "
+        f"Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché "
         f"mette cellule dello stesso paziente sia in train sia in test): macro-F1 = "
         f"{random_.mean:.3f} ± {random_.std:.3f}.",
         f"Divario sulla media: {gap:+.3f} -- lo split casuale {direzione} l'accuratezza reale "
@@ -383,14 +383,14 @@ def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_r
     if std_ratio > 0 and np.isfinite(std_ratio):
         if std_ratio > 1.05:
             parts.append(
-                f"La deviazione standard fra fold e' {std_ratio:.1f}x piu' ampia nello split onesto: "
+                f"La deviazione standard fra fold è {std_ratio:.1f}x più ampia nello split onesto: "
                 f"lo split casuale sottostima l'incertezza reale sulla performance di quel fattore."
             )
         elif std_ratio < 0.95:
             parts.append(
-                f"La deviazione standard fra fold e' piu' ampia nello split casuale "
+                f"La deviazione standard fra fold è più ampia nello split casuale "
                 f"({1/std_ratio:.1f}x): in questo caso specifico non mostra il pattern atteso, "
-                f"da verificare con piu' fold o piu' pazienti."
+                f"da verificare con più fold o più pazienti."
             )
         else:
             parts.append("Le due deviazioni standard sono simili in questo dataset.")
@@ -398,17 +398,17 @@ def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_r
         parts.append(
             f"In {grouped.n_folds_with_absent_classes} fold su {len(grouped.fold_scores)} dello "
             f"split per paziente alcune classi non compaiono nel test: la macro-F1 di quei fold "
-            f"e' calcolata sulle sole classi presenti (le classi assenti sono elencate nel report).")
+            f"è calcolata sulle sole classi presenti (le classi assenti sono elencate nel report).")
     nc = grouped.n_not_converged + random_.n_not_converged
     if nc:
         parts.append(
             f"In {nc} fold su {len(grouped.fold_scores) + len(random_.fold_scores)} il classificatore "
             f"non ha raggiunto la convergenza entro il numero massimo di iterazioni: i punteggi di "
-            f"quei fold vanno letti con cautela (succede tipicamente quando il segnale e' debole o "
+            f"quei fold vanno letti con cautela (succede tipicamente quando il segnale è debole o "
             f"assente).")
     if grouped.capped or random_.capped:
         parts.append(
-            f"Il training e' stato limitato a {max(grouped.n_train + random_.n_train):,} cellule "
+            f"Il training è stato limitato a {max(grouped.n_train + random_.n_train):,} cellule "
             f"per fold con un sottocampionamento stratificato per paziente (seme fisso).")
     return " ".join(parts)
 
@@ -453,7 +453,7 @@ def run_leakage_audit(
     sample = X.data[: min(X.nnz, 1_000_000)]
     if sample.size and not np.allclose(sample, np.round(sample)):
         raise ValueError(
-            "la matrice non contiene conteggi interi (sembra gia' normalizzata o log-trasformata): "
+            "la matrice non contiene conteggi interi (sembra già normalizzata o log-trasformata): "
             "il Modulo A applica la propria normalizzazione e richiede conteggi grezzi. Usa il layer "
             "dei conteggi (es. adata.layers['counts']) come adata.X.")
     gene_names = np.asarray(adata.var_names.astype(str))
@@ -465,9 +465,9 @@ def run_leakage_audit(
         raise ValueError(f"servono almeno 2 pazienti in '{patient_col}', trovati {n_patients}")
     min_class = int(pd.Series(y).value_counts().min())
     if min_class < 2:
-        raise ValueError("almeno una classe ha una sola cellula: lo split casuale stratificato non e' definito")
+        raise ValueError("almeno una classe ha una sola cellula: lo split casuale stratificato non è definito")
 
-    # la SVD non puo' avere piu' componenti dei geni selezionati
+    # la SVD non può avere più componenti dei geni selezionati
     n_svd = max(1, min(n_svd, min(n_hvg, X.shape[1]) - 1))
     n_grouped = min(n_folds, n_patients)
     n_random = min(n_folds, min_class)
@@ -500,7 +500,7 @@ def run_leakage_audit(
         scores = {}
         for name, (est, reduce) in _model_registry(seed).items():
             make = lambda est=est, reduce=reduce: _pipeline(clone(est), reduce, n_hvg, n_svd, seed)  # noqa: E731
-            # random forest e gradient boosting usano gia' tutti i core al loro interno
+            # random forest e gradient boosting usano già tutti i core al loro interno
             scores[name] = _run_folds(X, y, groups, logo, classes, make, f"confronto modelli: {name}",
                                       clock, max_train_cells, seed, None,
                                       n_jobs if name == "logreg" else 1)

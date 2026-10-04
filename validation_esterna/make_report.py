@@ -6,12 +6,13 @@ Uso: python -m validation_esterna.make_report "<riga della suite finale>"
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
 R = HERE / "results"
-UA, UI = "unita' audit", "unita' indipendenti"
+UA, UI = "unità audit", "unità indipendenti"
 
 
 def main() -> None:
@@ -64,6 +65,12 @@ def main() -> None:
                 f"{r['diff_altre_metriche']['classi_del_test']:.4f}")
 
     a1 = (R / "A1_cli_stdout.txt").read_text().strip()
+    a1_err = (R / "A1_cli_stderr.txt").read_text()
+    m, sec = re.search(r"Elapsed \(wall clock\) time.*?: (\d+):([\d.]+)", a1_err).groups()
+    a1_s = round(int(m) * 60 + float(sec))
+    a1_gb = int(re.search(r"Maximum resident set size \(kbytes\): (\d+)", a1_err).group(1)) / 1e6
+    a1_exit = int(re.search(r"Exit status: (\d+)", a1_err).group(1))
+    a1_txt = f"exit {a1_exit}, {a1_s} s reali, {a1_gb:.1f} GB".replace(".", ",")
     text = (HERE / "REPORT_template.md").read_text()
     repl = {
         "DROW_GSE132465": drow("GSE132465"), "DROW_GSE131907": drow("GSE131907"), "DROW_GSE125449": drow("GSE125449"),
@@ -78,10 +85,10 @@ def main() -> None:
                    f"{pm['atteso_1_su_K']:.3f} (diff {abs(pm['media_raggruppata'] - pm['atteso_1_su_K']):.4f} <= 0,05); "
                    f"divario medio {pm['media_divario']:+.4f}; tag 'leakage rilevabile' in "
                    f"{pm['permutazioni_con_tag_leakage']}/20 (<= 1)"),
-        "A4C_TXT": (f"nei 19 fold LeaveOneGroupOut {n_abs} hanno classi assenti; lo strumento da' "
+        "A4C_TXT": (f"nei 19 fold LeaveOneGroupOut {n_abs} hanno classi assenti; lo strumento dà "
                     f"{bm['logo']['logreg']:.4f}, coerente con la macro-F1 sulle classi presenti ({il:.4f}) e non "
                     f"con quella che conta le assenti come zero ({ind['logo_logreg']['media_tutte_le_classi']:.4f}); "
-                    f"test unitario: un fold perfetto con una classe assente vale 1,0 e la classe e' dichiarata"),
+                    f"test unitario: un fold perfetto con una classe assente vale 1,0 e la classe è dichiarata"),
         "CLI_GSE132465": cli("GSE132465"), "CLI_GSE131907": cli("GSE131907"), "CLI_GSE125449": cli("GSE125449"),
         "A1_STDOUT": a1,
         "LOGO_TXT": (f"regressione logistica {bm['logo']['logreg']:.3f}, random forest {bm['logo']['random_forest']:.3f}, "
@@ -89,8 +96,8 @@ def main() -> None:
         "GAP_TXT": f"{bm['divario']:+.3f}** ({bm['casuale']:.3f} contro {bm['raggruppato']:.3f})",
         "XAI_TXT": f"{bm['xai_jaccard'][0]:.3f} fra fold per paziente, {bm['xai_jaccard'][1]:.3f} fra fold casuali",
         "SINT_S": f"{bs['secondi']:.0f}", "SUITE_FINALE": suite,
-        "CO_ROW_O": corow("O", "exit 0, 324 s"), "CO_ROW_M1": corow("M1", "exit 0, 156 s"),
-        "CO_ROW_M2": corow("M2", "exit 0, 324 s"),
+        "CO_ROW_O": corow("O", f"exit {a1_exit}, {a1_s} s"), "CO_ROW_M1": corow("M1", "exit 0, 156 s"),
+        "CO_ROW_M2": corow("M2", f"exit {a1_exit}, {a1_s} s"), "A1_TXT": a1_txt, "A1_S": str(a1_s),
         "O_LOGO_TXT": logo("O")[0], "O_LOGO_LIKE": logo("O")[1],
         "M1_LOGO_TXT": logo("M1")[0], "M1_LOGO_LIKE": logo("M1")[1],
         "M1_PRIMA": (R / "motore_precedente_ridotta.txt").read_text().strip(),

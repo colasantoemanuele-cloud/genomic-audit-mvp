@@ -1,5 +1,5 @@
 """Report HTML autocontenuto (grafici inline come data URI, nessuna dipendenza esterna
-al momento dell'apertura del file) per un ricercatore clinico non tecnico: ogni numero e'
+al momento dell'apertura del file) per un ricercatore clinico non tecnico: ogni numero è
 accompagnato da una frase che ne spiega il significato pratico.
 """
 
@@ -101,21 +101,21 @@ def _summary_section(sections: list[SectionSummary]) -> str:
 
 _KIND_LABEL = {
     "annidamento": "annidamento", "uno-a-uno": "fattori coincidenti",
-    "esito-determinato": "esito determinato da un fattore", "unita'-tecnica": "unita' tecnica",
+    "esito-determinato": "esito determinato da un fattore", "unità-tecnica": "unità tecnica",
     "costante": "fattore costante", "identificatore": "identificativo di campione",
 }
 
 
 def _design_section(result: DesignAuditResult) -> str:
     structural = [f for f in result.findings
-                  if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica")]
+                  if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unità-tecnica")]
     verdict_cls = "verdict-warn" if structural else _card_class(design_summary(result))
     roles = ", ".join(f"{html.escape(c)} ({html.escape(r)})" for c, r in result.roles.items())
     parts = [
         "<h2>Audit del disegno e del confondimento</h2>",
         f'<div class="card {verdict_cls}">',
-        f'<p class="narrative">Unita\' analizzate: {result.n_rows} righe dei metadati. Fattori: {roles}. '
-        "Questo controllo guarda solo la struttura del disegno (chi e' stato misurato come, "
+        f'<p class="narrative">Unità analizzate: {result.n_rows} righe dei metadati. Fattori: {roles}. '
+        "Questo controllo guarda solo la struttura del disegno (chi è stato misurato come, "
         "quando, in quale tessuto): non usa l'espressione genica e non giudica il lavoro di "
         "chi ha disegnato lo studio. Rende espliciti i limiti che il disegno pone alle "
         "conclusioni.</p>",
@@ -123,7 +123,7 @@ def _design_section(result: DesignAuditResult) -> str:
     if result.comparisons:
         parts.append("<h3>Confronti richiesti</h3>")
         parts.append("<table><tr><th>Confronto</th><th>Classe</th><th>Disegno</th>"
-                     "<th>Unita' indipendenti</th><th>Cosa significa</th></tr>")
+                     "<th>Unità indipendenti</th><th>Cosa significa</th></tr>")
         for c in result.comparisons:
             tag = ("tag-ok" if c.classification == "stimabile" else "tag-warn")
             parts.append(
@@ -195,15 +195,15 @@ def _leakage_section(result: LeakageAuditResult) -> str:
         f'<div class="card {verdict_cls}">',
         f"<p>{tag}</p>",
         f'<p class="narrative">{html.escape(result.narrative)}</p>',
-        "<table><tr><th>Quantita'</th><th>Valore</th><th>Cosa significa</th></tr>",
+        "<table><tr><th>Quantità</th><th>Valore</th><th>Cosa significa</th></tr>",
         f"<tr><td>Cellule totali</td><td>{result.n_cells:,}</td>"
         f"<td>Numero di cellule usate per questo task, dopo aver escluso quelle senza etichetta.</td></tr>",
         f"<tr><td>Pazienti</td><td>{result.n_patients}</td>"
-        f"<td>Unita' statistica indipendente: piu' pazienti = stima piu' affidabile.</td></tr>",
+        f"<td>Unità statistica indipendente: più pazienti = stima più affidabile.</td></tr>",
         f"<tr><td>Classi</td><td>{result.n_classes}</td><td>Categorie del task di classificazione.</td></tr>",
         f"<tr><td>Divario sulla media</td><td>{result.gap:+.3f}</td>"
         f"<td>Quanto lo split casuale (non valido) sovrastima l'accuratezza rispetto allo split "
-        f"per paziente (onesto). Piu' vicino a zero, meglio e'.</td></tr>",
+        f"per paziente (onesto). Più vicino a zero, meglio è.</td></tr>",
         f"<tr><td>Rapporto delle deviazioni standard</td><td>{result.std_ratio:.2f}</td>"
         f"<td>Quanto lo split casuale sottostima l'incertezza sulla performance "
         f"(valori &gt;1 indicano sottostima).</td></tr>",
@@ -216,8 +216,8 @@ def _leakage_section(result: LeakageAuditResult) -> str:
         html_parts.append("<h3>Confronto fra modelli (LeaveOneGroupOut)</h3>")
         html_parts.append(
             f'<p class="narrative">Con almeno {result.n_patients} pazienti, il confronto fra modelli '
-            f"e' stato ripetuto lasciando fuori un paziente alla volta (la valutazione piu' onesta "
-            f"possibile su una coorte piccola). Il modello con macro-F1 media piu' alta e' "
+            f"è stato ripetuto lasciando fuori un paziente alla volta (la valutazione più onesta "
+            f"possibile su una coorte piccola). Il modello con macro-F1 media più alta è "
             f"<b>{html.escape(mc.best_model)}</b> ({mc.scores[mc.best_model].mean:.3f}).</p>"
         )
         html_parts.append(f'<img src="{_model_comparison_chart(mc)}" alt="Confronto fra modelli">')
@@ -234,9 +234,9 @@ def _leakage_section(result: LeakageAuditResult) -> str:
             )
         html_parts.append("</table>")
         html_parts.append(
-            '<p class="narrative">Con pochi fold la potenza statistica e\' bassa: "non significativo" '
-            "non vuol dire \"equivalente\". Se un modello piu' semplice non viene battuto in modo "
-            "significativo, e' un'informazione utile, non un errore dello strumento.</p>"
+            '<p class="narrative">Con pochi fold la potenza statistica è bassa: "non significativo" '
+            "non vuol dire \"equivalente\". Se un modello più semplice non viene battuto in modo "
+            "significativo, è un'informazione utile, non un errore dello strumento.</p>"
         )
     else:
         settings = getattr(result, "settings", {}) or {}
@@ -290,7 +290,7 @@ def _marker_error_chart(m: MarkerErrorResult) -> str | None:
 def _tcr_section(result: TcrValidationResult) -> str:
     d = result.discordance
     if not d.sufficient:
-        verdict_cls, tag = "verdict-no", '<span class="tag tag-warn">numerosita\' insufficiente</span>'
+        verdict_cls, tag = "verdict-no", '<span class="tag tag-warn">numerosità insufficiente</span>'
     elif d.ci_low > 0:
         verdict_cls, tag = "verdict-warn", '<span class="tag tag-warn">discordanza reale rilevata</span>'
     elif d.ci_high < 0:
@@ -304,22 +304,22 @@ def _tcr_section(result: TcrValidationResult) -> str:
         "<h2>Modulo B — Validazione dell'annotazione via TCR</h2>",
         f'<div class="card {verdict_cls}">',
         f"<p>{tag}</p>",
-        "<table><tr><th>Quantita'</th><th>Valore</th><th>Cosa significa</th></tr>",
+        "<table><tr><th>Quantità</th><th>Valore</th><th>Cosa significa</th></tr>",
         (f"<tr><td>Match dei barcode VDJ</td><td>{result.barcode_match.fraction:.1%}</td>"
          f"<td>{html.escape(result.barcode_match.sentence)}</td></tr>" if result.barcode_match else ""),
         f"<tr><td>Cellule con TCR</td><td>{result.n_cells_with_tcr:,}</td>"
-        f"<td>Cellule per cui e' stato ricostruito un clonotipo (catena TRB rilevata).</td></tr>",
+        f"<td>Cellule per cui è stato ricostruito un clonotipo (catena TRB rilevata).</td></tr>",
         f"<tr><td>Coppie clone-compartimenti confrontabili</td><td>{d.n_pairs:,}</td>"
         f"<td>Ogni riga confronta lo stesso clone T in due compartimenti diversi.</td></tr>",
         f"<tr><td>Pazienti che contribuiscono</td><td>{d.n_patients}</td>"
-        f"<td>L'unita' statistica indipendente e' il paziente, non il clone: i cloni di uno stesso "
+        f"<td>L'unità statistica indipendente è il paziente, non il clone: i cloni di uno stesso "
         f"paziente non sono osservazioni indipendenti.</td></tr>",
     ]
     if d.sufficient:
         html_parts.append(
             f"<tr><td>Eccesso di discordanza</td><td>{d.mean_excess:+.3f} "
             f"[{d.ci_low:+.3f}, {d.ci_high:+.3f}]</td>"
-            f"<td>Quanto piu' spesso le cellule dello stesso clone T ricevono etichette diverse fra "
+            f"<td>Quanto più spesso le cellule dello stesso clone T ricevono etichette diverse fra "
             f"compartimenti rispetto a quanto ci si aspetterebbe dal solo rumore entro un "
             f"compartimento. Zero nell'intervallo = non distinguibile dal rumore.</td></tr>"
         )
@@ -337,7 +337,7 @@ def _tcr_section(result: TcrValidationResult) -> str:
             if r.sufficient:
                 val = f"{r.excess:+.3f} [{r.ci_low:+.3f}, {r.ci_high:+.3f}]"
             else:
-                val = "numerosita' insufficiente"
+                val = "numerosità insufficiente"
             html_parts.append(
                 f"<tr><td>{html.escape(r.comp_a)} ↔ {html.escape(r.comp_b)}</td>"
                 f"<td>{r.n_pairs}</td><td>{r.n_patients}</td><td>{val}</td></tr>"
@@ -348,9 +348,9 @@ def _tcr_section(result: TcrValidationResult) -> str:
         html_parts.append("<h3>Tasso d'errore per compartimento (marcatori canonici)</h3>")
         ref = result.marker_error.reference_compartment if result.marker_error else ""
         html_parts.append(
-            f'<p class="narrative">Identita\' di riferimento del clone stimata SOLO dal compartimento '
+            f'<p class="narrative">Identità di riferimento del clone stimata SOLO dal compartimento '
             f"'{html.escape(ref)}', confrontata con l'etichetta assegnata negli altri compartimenti. "
-            f"Lo stesso confronto puo' essere contato in modi diversi: ogni numero e' riportato con la "
+            f"Lo stesso confronto può essere contato in modi diversi: ogni numero è riportato con la "
             f"sua convenzione, e le convenzioni sono affiancate.</p><ul>"
             + "".join(f"<li><b>{html.escape(c.name)}</b>: {html.escape(c.definition)}</li>"
                       for c in result.conventions.values()) + "</ul>")
@@ -393,10 +393,10 @@ def _tcr_section(result: TcrValidationResult) -> str:
         html_parts.append(
             f'<p class="narrative">Il controllo produce due colonne per cellula, esportabili in una '
             f"copia dell'AnnData (<code>*_audited.h5ad</code>) e in un CSV: "
-            f"<code>audit_reference_label</code> (identita' del clone stimata nel sangue) e "
-            f"<code>audit_label_vs_reference</code> (l'etichetta assegnata discorda da quell'identita'). "
+            f"<code>audit_reference_label</code> (identità del clone stimata nel sangue) e "
+            f"<code>audit_label_vs_reference</code> (l'etichetta assegnata discorda da quell'identità). "
             f"Le etichette originali non vengono modificate. Copertura: {n_ref:,} cellule su {n:,} "
-            f"({n_ref / n:.1%}) hanno un'identita' di riferimento; {n_eval:,} ({result.flag_coverage:.1%}) "
+            f"({n_ref / n:.1%}) hanno un'identità di riferimento; {n_eval:,} ({result.flag_coverage:.1%}) "
             f"sono valutabili, e di queste {n_disc:,} sono discordanti. Tutte le altre sono NA: "
             f"lo strumento non poteva verificarle (nessun TCR, clone senza cellule sufficienti nel "
             f"riferimento, etichetta non CD4/CD8, o cellula del compartimento di riferimento). NA non "
@@ -422,9 +422,9 @@ def _cd8_section(r: CD8PropagationResult) -> str:
     elif r.matrix is not None:
         parts.append(
             f'<p class="narrative">Matrice di confusione con direzione, stimata su {r.n_reference_cells:,} '
-            f"cellule con identita' di riferimento da {r.n_reference_patients} pazienti, unica per tutti "
-            f"i pazienti (pooled). Ogni riga: probabilita' che una cellula con quell'identita' vera "
-            f"riceva ciascuna etichetta. J = {r.youden_j:.2f} (differenza fra le probabilita' di "
+            f"cellule con identità di riferimento da {r.n_reference_patients} pazienti, unica per tutti "
+            f"i pazienti (pooled). Ogni riga: probabilità che una cellula con quell'identità vera "
+            f"riceva ciascuna etichetta. J = {r.youden_j:.2f} (differenza fra le probabilità di "
             f"essere chiamata CD8 per una vera CD8 e per una vera CD4: sotto 0.2 la correzione non "
             f"viene fatta).</p>")
         parts.append("<table><tr><th></th>" + "".join(f"<th>{html.escape(c)}</th>" for c in r.matrix.columns) + "</tr>")
@@ -469,7 +469,7 @@ def render_report(
         f"<h1>Report di audit — {html.escape(dataset_name)}</h1>",
         f'<p class="footer" style="margin-top:0;border-top:none;padding-top:0;">'
         f"Generato il {now}. Strumento diagnostico per un singolo studio pilota: "
-        f"non e' una certificazione, e' un supporto alla decisione per chi analizza i dati.</p>",
+        f"non è una certificazione, è un supporto alla decisione per chi analizza i dati.</p>",
     ]
     sections = summarize(design_result, leakage_result, tcr_result, cd8_result)
     if sections:
@@ -489,8 +489,8 @@ def render_report(
         "metadati e segnala quali confronti la struttura dello studio permette. Il Modulo A misura quanto una "
         "valutazione che non raggruppa per paziente sovrastimerebbe l'accuratezza e sottostimerebbe "
         "l'incertezza. Il Modulo B misura, tramite il repertorio T-cell receptor, quanto l'annotazione "
-        "di tipo cellulare da clustering e' internamente coerente per uno stesso clone attraverso i "
-        "compartimenti tissutali. Nessuno dei due modulo sostituisce una validazione biologica "
+        "di tipo cellulare da clustering è internamente coerente per uno stesso clone attraverso i "
+        "compartimenti tissutali. Nessuno dei due moduli sostituisce una validazione biologica "
         "indipendente.</div>"
     )
     return f"<!doctype html><html lang=\"it\"><head><meta charset=\"utf-8\">" \
@@ -529,7 +529,7 @@ def render_markdown_report(
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     md = [f"# Report di audit — {dataset_name}", "",
-          f"Generato il {now}. Strumento diagnostico locale: non e' una certificazione.", ""]
+          f"Generato il {now}. Strumento diagnostico locale: non è una certificazione.", ""]
     sections = summarize(design_result, leakage_result, tcr_result, cd8_result)
     if sections:
         md += [f"## {TITLE}", "",
@@ -541,7 +541,7 @@ def render_markdown_report(
     if design_result is not None:
         md += ["## Audit del disegno", "", design_result.narrative, ""]
         if design_result.comparisons:
-            md += ["| Confronto | Classe | Unita' | p-value minimo |", "|---|---|---|---|"]
+            md += ["| Confronto | Classe | Unità | p-value minimo |", "|---|---|---|---|"]
             for c in design_result.comparisons:
                 mp = "—" if c.min_pvalue is None else f"{c.min_pvalue:.3f}"
                 md.append(f"| {c.factor}: {c.level_a} vs {c.level_b} | {c.classification} | {c.n_units} | {mp} |")
@@ -557,7 +557,7 @@ def render_markdown_report(
                "le classi assenti sono dichiarate. Nessun intervallo di confidenza: i punteggi dei "
                "fold sono correlati e un intervallo non sarebbe calibrato.", ""]
         if r.xai is not None:
-            md += [f"Stabilita' delle spiegazioni (descrittiva): Jaccard medio fra i {r.xai.k} geni "
+            md += [f"Stabilità delle spiegazioni (descrittiva): Jaccard medio fra i {r.xai.k} geni "
                    f"principali dei fold = {r.xai.grouped_mean:.3f} con split per paziente, "
                    f"{r.xai.random_mean:.3f} con split casuale.", ""]
         if r.model_comparison is not None:

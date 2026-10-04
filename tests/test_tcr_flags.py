@@ -52,7 +52,7 @@ def _assert_close(a, b, path="") -> None:
 
 @pytest.mark.parametrize("name", list(CONFIGS))
 def test_regression_identical_to_baseline(name):
-    """Numeri identici al riferimento (1e-12). Il testo narrativo e' cambiato volutamente in
+    """Numeri identici al riferimento (1e-12). Il testo narrativo è cambiato volutamente in
     Pulizia 1 (ogni tasso d'errore dice la sua convenzione): la parte sulla discordanza deve
     restare identica, e la parte sul tasso d'errore deve contenere gli stessi numeri."""
     baseline = json.loads(BASELINE_PATH.read_text())[name]
@@ -85,7 +85,7 @@ def test_flags_mean_equals_marker_error_rate_exactly():
 
 def test_reference_compartment_and_unverifiable_cells_are_na():
     adata, contigs = make_tcr_validation_dataset(n_patients=8, n_clones_per_patient=10, seed=3)
-    # meta' delle cellule senza TCR: si tolgono i loro contig
+    # metà delle cellule senza TCR: si tolgono i loro contig
     drop = set(adata.obs["barcode"].iloc[::2])
     contigs = contigs[~contigs["barcode"].isin(drop)]
     res = _run(adata, contigs)
@@ -119,7 +119,7 @@ def test_export_writes_copy_and_leaves_original_untouched(tmp_path):
     res = _run(adata, contigs)
     h5ad_path, csv_path = export_audited(adata, res, tmp_path / "dati")
     assert h5ad_path.name == "dati_audited.h5ad"
-    # l'AnnData in memoria non e' stato toccato
+    # l'AnnData in memoria non è stato toccato
     pd.testing.assert_frame_equal(adata.obs, obs_before)
     assert (adata.X != x_before).nnz == 0
     # la copia ha le colonne originali identiche + le due colonne di flag

@@ -14,7 +14,7 @@ Esempi:
 
 ``vdj_manifest.csv`` ha tre colonne: path,patient,compartment -- una riga per ogni CSV
 Cell Ranger da includere (i CSV Cell Ranger non contengono queste informazioni al loro
-interno, e non c'e' una convenzione di nome file universale per dedurle).
+interno, e non c'è una convenzione di nome file universale per dedurle).
 """
 
 from __future__ import annotations
@@ -127,7 +127,7 @@ def _cmd_leakage(args: argparse.Namespace) -> None:
 
 
 def _cmd_serve(args: argparse.Namespace) -> None:
-    """Avvia Streamlit legato a localhost, con la telemetria disattivata: nessun dato (ne'
+    """Avvia Streamlit legato a localhost, con la telemetria disattivata: nessun dato (né
     statistica d'uso) lascia la macchina."""
     import subprocess
     import threading
@@ -177,7 +177,7 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
             sys.exit("--export-flags richiede --marker-map e --reference-compartment")
         prefix = Path(args.out).parent / Path(args.h5ad).stem
         h5ad_path, csv_path = export_audited(adata, result, prefix)
-        print(f"[ok] copia con i flag scritta in {h5ad_path} (il file originale non e' toccato)")
+        print(f"[ok] copia con i flag scritta in {h5ad_path} (il file originale non è toccato)")
         print(f"[ok] flag per cellula scritti in {csv_path}")
     cd8 = None
     if args.cd8_compartment:
@@ -305,8 +305,8 @@ def main() -> None:
                        help="convenzione 'clone': etichette fuori mappa ammesse e contate come errore, "
                             "separate da virgola (default: tutte; la tesi usa NK)")
     p_tcr.add_argument("--clone-marker-priority", default=None,
-                       help="convenzione 'clone': ordine di positivita' esclusiva, es. CD8T,CD4T "
-                            "(default: positivita' non esclusiva)")
+                       help="convenzione 'clone': ordine di positività esclusiva, es. CD8T,CD4T "
+                            "(default: positività non esclusiva)")
     p_tcr.add_argument("--export-flags", action="store_true",
                         help="scrive <nome>_audited.h5ad (copia con i flag) e <nome>_audit_flags.csv "
                              "nella cartella di --out; richiede --marker-map")

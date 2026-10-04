@@ -192,13 +192,13 @@ def test_variance_share_bootstrap_coverage_patient():
     strict=True,
     reason=(
         "Copertura dell'IC95% della quota del TESSUTO misurata 200/200 = 1.000, sopra la banda "
-        "dichiarata [0.90, 0.99]: intervallo conservativo (troppo largo). Metodo gia' corretto "
+        "dichiarata [0.90, 0.99]: intervallo conservativo (troppo largo). Metodo già corretto "
         "due volte (1: divisore per effetti casuali + intervallo 'basic', copertura 0/200 -> "
         "stimatore puntuale non distorto ma intervallo ancora spostato; 2: intervallo normale "
         "stima +- 1.96 SE bootstrap -> paziente 0.965 in banda, tessuto 1.000 fuori). La banda "
-        "NON e' stata allargata. Conseguenza: la scomposizione della varianza non e' esposta in "
+        "NON è stata allargata. Conseguenza: la scomposizione della varianza non è esposta in "
         "CLI, app o report. Probabile causa: il bootstrap sui pazienti propaga all'intervallo "
-        "del tessuto (effetto fisso) anche la variabilita' del denominatore dovuta al paziente."
+        "del tessuto (effetto fisso) anche la variabilità del denominatore dovuta al paziente."
     ),
 )
 def test_variance_share_bootstrap_coverage_tissue():
@@ -206,7 +206,7 @@ def test_variance_share_bootstrap_coverage_tissue():
 
 
 def test_pseudobulk_end_to_end_smoke():
-    """Non e' una calibrazione: verifica che la pseudobulk da conteggi per cellula
+    """Non è una calibrazione: verifica che la pseudobulk da conteggi per cellula
     produca quote nell'ordine atteso (paziente > tessuto > 0)."""
     adata = make_pseudobulk_adata(seed=3)
     dec = variance_decomposition(adata, patient_col="patient_id", tissue_col="tissue",
@@ -219,7 +219,7 @@ def test_pseudobulk_end_to_end_smoke():
 
 def test_variance_decomposition_refuses_confounded_factors():
     Y, units = make_variance_units(seed=1)
-    # 'library' coincide con la coppia paziente-tessuto: nessun grado di liberta' residuo
+    # 'library' coincide con la coppia paziente-tessuto: nessun grado di libertà residuo
     units = units.assign(library=units.patient + "-" + units.tissue)
     dec = variance_decomposition_from_units(
         Y, units, patient_col="patient", factor_cols=["patient", "tissue", "library"],
@@ -262,5 +262,5 @@ def test_gse278694_reference_design():
     assert sc_sn.classification == "non stimabile"
     # libreria = coppia paziente-tessuto; paziente annidato nel protocollo (coorti disgiunte)
     kinds = {(f.kind, f.factors) for f in res.findings}
-    assert ("unita'-tecnica", ("library",)) in kinds
+    assert ("unità-tecnica", ("library",)) in kinds
     assert ("annidamento", ("patient", "protocol")) in kinds

@@ -157,7 +157,7 @@ def test_cd8_is_never_green_refused_is_grey():
     refused = cd8_summary(_cd8(refused="2 pazienti con riferimento, ne servono almeno 5"))
     assert _states(refused) == [GRIGIO] and "rifiutato" in refused.checks[0].text
     produced = cd8_summary(_cd8())
-    assert _states(produced) == [GIALLO] and "1 pazienti su 2" in produced.checks[0].text
+    assert _states(produced) == [GIALLO] and "per 1 su 2 pazienti" in produced.checks[0].text
     none_produced = cd8_summary(_cd8(lows=(None, None)))
     assert _states(none_produced) == [GRIGIO] and "J = 0.10" in none_produced.checks[0].text
 

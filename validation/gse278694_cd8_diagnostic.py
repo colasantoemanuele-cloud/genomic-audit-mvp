@@ -1,7 +1,7 @@
 """Pulizia 4 -- diagnostica su P(chiamata CD8 | vera CD4) = 0.45 nel tumore (GSE278694 reale).
 
-Verifica se quel valore dipende da come il sangue assegna l'identita' del clone. Ricalcola
-la matrice di confusione del tumore con soglie di riferimento piu' o meno stringenti
+Verifica se quel valore dipende da come il sangue assegna l'identità del clone. Ricalcola
+la matrice di confusione del tumore con soglie di riferimento più o meno stringenti
 (margine 0.20 / 0.40, minimo di cellule nel sangue 3 / 5), SENZA cambiare i default
 dell'MVP: usa le stesse funzioni (assign_reference_identity, cd8_fraction_intervals) con
 parametri diversi. Per ogni combinazione riporta anche la frazione dei cloni "CD4" di
@@ -34,7 +34,7 @@ MARKERS = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
 
 
 def load_cells(manifest: Path) -> pd.DataFrame:
-    """Stessa preparazione di run_tcr_validation, piu' la positivita' al solo CD8A."""
+    """Stessa preparazione di run_tcr_validation, più la positività al solo CD8A."""
     adata = ad.read_h5ad(H5AD)
     obs = adata.obs[["patients", "tissue", "all_celltype", "barcode"]].astype(str).reset_index(drop=True)
     obs.columns = ["patient", "compartment", "celltype", "barcode"]

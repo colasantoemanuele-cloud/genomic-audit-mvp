@@ -9,7 +9,7 @@ Scelta sull'estimatore D_A/D_B (discordanza entro compartimento, baseline dell'e
 usa la versione SENZA reinserimento (coppie di cellule distinte dallo stesso gruppo),
 validata come non distorta in 07_robustness.py punto (A) -- non la versione con
 proporzioni (con reinserimento), che sovrastima sistematicamente D su gruppi piccoli e
-quindi sottostima l'eccesso proprio nei cloni piu' piccoli (il regime tipico qui, dato il
+quindi sottostima l'eccesso proprio nei cloni più piccoli (il regime tipico qui, dato il
 min_cells di default = 2). D(A×B) cross-compartimento resta con proporzioni: confronta
 due gruppi DIVERSI (una cellula per lato), nessun problema di reinserimento.
 """
@@ -39,13 +39,13 @@ MIN_MARGIN_DEFAULT = 0.20
 # --------------------------------------------------------------------------- #
 def parse_vdj_contigs(files: list[tuple[Path, str, str]]) -> pd.DataFrame:
     """``files``: lista di (percorso_csv, patient_id, compartment) -- l'associazione
-    file->paziente->compartimento e' fornita dal chiamante (CLI/app), non dedotta dal
+    file->paziente->compartimento è fornita dal chiamante (CLI/app), non dedotta dal
     nome del file: i CSV Cell Ranger non contengono questa informazione al loro interno,
-    e non c'e' una convenzione di nome universale.
+    e non c'è una convenzione di nome universale.
 
     Filtra is_cell/high_confidence/productive/full_length (se le colonne sono presenti),
     catene limitate a TRA/TRB, e per (paziente, compartimento, barcode, catena) mantiene
-    il contig con piu' UMI.
+    il contig con più UMI.
     """
     frames = []
     for path, patient, compartment in files:
@@ -73,7 +73,7 @@ def parse_vdj_contigs(files: list[tuple[Path, str, str]]) -> pd.DataFrame:
 
 
 def build_clonotypes(contigs: pd.DataFrame) -> pd.DataFrame:
-    """Il clonotipo e' definito dalla sequenza nucleotidica CDR3 della catena TRB. Una
+    """Il clonotipo è definito dalla sequenza nucleotidica CDR3 della catena TRB. Una
     riga per cellula con TRB rilevato."""
     trb = contigs[contigs.chain == "TRB"][["patient", "compartment", "barcode", "cdr3_nt"]]
     trb = trb.rename(columns={"cdr3_nt": "clone_id"})
@@ -114,7 +114,7 @@ def match_barcodes(obs: pd.DataFrame, clones: pd.DataFrame,
     compartimento, barcode). Se rimuovere il suffisso "-N" (es. "-1" di Cell Ranger) da
     entrambi i lati aumenta il match senza creare collisioni (barcode diversi che diventano
     uguali, es. -1 e -2 dello stesso campione aggregato), la normalizzazione viene applicata
-    e dichiarata. Errore esplicito se il match finale e' sotto ``min_fraction``."""
+    e dichiarata. Errore esplicito se il match finale è sotto ``min_fraction``."""
     n_raw, f_raw = _match_fraction(obs, clones)
     used_obs, used_clones, suffixes = obs, clones, ()
     obs_n = obs.assign(barcode=_strip(obs["barcode"]))
@@ -143,7 +143,7 @@ def match_barcodes(obs: pd.DataFrame, clones: pd.DataFrame,
         ex_v = clones["barcode"].astype(str).head(3).tolist()
         ex_o = obs["barcode"].astype(str).head(3).tolist()
         raise ValueError(
-            f"solo il {f_final:.1%} dei barcode VDJ e' stato ritrovato nei metadati (soglia "
+            f"solo il {f_final:.1%} dei barcode VDJ è stato ritrovato nei metadati (soglia "
             f"{min_fraction:.0%}), anche dopo l'eventuale normalizzazione del suffisso -N. Esempi "
             f"VDJ: {ex_v}; esempi metadati: {ex_o}. Controlla che paziente e compartimento del "
             f"manifest coincidano con quelli dell'AnnData e che i barcode abbiano lo stesso formato.")
@@ -154,7 +154,7 @@ def match_barcodes(obs: pd.DataFrame, clones: pd.DataFrame,
 # (A) Discordanza a coppie
 # --------------------------------------------------------------------------- #
 def within_compartment_discordance(labels: np.ndarray) -> float:
-    """D_A = 1 - sum(n_k(n_k-1)) / (n(n-1)): probabilita' che DUE cellule distinte dello
+    """D_A = 1 - sum(n_k(n_k-1)) / (n(n-1)): probabilità che DUE cellule distinte dello
     stesso gruppo (senza reinserimento) abbiano etichetta diversa. Stimatore non distorto
     (07_robustness.py, punto A) -- la versione con proporzioni (1-sum(p_i^2)) sovrastima
     sistematicamente D su gruppi piccoli."""
@@ -173,7 +173,7 @@ def _label_proportions(labels: np.ndarray, categories: np.ndarray) -> np.ndarray
 
 def cross_compartment_discordance(p_a: np.ndarray, p_b: np.ndarray) -> float:
     """D(A×B) = 1 - sum(p_A_i * p_B_i): una cellula per lato, gruppi diversi -> nessun
-    problema di reinserimento, la versione con proporzioni e' corretta qui."""
+    problema di reinserimento, la versione con proporzioni è corretta qui."""
     return 1.0 - float(np.dot(p_a, p_b))
 
 
@@ -284,8 +284,8 @@ def assign_reference_identity(
     min_cells: int = MIN_CELLS_MARKER_DEFAULT,
     min_margin: float = MIN_MARGIN_DEFAULT,
 ) -> pd.DataFrame:
-    """Identita' di riferimento del clone dai marcatori, stimata SOLO dal compartimento
-    di riferimento (tipicamente il sangue): niente circolarita' con i compartimenti poi
+    """Identità di riferimento del clone dai marcatori, stimata SOLO dal compartimento
+    di riferimento (tipicamente il sangue): niente circolarità con i compartimenti poi
     giudicati. Cloni ambigui (margine fra l'etichetta vincente e la seconda < min_margin)
     sono scartati, non forzati."""
     ref = cells_with_markers[cells_with_markers[compartment_col] == reference_compartment]
@@ -323,7 +323,7 @@ def marker_error_rate(
     seed: int = 0,
     min_patients_for_ci: int = MIN_PATIENTS_FOR_CI_DEFAULT,
 ) -> MarkerErrorResult:
-    """Confronta l'etichetta assegnata (celltype_col) con l'identita' di riferimento del
+    """Confronta l'etichetta assegnata (celltype_col) con l'identità di riferimento del
     clone (dai marcatori, stimata solo nel compartimento di riferimento) su tutti gli
     ALTRI compartimenti. Tasso d'errore per compartimento con cluster bootstrap sui
     pazienti."""
@@ -355,7 +355,7 @@ CONVENTIONS = ("cell", "clone")
 
 @dataclass(frozen=True)
 class ConventionResult:
-    """Tasso d'errore per compartimento secondo una convenzione dichiarata, piu' le
+    """Tasso d'errore per compartimento secondo una convenzione dichiarata, più le
     differenze appaiate fra compartimenti (stessi cloni)."""
     name: str
     definition: str
@@ -365,7 +365,7 @@ class ConventionResult:
 
 def _paired_differences(units: pd.DataFrame, n_boot: int, seed: int,
                         min_patients_for_ci: int) -> dict[tuple[str, str], tuple[BootstrapResult, int]]:
-    """``units``: colonne patient, clone, compartment, error (una riga per unita').
+    """``units``: colonne patient, clone, compartment, error (una riga per unità).
     Per ogni coppia di compartimenti giudicati: errore medio del clone in A meno quello in B,
     sui cloni presenti in entrambi; cluster bootstrap sui pazienti. Valore: (risultato,
     numero di cloni)."""
@@ -386,7 +386,7 @@ def _paired_differences(units: pd.DataFrame, n_boot: int, seed: int,
 
 def _cell_units(cells: pd.DataFrame, reference_identity: pd.DataFrame,
                 reference_compartment: str) -> pd.DataFrame:
-    """Unita' della convenzione "per cellula": stessi filtri di ``marker_error_rate``."""
+    """Unità della convenzione "per cellula": stessi filtri di ``marker_error_rate``."""
     if reference_identity.empty:
         return pd.DataFrame(columns=["patient", "clone", "compartment", "error"])
     j = cells.merge(reference_identity, on=["patient", "clone_id"], how="inner")
@@ -406,17 +406,17 @@ def clone_level_units(
     min_cells: int = MIN_CELLS_MARKER_DEFAULT,
     min_margin: float = MIN_MARGIN_DEFAULT,
 ) -> pd.DataFrame:
-    """Unita' della convenzione "per clone" (definizione della tesi, 10_loco.py schema blood).
+    """Unità della convenzione "per clone" (definizione della tesi, 10_loco.py schema blood).
 
     - Si considerano solo le cellule con etichetta in ``marker_labels`` + ``error_labels``
       (``error_labels=None``: tutte le etichette).
-    - Positivita' ai marcatori: se ``marker_priority`` e' dato, una cellula positiva ai
-      marcatori di un'etichetta e' considerata negativa per tutte le etichette che seguono
-      nell'ordine (tesi: CD8T prima di CD4T, cioe' CD4 positivo solo se CD8A e CD8B negativi).
-    - Identita' del clone dal solo compartimento di riferimento (>= ``min_cells`` cellule,
+    - Positività ai marcatori: se ``marker_priority`` è dato, una cellula positiva ai
+      marcatori di un'etichetta è considerata negativa per tutte le etichette che seguono
+      nell'ordine (tesi: CD8T prima di CD4T, cioè CD4 positivo solo se CD8A e CD8B negativi).
+    - Identità del clone dal solo compartimento di riferimento (>= ``min_cells`` cellule,
       margine >= ``min_margin``), come ``assign_reference_identity``.
-    - Un'unita' per coppia (clone, compartimento giudicato) con >= ``min_cells`` cellule;
-      etichetta = etichetta di maggioranza; errore se diversa dall'identita'. Le etichette
+    - Un'unità per coppia (clone, compartimento giudicato) con >= ``min_cells`` cellule;
+      etichetta = etichetta di maggioranza; errore se diversa dall'identità. Le etichette
       fuori mappa contano come errore.
     """
     x = cells if error_labels is None else cells[cells["celltype"].isin(list(marker_labels) + list(error_labels))]
@@ -455,12 +455,12 @@ def _summarize_units(units: pd.DataFrame, n_boot: int, seed: int,
 def convention_definition(name: str, error_labels: list[str] | None = None,
                           marker_priority: list[str] | None = None) -> str:
     if name == "cell":
-        return ("per cellula: ogni cellula giudicata e' un'unita'; etichette fuori dalla mappa "
+        return ("per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa "
                 "dei marcatori escluse")
     labels = "tutte" if error_labels is None else (", ".join(error_labels) or "nessuna")
-    prio = ("positivita' non esclusiva" if not marker_priority else
-            "positivita' esclusiva in ordine " + " > ".join(marker_priority))
-    return ("per clone: un'unita' per coppia clone-compartimento con almeno 3 cellule, etichetta "
+    prio = ("positività non esclusiva" if not marker_priority else
+            "positività esclusiva in ordine " + " > ".join(marker_priority))
+    return ("per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta "
             f"di maggioranza; etichette fuori mappa contate come errore (etichette ammesse fuori "
             f"mappa: {labels}); {prio}")
 
@@ -471,15 +471,15 @@ def convention_definition(name: str, error_labels: list[str] | None = None,
 FLAG_COLUMNS = ("audit_reference_label", "audit_label_vs_reference")
 FLAG_DEFINITIONS = {
     "audit_reference_label": (
-        "Identita' del clone T della cellula stimata dai marcatori canonici SOLO nel "
+        "Identità del clone T della cellula stimata dai marcatori canonici SOLO nel "
         "compartimento di riferimento (schema solo sangue: >= 3 cellule del clone nel "
-        "riferimento, margine >= 0.20 fra la prima e la seconda identita'). NA se la cellula "
-        "non ha TCR o il suo clone non ha un'identita' di riferimento."),
+        "riferimento, margine >= 0.20 fra la prima e la seconda identità). NA se la cellula "
+        "non ha TCR o il suo clone non ha un'identità di riferimento."),
     "audit_label_vs_reference": (
-        "True se l'etichetta assegnata alla cellula discorda dall'identita' di riferimento del "
+        "True se l'etichetta assegnata alla cellula discorda dall'identità di riferimento del "
         "clone, False se concorda. Stessa logica di marker_error_rate: NA se il clone non ha "
-        "riferimento, se l'etichetta e' fuori dalla marker_map, o se la cellula sta nel "
-        "compartimento di riferimento (da cui il riferimento e' stimato). E' un segnale, non "
+        "riferimento, se l'etichetta è fuori dalla marker_map, o se la cellula sta nel "
+        "compartimento di riferimento (da cui il riferimento è stimato). È un segnale, non "
         "una correzione: l'etichetta originale non viene modificata."),
 }
 
@@ -498,9 +498,9 @@ def cell_flags(
     """Flag per cellula, indicizzati per posizione di riga (0..n_obs-1) in adata.obs.
 
     ``audit_label_vs_reference`` ripete ESATTAMENTE i filtri di ``marker_error_rate``
-    (join interno sull'identita' di riferimento, esclusione del compartimento di
-    riferimento, etichette limitate a quelle presenti fra le identita' di riferimento),
-    cosi' la media dei flag valutabili di un compartimento coincide con la stima puntuale
+    (join interno sull'identità di riferimento, esclusione del compartimento di
+    riferimento, etichette limitate a quelle presenti fra le identità di riferimento),
+    così la media dei flag valutabili di un compartimento coincide con la stima puntuale
     del tasso d'errore di quel compartimento."""
     ref_label = pd.Series(pd.NA, index=pd.RangeIndex(n_obs), dtype="object")
     vs_ref = pd.Series(pd.NA, index=pd.RangeIndex(n_obs), dtype="boolean")
@@ -519,12 +519,12 @@ def export_audited(adata: ad.AnnData, result: "TcrValidationResult",
     """Scrive ``<prefisso>_audited.h5ad`` (COPIA compressa gzip di adata con le due colonne
     di flag in obs e le definizioni in uns['genomic_audit_flags']) e ``<prefisso>_audit_flags.csv``
     (obs_names + flag). L'AnnData passato non viene modificato; le colonne esistenti non
-    vengono sovrascritte (errore se una colonna di flag esiste gia')."""
+    vengono sovrascritte (errore se una colonna di flag esiste già)."""
     if result.cell_flags is None:
         raise ValueError("nessun flag da esportare: servono marker_map e reference_compartment")
     clash = [c for c in FLAG_COLUMNS if c in adata.obs.columns]
     if clash:
-        raise ValueError(f"adata.obs contiene gia' le colonne {clash}: non vengono sovrascritte")
+        raise ValueError(f"adata.obs contiene già le colonne {clash}: non vengono sovrascritte")
     if list(result.cell_flags.index) != list(adata.obs_names):
         raise ValueError("i flag non corrispondono alle righe di questo AnnData")
     out_prefix = Path(out_prefix)
@@ -565,14 +565,14 @@ class TcrValidationResult:
 
 def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> str:
     if not d.sufficient:
-        return (f"Numerosita' insufficiente per una stima affidabile dell'eccesso di discordanza "
+        return (f"Numerosità insufficiente per una stima affidabile dell'eccesso di discordanza "
                 f"({d.n_patients} pazienti contribuiscono cloni comparabili, ne servono almeno "
                 f"{min_patients_for_ci}): nessun intervallo di confidenza riportato.")
     if d.ci_low > 0:
         esito = "un effetto reale (l'intervallo esclude lo zero)"
     elif d.ci_high < 0:
         esito = ("l'intervallo esclude lo zero ma in direzione NEGATIVA -- l'opposto di un errore "
-                 "di annotazione (che produrrebbe eccesso >=0). Non e' la firma cercata: probabile "
+                 "di annotazione (che produrrebbe eccesso >=0). Non è la firma cercata: probabile "
                  "rumore campionario su pochi pazienti/cloni, da non interpretare come un effetto")
     else:
         esito = "non distinguibile dal rumore di base entro compartimento (l'intervallo include lo zero)"
@@ -587,12 +587,12 @@ def _marker_narrative(m: MarkerErrorResult | None, min_patients_for_ci: int) -> 
     if m is None:
         return ""
     if not m.by_compartment:
-        return " Nessun clone risolvibile per il tasso d'errore via marcatori (identita' ambigua o troppe poche cellule di riferimento)."
-    parts = [f" Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori "
+        return " Nessun clone risolvibile per il tasso d'errore via marcatori (identità ambigua o troppe poche cellule di riferimento)."
+    parts = [f" Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori "
              f"(riferimento: compartimento '{m.reference_compartment}', {m.n_resolved_clones} cloni risolti):"]
     for comp, res in m.by_compartment.items():
         if not res.sufficient:
-            parts.append(f" '{comp}': numerosita' insufficiente ({res.n_groups} pazienti, "
+            parts.append(f" '{comp}': numerosità insufficiente ({res.n_groups} pazienti, "
                          f"ne servono almeno {min_patients_for_ci}).")
         else:
             parts.append(f" '{comp}': {res.mean:.3f} (IC95% [{res.ci_low:.3f}, {res.ci_high:.3f}], "
@@ -604,13 +604,13 @@ def _conventions_narrative(conv: dict[str, ConventionResult] | None, reference_c
                            min_patients_for_ci: int) -> str:
     if not conv:
         return ""
-    parts = [f" Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori "
+    parts = [f" Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori "
              f"(riferimento: compartimento '{reference_compartment}'), secondo "
              f"{len(conv)} convenzion{'i' if len(conv) > 1 else 'e'} dichiarat{'e' if len(conv) > 1 else 'a'}:"]
     for c in conv.values():
         parts.append(f" [{c.name}] {c.definition} --")
         if not c.by_compartment:
-            parts.append(" nessuna unita' valutabile.")
+            parts.append(" nessuna unità valutabile.")
         for comp, res in c.by_compartment.items():
             if not res.sufficient:
                 parts.append(f" '{comp}': {res.mean:.3f}, IC non prodotto ({res.n_groups} pazienti, "
@@ -643,12 +643,12 @@ def run_tcr_validation(
     clone_error_labels: list[str] | None = None,
     clone_marker_priority: list[str] | None = None,
 ) -> TcrValidationResult:
-    """Esegue il Modulo B. ``contigs`` e' l'output gia' filtrato di ``parse_vdj_contigs``.
+    """Esegue il Modulo B. ``contigs`` è l'output già filtrato di ``parse_vdj_contigs``.
 
     ``marker_map`` e ``reference_compartment`` sono opzionali: se entrambi forniti, viene
     calcolato anche il tasso d'errore per compartimento via marcatori canonici, secondo
     ``convention`` ("cell", "clone" o "both", default: entrambe affiancate). ``marker_error``
-    (convenzione per cellula) e' calcolato comunque, invariato.
+    (convenzione per cellula) è calcolato comunque, invariato.
     """
     if convention not in ("cell", "clone", "both"):
         raise ValueError(f"convention deve essere cell, clone o both, non '{convention}'")
@@ -665,7 +665,7 @@ def run_tcr_validation(
     obs["_row"] = np.arange(len(obs))
 
     # Le colonne pos_<etichetta> vengono allineate per POSIZIONE (stessa riga di
-    # adata.obs), non per join sul barcode: il barcode 10x da solo NON e' univoco a
+    # adata.obs), non per join sul barcode: il barcode 10x da solo NON è univoco a
     # livello globale (si ripete fra pazienti/compartimenti diversi), quindi un join
     # per barcode rischierebbe di mescolare cellule di pazienti diversi.
     if marker_map:
@@ -738,7 +738,7 @@ def tcr_by_celltype(adata: ad.AnnData, contigs: pd.DataFrame, patient_col: str,
     """Per ogni etichetta di tipo cellulare: cellule totali, cellule con catena TRB rilevata e
     quante di queste appartengono a un clone espanso (>= 2 cellule nello stesso paziente).
 
-    E' una tabella DESCRITTIVA. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) puo'
+    È una tabella DESCRITTIVA. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) può
     essere un doppietto, RNA ambientale o un errore di annotazione: la tabella non distingue fra
     questi casi e non classifica le singole cellule. Usa la stessa corrispondenza dei barcode
     del Modulo B (``match_barcodes``)."""

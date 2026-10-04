@@ -6,10 +6,10 @@ paziente: "frazione CD8 nel tumore del paziente X: riportata 0.22, plausibile fr
 Metodo
 ------
 1. Matrice di confusione CON DIREZIONE, stimata solo sulle cellule del compartimento
-   bersaglio che hanno un'identita' di riferimento (``audit_reference_label`` del Modulo
-   B, schema solo sangue): da identita' vera {CD4, CD8} a etichetta chiamata {CD4, CD8,
-   altro}. "Altro" e' ogni etichetta diversa da CD4/CD8 (es. NK); serve solo qui,
-   ``marker_error_rate`` resta invariata. La matrice e' POOLED fra pazienti.
+   bersaglio che hanno un'identità di riferimento (``audit_reference_label`` del Modulo
+   B, schema solo sangue): da identità vera {CD4, CD8} a etichetta chiamata {CD4, CD8,
+   altro}. "Altro" è ogni etichetta diversa da CD4/CD8 (es. NK); serve solo qui,
+   ``marker_error_rate`` resta invariata. La matrice è POOLED fra pazienti.
 2. Frazione riportata del paziente: r = n_CD8 / (n_CD4 + n_CD8), contando le cellule del
    compartimento bersaglio etichettate CD4 o CD8.
 3. Inversione. Con x, y = cellule vere CD4 e CD8 del paziente e a4 = P(chiamata CD4 |
@@ -19,8 +19,8 @@ Metodo
    da cui, con (n_CD4, n_CD8) proporzionali a (1 - r, r):
        x ∝ b8 (1 - r) - a8 r,   y ∝ a4 r - b4 (1 - r),   frazione vera = y / (x + y)
    troncata a [0, 1]. Le chiamate "altro" non entrano nel denominatore: la perdita
-   differenziale verso "altro" e' gia' nelle a/b, che per riga non sommano a 1.
-   Condizionamento: J = b8/(a8+b8) - b4/(a4+b4), differenza fra le probabilita' di essere
+   differenziale verso "altro" è già nelle a/b, che per riga non sommano a 1.
+   Condizionamento: J = b8/(a8+b8) - b4/(a4+b4), differenza fra le probabilità di essere
    chiamata CD8 (fra le chiamate CD4/CD8) per una vera CD8 e per una vera CD4. Con J
    vicino a zero l'inversione amplifica il rumore senza limite: intervallo rifiutato se
    J < 0.2 oppure se l'intervallo bootstrap di J include lo zero.
@@ -29,15 +29,15 @@ Metodo
    e IC, non le repliche, e non va modificato -- per la matrice; per ogni replica una
    frazione riportata estratta da Beta(n_CD8 + 1/2, n_CD4 + 1/2) (Monte Carlo sui
    conteggi del paziente); intervallo = percentili 2.5-97.5 delle frazioni invertite.
-5. Sensibilita': l'errore di ciascuna riga della matrice (1 - chiamata corretta) e'
+5. Sensibilità: l'errore di ciascuna riga della matrice (1 - chiamata corretta) è
    moltiplicato per 0.5, 1 e 2 mantenendone la composizione; tre intervalli sempre
    riportati, nessuno indicato come "il risultato".
 
 Assunzioni
 ----------
-- L'identita' di riferimento dal sangue e' considerata corretta.
+- L'identità di riferimento dal sangue è considerata corretta.
 - I cloni condivisi con il sangue (quelli con riferimento) sono rappresentativi dei non
-  condivisi: e' l'assunzione che gli scenari 0.5x/2x mettono alla prova.
+  condivisi: è l'assunzione che gli scenari 0.5x/2x mettono alla prova.
 - Le cellule chiamate CD4/CD8 sono vere cellule T CD4 o CD8 (le non-T chiamate CD4/CD8,
   es. doppietti, non sono modellate).
 """
@@ -58,17 +58,17 @@ MIN_CELLS_PER_PATIENT = 20
 MAX_INVALID_FRACTION = 0.10
 
 ASSUMPTIONS_TEXT = (
-    "Assunzioni. (1) L'identita' di riferimento stimata dal sangue e' considerata corretta. "
-    "(2) La matrice di confusione e' stimata solo sui cloni condivisi con il sangue, che per "
-    "costruzione sono quelli espansi (almeno 3 cellule nel sangue e identita' netta), ed e' "
+    "Assunzioni. (1) L'identità di riferimento stimata dal sangue è considerata corretta. "
+    "(2) La matrice di confusione è stimata solo sui cloni condivisi con il sangue, che per "
+    "costruzione sono quelli espansi (almeno 3 cellule nel sangue e identità netta), ed è "
     "unica per tutti i pazienti (pooled), non per paziente. Nei dati originali (PDAC, "
     "GSE278694) l'errore di annotazione cresce con la dimensione del clone (rho = +0.177): "
-    "e' quindi possibile che la matrice SOVRASTIMI l'errore dei cloni non condivisi, ma non "
-    "e' verificabile, perche' quelle cellule non hanno riferimento. In simulazione nessuno "
+    "è quindi possibile che la matrice SOVRASTIMI l'errore dei cloni non condivisi, ma non "
+    "è verificabile, perché quelle cellule non hanno riferimento. In simulazione nessuno "
     "scenario copre il valore vero in tutti i casi: se i cloni condivisi sbagliano 2-4 volte "
-    "piu' degli altri lo scenario 1x scende fino al 28% di copertura e lo 0.5x resta intorno "
+    "più degli altri lo scenario 1x scende fino al 28% di copertura e lo 0.5x resta intorno "
     "al 92-95%; se sbagliano quanto gli altri, lo 0.5x scende all'88%. Per questo sono "
-    "riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali e' \"il "
+    "riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali è \"il "
     "risultato\". (3) Le cellule etichettate CD4 o CD8 sono vere cellule T; doppietti "
     "e altre cellule non-T etichettate CD4/CD8 non sono modellati."
 )
@@ -76,8 +76,8 @@ ASSUMPTIONS_TEXT = (
 
 EXPERIMENTAL_NOTE = (
     "FUNZIONE SPERIMENTALE. Nei test di robustezza (cloni condivisi con il sangue che sbagliano "
-    "piu' o meno degli altri) nessuno dei tre scenari garantisce la copertura nominale "
-    "dell'intervallo al 95%. Sui dati reali su cui e' stata provata (GSE278694) gli intervalli "
+    "più o meno degli altri) nessuno dei tre scenari garantisce la copertura nominale "
+    "dell'intervallo al 95%. Sui dati reali su cui è stata provata (GSE278694) gli intervalli "
     "sono risultati molto ampi, e lo scenario 2x non era calcolabile. Gli intervalli non vanno "
     "letti come una stima della frazione vera di CD8."
 )
@@ -87,7 +87,7 @@ SCENARIO_WARNING = (
     "CD4 o CD8 nel compartimento (denominatore dichiarato), intervallo dei soli conteggi (senza "
     "correzione) e intervalli plausibili al 95% dopo la correzione per l'errore di annotazione, in "
     "tre scenari di errore sui cloni non condivisi con il sangue (0.5x, 1x, 2x). Nessuno scenario "
-    "e' \"il risultato\": la loro distanza mostra quanto la conclusione dipende dall'assunzione."
+    "è \"il risultato\": la loro distanza mostra quanto la conclusione dipende dall'assunzione."
 )
 
 
@@ -127,7 +127,7 @@ class CD8PropagationResult:
 def patient_resample_draws(groups: np.ndarray, n_boot: int, seed: int) -> Iterator[np.ndarray]:
     """Indici delle osservazioni per ogni replica del bootstrap sui pazienti. Riproduce
     esattamente lo schema di ``core.stats.cluster_bootstrap`` (stesso generatore, stesse
-    chiamate, stesso ordine di concatenazione): la media dei valori su questi indici da'
+    chiamate, stesso ordine di concatenazione): la media dei valori su questi indici dà
     le stesse repliche, e quindi lo stesso IC, di quella funzione. Verificato in
     tests/test_cd8_propagation_calibration.py."""
     g = np.asarray(groups)
@@ -140,8 +140,8 @@ def patient_resample_draws(groups: np.ndarray, n_boot: int, seed: int) -> Iterat
 
 
 def _confusion(true_is_cd8: np.ndarray, called: np.ndarray) -> np.ndarray | None:
-    """Matrice 2x3 di probabilita': righe vera CD4 / vera CD8, colonne chiamata
-    CD4 / CD8 / altro. ``called``: 0 = CD4, 1 = CD8, 2 = altro. None se una riga e' vuota."""
+    """Matrice 2x3 di probabilità: righe vera CD4 / vera CD8, colonne chiamata
+    CD4 / CD8 / altro. ``called``: 0 = CD4, 1 = CD8, 2 = altro. None se una riga è vuota."""
     m = np.zeros((2, 3))
     np.add.at(m, (true_is_cd8.astype(int), called), 1.0)
     tot = m.sum(axis=1, keepdims=True)
@@ -206,7 +206,7 @@ def cd8_fraction_intervals(
     """Intervalli sulla frazione di CD8 per paziente nel compartimento bersaglio.
 
     ``obs``: una riga per cellula, con l'etichetta assegnata (``celltype_col``) e
-    l'identita' di riferimento del clone (``reference_col``, tipicamente la colonna
+    l'identità di riferimento del clone (``reference_col``, tipicamente la colonna
     ``audit_reference_label`` prodotta dal Modulo B; NA se assente)."""
     df = obs[[patient_col, compartment_col, celltype_col, reference_col]].copy()
     df.columns = ["patient", "compartment", "celltype", "ref"]
@@ -226,13 +226,13 @@ def cd8_fraction_intervals(
     refused = None
     P_hat, J_hat = None, None
     if n_ref_pat < min_patients:
-        refused = (f"solo {n_ref_pat} pazienti hanno cellule con identita' di riferimento nel "
+        refused = (f"solo {n_ref_pat} pazienti hanno cellule con identità di riferimento nel "
                    f"compartimento '{target_compartment}', ne servono almeno {min_patients}")
     else:
         P_hat = _confusion(r_true_cd8, r_called)
         if P_hat is None:
-            refused = ("mancano cellule di riferimento per una delle due identita' (CD4 o CD8): "
-                       "la matrice di confusione non e' stimabile")
+            refused = ("mancano cellule di riferimento per una delle due identità (CD4 o CD8): "
+                       "la matrice di confusione non è stimabile")
         else:
             J_hat = _youden(P_hat)
 
@@ -245,11 +245,11 @@ def cd8_fraction_intervals(
                 mats.append(m)
         if len(mats) < (1 - MAX_INVALID_FRACTION) * n_boot:
             refused = (f"{n_boot - len(mats)} repliche bootstrap su {n_boot} senza una delle due "
-                       f"identita': la matrice e' troppo instabile")
+                       f"identità: la matrice è troppo instabile")
         else:
             boot_P = np.stack(mats)
 
-    # condizionamento per scenario (globale, la matrice e' pooled)
+    # condizionamento per scenario (globale, la matrice è pooled)
     scen_reason: dict[float, str | None] = {}
     scen_P: dict[float, tuple[np.ndarray, np.ndarray] | None] = {}
     for k in scenarios:
@@ -258,7 +258,7 @@ def cd8_fraction_intervals(
             continue
         P_k = _scale(P_hat, k)
         if P_k is None:
-            scen_reason[k], scen_P[k] = (f"con errore {k:g}x la probabilita' di errore stimata "
+            scen_reason[k], scen_P[k] = (f"con errore {k:g}x la probabilità di errore stimata "
                                          f"supera 1"), None
             continue
         j_k = _youden(P_k)
@@ -269,7 +269,7 @@ def cd8_fraction_intervals(
             continue
         B_k = [b for b in (_scale(m, k) for m in boot_P) if b is not None]
         if len(B_k) < (1 - MAX_INVALID_FRACTION) * len(boot_P):
-            scen_reason[k], scen_P[k] = (f"con errore {k:g}x la probabilita' di errore supera 1 in "
+            scen_reason[k], scen_P[k] = (f"con errore {k:g}x la probabilità di errore supera 1 in "
                                          f"{len(boot_P) - len(B_k)} repliche bootstrap su "
                                          f"{len(boot_P)}"), None
             continue
@@ -328,7 +328,7 @@ def cd8_fraction_intervals(
         head = (f"Intervalli sulla frazione di CD8 non prodotti: {refused}. Sono riportate solo le "
                 f"frazioni osservate, senza correzione.")
     else:
-        head = (f"Matrice di confusione stimata su {len(rdf)} cellule con identita' di riferimento "
+        head = (f"Matrice di confusione stimata su {len(rdf)} cellule con identità di riferimento "
                 f"da {n_ref_pat} pazienti (pooled fra pazienti), J = {J_hat:.2f}.")
     narrative = " ".join([head, SCENARIO_WARNING, ASSUMPTIONS_TEXT])
     return CD8PropagationResult(

@@ -2,7 +2,7 @@
 negativo con 20 permutazioni (A3) e varianti di formato (A4a, A4b).
 
 Usa core.leakage_audit.run_leakage_audit, la stessa funzione che chiama `cli.py leakage`,
-con gli stessi argomenti (A1 e' verificato a parte con la CLI vera).
+con gli stessi argomenti (A1 è verificato a parte con la CLI vera).
 
 Uso: python -m validation_esterna.run_moduleA <passo> [h5ad] [suffisso]
      passo in {base, perm, formati}; default h5ad = data/GSE125449.h5ad
@@ -59,7 +59,7 @@ def _perm(seed: int) -> dict:
 
 
 def perm() -> None:
-    # sequenziale: ogni esecuzione usa gia' tutti i core per i fold (nessuna sovrascrittura di thread)
+    # sequenziale: ogni esecuzione usa già tutti i core per i fold (nessuna sovrascrittura di thread)
     rows = [_perm(seed) for seed in range(20)]
     y = ad.read_h5ad(H5AD, backed="r").obs[TARGET].astype(str)
     k = y.nunique()

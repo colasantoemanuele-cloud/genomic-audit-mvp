@@ -1,5 +1,5 @@
 """Test del motore del Modulo A per dati reali: metrica, assenza di leakage nel
-preprocessing, sparsita', sottocampionamento, robustezza di formato."""
+preprocessing, sparsità, sottocampionamento, robustezza di formato."""
 
 from __future__ import annotations
 
@@ -50,7 +50,7 @@ def test_pipeline_never_densifies_the_gene_matrix():
         for _, step in pipe.steps[:-1]:
             Z = step.fit(Z, y).transform(Z)
             if not sp.issparse(Z):
-                assert Z.shape[1] <= 10, "solo l'uscita della SVD puo' essere densa"
+                assert Z.shape[1] <= 10, "solo l'uscita della SVD può essere densa"
 
 
 def test_cap_training_is_stratified_by_patient_and_deterministic():

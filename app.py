@@ -82,12 +82,12 @@ for k in ("design", "leakage", "tcr", "cd8", "tcr_table", "dataset_name", "b_ctx
 
 
 # --------------------------------------------------------------------------- #
-# Barra laterale: modalita'
+# Barra laterale: modalità
 # --------------------------------------------------------------------------- #
 with st.sidebar:
     st.markdown("### Audit genomico")
     st.caption("Strumento locale per coorti cliniche piccole. Nessun dato lascia questa macchina.")
-    mode = st.radio("Modalita'", ["Demo immediata", "Carica studio"], key="mode")
+    mode = st.radio("Modalità", ["Demo immediata", "Carica studio"], key="mode")
     if mode == "Demo immediata":
         demo_design = st.selectbox("Disegno dimostrativo (metadati reali GEO)", list(DEMO_DESIGN))
         rapido_demo = st.checkbox("Modulo A rapido (senza confronto fra modelli)", value=False)
@@ -112,7 +112,7 @@ with st.sidebar:
         st.session_state.dataset_name = st.text_input("Nome dello studio", value="studio")
 
 st.title("Audit genomico per coorti cliniche piccole")
-st.markdown('<p class="small">Unita\' statistica indipendente: il paziente. Ogni numero e\' '
+st.markdown('<p class="small">Unità statistica indipendente: il paziente. Ogni numero è '
             'accompagnato dalla sua definizione e dai suoi limiti; lo strumento segnala, non corregge '
             'le etichette.</p>', unsafe_allow_html=True)
 
@@ -121,7 +121,7 @@ tab_d, tab_a, tab_b, tab_v = st.tabs(["1 · Disegno sperimentale", "2 · Modulo 
 
 
 # --------------------------------------------------------------------------- #
-# Caricamento dati in modalita' studio
+# Caricamento dati in modalità studio
 # --------------------------------------------------------------------------- #
 def load_matrix_ui(key: str):
     kind = st.radio("Formato della matrice", ["AnnData (.h5ad)", "Cartella 10x (Matrix Market)"],
@@ -184,7 +184,7 @@ def factor_matrix_chart(res) -> alt.Chart:
 
 with tab_d:
     st.markdown("Legge **solo i metadati** (una riga per campione): quali fattori sono confusi e quali "
-                "confronti il disegno permette, con quante unita' indipendenti. Utilizzabile anche "
+                "confronti il disegno permette, con quante unità indipendenti. Utilizzabile anche "
                 "prima di sequenziare.")
     ctx = st.session_state.d_ctx if mode == "Demo immediata" else None
     if mode == "Carica studio":
@@ -231,7 +231,7 @@ with tab_d:
             f"<td>{badge(COLOR_OF[c.classification], c.classification)}</td><td>{c.n_units}</td>"
             f"<td>{'—' if c.min_pvalue is None else f'{c.min_pvalue:.3f}'}</td>"
             f"<td class='small'>{html.escape(c.sentence)}</td></tr>" for c in res.comparisons)
-        st.markdown("<table class='sem'><tr><th>Confronto</th><th>Classe</th><th>Unita' indipendenti</th>"
+        st.markdown("<table class='sem'><tr><th>Confronto</th><th>Classe</th><th>Unità indipendenti</th>"
                     f"<th>p-value minimo</th><th>Spiegazione</th></tr>{rows}</table>", unsafe_allow_html=True)
         c1, c2 = st.columns([3, 2])
         with c1:
@@ -243,7 +243,7 @@ with tab_d:
         with c2:
             st.subheader("Fatti strutturali")
             for f in res.findings:
-                if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica"):
+                if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unità-tecnica"):
                     st.markdown(f"- {f.sentence}")
             for n in res.notes:
                 st.caption(n)
@@ -337,7 +337,7 @@ with tab_a:
                   "dev. std onesta / casuale", delta_color="off")
         st.altair_chart(folds_chart(r), width="stretch")
         st.caption("Punti = singoli fold; tacca = media; barra = media ± 1 deviazione standard fra fold. "
-                   "Non e' un intervallo di confidenza: i punteggi dei fold sono correlati (i training si "
+                   "Non è un intervallo di confidenza: i punteggi dei fold sono correlati (i training si "
                    "sovrappongono) e un intervallo non sarebbe calibrato. Definizione: macro-F1 sulle "
                    "sole classi presenti nel fold di test.")
         st.markdown(r.narrative)
@@ -347,15 +347,15 @@ with tab_a:
                                        "classi assenti": [", ".join(a) or "—" for a in r.grouped.absent_classes]}),
                          hide_index=True)
         if r.xai is not None and r.xai.grouped_matrix.shape[0] > 1:
-            st.subheader("Stabilita' delle spiegazioni (descrittiva)")
+            st.subheader("Stabilità delle spiegazioni (descrittiva)")
             c1, c2 = st.columns(2)
             c1.altair_chart(jaccard_chart(r.xai.grouped_matrix, f"split per paziente — media {r.xai.grouped_mean:.2f}"),
                             width="stretch")
             c2.altair_chart(jaccard_chart(r.xai.random_matrix, f"split casuale — media {r.xai.random_mean:.2f}"),
                             width="stretch")
-            st.caption(f"Jaccard fra i {r.xai.k} geni con coefficiente piu' grande della regressione logistica "
-                       "nei diversi fold. Se togliere pazienti cambia i geni scelti piu' di quanto lo cambi "
-                       "togliere cellule a caso, l'informazione e' organizzata per paziente. Misura descrittiva, "
+            st.caption(f"Jaccard fra i {r.xai.k} geni con coefficiente più grande della regressione logistica "
+                       "nei diversi fold. Se togliere pazienti cambia i geni scelti più di quanto lo cambi "
+                       "togliere cellule a caso, l'informazione è organizzata per paziente. Misura descrittiva, "
                        "senza test statistico.")
         if r.model_comparison is not None:
             mc = r.model_comparison
@@ -366,7 +366,7 @@ with tab_a:
                       "p Nadeau-Bengio": f"{c.p_nadeau_bengio:.3f}", "p Wilcoxon": f"{c.p_wilcoxon:.3f}",
                       "nota": c.note} for c in mc.comparisons]
             st.dataframe(pd.DataFrame(rows), hide_index=True)
-            st.caption("Regressione logistica sui 2.000 geni piu' variabili; random forest e gradient boosting "
+            st.caption("Regressione logistica sui 2.000 geni più variabili; random forest e gradient boosting "
                        "su 50 componenti SVD. Geni e componenti sono stimati sul solo training di ogni fold.")
             ref = mc.scores["logreg"]
             if ref.n_folds_with_absent_classes:
@@ -381,7 +381,7 @@ with tab_a:
 # Tab 3: Modulo B
 # --------------------------------------------------------------------------- #
 with tab_b:
-    st.markdown("Usa il repertorio **TCR** come identita' indipendente dal trascrittoma: le cellule dello "
+    st.markdown("Usa il repertorio **TCR** come identità indipendente dal trascrittoma: le cellule dello "
                 "stesso clone T dovrebbero avere la stessa etichetta in ogni compartimento.")
     b_ctx = st.session_state.b_ctx if mode == "Demo immediata" else None
     if mode == "Carica studio":
@@ -449,7 +449,7 @@ with tab_b:
         if st.session_state.tcr_table is not None:
             st.subheader("Cellule con TCR per etichetta (contaminazioni cross-lineage)")
             st.dataframe(st.session_state.tcr_table)
-            st.caption("Tabella descrittiva. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) puo' essere un "
+            st.caption("Tabella descrittiva. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) può essere un "
                        "doppietto, RNA ambientale o un errore di annotazione: la tabella non li distingue e non "
                        "classifica le singole cellule.")
         if t.cell_flags is not None and b_ctx is not None:

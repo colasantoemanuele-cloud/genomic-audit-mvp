@@ -15,14 +15,14 @@ assemblati dai file in `results/` da `make_report.py`.
 
 ## 1. Dataset valutati
 
-| Accessione | Tumore | Pazienti | Campioni / cellule | Uso | Eleggibilita' |
+| Accessione | Tumore | Pazienti | Campioni / cellule | Uso | Eleggibilità |
 |---|---|---|---|---|---|
 | [GSE132465](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132465) | carcinoma colorettale | 23 | 33 campioni (10 pazienti con tumore + mucosa normale) | audit del disegno | eleggibile: E1-E3 (`patient_id`, `tissue type` nel series matrix); nomi di colonna con spazi; stadio e regione mancanti per i normali |
 | [GSE131907](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131907) | adenocarcinoma polmonare | 44 | 58 campioni, 7 tessuti | audit del disegno | eleggibile: E1-E3 (`patient id`, `tissue origin abbrevation`) |
 | [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449) | tumori primitivi del fegato (HCC, iCCA) | 19 | 19 campioni (uno per paziente) su 2 piattaforme; 9.946 cellule, 18.372 geni comuni | audit del disegno e Modulo A | eleggibile: E1-E3 (paziente ricavato dal titolo `LCP<id>`, regex dichiarata in `parse_geo.py`) e M1-M4 (conteggi interi in mtx, 19 pazienti, etichetta `Type` degli autori, meno di 50.000 cellule) |
 
 Tutte le accessioni sono state verificate leggendo le pagine GEO e scaricando i file (series
-matrix e file supplementari). Il Modulo B non e' testato qui: resta validato su un solo
+matrix e file supplementari). Il Modulo B non è testato qui: resta validato su un solo
 dataset (GSE278694).
 
 ## 2. Criteri × dataset (esecuzione finale)
@@ -47,7 +47,7 @@ testo del Cramér V (sezione 4).
 
 | Criterio | Esito | Numeri misurati |
 |---|---|---|
-| A1 CLI | OK | `audit-sc leakage --h5ad GSE125449.h5ad --target-col Type --patient-col patient`: exit 0, 324 s reali, 1,2 GB, confronto fra modelli incluso |
+| A1 CLI | OK | `audit-sc leakage --h5ad GSE125449.h5ad --target-col Type --patient-col patient`: {{A1_TXT}}, confronto fra modelli incluso |
 | A2 verifica indipendente | OK | {{A2_TXT}} |
 | A3 controllo negativo | OK | {{A3_TXT}} |
 | A4a matrice sparsa / densa | OK | punteggi dei fold identici (uguaglianza esatta) |
@@ -61,7 +61,7 @@ testo del Cramér V (sezione 4).
   0,667 invece di 1,0. Sui dati LeaveOneGroupOut la media era 0,705, contro 0,759 con la
   definizione standard.
 
-Come previsto dai criteri, mi ero fermato senza correggere. La correzione e' stata richiesta
+Come previsto dai criteri, mi ero fermato senza correggere. La correzione è stata richiesta
 in seguito dall'utente.
 
 ## 3. Output reali
@@ -95,23 +95,24 @@ Confronto fra modelli (LeaveOneGroupOut): {{LOGO_TXT}}.
 | La macro-F1 contava come zero le classi assenti dal fold di test | calcolo: riportato senza correggerlo, poi corretto su richiesta dell'utente | macro-F1 sulle classi presenti, classi assenti dichiarate | `bbe7bd0` |
 | Modulo A non praticabile su dati reali (oltre 5,5 h senza terminare) | architettura | matrice sparsa, HVG e SVD stimati nel fold, training limitato, fold in parallelo: 403 s sul dataset completo | `bbe7bd0` |
 | Classe presente in un solo paziente: traceback di scikit-learn | robustezza | errore esplicito con il motivo | commit finale |
-| Mancata convergenza del classificatore non dichiarata (solo un avviso su stderr) | onesta' dell'output | conteggio dei fold, frase nella narrativa, verdetto giallo | commit finale |
+| Mancata convergenza del classificatore non dichiarata (solo un avviso su stderr) | onestà dell'output | conteggio dei fold, frase nella narrativa, verdetto giallo | commit finale |
 | Frase sbagliata: "V = 0,95 [...] sotto la soglia di 0,5" quando la coppia ha un fatto strutturale | testo | frase specifica per le coppie strutturali; test di regressione | commit finale |
-| Classi assenti non dichiarate per i fold del confronto fra modelli | onesta' dell'output | elenco nell'app e nel report Markdown | commit finale |
-| Telemetria di Streamlit attiva per default; richiesta interattiva di email al primo avvio | privacy e usabilita' | `gatherUsageStats=false`, solo localhost, avvio headless; verificato che il server ascolta solo su 127.0.0.1 e rifiuta le connessioni dall'IP di rete | `6938623` e commit finale |
+| Classi assenti non dichiarate per i fold del confronto fra modelli | onestà dell'output | elenco nell'app e nel report Markdown | commit finale |
+| Telemetria di Streamlit attiva per default; richiesta interattiva di email al primo avvio | privacy e usabilità | `gatherUsageStats=false`, solo localhost, avvio headless; verificato che il server ascolta solo su 127.0.0.1 e rifiuta le connessioni dall'IP di rete | `6938623` e commit finale |
 
 Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: {{SUITE_FINALE}}.
 
 ## 5. Risultati descrittivi (non criteri)
 
 Su GSE125449 lo split casuale sovrastima la macro-F1 dello split per paziente di
-**{{GAP_TXT}}. La deviazione standard fra fold e' 15,4 volte piu' ampia nello split onesto.
-Stabilita' delle spiegazioni (Jaccard fra i 50 geni principali): {{XAI_TXT}}.
+**{{GAP_TXT}}. La deviazione standard fra fold è 15,4 volte più ampia nello split onesto.
+Stabilità delle spiegazioni (Jaccard fra i 50 geni principali): {{XAI_TXT}}.
 
 Tempi:
-- GSE125449 completo: 403 s nel benchmark e 324 s in A1;
+- GSE125449 completo: 403 s nel benchmark; in A1, 324 s alla prima misura e {{A1_S}} s nella
+  riesecuzione con il codice finale (2026-10-04, macchina condivisa con altri processi);
 - dati sintetici con 25.000 cellule, 20.000 geni e 20 pazienti: {{SINT_S}} s, misurati prima
-  della parallelizzazione dei fold. Su questi dati il segnale e' troppo facile (macro-F1 = 1,0):
+  della parallelizzazione dei fold. Su questi dati il segnale è troppo facile (macro-F1 = 1,0):
   la misura vale per i tempi, non per l'accuratezza.
 
 ## 6. Criteri originali e modifiche
@@ -242,12 +243,12 @@ Altre precisazioni che fanno parte del verdetto:
 
 ## Cosa questa validazione non dimostra
 
-- Il **Modulo B** resta validato su un solo dataset reale (GSE278694, PDAC) e non e' testato qui.
-- La generalita' del codice non implica la sua **utilita'** per un utente clinico: lo strumento
-  non e' stato provato da nessun utente esterno.
+- Il **Modulo B** resta validato su un solo dataset reale (GSE278694, PDAC) e non è testato qui.
+- La generalità del codice non implica la sua **utilità** per un utente clinico: lo strumento
+  non è stato provato da nessun utente esterno.
 - I dataset sono **pochi**: 3 per il disegno e uno solo per il Modulo A, con una sola etichetta
-  (tipo cellulare). Il Modulo A non e' stato provato su un'etichetta di condizione o di esito,
-  ne' su dataset reali con piu' di 25.000 cellule.
-- Il limite di 20.000 cellule per fold non e' mai entrato in funzione sui dati reali testati.
-- Sul dataset reale l'obiettivo dei 10 minuti e' stato misurato su 9.946 cellule; il caso da
-  25.000 cellule e' stato misurato solo su dati sintetici.
+  (tipo cellulare). Il Modulo A non è stato provato su un'etichetta di condizione o di esito,
+  né su dataset reali con più di 25.000 cellule.
+- Il limite di 20.000 cellule per fold non è mai entrato in funzione sui dati reali testati.
+- Sul dataset reale l'obiettivo dei 10 minuti è stato misurato su 9.946 cellule; il caso da
+  25.000 cellule è stato misurato solo su dati sintetici.

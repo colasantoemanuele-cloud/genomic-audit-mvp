@@ -45,7 +45,7 @@ def _vdj_files(tmp: Path, strip_suffix: bool) -> list[tuple[Path, str, str]]:
 @pytest.fixture(scope="module")
 def real(tmp_path_factory):
     adata = ad.read_h5ad(H5AD)
-    # File VDJ ORIGINALI (barcode con "-1"): la normalizzazione del suffisso e' automatica
+    # File VDJ ORIGINALI (barcode con "-1"): la normalizzazione del suffisso è automatica
     # dalla Pulizia 2 e deve essere dichiarata.
     contigs = parse_vdj_contigs(_vdj_files(tmp_path_factory.mktemp("vdj"), strip_suffix=False))
     res = run_tcr_validation(

@@ -1,24 +1,24 @@
 """Audit del disegno e del confondimento (Intervento 1).
 
-Lavora sui soli METADATI (una riga per campione/libreria; se l'input e' a livello di
+Lavora sui soli METADATI (una riga per campione/libreria; se l'input è a livello di
 cellula, le righe vengono prima ridotte alle combinazioni distinte dei fattori indicati).
 Tre output:
 
 1. Fattori confusi fra loro: per ogni coppia, tabella di contingenza, Cramér V con la
    correzione di Bergsma (2013) e i fatti STRUTTURALI -- annidamento, mappa uno-a-uno,
    esito determinato da un fattore. I fatti strutturali sono rilevati in modo
-   deterministico: sono proprieta' del disegno, non stime.
-2. Confronti stimabili: per ogni confronto richiesto, unita' indipendenti (i pazienti)
+   deterministico: sono proprietà del disegno, non stime.
+2. Confronti stimabili: per ogni confronto richiesto, unità indipendenti (i pazienti)
    e classe `stimabile` / `stimabile con bassa potenza` / `non stimabile`.
 3. (Opzionale, richiede la matrice) scomposizione della varianza su pseudobulk
    paziente-tessuto, con intervallo bootstrap sui pazienti; se i fattori sono confusi
    la scomposizione NON viene prodotta ("non identificabile"). NON ESPOSTA in CLI, app o
-   report: la copertura dell'intervallo della quota del tessuto e' fuori banda (1.000 >
+   report: la copertura dell'intervallo della quota del tessuto è fuori banda (1.000 >
    0.99) dopo due correzioni del metodo -- test marcato xfail(strict=True).
 
-Nessuno di questi output e' un giudizio sul lavoro di chi ha disegnato lo studio: molte
+Nessuno di questi output è un giudizio sul lavoro di chi ha disegnato lo studio: molte
 strutture segnalate (es. una libreria per coppia paziente-tessuto) sono la norma nei
-disegni a singola cellula. Lo strumento le rende esplicite perche' limitano quali
+disegni a singola cellula. Lo strumento le rende esplicite perché limitano quali
 conclusioni i dati possono sostenere.
 """
 
@@ -40,12 +40,12 @@ from core.tcr_validation import MIN_PATIENTS_FOR_CI_DEFAULT
 # Stessa soglia del Modulo B: sotto 5 pazienti nessun intervallo di confidenza.
 MIN_UNITS_DEFAULT = MIN_PATIENTS_FOR_CI_DEFAULT
 CRAMER_V_THRESHOLD = 0.5
-# Il V e' "valutabile" solo con almeno 10 righe e almeno 2 righe attese per cella in
+# Il V è "valutabile" solo con almeno 10 righe e almeno 2 righe attese per cella in
 # media (n / (r*c) >= 2): sotto, il valore oscilla troppo per essere riportato.
 MIN_ROWS_FOR_V = 10
 MIN_EXPECTED_PER_CELL = 2.0
 ALPHA = 0.05
-MIN_PVALUE_NOTE = ("Il p-value minimo non misura la potenza: con questa numerosita' solo effetti "
+MIN_PVALUE_NOTE = ("Il p-value minimo non misura la potenza: con questa numerosità solo effetti "
                    "grandi sono rilevabili.")
 MIN_CELLS_PER_UNIT_DEFAULT = 20
 N_HVG_DEFAULT = 1000
@@ -55,7 +55,7 @@ PROTOCOL_NOTE = (
     "Nota fissa sui protocolli: lo snRNA-seq (nuclei) sottorappresenta le cellule "
     "immunitarie e cambia la composizione misurata rispetto allo scRNA-seq; i protocolli "
     "per tessuto fissato (FFPE, 10x Flex) misurano l'RNA tramite sonde e danno profili non "
-    "direttamente sovrapponibili a quelli da tessuto fresco. Un confronto fra protocolli e' "
+    "direttamente sovrapponibili a quelli da tessuto fresco. Un confronto fra protocolli è "
     "interpretabile solo se gli stessi pazienti sono misurati con entrambi."
 )
 
@@ -81,7 +81,7 @@ class PairAssociation:
 
 @dataclass(frozen=True)
 class StructuralFinding:
-    kind: str  # annidamento | uno-a-uno | esito-determinato | unita'-tecnica | costante | identificatore
+    kind: str  # annidamento | uno-a-uno | esito-determinato | unità-tecnica | costante | identificatore
     factors: tuple[str, ...]
     sentence: str
 
@@ -98,7 +98,7 @@ class ComparisonAssessment:
     classification: str  # stimabile | stimabile con bassa potenza | non stimabile
     reasons: tuple[str, ...]
     sentence: str
-    # p-value minimo raggiungibile da un test esatto con queste unita' (None se non definito)
+    # p-value minimo raggiungibile da un test esatto con queste unità (None se non definito)
     min_pvalue: float | None = None
     min_pvalue_test: str | None = None
 
@@ -144,7 +144,7 @@ def as_levels(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     """Converte i fattori in stringhe con i valori mancanti come livello esplicito "NA".
     Senza questo passaggio (con pandas >= 3, ``astype(str)`` lascia i mancanti come
     mancanti) le righe con un valore mancante venivano scartate in silenzio da crosstab e
-    groupby, ma contate nel numero di unita'. Ritorna anche il conteggio dei mancanti per
+    groupby, ma contate nel numero di unità. Ritorna anche il conteggio dei mancanti per
     colonna, da dichiarare."""
     missing = {c: int(df[c].isna().sum()) for c in df.columns if df[c].isna().any()}
     out = df.astype(object).where(df.notna(), MISSING_LEVEL).astype(str)
@@ -153,8 +153,8 @@ def as_levels(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
 
 def sample_sheet_from_obs(obs: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     """Riduce una tabella a livello di cellula (es. ``adata.obs``) alle combinazioni
-    distinte dei fattori indicati: le cellule non sono unita' indipendenti del disegno.
-    Se fra le colonne c'e' un identificativo di libreria, ogni riga risultante e' una
+    distinte dei fattori indicati: le cellule non sono unità indipendenti del disegno.
+    Se fra le colonne c'è un identificativo di libreria, ogni riga risultante è una
     libreria."""
     missing = [c for c in cols if c not in obs.columns]
     if missing:
@@ -193,19 +193,19 @@ def _nested(sheet: pd.DataFrame, a: str, b: str) -> bool:
 def _pair_sentence(a: str, b: str, n: int, r: int, c: int, v: float | None, alarm: bool,
                    v_threshold: float, structural: bool = False) -> str:
     if v is not None and structural:
-        return (f"'{a}' e '{b}': Cramér V corretto = {v:.2f} su {n} unita'. La relazione fra i due "
-                f"fattori e' strutturale (annidamento o coincidenza, vedi i fatti strutturali): "
-                f"l'associazione e' riportata li', non come allarme separato.")
+        return (f"'{a}' e '{b}': Cramér V corretto = {v:.2f} su {n} unità. La relazione fra i due "
+                f"fattori è strutturale (annidamento o coincidenza, vedi i fatti strutturali): "
+                f"l'associazione è riportata lì, non come allarme separato.")
     if v is None:
-        return (f"'{a}' e '{b}': Cramér V non valutabile ({n} unita' per {r}x{c} celle; servono "
-                f"almeno {MIN_ROWS_FOR_V} unita' e {MIN_EXPECTED_PER_CELL:g} unita' attese per "
-                f"cella). Un numero su una tabella cosi' piccola sarebbe instabile.")
+        return (f"'{a}' e '{b}': Cramér V non valutabile ({n} unità per {r}x{c} celle; servono "
+                f"almeno {MIN_ROWS_FOR_V} unità e {MIN_EXPECTED_PER_CELL:g} unità attese per "
+                f"cella). Un numero su una tabella così piccola sarebbe instabile.")
     if alarm:
         return (f"'{a}' e '{b}': associazione forte (Cramér V corretto = {v:.2f}, soglia "
-                f"{v_threshold:g}, su {n} unita'). I due fattori sono in parte confusi: un effetto "
-                f"attribuito all'uno puo' dipendere in parte dall'altro. Il V descrive la "
+                f"{v_threshold:g}, su {n} unità). I due fattori sono in parte confusi: un effetto "
+                f"attribuito all'uno può dipendere in parte dall'altro. Il V descrive la "
                 f"struttura del disegno, non un effetto biologico.")
-    return (f"'{a}' e '{b}': Cramér V corretto = {v:.2f} su {n} unita', sotto la soglia di "
+    return (f"'{a}' e '{b}': Cramér V corretto = {v:.2f} su {n} unità, sotto la soglia di "
             f"{v_threshold:g}: nessuna segnalazione (non significa che il disegno sia "
             f"perfettamente bilanciato).")
 
@@ -262,19 +262,19 @@ def _pairs_and_findings(
                 if not _nested(sheet, inner, outer):
                     continue
                 if outer in outcome_like and roles[inner] != "outcome":
-                    extra = (" Il confronto fra i valori di '" + outer + "' puo' essere fatto solo "
+                    extra = (" Il confronto fra i valori di '" + outer + "' può essere fatto solo "
                              "fra pazienti diversi, mai entro lo stesso paziente."
                              if roles[inner] == "patient" else
-                             " Un effetto attribuito a '" + outer + "' non e' separabile da quello "
+                             " Un effetto attribuito a '" + outer + "' non è separabile da quello "
                              "di '" + inner + "'.")
                     findings.append(StructuralFinding(
                         "esito-determinato", (inner, outer),
                         f"Nel disegno attuale ogni livello di '{inner}' ha un solo valore di "
-                        f"'{outer}': '{outer}' e' interamente determinato da '{inner}'." + extra))
+                        f"'{outer}': '{outer}' è interamente determinato da '{inner}'." + extra))
                 else:
                     findings.append(StructuralFinding(
                         "annidamento", (inner, outer),
-                        f"Nel disegno attuale il fattore '{inner}' e' annidato in '{outer}': ogni "
+                        f"Nel disegno attuale il fattore '{inner}' è annidato in '{outer}': ogni "
                         f"livello di '{inner}' compare in un solo livello di '{outer}'. Un "
                         f"confronto fra livelli di '{outer}' non distingue l'effetto di '{outer}' "
                         f"da quello dei livelli di '{inner}' che contiene."))
@@ -297,10 +297,10 @@ def _technical_unit_findings(sheet: pd.DataFrame, roles: dict[str, str], patient
             continue
         if _nested(tmp, "t", "u") and _nested(tmp, "u", "t"):
             out.append(StructuralFinding(
-                "unita'-tecnica", (c,),
+                "unità-tecnica", (c,),
                 f"Ogni livello di '{c}' corrisponde a una sola coppia paziente-tessuto e viceversa: "
-                f"l'effetto tecnico di '{c}' non e' separabile da quello della coppia "
-                f"paziente-tessuto. E' la norma senza multiplexing o librerie replicate, ma "
+                f"l'effetto tecnico di '{c}' non è separabile da quello della coppia "
+                f"paziente-tessuto. È la norma senza multiplexing o librerie replicate, ma "
                 f"significa che ogni differenza fra tessuti dello stesso paziente include anche "
                 f"la differenza fra due librerie."))
     return out
@@ -358,13 +358,13 @@ def assess_comparison(
 ) -> ComparisonAssessment:
     """Classifica un confronto 'level_a vs level_b' del fattore ``factor``.
 
-    - Se almeno un paziente ha entrambi i livelli: disegno appaiato, unita' = pazienti
+    - Se almeno un paziente ha entrambi i livelli: disegno appaiato, unità = pazienti
       con entrambi. Bassa potenza se meno di ``min_units`` oppure se anche un test di
-      Wilcoxon esatto non potrebbe scendere sotto 0.05 (con 5 coppie il minimo e' 0.0625).
+      Wilcoxon esatto non potrebbe scendere sotto 0.05 (con 5 coppie il minimo è 0.0625).
     - Se nessun paziente ha entrambi i livelli: per tessuto e fattori tecnici il
       confronto coincide con un confronto fra gruppi di pazienti -> non stimabile; per un
-      esito a livello di paziente (colonna dichiarata come esito) e' un confronto fra
-      pazienti, con unita' = pazienti per gruppo.
+      esito a livello di paziente (colonna dichiarata come esito) è un confronto fra
+      pazienti, con unità = pazienti per gruppo.
     - In ogni caso, un fattore tecnico che separa perfettamente i due livelli rende il
       confronto non stimabile.
     """
@@ -373,7 +373,7 @@ def assess_comparison(
     if factor not in s.columns:
         raise ValueError(f"fattore '{factor}' non trovato")
     if factor == patient_col:
-        raise ValueError("il fattore del confronto non puo' essere la colonna paziente")
+        raise ValueError("il fattore del confronto non può essere la colonna paziente")
     rows = s[s[factor].isin([level_a, level_b])]
     pats_a = set(rows.loc[rows[factor] == level_a, patient_col])
     pats_b = set(rows.loc[rows[factor] == level_b, patient_col])
@@ -398,7 +398,7 @@ def assess_comparison(
             reasons.append(f"{excluded} pazienti con un solo livello esclusi dal confronto appaiato")
         min_p, min_p_test = wilcoxon_min_pvalue(units), "Wilcoxon appaiato"
         low_power = units < min_units or min_p > ALPHA
-        power_txt = (f"con {units} pazienti appaiati anche un test di Wilcoxon esatto non puo' "
+        power_txt = (f"con {units} pazienti appaiati anche un test di Wilcoxon esatto non può "
                      f"scendere sotto p = {min_p:.3f}" if low_power else "")
     else:
         sub = rows
@@ -409,19 +409,19 @@ def assess_comparison(
             min_p, min_p_test = floor, "Mann-Whitney"
             low_power = units < min_units or floor > ALPHA
             power_txt = (f"con {len(pats_a)} contro {len(pats_b)} pazienti il p-value minimo "
-                         f"raggiungibile da un test di Mann-Whitney esatto e' {floor:.3f}"
+                         f"raggiungibile da un test di Mann-Whitney esatto è {floor:.3f}"
                          if floor > ALPHA else
-                         f"meno di {min_units} pazienti nel gruppo piu' piccolo")
+                         f"meno di {min_units} pazienti nel gruppo più piccolo")
         else:
             reason = (f"nessun paziente ha entrambi i livelli: la differenza fra '{level_a}' e "
                       f"'{level_b}' coincide con la differenza fra due gruppi di pazienti diversi "
                       f"(fattore confuso con il paziente)")
             return ComparisonAssessment(
                 factor, level_a, level_b, "-", 0, len(pats_a), len(pats_b), "non stimabile",
-                (reason,), f"Confronto {label}: non stimabile -- {reason}. Unita' indipendenti: "
+                (reason,), f"Confronto {label}: non stimabile -- {reason}. Unità indipendenti: "
                            f"0; p-value minimo non definito (nessun test possibile).")
 
-    tail = (f" Unita' indipendenti: {units}; p-value minimo raggiungibile con un test esatto di "
+    tail = (f" Unità indipendenti: {units}; p-value minimo raggiungibile con un test esatto di "
             f"{min_p_test}: {min_p:.3f}. {MIN_PVALUE_NOTE}")
     confounders = _technical_confounders(sub, factor, roles)
     if confounders:
@@ -433,10 +433,10 @@ def assess_comparison(
             min_p, min_p_test)
 
     for c, v in _partial_confounders(sub, factor, roles, v_threshold):
-        reasons.append(f"'{c}' e' fortemente associato al confronto (Cramér V = {v:.2f})")
+        reasons.append(f"'{c}' è fortemente associato al confronto (Cramér V = {v:.2f})")
 
     unit_word = "pazienti con entrambi i livelli" if design.startswith("appaiato") else \
-        "pazienti nel gruppo piu' piccolo"
+        "pazienti nel gruppo più piccolo"
     if low_power:
         cls = "stimabile con bassa potenza"
         reasons.append(power_txt)
@@ -447,7 +447,7 @@ def assess_comparison(
     else:
         cls = "stimabile"
         sentence = (f"Confronto {label}: stimabile, disegno {design}, {units} {unit_word}. "
-                    f"L'unita' indipendente e' il paziente, non la cellula.")
+                    f"L'unità indipendente è il paziente, non la cellula.")
     extra = [r for r in reasons if r != power_txt]
     if extra:
         sentence += " Attenzione: " + "; ".join(extra) + "."
@@ -480,17 +480,17 @@ def variance_shares(Y: np.ndarray, factors: pd.DataFrame,
     sul contributo UNICO del fattore nel modello lineare additivo con tutti i fattori.
 
     Per ogni gene: SS_f = RSS(modello senza f) - RSS(modello completo), df_f i gradi di
-    liberta' propri di f, MS_res = RSS completo / df residui. Componente di f:
+    libertà propri di f, MS_res = RSS completo / df residui. Componente di f:
         C_f = (SS_f - df_f * MS_res) / D_f
     con D_f = N per un fattore FISSO (livelli fissati, es. il tessuto: stima la varianza
     fra i livelli, sum(alpha^2)/k) e D_f = N (L_f - 1) / L_f per un fattore CASUALE con L_f
     livelli campionati da una popolazione (paziente, batch: stima sigma^2_f). In un
     disegno bilanciato questi sono gli stimatori non distorti delle componenti; con
     disegni sbilanciati sono approssimati. Quota di f = media sui geni di C_f (troncata a
-    0) divisa per la somma delle componenti medie piu' MS_res medio.
+    0) divisa per la somma delle componenti medie più MS_res medio.
 
-    Ritorna None se non identificabile: un fattore senza gradi di liberta' propri
-    (confuso con gli altri) o nessun grado di liberta' residuo. ``Y``: unita' x geni, su
+    Ritorna None se non identificabile: un fattore senza gradi di libertà propri
+    (confuso con gli altri) o nessun grado di libertà residuo. ``Y``: unità x geni, su
     scala log."""
     fixed = set(fixed_cols or [])
     cols = list(factors.columns)
@@ -521,7 +521,7 @@ def _refused(reason: str, n_units: int, n_patients: int, n_genes: int) -> Varian
         identifiable=False, reason=reason, n_units=n_units, n_patients=n_patients,
         n_genes=n_genes, shares=[], residual_share=None,
         sentence=f"Scomposizione della varianza non identificabile: {reason}. Nessuna "
-                 f"percentuale viene riportata, perche' sarebbe arbitraria.")
+                 f"percentuale viene riportata, perché sarebbe arbitraria.")
 
 
 def variance_decomposition_from_units(
@@ -531,14 +531,14 @@ def variance_decomposition_from_units(
     z: float = 1.959964,
 ) -> VarianceDecomposition:
     """Quote di varianza con intervallo bootstrap ricampionando i PAZIENTI (con tutte le
-    loro unita'), non le unita': le unita' dello stesso paziente non sono indipendenti.
+    loro unità), non le unità: le unità dello stesso paziente non sono indipendenti.
 
-    L'intervallo e' normale: stima +- z * SE, con SE = deviazione standard delle stime
-    bootstrap. Non si usano i quantili bootstrap perche' la distribuzione bootstrap di una
-    componente di varianza e' spostata verso il basso (i pazienti estratti piu' volte
-    riducono la varianza fra pazienti) di piu' della propria ampiezza: in calibrazione
+    L'intervallo è normale: stima +- z * SE, con SE = deviazione standard delle stime
+    bootstrap. Non si usano i quantili bootstrap perché la distribuzione bootstrap di una
+    componente di varianza è spostata verso il basso (i pazienti estratti più volte
+    riducono la varianza fra pazienti) di più della propria ampiezza: in calibrazione
     il percentile copriva il vero 0/200 volte e il "basic" lo ribaltava senza coprirlo.
-    Lo stimatore puntuale e' invece non distorto per costruzione (metodo dei momenti).
+    Lo stimatore puntuale è invece non distorto per costruzione (metodo dei momenti).
     ``fixed_cols``: fattori a livelli fissi (tipicamente il tessuto); gli altri sono
     trattati come casuali."""
     Y = np.asarray(Y, dtype=float)
@@ -551,8 +551,8 @@ def variance_decomposition_from_units(
                         n_units, n_pat, n_genes)
     point = variance_shares(Y, units[factor_cols], fixed_cols)
     if point is None:
-        return _refused("almeno un fattore coincide con altri fattori o con le unita' stesse "
-                        "(nessun grado di liberta' proprio o residuo)", n_units, n_pat, n_genes)
+        return _refused("almeno un fattore coincide con altri fattori o con le unità stesse "
+                        "(nessun grado di libertà proprio o residuo)", n_units, n_pat, n_genes)
 
     rng = np.random.default_rng(seed)
     idx_by_pat = {p: np.flatnonzero(units[patient_col].values == p) for p in patients}
@@ -575,7 +575,7 @@ def variance_decomposition_from_units(
             boot[c].append(s[c])
     if n_fail > 0.1 * n_boot:
         return _refused(f"{n_fail} ricampionamenti bootstrap su {n_boot} non identificabili: "
-                        f"il disegno e' troppo fragile per un intervallo", n_units, n_pat, n_genes)
+                        f"il disegno è troppo fragile per un intervallo", n_units, n_pat, n_genes)
 
     shares = []
     for c in factor_cols:
@@ -586,17 +586,17 @@ def variance_decomposition_from_units(
     residual = max(0.0, 1.0 - sum(point.values()))
     parts = ", ".join(f"'{s.factor}' {s.share:.0%} (IC95% {s.ci_low:.0%}-{s.ci_high:.0%})"
                       for s in shares)
-    sentence = (f"Quota della variabilita' dell'espressione (pseudobulk, {n_units} unita', "
+    sentence = (f"Quota della variabilità dell'espressione (pseudobulk, {n_units} unità, "
                 f"{n_pat} pazienti, {n_genes} geni ad alta varianza) attribuibile in modo "
-                f"univoco a ciascun fattore: {parts}; il resto ({residual:.0%}) e' variabilita' "
+                f"univoco a ciascun fattore: {parts}; il resto ({residual:.0%}) è variabilità "
                 f"residua o condivisa fra fattori. Gli intervalli ricampionano i pazienti; con "
-                f"pochi pazienti sono larghi, ed e' questa la loro informazione principale.")
+                f"pochi pazienti sono larghi, ed è questa la loro informazione principale.")
     return VarianceDecomposition(True, "", n_units, n_pat, n_genes, shares, residual, sentence)
 
 
 def pseudobulk(adata: ad.AnnData, unit_cols: list[str],
                min_cells: int = MIN_CELLS_PER_UNIT_DEFAULT) -> tuple[np.ndarray, pd.DataFrame, int]:
-    """Somma dei conteggi per combinazione distinta di ``unit_cols``. Scarta le unita'
+    """Somma dei conteggi per combinazione distinta di ``unit_cols``. Scarta le unità
     con meno di ``min_cells`` cellule e ne ritorna il numero."""
     obs = adata.obs[unit_cols].astype(str).reset_index(drop=True)
     key = obs.agg("|".join, axis=1)
@@ -633,7 +633,7 @@ def variance_decomposition(
         dec = VarianceDecomposition(
             dec.identifiable, dec.reason, dec.n_units, dec.n_patients, dec.n_genes, dec.shares,
             dec.residual_share,
-            dec.sentence + f" {n_dropped} unita' con meno di {min_cells} cellule sono state escluse.")
+            dec.sentence + f" {n_dropped} unità con meno di {min_cells} cellule sono state escluse.")
     return dec
 
 
@@ -656,8 +656,8 @@ def run_design_audit(
     da ``adata.obs``). ``technical_cols``: ruolo -> colonna, ruoli in
     ``TECHNICAL_ROLES``. ``comparisons``: lista di (colonna, livello_a, livello_b).
 
-    La scomposizione della varianza (``variance_decomposition``) NON e' inclusa qui: la
-    calibrazione del suo intervallo e' fuori banda per la quota del tessuto (vedi
+    La scomposizione della varianza (``variance_decomposition``) NON è inclusa qui: la
+    calibrazione del suo intervallo è fuori banda per la quota del tessuto (vedi
     tests/test_design_audit_calibration.py, xfail) e per regola non viene esposta.
     """
     technical_cols = dict(technical_cols or {})
@@ -689,17 +689,17 @@ def run_design_audit(
     if missing:
         notes.append("Valori mancanti trattati come livello esplicito \"NA\": " + ", ".join(
             f"'{c}' ({n} righe)" for c, n in missing.items()) + ". Un livello \"NA\" condiviso "
-            "da piu' righe e' trattato come un valore uguale per tutte.")
+            "da più righe è trattato come un valore uguale per tutte.")
     if "protocol" in technical_cols:
         notes.append(PROTOCOL_NOTE)
-    notes.append("Le unita' di questo audit sono le righe della tabella dei metadati (campioni o "
+    notes.append("Le unità di questo audit sono le righe della tabella dei metadati (campioni o "
                  "librerie), non le cellule: le cellule dello stesso campione non sono "
                  "osservazioni indipendenti del disegno.")
 
     structural = [f for f in findings if f.kind in ("annidamento", "uno-a-uno", "esito-determinato",
-                                                     "unita'-tecnica")]
+                                                     "unità-tecnica")]
     n_alarm = sum(p.v_alarm for p in pairs)
-    parts = [f"Audit del disegno su {len(s)} unita' (righe dei metadati) e {len(roles)} fattori."]
+    parts = [f"Audit del disegno su {len(s)} unità (righe dei metadati) e {len(roles)} fattori."]
     parts.append(f"{len(structural)} fatti strutturali rilevati (annidamenti, coincidenze, esiti "
                  f"determinati da un fattore)" + (":" if structural else "."))
     parts += [f.sentence for f in structural]

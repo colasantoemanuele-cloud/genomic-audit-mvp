@@ -15,7 +15,7 @@
     "tissue type"
    ],
    [
-    "unita'-tecnica",
+    "unità-tecnica",
     "gsm"
    ]
   ],
@@ -31,7 +31,7 @@
     "tissue type"
    ],
    [
-    "unita'-tecnica",
+    "unità-tecnica",
     "gsm"
    ]
   ],
@@ -43,16 +43,16 @@
     "confronto": "tissue type: Colorectal cancer vs Normal mucosa",
     "classe audit": "stimabile",
     "classe indipendente": "stimabile",
-    "unita' audit": 10,
-    "unita' indipendenti": 10,
+    "unità audit": 10,
+    "unità indipendenti": 10,
     "coincide": true
    },
    {
     "confronto": "tumor stage: 2 vs 3",
     "classe audit": "stimabile",
     "classe indipendente": "stimabile",
-    "unita' audit": 6,
-    "unita' indipendenti": 6,
+    "unità audit": 6,
+    "unità indipendenti": 6,
     "coincide": true
    }
   ],
@@ -107,7 +107,7 @@
     "tumor stage"
    ],
    [
-    "unita'-tecnica",
+    "unità-tecnica",
     "gsm"
    ]
   ],
@@ -118,7 +118,7 @@
     "tumor stage"
    ],
    [
-    "unita'-tecnica",
+    "unità-tecnica",
     "gsm"
    ]
   ],
@@ -130,32 +130,32 @@
     "confronto": "tissue origin abbrevation: tLung vs nLung",
     "classe audit": "stimabile",
     "classe indipendente": "stimabile",
-    "unita' audit": 10,
-    "unita' indipendenti": 10,
+    "unità audit": 10,
+    "unità indipendenti": 10,
     "coincide": true
    },
    {
     "confronto": "tissue origin abbrevation: mLN vs nLN",
     "classe audit": "non stimabile",
     "classe indipendente": "non stimabile",
-    "unita' audit": 0,
-    "unita' indipendenti": 0,
+    "unità audit": 0,
+    "unità indipendenti": 0,
     "coincide": true
    },
    {
     "confronto": "tissue origin abbrevation: tLung vs mBrain",
     "classe audit": "non stimabile",
     "classe indipendente": "non stimabile",
-    "unita' audit": 0,
-    "unita' indipendenti": 0,
+    "unità audit": 0,
+    "unità indipendenti": 0,
     "coincide": true
    },
    {
     "confronto": "tumor stage: I vs IV",
     "classe audit": "stimabile",
     "classe indipendente": "stimabile",
-    "unita' audit": 17,
-    "unita' indipendenti": 17,
+    "unità audit": 17,
+    "unità indipendenti": 17,
     "coincide": true
    }
   ],
@@ -195,16 +195,16 @@
     "confronto": "cancer type: Hepatocellular carcinoma vs Intrahepatic cholangiocarcinoma",
     "classe audit": "stimabile",
     "classe indipendente": "stimabile",
-    "unita' audit": 9,
-    "unita' indipendenti": 9,
+    "unità audit": 9,
+    "unità indipendenti": 9,
     "coincide": true
    },
    {
     "confronto": "platform: GPL18573 vs GPL20301",
     "classe audit": "non stimabile",
     "classe indipendente": "non stimabile",
-    "unita' audit": 0,
-    "unita' indipendenti": 0,
+    "unità audit": 0,
+    "unità indipendenti": 0,
     "coincide": true
    }
   ],

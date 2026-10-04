@@ -3,7 +3,7 @@ interpretazione oltre a quella dichiarata qui).
 
 Per ogni campione: titolo, source, piattaforma e ogni campo "chiave: valore" di
 !Sample_characteristics_ch1, con la chiave come nome di colonna e il valore senza modifiche.
-Unica derivazione: per GSE125449 il paziente non e' fra le caratteristiche ma solo nel
+Unica derivazione: per GSE125449 il paziente non è fra le caratteristiche ma solo nel
 titolo (formato "S<campione>_P<n>_LCP<id>"); la colonna `patient_from_title` ne estrae l'ultimo
 token "LCP<id>" con una regex esplicita, e lo script verifica che il formato valga per tutti i
 titoli.

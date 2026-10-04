@@ -3,7 +3,7 @@
 - Regressione: i numeri (matrice, J, frazioni, intervalli, motivi di rifiuto) sono identici
   (tolleranza 1e-12) a quelli prodotti PRIMA della modifica di formato
   (tests/fixtures/cd8_regression_baseline.json, generato sul commit 2f03461).
-- Formato: in CLI e nel report HTML avvertenza e assunzioni compaiono una sola volta, c'e'
+- Formato: in CLI e nel report HTML avvertenza e assunzioni compaiono una sola volta, c'è
   una riga per paziente e i rifiuti rimandano a note numerate.
 """
 

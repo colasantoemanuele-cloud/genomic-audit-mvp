@@ -6,12 +6,12 @@ test passino (vedi prompt di progetto, sezione "Requisito trasversale").
 Per ciascuno stimatore (correzione di Nadeau-Bengio, cluster bootstrap):
   - sotto ipotesi nulla (nessun effetto reale simulato): su >=200 repliche, la frazione
     di risultati dichiarati significativi a soglia 0.05 deve cadere approssimativamente
-    fra 2% e 8% (calibrazione: ne' zero, ne' esplosa);
+    fra 2% e 8% (calibrazione: né zero, né esplosa);
   - sotto un effetto noto e sostanziale (iniettato deliberatamente): lo stimatore deve
     rilevarlo nella maggioranza delle repliche (potenza).
 
 I semi casuali sono fissi ovunque: i test sono deterministici, non flaky. I parametri
-(dimensione campionaria, numero di fold/gruppi) sono stati scelti empiricamente perche'
+(dimensione campionaria, numero di fold/gruppi) sono stati scelti empiricamente perché
 danno risultati stabilmente dentro le bande richieste, non a caso.
 """
 
@@ -36,7 +36,7 @@ CALIBRATION_LOW, CALIBRATION_HIGH = 0.02, 0.08
 def _nb_null_replicate(rep: int, seed0: int, n: int, k: int) -> float:
     """Un confronto fra due DummyClassifier(strategy='stratified') su una CV reale a k
     fold: nessuna vera differenza di performance (entrambi ignorano le feature), ma le
-    differenze fra fold sono correlate perche' i training set si sovrappongono -- e'
+    differenze fra fold sono correlate perché i training set si sovrappongono -- è
     esattamente il meccanismo che la correzione di Nadeau-Bengio deve compensare."""
     rng = np.random.default_rng(seed0 + rep)
     y = rng.integers(0, 2, n)
@@ -68,21 +68,21 @@ def test_nadeau_bengio_calibration_null():
 
 @pytest.mark.xfail(
     reason=(
-        "Nadeau-Bengio a k=5 (default reale di leakage_audit.py) e' conservativo sotto "
+        "Nadeau-Bengio a k=5 (default reale di leakage_audit.py) è conservativo sotto "
         "H0: 18/1000=1.8% (R=1000) e 38/2000=1.9% (R=2000, conferma), stabile su repliche "
-        "raddoppiate -> non e' rumore Monte Carlo. La banda [2%, 8%] resta quella teorica "
-        "legata al livello nominale 0.05 (stessa di k=3): NON e' stata allargata per far "
-        "passare questo numero. Il fallimento e' atteso e sul lato sicuro (meno gradi di "
-        "liberta' a k=5 -> correzione piu' cautelativa, falsi positivi ancora piu' rari "
+        "raddoppiate -> non è rumore Monte Carlo. La banda [2%, 8%] resta quella teorica "
+        "legata al livello nominale 0.05 (stessa di k=3): NON è stata allargata per far "
+        "passare questo numero. Il fallimento è atteso e sul lato sicuro (meno gradi di "
+        "libertà a k=5 -> correzione più cautelativa, falsi positivi ancora più rari "
         "del nominale). Se in futuro questo xfail smette di verificarsi (il test torna a "
-        "passare, es. dopo una modifica a nadeau_bengio_test), e' un segnale che la "
-        "calibrazione e' cambiata -- da investigare, non un progresso da ignorare "
+        "passare, es. dopo una modifica a nadeau_bengio_test), è un segnale che la "
+        "calibrazione è cambiata -- da investigare, non un progresso da ignorare "
         "(strict=True: uno xpass qui fa fallire la suite)."
     ),
     strict=True,
 )
 def test_nadeau_bengio_calibration_null_k5_default():
-    """k=5 e' il default REALE usato da leakage_audit.py (StratifiedGroupKFold a 5
+    """k=5 è il default REALE usato da leakage_audit.py (StratifiedGroupKFold a 5
     fold), non solo un caso di stress come k=3 sopra: va misurato separatamente, non
     dedotto per estrapolazione. Soglia teorica, non adattata al risultato osservato:
     stessa banda [2%, 8%] legata al livello nominale 0.05 usata per k=3."""
@@ -99,7 +99,7 @@ def test_nadeau_bengio_less_anticonservative_than_uncorrected_ttest():
     """Controllo di contrasto (non di calibrazione assoluta): sullo stesso scenario
     nullo e con lo stesso seme, il t-test appaiato ordinario (solo var/k, senza il
     termine n_test/n_train) dichiara significativo un risultato falso positivo con
-    frequenza maggiore o uguale rispetto alla versione corretta -- e' esattamente il
+    frequenza maggiore o uguale rispetto alla versione corretta -- è esattamente il
     problema che la correzione di Nadeau-Bengio risolve. Confronto diretto fra le due
     varianti sugli stessi dati simulati, invece di una soglia assoluta sul naive (che
     dipende troppo dalla forza della correlazione fra fold indotta dallo scenario)."""
@@ -244,17 +244,17 @@ def test_cluster_bootstrap_insufficient_groups_flagged():
 
 def test_cluster_bootstrap_naive_vs_cluster_ci_width():
     """Controllo di contrasto (non di calibrazione): un bootstrap 'ingenuo' che
-    ricampiona le osservazioni singole invece dei gruppi produce un IC piu' stretto di
+    ricampiona le osservazioni singole invece dei gruppi produce un IC più stretto di
     quello a cluster, quando le osservazioni sono fortemente correlate entro gruppo --
-    coerente con 07_robustness.py, dove l'IC a cluster risultava piu' largo."""
+    coerente con 07_robustness.py, dove l'IC a cluster risultava più largo."""
     rng = np.random.default_rng(1)
     n_groups = 15
     groups, values = [], []
     for gi in range(n_groups):
-        group_mean = rng.normal(0, 1.5)  # forte eterogeneita' fra pazienti
+        group_mean = rng.normal(0, 1.5)  # forte eterogeneità fra pazienti
         n_obs = rng.integers(10, 20)
         groups += [gi] * n_obs
-        values += list(rng.normal(group_mean, 0.2, n_obs))  # poca variabilita' entro paziente
+        values += list(rng.normal(group_mean, 0.2, n_obs))  # poca variabilità entro paziente
     values, groups = np.array(values), np.array(groups)
 
     cluster_res = cluster_bootstrap(values, groups, n_boot=1000, seed=0)

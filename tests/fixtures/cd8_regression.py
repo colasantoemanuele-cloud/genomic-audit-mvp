@@ -1,6 +1,6 @@
 """Configurazioni e serializzazione per il test di regressione di cd8_fraction_intervals.
 
-``cd8_regression_baseline.json`` e' stato generato con ``python -m
+``cd8_regression_baseline.json`` è stato generato con ``python -m
 tests.fixtures.cd8_regression`` sul codice del commit 2f03461, PRIMA della modifica di
 formato B1 (tabella al posto del testo ripetuto). Non va rigenerato dopo: serve a
 verificare che i numeri non cambino.

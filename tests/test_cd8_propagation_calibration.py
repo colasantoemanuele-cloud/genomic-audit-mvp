@@ -3,12 +3,12 @@
 OBBLIGATORIO prima di esporre core/cd8_propagation.py in CLI, app o report.
 
 Bande dichiarate PRIMA di eseguire i test (non vanno allargate per farli passare):
-  - Errore simmetrico iniettato (CD4->CD8 = CD8->CD4 = 0.15, piu' 0.05 verso "altro"):
+  - Errore simmetrico iniettato (CD4->CD8 = CD8->CD4 = 0.15, più 0.05 verso "altro"):
     copertura dell'IC 95% (scenario 1x) della frazione vera di CD8 di ciascun paziente
     in [90%, 99%], su 200 repliche x 10 pazienti.
-  - Errore ASIMMETRICO (CD4->CD8 = 0.24, tre volte CD8->CD4 = 0.08, piu' 0.05 verso
+  - Errore ASIMMETRICO (CD4->CD8 = 0.24, tre volte CD8->CD4 = 0.08, più 0.05 verso
     "altro"): stessa banda [90%, 99%].
-  - Controllo di sensibilita' (non una banda): con errore iniettato, l'intervallo della
+  - Controllo di sensibilità (non una banda): con errore iniettato, l'intervallo della
     frazione RIPORTATA senza correzione (solo Beta sui conteggi) copre il vero meno
     spesso della versione corretta -- dimostra che la correzione fa qualcosa.
   - Rifiuti: con meno di 5 pazienti con cellule di riferimento nel compartimento, o con
@@ -100,7 +100,7 @@ def test_refuses_with_fewer_than_five_reference_patients():
 
 
 def test_refuses_ill_conditioned_matrix():
-    # errore cosi' alto che le due probabilita' di chiamata CD8 quasi coincidono
+    # errore così alto che le due probabilità di chiamata CD8 quasi coincidono
     obs, _ = make_cd8_fraction_dataset(n_patients=10, seed=4, p_cd4_to_cd8=0.45,
                                        p_cd8_to_cd4=0.45, p_to_other=0.05)
     res = cd8_fraction_intervals(obs, "patient", "compartment", "celltype",
@@ -120,7 +120,7 @@ def test_resampling_matches_cluster_bootstrap_exactly():
 
 
 def test_end_to_end_from_module_b_flags():
-    """Non e' una calibrazione: la funzione accetta direttamente adata.obs + i flag del
+    """Non è una calibrazione: la funzione accetta direttamente adata.obs + i flag del
     Modulo B e produce un risultato per ogni paziente del compartimento bersaglio."""
     from core.synthetic import make_tcr_validation_dataset
     from core.tcr_validation import run_tcr_validation

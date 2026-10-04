@@ -1,9 +1,9 @@
 """Configurazioni e serializzazione per il test di regressione di run_tcr_validation.
 
-``tcr_regression_baseline.json`` e' stato generato eseguendo ``python -m
+``tcr_regression_baseline.json`` è stato generato eseguendo ``python -m
 tests.fixtures.tcr_regression`` sul codice del commit di baseline (cf61e76), PRIMA di
 qualunque modifica a core/tcr_validation.py. Non va rigenerato dopo le modifiche: il suo
-scopo e' proprio verificare che l'output non cambi.
+scopo è proprio verificare che l'output non cambi.
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
  "eccesso_035_marcatori": {
   "n_cells_with_tcr": 2285,
   "n_clones_total": 180,
-  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.107 (IC95% [+0.088, +0.127], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.283 (IC95% [0.251, 0.311], 12 pazienti).",
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.107 (IC95% [+0.088, +0.127], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.283 (IC95% [0.251, 0.311], 12 pazienti).",
   "discordance": {
    "n_pairs": 180,
    "n_patients": 12,
@@ -40,7 +40,7 @@
  "eccesso_0_marcatori": {
   "n_cells_with_tcr": 2384,
   "n_clones_total": 180,
-  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di -0.002 (IC95% [-0.007, +0.002], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: non distinguibile dal rumore di base entro compartimento (l'intervallo include lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.026 (IC95% [0.018, 0.035], 12 pazienti).",
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di -0.002 (IC95% [-0.007, +0.002], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore di base entro lo stesso compartimento: non distinguibile dal rumore di base entro compartimento (l'intervallo include lo zero). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC', 180 cloni risolti): 'Tumor': 0.026 (IC95% [0.018, 0.035], 12 pazienti).",
   "discordance": {
    "n_pairs": 180,
    "n_patients": 12,
@@ -78,7 +78,7 @@
  "tre_compartimenti": {
   "n_cells_with_tcr": 1589,
   "n_clones_total": 80,
-  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.035 (IC95% [+0.017, +0.055], su 240 coppie clone-compartimenti da 8 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identita' clonale dai marcatori (riferimento: compartimento 'PBMC', 80 cloni risolti): 'Adjacent': 0.019 (IC95% [0.011, 0.026], 8 pazienti). 'Tumor': 0.198 (IC95% [0.161, 0.236], 8 pazienti).",
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) cambiano etichetta di tipo cellulare fra compartimenti tissutali con un eccesso di discordanza di +0.035 (IC95% [+0.017, +0.055], su 240 coppie clone-compartimenti da 8 pazienti) rispetto al rumore di base entro lo stesso compartimento: un effetto reale (l'intervallo esclude lo zero). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC', 80 cloni risolti): 'Adjacent': 0.019 (IC95% [0.011, 0.026], 8 pazienti). 'Tumor': 0.198 (IC95% [0.161, 0.236], 8 pazienti).",
   "discordance": {
    "n_pairs": 240,
    "n_patients": 8,
@@ -144,7 +144,7 @@
  "senza_marcatori_pochi_pazienti": {
   "n_cells_with_tcr": 507,
   "n_clones_total": 40,
-  "narrative": "Numerosita' insufficiente per una stima affidabile dell'eccesso di discordanza (4 pazienti contribuiscono cloni comparabili, ne servono almeno 5): nessun intervallo di confidenza riportato.",
+  "narrative": "Numerosità insufficiente per una stima affidabile dell'eccesso di discordanza (4 pazienti contribuiscono cloni comparabili, ne servono almeno 5): nessun intervallo di confidenza riportato.",
   "discordance": {
    "n_pairs": 40,
    "n_patients": 4,

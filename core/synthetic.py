@@ -2,12 +2,12 @@
 
 Modulo A: dataset con struttura per paziente e un effetto di leakage iniettato
 deliberatamente -- un "fingerprint" genico casuale per paziente, non generalizzabile a
-pazienti mai visti, che uno split casuale sulle cellule puo' sfruttare (le cellule dello
+pazienti mai visti, che uno split casuale sulle cellule può sfruttare (le cellule dello
 stesso paziente finiscono sia in train sia in test) ma uno split per paziente no.
 
 Modulo B: cloni TCR con discordanza cross-compartimento iniettata deliberatamente in un
-compartimento "rumoroso", ed espressione dei geni marcatori legata all'identita' VERA del
-clone (non all'etichetta assegnata, che puo' essere sbagliata) -- cosi' il tasso d'errore
+compartimento "rumoroso", ed espressione dei geni marcatori legata all'identità VERA del
+clone (non all'etichetta assegnata, che può essere sbagliata) -- così il tasso d'errore
 via marcatori ha qualcosa di reale da rilevare.
 """
 
@@ -37,13 +37,13 @@ def make_leakage_dataset(
     label_col: str = "label",
 ) -> ad.AnnData:
     """Ogni paziente ha un'etichetta assegnata a caso (nessun legame biologico vero con
-    l'identita' del paziente) e un "fingerprint" genico casuale forte e specifico di
+    l'identità del paziente) e un "fingerprint" genico casuale forte e specifico di
     quel paziente, condiviso da tutte le sue cellule. Un classificatore che vede cellule
-    dello stesso paziente sia in train sia in test (split casuale) puo' riconoscere il
+    dello stesso paziente sia in train sia in test (split casuale) può riconoscere il
     fingerprint e "ricordare" l'etichetta di quel paziente -- senza aver imparato nulla
     di generalizzabile. Un piccolo segnale biologico vero e debole (n_signal_genes,
-    effetto true_effect, condiviso fra pazienti della stessa classe) e' anche presente,
-    cosi' lo split per paziente non è a livello del caso puro.
+    effetto true_effect, condiviso fra pazienti della stessa classe) è anche presente,
+    così lo split per paziente non è a livello del caso puro.
     """
     rng = np.random.default_rng(seed)
     classes = np.array(["ClassA", "ClassB"])
@@ -98,16 +98,16 @@ def make_tcr_validation_dataset(
     celltype_col: str = "celltype",
     barcode_col: str = "barcode",
 ) -> tuple[ad.AnnData, pd.DataFrame]:
-    """Ritorna (adata, contigs) gia' nel formato atteso da
+    """Ritorna (adata, contigs) già nel formato atteso da
     ``core.tcr_validation.run_tcr_validation`` (contigs ha lo stesso schema
     dell'output di ``parse_vdj_contigs``: patient, compartment, barcode, chain,
     cdr3_nt, umis).
 
-    Ogni clone ha un'identita' VERA (CD4T o CD8T) fissata alla nascita del clone.
+    Ogni clone ha un'identità VERA (CD4T o CD8T) fissata alla nascita del clone.
     L'etichetta assegnata alla cellula (che simula l'output del clustering) sbaglia con
-    probabilita' ``baseline_mislabel_rate`` in tutti i compartimenti, PIU'
+    probabilità ``baseline_mislabel_rate`` in tutti i compartimenti, PIÙ
     ``injected_excess`` nel compartimento rumoroso. L'espressione dei geni marcatori
-    segue l'identita' VERA del clone, non l'etichetta assegnata -- come nella realta',
+    segue l'identità VERA del clone, non l'etichetta assegnata -- come nella realtà,
     dove il trascrittoma riflette la biologia vera indipendentemente da come il
     clustering ha etichettato la cellula.
     """
@@ -208,7 +208,7 @@ def make_design_sheet_independent(
     """Tabella di campioni con fattori INDIPENDENTI fra loro e dal paziente: ogni
     campione riceve un livello estratto a caso, in modo uniforme e indipendente, per
     ciascun fattore. Con ``samples_per_patient`` alto un annidamento casuale (TUTTI i
-    campioni di TUTTI i pazienti nello stesso livello) e' di fatto impossibile. Una
+    campioni di TUTTI i pazienti nello stesso livello) è di fatto impossibile. Una
     colonna ``library`` identifica ogni riga (un campione = una libreria)."""
     if factor_levels is None:
         factor_levels = {"tissue": 3, "batch": 4, "chemistry": 2, "protocol": 2}
@@ -229,7 +229,7 @@ def make_design_sheet_nested(
     patients_per_batch: int = 2,
     seed: int = 0,
 ) -> pd.DataFrame:
-    """Annidamento iniettato: ogni paziente e' processato interamente in un solo batch
+    """Annidamento iniettato: ogni paziente è processato interamente in un solo batch
     (paziente annidato nel batch), ogni batch contiene ``patients_per_batch`` pazienti.
     Il tessuto resta estratto a caso."""
     rng = np.random.default_rng(seed)
@@ -270,7 +270,7 @@ def make_design_sheet_association(
     seed: int = 0,
 ) -> pd.DataFrame:
     """Due fattori con ``n_levels`` livelli ciascuno e Cramér V di POPOLAZIONE pari a
-    ``target_v``: A uniforme; B = A con probabilita' ``target_v``, altrimenti uniforme e
+    ``target_v``: A uniforme; B = A con probabilità ``target_v``, altrimenti uniforme e
     indipendente. Per la mistura p_ij = s*delta_ij/k + (1-s)/k^2 vale phi^2 = s^2 (k-1),
     quindi V = s esattamente."""
     rng = np.random.default_rng(seed)
@@ -301,8 +301,8 @@ _GSE278694_SC_LIBRARIES = {
 
 def make_gse278694_like_sheet(n_sn_patients: int = 8) -> pd.DataFrame:
     """Riproduce la STRUTTURA del disegno di GSE278694 (nessun dato di espressione):
-    coorte scRNA-seq come sopra, piu' una coorte snRNA-seq di ``n_sn_patients`` pazienti
-    DISGIUNTI (nessun paziente ha entrambe le modalita'), un campione tumorale ciascuno.
+    coorte scRNA-seq come sopra, più una coorte snRNA-seq di ``n_sn_patients`` pazienti
+    DISGIUNTI (nessun paziente ha entrambe le modalità), un campione tumorale ciascuno.
     Gli identificativi dei pazienti snRNA sono fittizi."""
     rows = []
     for pat, tissues in _GSE278694_SC_LIBRARIES.items():
@@ -323,11 +323,11 @@ def make_variance_units(
     n_genes: int = 300,
     seed: int = 0,
 ) -> tuple[np.ndarray, pd.DataFrame]:
-    """Matrice unita' x geni (gia' su scala log) con quote di varianza NOTE per gene:
+    """Matrice unità x geni (già su scala log) con quote di varianza NOTE per gene:
     ``shares`` = (paziente, tessuto, residuo). Effetto paziente ~ N(0, s_p) per gene;
     effetto tessuto a media nulla fra i livelli con varianza fra livelli pari a s_t (con
     2 tessuti: +-sqrt(s_t), segno casuale per gene); residuo ~ N(0, s_e). Disegno
-    bilanciato: ogni paziente ha un'unita' per tessuto."""
+    bilanciato: ogni paziente ha un'unità per tessuto."""
     s_p, s_t, s_e = shares
     rng = np.random.default_rng(seed)
     k = len(tissues)
@@ -353,7 +353,7 @@ def make_pseudobulk_adata(
     shares: tuple[float, float, float] = (0.5, 0.3, 0.2),
     seed: int = 0,
 ) -> ad.AnnData:
-    """AnnData a livello di cellula le cui medie di espressione per unita'
+    """AnnData a livello di cellula le cui medie di espressione per unità
     paziente-tessuto seguono le quote di ``make_variance_units`` (scala log naturale),
     per il test end-to-end della pseudobulk. Una colonna ``library`` 1:1 con la coppia
     paziente-tessuto, come in GSE278694."""
@@ -388,15 +388,15 @@ def make_cd8_fraction_dataset(
 ) -> tuple[pd.DataFrame, dict[str, float]]:
     """Cellule T del compartimento 'Tumor' con frazione VERA di CD8 nota per paziente
     (``truth``: paziente -> frazione latente) ed errore di annotazione iniettato con
-    direzione: una cellula vera CD4 e' chiamata CD8T con prob. ``p_cd4_to_cd8``, "NK"
+    direzione: una cellula vera CD4 è chiamata CD8T con prob. ``p_cd4_to_cd8``, "NK"
     (altro) con prob. ``p_to_other``; simmetricamente per le vere CD8. Una frazione
-    ``reference_fraction`` delle cellule, scelta a caso e indipendentemente da identita' ed
-    errore, ha un'identita' di riferimento (= identita' vera: simula i cloni condivisi con
+    ``reference_fraction`` delle cellule, scelta a caso e indipendentemente da identità ed
+    errore, ha un'identità di riferimento (= identità vera: simula i cloni condivisi con
     il sangue, con l'assunzione che siano rappresentativi). Colonne come l'output dei flag
     del Modulo B: patient, compartment, celltype, audit_reference_label.
 
     ``reference_error_factor`` (B3) rompe di proposito quell'assunzione: l'errore delle
-    cellule CON riferimento e' moltiplicato per questo fattore, quello delle altre no."""
+    cellule CON riferimento è moltiplicato per questo fattore, quello delle altre no."""
     rng = np.random.default_rng(seed)
     rows, truth = [], {}
     for p in range(n_patients):
@@ -409,7 +409,7 @@ def make_cd8_fraction_dataset(
         has_ref_draw = rng.random(n)
         has_ref = has_ref_draw < reference_fraction
         # errore delle cellule con riferimento moltiplicato per reference_error_factor (B3):
-        # nessuna estrazione casuale in piu', quindi con fattore 1 i dati sono identici a prima
+        # nessuna estrazione casuale in più, quindi con fattore 1 i dati sono identici a prima
         f = np.where(has_ref, reference_error_factor, 1.0)
         e84, e48, eo = p_cd8_to_cd4 * f, p_cd4_to_cd8 * f, p_to_other * f
         called = np.where(

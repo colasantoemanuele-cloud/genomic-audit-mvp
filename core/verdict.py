@@ -97,6 +97,10 @@ class SectionSummary:
         return "; ".join(f"{n} × {STATE_LABEL[s]}" for s, n in self.counts.items())
 
 
+def _coppie(n: int) -> str:
+    return "1 coppia" if n == 1 else f"{n} coppie"
+
+
 def design_summary(r: DesignAuditResult) -> SectionSummary:
     checks = []
     for c in r.comparisons:
@@ -119,10 +123,12 @@ def design_summary(r: DesignAuditResult) -> SectionSummary:
                             f"è separabile dall'altro solo in parte"))
     if evaluable:
         checks.append(Check("Associazioni fra fattori", VERDE,
-                            f"{len(evaluable)} coppie valutabili con Cramér V sotto la soglia di 0.5"))
+                            f"Cramér V sotto la soglia di 0.5 per {_coppie(len(evaluable))} "
+                            f"fra quelle valutabili"))
     if not_evaluable:
         checks.append(Check("Associazioni fra fattori", GRIGIO,
-                            f"Cramér V non valutabile per {len(not_evaluable)} coppie (tabelle troppo piccole)"))
+                            f"Cramér V non valutabile per {_coppie(len(not_evaluable))} (tabelle troppo "
+                            f"piccole)"))
     return SectionSummary("Disegno", checks, RULES["Disegno"])
 
 
@@ -198,8 +204,9 @@ def cd8_summary(r: CD8PropagationResult) -> SectionSummary:
                         if p.scenarios[1.0].refused_reason), "nessun paziente valutabile")
             checks = [Check(name, GRIGIO, f"nessun intervallo prodotto nello scenario 1x: {why}")]
         else:
-            checks = [Check(name, GIALLO, f"funzione sperimentale: intervalli prodotti per {n_ok} pazienti su "
-                                          f"{len(r.patients)} nello scenario 1x; copertura nominale non garantita")]
+            checks = [Check(name, GIALLO, f"funzione sperimentale: intervalli prodotti per {n_ok} su "
+                                          f"{len(r.patients)} pazienti nello scenario 1x; copertura nominale non "
+                                          f"garantita")]
     return SectionSummary("Frazione di CD8", checks, RULES["Frazione di CD8"])
 
 

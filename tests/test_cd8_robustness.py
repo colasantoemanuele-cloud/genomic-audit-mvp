@@ -1,7 +1,7 @@
 """B3 -- robustezza della frazione di CD8 a un errore NON rappresentativo.
 
 Solo una misura, nessun cambio di metodo e nessuna banda nuova. Nella simulazione l'errore di
-annotazione delle cellule CON identita' di riferimento (i cloni condivisi con il sangue) e'
+annotazione delle cellule CON identità di riferimento (i cloni condivisi con il sangue) è
 ``f`` volte quello delle cellule senza riferimento (f = 1 controllo, 2, 4). La matrice
 stimata sulle cellule di riferimento sovrastima quindi l'errore delle altre. Due errori di
 base (cellule senza riferimento): "basso" CD4->CD8 = CD8->CD4 = 0.05, altro 0.02; "alto"
@@ -9,7 +9,7 @@ asimmetrico come nel tumore reale, CD4->CD8 = 0.10, CD8->CD4 = 0.03, altro 0.04.
 cellule con riferimento; 200 repliche x 10 pazienti = 2000 intervalli per scenario.
 
 Errore medio effettivo sulle cellule di un paziente: 0.3*f*e + 0.7*e. Il fattore di scala che
-riporterebbe la matrice al valore giusto e' quindi (0.3 f + 0.7) / f: 1 per f=1, 0.65 per
+riporterebbe la matrice al valore giusto è quindi (0.3 f + 0.7) / f: 1 per f=1, 0.65 per
 f=2, 0.475 per f=4. Nessuno dei tre scenari (0.5x, 1x, 2x) coincide esattamente per f=2.
 """
 

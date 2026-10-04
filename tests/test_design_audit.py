@@ -1,4 +1,4 @@
-"""Test funzionali dell'audit del disegno (casi limite, non calibrazione: quella e' in
+"""Test funzionali dell'audit del disegno (casi limite, non calibrazione: quella è in
 test_design_audit_calibration.py)."""
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ def test_protocol_note_present_only_when_protocol_declared():
 
 
 def test_every_comparison_reports_units_and_min_pvalue_with_fixed_note():
-    """B2: la classe non cambia; il testo riporta unita', p-value minimo e la frase fissa."""
+    """B2: la classe non cambia; il testo riporta unità, p-value minimo e la frase fissa."""
     from core.design_audit import MIN_PVALUE_NOTE
     rows = []
     for p in range(8):
@@ -117,7 +117,7 @@ def test_every_comparison_reports_units_and_min_pvalue_with_fixed_note():
     assert abs(between.min_pvalue - 2 / 70) < 1e-12 and between.min_pvalue_test == "Mann-Whitney"
     for c in (paired, between):
         assert MIN_PVALUE_NOTE in c.sentence
-        assert f"Unita' indipendenti: {c.n_units}" in c.sentence
+        assert f"Unità indipendenti: {c.n_units}" in c.sentence
         assert f"{c.min_pvalue:.3f}" in c.sentence
 
 
