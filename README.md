@@ -419,8 +419,10 @@ per un solo dataset sono stati generalizzati in uno strumento riutilizzabile.
 
 Chi usa i dati citati in questa repo deve citare gli articoli di origine, non questo progetto:
 
-- **GSE278694** — Chen et al., *Cancer Cell* 2025 (adenocarcinoma duttale pancreatico; SuperSeries
-  con scRNA-seq GSE278688 e scTCR-seq GSE300435). I dati non sono inclusi nella repo.
+- **GSE278694** — Chen et al., «Integrated single-cell and spatial transcriptomics uncover
+  distinct cellular subtypes involved in neural invasion in pancreatic cancer», *Cancer Cell*
+  2025, DOI 10.1016/j.ccell.2025.06.020 (adenocarcinoma duttale pancreatico; SuperSeries con
+  scRNA-seq GSE278688 e scTCR-seq GSE300435). I dati non sono inclusi nella repo.
 - **GSE125449** — Ma L. et al., «Tumor Cell Biodiversity Drives Microenvironmental Reprogramming
   in Liver Cancer», *Cancer Cell* 36(4):418-430, 2019.
 - **GSE132465** — Lee H.-O. et al., «Lineage-dependent gene expression programs influence the
