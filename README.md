@@ -144,8 +144,34 @@ nessuna statistica d'uso lasciano la macchina. Nella barra laterale ci sono due 
 - **Carica studio:** percorsi locali o upload di CSV/TSV, `.h5ad`, cartelle 10x Matrix
   Market e manifest VDJ.
 
-Le sezioni sono Disegno, Modulo A, Modulo B e Verdetto. Il verdetto a semaforo usa regole
-dichiarate in `core/verdict.py` ed e' esportabile in Markdown o HTML.
+Le sezioni sono Disegno, Modulo A, Modulo B e «Sintesi dei controlli», esportabile in Markdown o
+HTML.
+
+### Sintesi dei controlli (regole del semaforo)
+
+La sintesi (`core/verdict.py`) non è un verdetto sullo studio né sul lavoro di chi lo ha
+prodotto. Ogni riga descrive **un controllo** e dice che cosa i dati permettono di stimare. Non
+esiste un colore complessivo per sezione o per studio: ogni sezione riporta solo quanti controlli
+sono in ciascuno stato. Le regole leggono classi e soglie già calcolate dai moduli, senza nuovi
+calcoli.
+
+| Stato | Testo | Significato |
+|---|---|---|
+| verde | stima affidabile | il controllo è stato eseguito e non segnala limiti |
+| giallo | stima con limiti | la stima esiste, ma va letta insieme al limite indicato |
+| rosso | stima non possibile con questi dati | i dati non contengono l'informazione necessaria |
+| grigio | controllo non eseguito o non valutabile | non richiesto, rifiutato dallo strumento o non valutabile; mai mostrato in verde |
+
+| Sezione | Controllo | Verde | Giallo | Rosso | Grigio |
+|---|---|---|---|---|---|
+| Disegno | ogni confronto richiesto | classe «stimabile» | «stimabile con bassa potenza»: meno di 5 unità indipendenti, oppure p-value minimo raggiungibile > 0.05 | «non stimabile»: nessun paziente con entrambi i livelli, oppure un fattore tecnico separa i due livelli | nessun confronto richiesto |
+| Disegno | associazioni fra fattori | coppie valutabili con Cramér V < 0.5 | una riga per ogni coppia con Cramér V >= 0.5 | — | coppie con V non valutabile (meno di 10 righe o meno di 2 righe attese per cella) |
+| Modulo A | valutazione con split per paziente | nessuno dei limiti a destra | classi assenti da almeno un fold di test, training sottocampionato (oltre 20.000 cellule per fold), oppure classificatore non convergente in almeno un fold | — | — |
+| Modulo A | valutazione con split casuale delle cellule | divario <= 0.05 | — | divario > 0.05: lo split casuale non stima la prestazione su pazienti nuovi | — |
+| Modulo A | confronto fra modelli | eseguito | — | — | non eseguito (meno di 8 pazienti, oppure `--rapido`) |
+| Modulo B | eccesso di discordanza fra compartimenti | IC 95% che include lo zero | IC 95% interamente sopra lo zero | meno di 5 pazienti: intervallo non prodotto | — |
+| Modulo B | tasso d'errore per compartimento (per convenzione) | intervallo prodotto | — | meno di 5 pazienti: intervallo non prodotto | non calcolato (mappa dei marcatori o riferimento non forniti) |
+| Frazione di CD8 (sperimentale) | intervalli per paziente | mai | almeno un intervallo prodotto nello scenario 1x (copertura nominale non garantita) | — | calcolo rifiutato (meno di 5 pazienti con riferimento, cellule di riferimento mancanti), oppure nessun intervallo prodotto nello scenario 1x (J < 0.2) |
 
 ## Demo da riga di comando
 

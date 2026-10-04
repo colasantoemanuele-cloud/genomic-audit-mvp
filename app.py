@@ -26,7 +26,15 @@ from core.leakage_audit import GAP_ALERT, run_leakage_audit
 from core.report import render_markdown_report, render_report
 from core.synthetic import make_tcr_validation_dataset
 from core.tcr_validation import parse_vdj_contigs, run_tcr_validation, tcr_by_celltype
-from core.verdict import design_verdict, leakage_verdict, standing_limits, tcr_verdict
+from core.verdict import (
+    STATE_LABEL,
+    TITLE,
+    design_summary,
+    leakage_summary,
+    standing_limits,
+    summarize,
+    tcr_summary,
+)
 
 ROOT = Path(__file__).resolve().parent
 DEMO = ROOT / "data" / "demo"
@@ -109,7 +117,7 @@ st.markdown('<p class="small">Unita\' statistica indipendente: il paziente. Ogni
             'le etichette.</p>', unsafe_allow_html=True)
 
 tab_d, tab_a, tab_b, tab_v = st.tabs(["1 · Disegno sperimentale", "2 · Modulo A — Leakage",
-                                      "3 · Modulo B — Verifica TCR", "Verdetto e report"])
+                                      "3 · Modulo B — Verifica TCR", f"{TITLE} e report"])
 
 
 # --------------------------------------------------------------------------- #
@@ -137,9 +145,11 @@ def load_matrix_ui(key: str):
     return None
 
 
-def verdict_line(v) -> None:
-    st.markdown(f'{badge(v.color, v.color.upper())} &nbsp; <span class="small">{html.escape(v.rule)}</span>',
-                unsafe_allow_html=True)
+def summary_line(s) -> None:
+    """Conteggio dei controlli della sezione per stato: nessun colore complessivo."""
+    badges = " ".join(badge(state, f"{n} × {STATE_LABEL[state]}") for state, n in s.counts.items())
+    st.markdown(f'{badges}<br><span class="small">{TITLE}: un colore per controllo, dettaglio nell\'ultima '
+                f'scheda. Regola: {html.escape(s.rule)}</span>', unsafe_allow_html=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -214,8 +224,8 @@ with tab_d:
     if res is None:
         st.info("Carica la demo dalla barra laterale oppure scegli 'Carica studio'.")
     else:
-        verdict_line(design_verdict(res))
-        st.subheader("Confronti: semafori di fattibilita'")
+        summary_line(design_summary(res))
+        st.subheader("Confronti: che cosa il disegno permette di stimare")
         rows = "".join(
             f"<tr><td>{html.escape(c.factor)}: {html.escape(c.level_a)} vs {html.escape(c.level_b)}</td>"
             f"<td>{badge(COLOR_OF[c.classification], c.classification)}</td><td>{c.n_units}</td>"
@@ -315,7 +325,7 @@ with tab_a:
     if r is None:
         st.info("Carica la demo dalla barra laterale oppure scegli 'Carica studio'.")
     else:
-        verdict_line(leakage_verdict(r))
+        summary_line(leakage_summary(r))
         if a_ctx:
             st.caption(f"Dataset: {a_ctx.get('label', '')}. {r.n_cells:,} cellule, {r.n_patients} pazienti, "
                        f"{r.n_classes} classi; tempo di calcolo {r.elapsed_seconds:.0f} s.")
@@ -414,7 +424,7 @@ with tab_b:
     if t is None:
         st.info("Carica la demo dalla barra laterale oppure scegli 'Carica studio'.")
     else:
-        verdict_line(tcr_verdict(t))
+        summary_line(tcr_summary(t))
         if b_ctx:
             st.caption(f"Dataset: {b_ctx.get('label', '')}.")
         if t.barcode_match is not None:
@@ -473,21 +483,22 @@ with tab_b:
 
 
 # --------------------------------------------------------------------------- #
-# Verdetto e report
+# Sintesi dei controlli e report
 # --------------------------------------------------------------------------- #
 with tab_v:
-    verdicts = []
-    if st.session_state.design is not None:
-        verdicts.append(design_verdict(st.session_state.design))
-    if st.session_state.leakage is not None:
-        verdicts.append(leakage_verdict(st.session_state.leakage))
-    if st.session_state.tcr is not None:
-        verdicts.append(tcr_verdict(st.session_state.tcr))
+    verdicts = summarize(st.session_state.design, st.session_state.leakage, st.session_state.tcr,
+                         st.session_state.cd8)
     if not verdicts:
-        st.info("Esegui almeno una sezione per ottenere il verdetto.")
+        st.info("Esegui almeno una sezione per ottenere la sintesi dei controlli.")
+    else:
+        st.markdown('<p class="small">Ogni riga descrive un controllo e dice che cosa i dati permettono di '
+                    'stimare. Non è un giudizio sullo studio né sul lavoro di chi lo ha prodotto, e non '
+                    'esiste un colore complessivo.</p>', unsafe_allow_html=True)
     for v in verdicts:
-        st.markdown(f'<div class="card"><b>{html.escape(v.section)}</b> &nbsp; {badge(v.color, v.color.upper())}'
-                    f'<ul>{"".join(f"<li>{html.escape(x)}</li>" for x in v.reasons)}</ul>'
+        rows = "".join(f"<tr><td>{html.escape(c.name)}</td><td>{badge(c.state, c.label)}</td>"
+                       f"<td class='small'>{html.escape(c.text)}</td></tr>" for c in v.checks)
+        st.markdown(f'<div class="card"><b>{html.escape(v.section)}</b>'
+                    f"<table class='sem'><tr><th>Controllo</th><th>Stato</th><th>Descrizione</th></tr>{rows}</table>"
                     f'<span class="small">Regola: {html.escape(v.rule)}</span></div>', unsafe_allow_html=True)
     st.subheader("Limiti dichiarati")
     for x in standing_limits(st.session_state.cd8):

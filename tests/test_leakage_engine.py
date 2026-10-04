@@ -137,5 +137,6 @@ def test_non_convergence_is_declared_not_hidden():
         la._reference_model = orig
     assert r.grouped.n_not_converged + r.random.n_not_converged > 0
     assert "non ha raggiunto la convergenza" in r.narrative
-    from core.verdict import leakage_verdict
-    assert any("non convergente" in x for x in leakage_verdict(r).reasons)
+    from core.verdict import GIALLO, leakage_summary
+    per_patient = next(c for c in leakage_summary(r).checks if "split per paziente" in c.name)
+    assert per_patient.state == GIALLO and "non convergente" in per_patient.text

@@ -1,4 +1,4 @@
-"""Test di lettura formati, verdetto, report Markdown, tabella TCR per etichetta e web app."""
+"""Test di lettura formati, sintesi dei controlli, report Markdown, tabella TCR per etichetta e web app."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from core.io import load_matrix_market, read_table
 from core.report import render_markdown_report
 from core.synthetic import make_gse278694_like_sheet, make_leakage_dataset, make_tcr_validation_dataset
 from core.tcr_validation import run_tcr_validation, tcr_by_celltype
-from core.verdict import GIALLO, ROSSO, VERDE, design_verdict, leakage_verdict, tcr_verdict
+from core.verdict import GIALLO, GRIGIO, ROSSO, VERDE, design_summary, leakage_summary, tcr_summary
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -60,32 +60,38 @@ def test_read_table_detects_tsv_and_csv(tmp_path):
     assert list(read_table(b"x\ty\n1\t2\n").columns) == ["x", "y"]
 
 
-def test_verdict_rules():
+def _state(summary, name_part: str) -> str:
+    return next(c.state for c in summary.checks if name_part in c.name)
+
+
+def test_summary_rules_on_real_module_outputs():
     sheet = make_gse278694_like_sheet()
     d = run_design_audit(sheet, "patient", "tissue", {"protocol": "protocol"},
                          comparisons=[("protocol", "scRNA", "snRNA")])
-    assert design_verdict(d).color == ROSSO
+    assert _state(design_summary(d), "protocol") == ROSSO  # confronto non stimabile
     d2 = run_design_audit(sheet, "patient", "tissue", comparisons=[("tissue", "Tumor", "Adjacent_normal")])
-    assert design_verdict(d2).color == GIALLO  # 5 pazienti: bassa potenza
+    assert _state(design_summary(d2), "tissue") == GIALLO  # 5 pazienti: bassa potenza
     from core.leakage_audit import run_leakage_audit
     leak = run_leakage_audit(make_leakage_dataset(n_patients=8, cells_per_patient=15, n_genes=150, seed=6),
                              "label", "patient_id", benchmark=False)
-    assert leakage_verdict(leak).color in (ROSSO, GIALLO)  # confronto fra modelli escluso -> almeno giallo
+    assert _state(leakage_summary(leak), "Confronto fra modelli") == GRIGIO  # non eseguito: mai verde
     adata, contigs = make_tcr_validation_dataset(n_patients=12, injected_excess=0.35, seed=0)
     t = run_tcr_validation(adata, contigs, "patient_id", "tissue", "celltype", "barcode", n_boot=200,
                            marker_map={"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}, reference_compartment="PBMC")
-    assert tcr_verdict(t).color == ROSSO
+    assert _state(tcr_summary(t), "discordanza") == GIALLO  # intervallo sopra lo zero: stima con limiti
+    assert _state(tcr_summary(t), "[cell] in Tumor") == VERDE  # tasso con intervallo prodotto
     adata0, contigs0 = make_tcr_validation_dataset(n_patients=3, seed=0)
     t0 = run_tcr_validation(adata0, contigs0, "patient_id", "tissue", "celltype", "barcode", n_boot=100)
-    assert tcr_verdict(t0).color == GIALLO
-    assert VERDE == "verde"
+    assert _state(tcr_summary(t0), "discordanza") == ROSSO  # 3 pazienti: stima non possibile
+    assert _state(tcr_summary(t0), "Tasso d'errore") == GRIGIO  # non calcolato senza mappa dei marcatori
 
 
 def test_markdown_report_contains_verdicts_definitions_and_limits():
     d = run_design_audit(make_gse278694_like_sheet(), "patient", "tissue",
                          comparisons=[("tissue", "Tumor", "Adjacent_normal")])
     md = render_markdown_report(design_result=d, dataset_name="prova")
-    assert "## Verdetto di audit" in md and "GIALLO" in md and "Regola Disegno" in md
+    assert "## Sintesi dei controlli" in md and "giallo: stima con limiti" in md and "Regola Disegno" in md
+    assert "Verdetto" not in md
     assert "## Limiti dichiarati" in md and "un solo dataset reale" in md
 
 
@@ -118,6 +124,7 @@ def test_web_app_demo_runs_end_to_end():
     next(b for b in at.button if b.label == "Carica la demo").click().run()
     assert not at.exception, at.exception
     text = " ".join(m.value for m in at.markdown)
-    assert "Confronti: semafori" in " ".join(s.value for s in at.subheader)
+    assert "Confronti: che cosa il disegno permette di stimare" in " ".join(s.value for s in at.subheader)
     assert "badge b-" in text
-    assert any("Verdetto" in t.label for t in at.tabs)
+    assert any("Sintesi dei controlli" in t.label for t in at.tabs)
+    assert not any("Verdetto" in t.label for t in at.tabs)

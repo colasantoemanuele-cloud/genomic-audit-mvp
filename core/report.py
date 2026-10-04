@@ -26,6 +26,18 @@ from core.cd8_propagation import (
 from core.design_audit import DesignAuditResult
 from core.leakage_audit import LeakageAuditResult, ModelComparisonResult
 from core.tcr_validation import MarkerErrorResult, TcrValidationResult
+from core.verdict import (
+    GIALLO,
+    GRIGIO,
+    ROSSO,
+    TITLE,
+    SectionSummary,
+    design_summary,
+    leakage_summary,
+    standing_limits,
+    summarize,
+    tcr_summary,
+)
 
 _CSS = """
 body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -46,6 +58,10 @@ img { max-width: 100%; height: auto; display: block; margin: .8rem 0; }
        font-weight: 600; }
 .tag-ok { background: #dff3ec; color: #0f6848; }
 .tag-warn { background: #fdecdc; color: #a34c05; }
+.tag-verde { background: #dff3ec; color: #0f6848; }
+.tag-giallo { background: #fbf0cf; color: #7a5a00; }
+.tag-rosso { background: #fbe0dd; color: #96261c; }
+.tag-grigio { background: #e8ebee; color: #48525e; }
 .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: .85rem; color: #666; }
 """
 
@@ -60,6 +76,29 @@ def _fig_to_data_uri(fig) -> str:
 # --------------------------------------------------------------------------- #
 # Audit del disegno
 # --------------------------------------------------------------------------- #
+def _card_class(summary: SectionSummary) -> str:
+    """Colore del bordo della scheda: verde solo se TUTTI i controlli della sezione sono verdi;
+    grigio se qualcuno non è stato eseguito o non è valutabile; arancione negli altri casi."""
+    states = {c.state for c in summary.checks}
+    if states & {ROSSO, GIALLO}:
+        return "verdict-warn"
+    return "verdict-no" if GRIGIO in states else "verdict-yes"
+
+
+def _summary_section(sections: list[SectionSummary]) -> str:
+    rows = "".join(
+        f"<tr><td>{html.escape(s.section)}</td><td>{html.escape(c.name)}</td>"
+        f'<td><span class="tag tag-{c.state}">{html.escape(c.label)}</span></td>'
+        f"<td>{html.escape(c.text)}</td></tr>" for s in sections for c in s.checks)
+    rules = "".join(f"<li><b>{html.escape(s.section)}</b>: {html.escape(s.rule)}</li>" for s in sections)
+    return (f"<h2>{TITLE}</h2>"
+            '<div class="card verdict-no"><p class="narrative">Ogni riga descrive un controllo e dice che cosa '
+            "i dati permettono di stimare. Non è un giudizio sullo studio né sul lavoro di chi lo ha "
+            "prodotto, e non esiste un colore complessivo.</p>"
+            f"<table><tr><th>Sezione</th><th>Controllo</th><th>Stato</th><th>Descrizione</th></tr>{rows}</table>"
+            f'<p class="narrative">Regole:</p><ul class="narrative">{rules}</ul></div>')
+
+
 _KIND_LABEL = {
     "annidamento": "annidamento", "uno-a-uno": "fattori coincidenti",
     "esito-determinato": "esito determinato da un fattore", "unita'-tecnica": "unita' tecnica",
@@ -70,8 +109,7 @@ _KIND_LABEL = {
 def _design_section(result: DesignAuditResult) -> str:
     structural = [f for f in result.findings
                   if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unita'-tecnica")]
-    not_estimable = any(c.classification == "non stimabile" for c in result.comparisons)
-    verdict_cls = "verdict-warn" if (structural or not_estimable) else "verdict-yes"
+    verdict_cls = "verdict-warn" if structural else _card_class(design_summary(result))
     roles = ", ".join(f"{html.escape(c)} ({html.escape(r)})" for c, r in result.roles.items())
     parts = [
         "<h2>Audit del disegno e del confondimento</h2>",
@@ -149,7 +187,7 @@ def _model_comparison_chart(mc: ModelComparisonResult) -> str:
 
 
 def _leakage_section(result: LeakageAuditResult) -> str:
-    verdict_cls = "verdict-warn" if result.gap > 0.05 else "verdict-yes"
+    verdict_cls = _card_class(leakage_summary(result))
     tag = ('<span class="tag tag-warn">leakage rilevabile</span>' if result.gap > 0.05
            else '<span class="tag tag-ok">nessun leakage evidente</span>')
     html_parts = [
@@ -259,6 +297,8 @@ def _tcr_section(result: TcrValidationResult) -> str:
         verdict_cls, tag = "verdict-warn", '<span class="tag tag-warn">direzione inattesa (probabile rumore)</span>'
     else:
         verdict_cls, tag = "verdict-yes", '<span class="tag tag-ok">nessuna discordanza oltre il rumore</span>'
+    if verdict_cls == "verdict-yes":  # bordo verde solo se ogni controllo della sezione è verde
+        verdict_cls = _card_class(tcr_summary(result))
 
     html_parts = [
         "<h2>Modulo B — Validazione dell'annotazione via TCR</h2>",
@@ -431,6 +471,9 @@ def render_report(
         f"Generato il {now}. Strumento diagnostico per un singolo studio pilota: "
         f"non e' una certificazione, e' un supporto alla decisione per chi analizza i dati.</p>",
     ]
+    sections = summarize(design_result, leakage_result, tcr_result, cd8_result)
+    if sections:
+        body.append(_summary_section(sections))
     if design_result is not None:
         body.append(_design_section(design_result))
     if leakage_result is not None:
@@ -481,24 +524,20 @@ def render_markdown_report(
     cd8_result: CD8PropagationResult | None = None,
     dataset_name: str = "dataset",
 ) -> str:
-    """Report in Markdown: verdetto per sezione con la regola che lo produce, numeri con la loro
-    definizione e limiti dichiarati. Stesse frasi del report HTML."""
-    from core.verdict import design_verdict, leakage_verdict, standing_limits, tcr_verdict
+    """Report in Markdown: sintesi dei controlli con le regole che la producono, numeri con la
+    loro definizione e limiti dichiarati. Stesse frasi del report HTML."""
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     md = [f"# Report di audit — {dataset_name}", "",
           f"Generato il {now}. Strumento diagnostico locale: non e' una certificazione.", ""]
-    verdicts = []
-    if design_result is not None:
-        verdicts.append(design_verdict(design_result))
-    if leakage_result is not None:
-        verdicts.append(leakage_verdict(leakage_result))
-    if tcr_result is not None:
-        verdicts.append(tcr_verdict(tcr_result))
-    if verdicts:
-        md += ["## Verdetto di audit", "", "| Sezione | Esito | Motivi |", "|---|---|---|"]
-        md += [f"| {v.section} | **{v.color.upper()}** | {'; '.join(v.reasons)} |" for v in verdicts]
-        md += [""] + [f"- *Regola {v.section}*: {v.rule}" for v in verdicts] + [""]
+    sections = summarize(design_result, leakage_result, tcr_result, cd8_result)
+    if sections:
+        md += [f"## {TITLE}", "",
+               "Ogni riga descrive un controllo e dice che cosa i dati permettono di stimare. Non è un "
+               "giudizio sullo studio, e non esiste un colore complessivo.", "",
+               "| Sezione | Controllo | Stato | Descrizione |", "|---|---|---|---|"]
+        md += [f"| {s.section} | {c.name} | {c.state}: {c.label} | {c.text} |" for s in sections for c in s.checks]
+        md += [""] + [f"- *Regola {s.section}*: {s.rule}" for s in sections] + [""]
     if design_result is not None:
         md += ["## Audit del disegno", "", design_result.narrative, ""]
         if design_result.comparisons:
