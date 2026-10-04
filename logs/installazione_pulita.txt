@@ -1,0 +1,98 @@
+# Prova di installazione pulita (Rifinitura 0) — 2026-10-04
+# Clone di https://github.com/colasantoemanuele-cloud/genomic-audit-mvp.git al commit 0662a40, in una cartella temporanea vuota.
+# Macchina: Linux, 12 core, Python 3.13.13, uv 0.12.5. Durante le prove la macchina eseguiva anche altro lavoro:
+# i tempi sono un limite superiore. I percorsi assoluti sono sostituiti da <tmp>, <home>, <conda>.
+
+## 1. Con uv, seguendo il README
+$ uv sync --extra dev   (cache di uv gia presente: nessun download)
+real 0m0.876s
+
+$ uv run python cli.py demo --out /tmp/demo.html   -> exit 0, report di 126588 byte
+Assunzioni. (1) L'identita' di riferimento stimata dal sangue e' considerata corretta. (2) La matrice di confusione e' stimata solo sui cloni condivisi con il sangue, che per costruzione sono quelli espansi (almeno 3 cellule nel sangue e identita' netta), ed e' unica per tutti i pazienti (pooled), non per paziente. Nei dati originali (PDAC, GSE278694) l'errore di annotazione cresce con la dimensione del clone (rho = +0.177): e' quindi possibile che la matrice SOVRASTIMI l'errore dei cloni non condivisi, ma non e' verificabile, perche' quelle cellule non hanno riferimento. In simulazione nessuno scenario copre il valore vero in tutti i casi: se i cloni condivisi sbagliano 2-4 volte piu' degli altri lo scenario 1x scende fino al 28% di copertura e lo 0.5x resta intorno al 92-95%; se sbagliano quanto gli altri, lo 0.5x scende all'88%. Per questo sono riportati sempre tre scenari (errore 0.5x, 1x, 2x), nessuno dei quali e' "il risultato". (3) Le cellule etichettate CD4 o CD8 sono vere cellule T; doppietti e altre cellule non-T etichettate CD4/CD8 non sono modellati.
+
+[ok] report scritto in /tmp/demo.html
+[ok] file VDJ di esempio scritti in data/synthetic/vdj
+
+real	2m59.456s
+user	5m42.013s
+sys	0m30.758s
+
+$ uv run pytest   -> exit 0
+tests/test_app_and_io.py ..........                                      [ 10%]
+tests/test_barcode_match.py ....                                         [ 14%]
+tests/test_cd8_format.py ......                                          [ 20%]
+tests/test_cd8_propagation_calibration.py .......                        [ 27%]
+tests/test_cd8_robustness.py ......                                      [ 33%]
+tests/test_design_audit.py ............                                  [ 45%]
+tests/test_design_audit_calibration.py ......x....                       [ 56%]
+tests/test_leakage_engine.py ...........                                 [ 67%]
+tests/test_real_data_gse278694.py ...                                    [ 70%]
+tests/test_stats_calibration.py .x........                               [ 80%]
+tests/test_synthetic_data.py .........                                   [ 89%]
+tests/test_tcr_flags.py ..........                                       [100%]
+tests/test_app_and_io.py::test_matrix_market_loader_aligns_metadata_and_dedups_genes[False]
+tests/test_app_and_io.py::test_matrix_market_loader_aligns_metadata_and_dedups_genes[True]
+tests/test_app_and_io.py::test_matrix_market_loader_refuses_missing_metadata
+tests/test_app_and_io.py: 5 warnings
+tests/test_barcode_match.py: 4 warnings
+tests/test_cd8_propagation_calibration.py: 1 warning
+tests/test_design_audit_calibration.py: 1 warning
+tests/test_leakage_engine.py: 8 warnings
+tests/test_synthetic_data.py: 8 warnings
+tests/test_tcr_flags.py: 14 warnings
+============ 97 passed, 2 xfailed, 44 warnings in 938.13s (0:15:38) ============
+real	15m48.321s
+user	24m54.741s
+sys	1m1.998s
+============ 97 passed, 2 xfailed, 44 warnings in 938.13s (0:15:38) ============
+
+## 2. Senza uv: venv nuovo + pip (il README non documentava questa strada)
+$ python3 -m venv .venv-pip && .venv-pip/bin/pip install -e ".[dev]"   -> exit 0
+real	3m1.046s
+user	2m28.926s
+sys	0m11.564s
+versioni installate: anndata-0.13.4 numpy-2.5.3 pandas-3.0.6 pytest-9.1.1 scikit-learn-1.9.1 scipy-1.18.1 streamlit-1.65.0 
+
+$ .venv-pip/bin/python cli.py demo --out demo_pip.html   -> exit 0
+[ok] report scritto in <tmp>/demo_pip.html
+[ok] file VDJ di esempio scritti in data/synthetic/vdj
+
+real	3m2.063s
+user	5m34.067s
+sys	0m31.325s
+exit pip demo: 0
+
+$ .venv-pip/bin/pytest   -> exit 0
+tests/test_app_and_io.py ..........                                      [ 10%]
+tests/test_barcode_match.py ....                                         [ 14%]
+tests/test_cd8_format.py ......                                          [ 20%]
+tests/test_cd8_propagation_calibration.py .......                        [ 27%]
+tests/test_cd8_robustness.py ......                                      [ 33%]
+tests/test_design_audit.py ............                                  [ 45%]
+tests/test_design_audit_calibration.py ......x....                       [ 56%]
+tests/test_leakage_engine.py ...........                                 [ 67%]
+tests/test_real_data_gse278694.py ...                                    [ 70%]
+tests/test_stats_calibration.py .x........                               [ 80%]
+tests/test_synthetic_data.py .........                                   [ 89%]
+tests/test_tcr_flags.py ..........                                       [100%]
+tests/test_app_and_io.py::test_matrix_market_loader_aligns_metadata_and_dedups_genes[False]
+tests/test_app_and_io.py::test_matrix_market_loader_aligns_metadata_and_dedups_genes[True]
+tests/test_app_and_io.py::test_matrix_market_loader_refuses_missing_metadata
+tests/test_app_and_io.py: 5 warnings
+tests/test_barcode_match.py: 4 warnings
+tests/test_cd8_propagation_calibration.py: 1 warning
+tests/test_design_audit_calibration.py: 1 warning
+tests/test_leakage_engine.py: 8 warnings
+tests/test_synthetic_data.py: 8 warnings
+tests/test_tcr_flags.py: 14 warnings
+real	16m13.417s
+user	22m24.693s
+sys	0m39.155s
+============ 97 passed, 2 xfailed, 44 warnings in 970.36s (0:16:10) ============
+
+## Esito
+Entrambe le installazioni funzionano. Mancanze del README annotate, da correggere al punto 3:
+- la strada senza uv (venv + pip install -e ".[dev]") non era documentata;
+- il requisito Python >= 3.12 (pyproject.toml) non era scritto nel README;
+- tests/test_real_data_gse278694.py usa un percorso assoluto della macchina di sviluppo: qui i dati
+  esistono e i test girano; su un'altra macchina vengono saltati (skip), e il README non lo diceva.
