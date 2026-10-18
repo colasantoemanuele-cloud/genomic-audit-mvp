@@ -21,6 +21,10 @@ passare: un caso fuori banda si corregge nel metodo o si marca xfail(strict=True
   Fattori confusi: la scomposizione rifiuta di produrre quote ("non identificabile").
   Caso di riferimento GSE278694: tumore vs adiacente stimabile con bassa potenza su
       5 pazienti; scRNA vs snRNA non stimabile.
+  (a2, revisione, regime d'uso: fogli campioni da 20-60 righe, come GSE278694 con 37 righe)
+      fattori indipendenti con 20, 30 e 40 righe e 2 o 3 livelli: frazione di coppie VALUTABILI
+      con allarme (V >= 0.5) in [0%, 5%], su 400 repliche per caso. Banda dichiarata prima
+      dell'esecuzione.
 
 I semi sono fissi: i test sono deterministici.
 """
@@ -78,6 +82,29 @@ def test_independent_factors_false_alarm_rate():
           f"(banda {V_FALSE_ALARM_BAND}); repliche con fatti strutturali: {n_structural}/{R}")
     assert V_FALSE_ALARM_BAND[0] <= frac <= V_FALSE_ALARM_BAND[1]
     assert n_structural == 0
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("n_rows", [20, 30, 40])
+@pytest.mark.parametrize("levels", [2, 3])
+def test_false_alarm_rate_per_pair_small_sheets(n_rows, levels):
+    import pandas as pd
+    n_alarm, n_eval = 0, 0
+    for rep in range(400):
+        rng = np.random.default_rng(80_000 + 1_000 * n_rows + 100 * levels + rep)
+        sheet = pd.DataFrame({"sample": [f"S{i}" for i in range(n_rows)],
+                              **{f: [f"{f}{x}" for x in rng.integers(0, levels, n_rows)]
+                                 for f in ("batch", "chemistry", "date")}})
+        res = run_design_audit(sheet, patient_col="sample",
+                               technical_cols={"batch": "batch", "chemistry": "chemistry", "date": "date"})
+        for p in res.pairs:
+            if p.cramer_v is not None and not (p.a_nested_in_b or p.b_nested_in_a):
+                n_eval += 1
+                n_alarm += p.v_alarm
+    frac = n_alarm / n_eval
+    print(f"\n[a2] {n_rows} righe, {levels} livelli: allarmi {n_alarm}/{n_eval} coppie valutabili = {frac:.3f} "
+          f"(banda {V_FALSE_ALARM_BAND})")
+    assert V_FALSE_ALARM_BAND[0] <= frac <= V_FALSE_ALARM_BAND[1]
 
 
 # --------------------------------------------------------------------------- #
