@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from core.design_audit import MIN_ROWS_FOR_V, MISSING_LEVEL_CLASS, DesignAuditResult
+from core.design_audit import MIN_ROWS_FOR_V, MISSING_LEVEL_CLASS, ComparisonAssessment, DesignAuditResult
 from core.leakage_audit import GAP_ALERT, MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT, LeakageAuditResult
 from core.tcr_validation import BIOLOGICAL_ASSUMPTIONS, TcrValidationResult
 
@@ -128,25 +128,28 @@ def _is_structural(p) -> bool:
     return bool(p.a_nested_in_b or p.b_nested_in_a or p.one_to_one)
 
 
+def comparison_check(c: ComparisonAssessment) -> Check:
+    """Controllo di un confronto richiesto. Unica fonte del suo stato: la sintesi, la tabella dei
+    confronti del report HTML e quella dell'app usano tutte questa funzione."""
+    name = f"Confronto {c.factor}: {c.level_a} vs {c.level_b}"
+    limits = [f"'{f}' fortemente associato al confronto (Cramér V = {v:.2f})" for f, v in c.partial_confounders]
+    if c.unassessed_technical:
+        limits.append("associazione con " + ", ".join(repr(f) for f in c.unassessed_technical)
+                      + " non valutabile (tabella troppo piccola)")
+    lim = ("; " + "; ".join(limits)) if limits else ""
+    if c.classification == "stimabile":
+        return Check(name, GIALLO if limits else VERDE, f"stimabile con {c.n_units} unità indipendenti" + lim)
+    if c.classification == "stimabile con bassa potenza":
+        return Check(name, GIALLO, f"stimabile con bassa potenza: {c.n_units} unità indipendenti" + lim)
+    if c.classification == MISSING_LEVEL_CLASS:
+        return Check(name, GRIGIO, "errore d'input: " + c.sentence.split(": ", 1)[1])
+    return Check(name, ROSSO, "non stimabile: i due livelli non sono separabili dal paziente "
+                              "o da un fattore tecnico in questo disegno")
+
+
 def design_summary(r: DesignAuditResult) -> SectionSummary:
     """Controlli dell'audit del disegno: confronti richiesti, fatti strutturali, associazioni."""
-    checks = []
-    for c in r.comparisons:
-        name = f"Confronto {c.factor}: {c.level_a} vs {c.level_b}"
-        limits = [f"'{f}' fortemente associato al confronto (Cramér V = {v:.2f})" for f, v in c.partial_confounders]
-        if c.unassessed_technical:
-            limits.append("associazione con " + ", ".join(repr(f) for f in c.unassessed_technical)
-                          + " non valutabile (tabella troppo piccola)")
-        lim = ("; " + "; ".join(limits)) if limits else ""
-        if c.classification == "stimabile":
-            checks.append(Check(name, GIALLO if limits else VERDE, f"stimabile con {c.n_units} unità indipendenti" + lim))
-        elif c.classification == "stimabile con bassa potenza":
-            checks.append(Check(name, GIALLO, f"stimabile con bassa potenza: {c.n_units} unità indipendenti" + lim))
-        elif c.classification == MISSING_LEVEL_CLASS:
-            checks.append(Check(name, GRIGIO, "errore d'input: " + c.sentence.split(": ", 1)[1]))
-        else:
-            checks.append(Check(name, ROSSO, "non stimabile: i due livelli non sono separabili dal paziente "
-                                             "o da un fattore tecnico in questo disegno"))
+    checks = [comparison_check(c) for c in r.comparisons]
     if not r.comparisons:
         checks.append(Check("Confronti", GRIGIO, "nessun confronto richiesto: controllo non eseguito"))
     for f in r.findings:

@@ -332,3 +332,17 @@ def test_malformed_marker_map_is_an_error_not_a_vanished_rate(bad, match):
     adata, contigs = make_tcr_validation_dataset(n_patients=5, n_clones_per_patient=5, seed=3)
     with pytest.raises(ValueError, match=match):
         _run(adata, contigs, marker_map=bad, reference_compartment="PBMC")
+
+
+# --------------------------------------------------------------------------- #
+# Revisione, giro 2: etichette dell'utente che non esistono nei dati
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("kw, match", [
+    (dict(marker_map={"CD4T": ["CD4"], "CD8+ T": ["CD8A", "CD8B"]}), "mappa dei marcatori non presenti.*CD8\\+ T"),
+    (dict(marker_map=MARKERS, clone_error_labels=["Nk"]), "clone_error_labels non presenti.*Nk"),
+    (dict(marker_map=MARKERS, clone_marker_priority=["CD8", "CD4T"]), "clone_marker_priority.*CD8"),
+])
+def test_user_labels_absent_from_data_are_an_error(kw, match):
+    adata, contigs = make_tcr_validation_dataset(n_patients=5, n_clones_per_patient=5, seed=3)
+    with pytest.raises(ValueError, match=match):
+        _run(adata, contigs, reference_compartment="PBMC", **kw)

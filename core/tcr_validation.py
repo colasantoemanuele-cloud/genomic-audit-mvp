@@ -846,6 +846,22 @@ def run_tcr_validation(
     # Posizione di riga originale: serve solo a riscrivere i flag per cellula sulle righe
     # giuste di adata.obs dopo la merge (che non preserva l'ordine). Non entra in nessun calcolo.
     obs["_row"] = np.arange(len(obs))
+    labels_present = set(obs["celltype"])
+    shown = ", ".join(sorted(labels_present)[:15])
+    if marker_map:
+        absent = [k for k in marker_map if k not in labels_present]
+        if absent:
+            raise ValueError(f"etichette della mappa dei marcatori non presenti nella colonna '{celltype_col}': "
+                             f"{absent} (etichette presenti: {shown}). Le chiavi della mappa devono essere "
+                             f"scritte come le etichette dei dati.")
+    absent = [x for x in (clone_error_labels or []) if x not in labels_present]
+    if absent:
+        raise ValueError(f"etichette di clone_error_labels non presenti nella colonna '{celltype_col}': {absent} "
+                         f"(etichette presenti: {shown})")
+    absent = [x for x in (clone_marker_priority or []) if x not in (marker_map or {})]
+    if absent:
+        raise ValueError(f"etichette di clone_marker_priority che non sono chiavi della mappa dei marcatori: "
+                         f"{absent} (chiavi: {list(marker_map or {})})")
     if reference_compartment and reference_compartment not in set(obs["compartment"]):
         present = ", ".join(sorted(set(obs["compartment"]))[:10])
         raise ValueError(f"il compartimento di riferimento '{reference_compartment}' non compare nella "

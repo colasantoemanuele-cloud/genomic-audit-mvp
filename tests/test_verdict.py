@@ -35,6 +35,7 @@ from core.verdict import (
     STATE_LABEL,
     VERDE,
     SectionSummary,
+    comparison_check,
     design_summary,
     leakage_summary,
     standing_limits,
@@ -220,6 +221,11 @@ def test_design_comparison_with_partial_confounder_is_yellow_not_green(n_pat, mo
     assert r.comparisons[0].classification == "stimabile"
     c = _one(design_summary(r), "Confronto tissue")
     assert c.state == GIALLO and motivo in c.text and "'batch'" in c.text
+    # giro 2: la tabella dei confronti del report (e dell'app, stessa funzione) ha lo stesso stato
+    assert comparison_check(r.comparisons[0]).state == GIALLO
+    html_txt = render_report(None, None, "t", design_result=r)
+    assert '<span class="tag tag-giallo">stimabile</span>' in html_txt
+    assert '<span class="tag tag-verde">stimabile</span>' not in html_txt
 
 
 # --------------------------------------------------------------------------- #

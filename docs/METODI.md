@@ -120,8 +120,10 @@ cellule per fold, con quote proporzionali per paziente (arrotondate per difetto,
 Macro-F1 sulle sole classi presenti nel fold di test.
 
 **Divario.** Media dello split casuale meno media dello split per paziente. Sotto ±0,05 è
-considerato rumore e non se ne indica la direzione; sopra 0,05 la sintesi lo segnala in rosso. La
-soglia è una scelta dichiarata, non una stima.
+considerato rumore e non se ne indica la direzione; sopra +0,05 la sintesi lo segnala in rosso,
+sotto −0,05 in giallo (direzione inattesa: variabilità fra fold, classi assenti o pochi pazienti).
+Con meno di 5 pazienti nessuna riga del Modulo A è verde: la soglia è stata provata solo con 19
+pazienti (GSE125449). La soglia è una scelta dichiarata, non una stima.
 
 **Nessun intervallo per la macro-F1.** I punteggi dei fold sono correlati (training sovrapposti): la
 deviazione standard fra fold non è una stima valida dell'incertezza, e il rapporto fra le due

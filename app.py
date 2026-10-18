@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from core.design_audit import MISSING_LEVEL_CLASS, TECHNICAL_ROLES, parse_comparison_lines, run_design_audit
+from core.design_audit import TECHNICAL_ROLES, parse_comparison_lines, run_design_audit
 from core.io import load_matrix_market, read_table, read_vdj_manifest
 from core.leakage_audit import GAP_ALERT, run_leakage_audit
 from core.report import render_markdown_report, render_report
@@ -40,6 +40,7 @@ from core.verdict import (
     STATE_LABEL,
     TITLE,
     USE_WARNING,
+    comparison_check,
     design_summary,
     leakage_summary,
     standing_limits,
@@ -79,8 +80,6 @@ table.sem{border-collapse:collapse;width:100%}
 table.sem td,table.sem th{border-bottom:1px solid #e3e7ec;padding:.35rem .5rem;text-align:left;vertical-align:top}
 </style>""", unsafe_allow_html=True)
 
-COLOR_OF = {"stimabile": "verde", "stimabile con bassa potenza": "giallo", "non stimabile": "rosso",
-            MISSING_LEVEL_CLASS: "grigio"}
 
 
 def badge(color: str, text: str) -> str:
@@ -194,8 +193,10 @@ def factor_matrix_chart(res) -> alt.Chart:
     rows = []
     facts = {(f.factors[0], f.factors[1]): f.kind for f in res.findings if len(f.factors) == 2}
     for p in res.pairs:
-        if p.one_to_one or p.a_nested_in_b or p.b_nested_in_a:
-            stato = "struttura (annidamento/coincidenza/esito)"
+        if p.one_to_one:
+            stato = "fattori coincidenti"
+        elif p.a_nested_in_b or p.b_nested_in_a:
+            stato = "annidamento o esito determinato"
         elif p.cramer_v is None:
             stato = "non valutabile"
         elif p.v_alarm:
@@ -207,9 +208,10 @@ def factor_matrix_chart(res) -> alt.Chart:
             rows.append({"fattore 1": a, "fattore 2": b, "stato": stato, "V": v,
                          "dettaglio": facts.get((a, b), facts.get((b, a), "")), "frase": p.sentence})
     df = pd.DataFrame(rows)
-    scale = alt.Scale(domain=["struttura (annidamento/coincidenza/esito)", "associazione forte (V >= 0.5)",
-                              "associazione debole", "non valutabile"],
-                      range=["#b3261e", "#d08a1e", "#2e7d4f", "#aab4bf"])
+    # stessi stati della sintesi: coincidenza rossa, annidamento ed esito determinato gialli
+    scale = alt.Scale(domain=["fattori coincidenti", "annidamento o esito determinato",
+                              "associazione forte (V >= 0.5)", "associazione debole", "non valutabile"],
+                      range=["#b3261e", "#e0b000", "#d08a1e", "#2e7d4f", "#aab4bf"])
     base = alt.Chart(df).encode(x=alt.X("fattore 1:N", title=None), y=alt.Y("fattore 2:N", title=None))
     return (base.mark_rect(stroke="white").encode(
         color=alt.Color("stato:N", scale=scale, legend=alt.Legend(orient="bottom", title=None)),
@@ -266,7 +268,7 @@ with tab_d:
         st.subheader("Confronti: che cosa il disegno permette di stimare")
         rows = "".join(
             f"<tr><td>{html.escape(c.factor)}: {html.escape(c.level_a)} vs {html.escape(c.level_b)}</td>"
-            f"<td>{badge(COLOR_OF[c.classification], c.classification)}</td><td>{c.n_units}</td>"
+            f"<td>{badge(comparison_check(c).state, c.classification)}</td><td>{c.n_units}</td>"
             f"<td>{'—' if c.min_pvalue is None else f'{c.min_pvalue:.3f}'}</td>"
             f"<td class='small'>{html.escape(c.sentence)}</td></tr>" for c in res.comparisons)
         st.markdown("<table class='sem'><tr><th>Confronto</th><th>Classe</th><th>Unità indipendenti</th>"
@@ -444,9 +446,12 @@ with tab_b:
             markers = st.text_area("Mappa marcatori (JSON)", value='{"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}', key="b_mk")
             comps = sorted(adata_b.obs[sel["compartment"]].astype(str).unique())
             blood = [i for i, c in enumerate(comps) if c.lower() in ("pbmc", "blood", "sangue", "peripheral blood")]
-            ref = st.selectbox("Compartimento di riferimento (sangue)", comps, index=blood[0] if blood else 0,
-                               key="b_ref")
-            if man and st.button("Esegui Modulo B", type="primary"):
+            # senza un compartimento dal nome riconoscibile nessuna scelta predefinita: va scelto
+            ref = st.selectbox("Compartimento di riferimento (sangue)", comps, index=blood[0] if blood else None,
+                               placeholder="scegli il compartimento di riferimento", key="b_ref")
+            if man and ref is None:
+                st.warning("Scegli il compartimento di riferimento prima di eseguire il Modulo B.")
+            if man and ref is not None and st.button("Esegui Modulo B", type="primary"):
                 files = safe(lambda: read_vdj_manifest(Path(man)), "manifest VDJ non utilizzabile")
                 contigs = safe(lambda: parse_vdj_contigs(files), "file VDJ non utilizzabili") if files else None
                 mk = safe(lambda: validate_marker_map(json.loads(markers)), "mappa dei marcatori non utilizzabile")

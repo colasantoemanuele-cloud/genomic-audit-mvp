@@ -121,7 +121,7 @@ Confronto fra modelli (LeaveOneGroupOut): regressione logistica 0.771, random fo
 | Classi assenti non dichiarate per i fold del confronto fra modelli | onestà dell'output | elenco nell'app e nel report Markdown | commit finale |
 | Telemetria di Streamlit attiva per default; richiesta interattiva di email al primo avvio | privacy e usabilità | `gatherUsageStats=false`, solo localhost, avvio headless; verificato che il server ascolta solo su 127.0.0.1 e rifiuta le connessioni dall'IP di rete | `6938623` e commit finale |
 
-Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: suite completa con i dati reali sul commit 69cf239: 180 passed, 7 xfailed in 24 min 30 s (da ripetere sul commit finale).
+Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: suite completa sul clone pulito del commit df4f539 con i dati reali: 192 passed, 7 xfailed in 25 min 20 s (docs/sviluppo/logs/df4f539_clone_uv_suite_completa.txt).
 
 ## 5. Risultati descrittivi (non criteri)
 

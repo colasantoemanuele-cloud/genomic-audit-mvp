@@ -91,8 +91,9 @@ errore (etichette ammesse fuori mappa: NK); positività esclusiva in ordine CD8T
 
 I due valori misurano cose diverse (cellule contro cloni, con le etichette NK escluse oppure
 contate come errore), e per questo lo strumento li riporta sempre insieme, ciascuno con la sua
-definizione. Il 72% della differenza è dovuto alle etichette NK contate come errore
-(`validation/results/b2_quota_nk.json`).
+definizione. Togliendo le etichette NK dalla convenzione per clone il tasso scende da 0,170 a
+0,115, cioè del 72% della differenza fra le due convenzioni (`validation/results/b2_quota_nk.json`);
+la quota dipende dall'ordine della scomposizione (sezione [Ipotesi e limiti](#ipotesi-e-limiti)).
 
 **Fedeltà del porting.** Con le stesse opzioni e la stessa regola dei pareggi (esclusi) la
 versione finale della tesi da cui lo strumento è stato portato (progetto-ml, ramo `revisione`,
@@ -363,18 +364,21 @@ uv run pytest -n auto                  # suite completa (oppure: pytest -n auto,
 uv run pytest -n auto -m "not slow"    # senza le calibrazioni lunghe
 ```
 
-Esiti misurati (log in `docs/sviluppo/logs/`), commit 69cf239, prima dell'allineamento dei
-pareggi; da ripetere sul commit finale:
+Esiti misurati (log in `docs/sviluppo/logs/`):
 
-| Prova | Esito |
-|---|---|
-| clone pulito, `uv sync --extra dev`, suite completa senza i dati reali | 177 passed, 3 skipped, 7 xfailed |
-| clone pulito, `pip install -e ".[dev]"` (Python 3.13), `pytest -m "not slow"` | 115 passed, 3 skipped |
-| clone pulito, Python 3.12, `pytest -m "not slow"` | 115 passed, 3 skipped |
-| copia di lavoro con i dati di GSE278694, suite completa | 180 passed, 7 xfailed in 24 min 30 s |
+| Prova | Commit | Esito |
+|---|---|---|
+| clone pulito, `uv sync --extra dev`, demo e suite completa con i dati di GSE278694 (`GSE278694_DIR`) | df4f539 | demo exit 0 in 97 s; **192 passed, 7 xfailed**, 0 skipped, in 25 min 20 s |
+| copia di lavoro, `pytest -m "not slow"`, dopo le correzioni del giro di chiusura | commit finale della 0.9.0 | 133 passed |
+| clone pulito, `pip install -e ".[dev]"` (Python 3.13), `pytest -m "not slow"`, senza i dati reali | 69cf239 (non ripetuta) | 115 passed, 3 skipped |
+| clone pulito, Python 3.12, `pytest -m "not slow"`, senza i dati reali | 69cf239 (non ripetuta) | 115 passed, 3 skipped |
 
-I 3 test saltati sono quelli sui dati reali di GSE278694, assenti nel clone pulito; i 7 xfailed
-sono gli stimatori fuori banda descritti qui sotto.
+Le prove con pip e con Python 3.12 non sono state ripetute dopo le correzioni (versione pilota:
+una sola installazione pulita, con uv); i 3 test saltati sono quelli sui dati reali di GSE278694,
+assenti in quei cloni. I 7 xfailed sono gli stimatori fuori banda descritti qui sotto. Le
+correzioni del giro di chiusura (dopo df4f539) toccano colori e testi della sintesi, la
+validazione delle etichette del Modulo B e i documenti: su di esse è stata rieseguita la sola
+suite veloce.
 
 Le calibrazioni dichiarano le bande nel docstring prima dell'esecuzione; una banda non si allarga
 per far passare un numero, e uno stimatore fuori banda è marcato `xfail(strict=True)` e non è

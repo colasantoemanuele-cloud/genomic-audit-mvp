@@ -50,8 +50,8 @@ N_SVD_DEFAULT = 50
 MAX_TRAIN_CELLS_DEFAULT = 20_000
 N_TOP_GENES_XAI = 50
 MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT = 8
-# soglia del divario oltre la quale il report segnala "leakage rilevabile"; sotto, in valore
-# assoluto, il divario è considerato entro il rumore e non se ne indica la direzione
+# soglia del divario: sopra +GAP_ALERT la sintesi lo segnala in rosso, sotto -GAP_ALERT in giallo
+# (direzione inattesa); entro ±GAP_ALERT è considerato rumore e non se ne indica la direzione
 GAP_ALERT = 0.05
 # modello di riferimento del confronto fra modelli, fissato prima di vedere i dati (A3)
 REFERENCE_MODEL = "logreg"

@@ -1,5 +1,8 @@
-"""Revisione B2 -- quanto della differenza fra la convenzione per cellula e quella per clone (tesi)
-è dovuto alle etichette NK contate come errore, su GSE278694.
+"""Revisione B2 -- di quanto scende la differenza fra la convenzione per cellula e quella per clone
+(tesi) togliendo le etichette NK dalle etichette contate come errore, su GSE278694. È una
+descrizione, non un'attribuzione di causa: la scomposizione non è additiva e la quota dipende
+dall'ordine (aggiungendo le NK alla convenzione per cellula, passo S2 -> S3 di
+validation/gse278694_moduleB.py, la quota è diversa).
 
 Quota = (per clone con NK come errore - per clone senza etichette fuori mappa) /
         (per clone con NK come errore - per cellula), nel tumore, con la regola di positività

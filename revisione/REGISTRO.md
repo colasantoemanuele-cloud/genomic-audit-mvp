@@ -198,3 +198,52 @@ BASSA 8 (due test più deboli del loro nome) rimandati.
 Validazioni rieseguite perché il loro codice è cambiato: audit del disegno (D1-D4 esterni,
 `cli_design_real*.txt`). A1 su GSE125449 rieseguito con `/usr/bin/time -v` (lo script lo aveva
 perso): 315 s, 1,2 GB, output identico a parte il tempo.
+
+## Fase 3 ridotta (commit df4f539)
+
+Una sola installazione pulita con uv (`uv sync --extra dev`), demo e suite completa con i dati di
+GSE278694 (`GSE278694_DIR`): demo exit 0 in 97 s, 313 MB; **192 passed, 7 xfailed, 0 skipped in
+25 min 20 s** (`docs/sviluppo/logs/df4f539_clone_uv_suite_completa.txt`). Prove con pip e con
+Python 3.12 non ripetute (ultime misure: commit 69cf239, 115 passed e 3 skipped ciascuna).
+
+## Fase 2, giro 2 (chiusura, commit df4f539)
+
+Resoconto: `revisione/log/giro2_revisore.md`. Esiti del revisore: 130 passed (not slow), ruff
+pulito, suite completa del clone pulito letta e confermata. **ALTA 1, MEDIA 2, BASSA 8.** Per
+istruzione dell'utente il giro di chiusura con problemi ALTA o MEDIA si chiude correggendoli e
+fermandosi: non c'è un terzo giro, quindi le correzioni qui sotto non sono state riviste da un
+revisore indipendente.
+
+Corretti:
+- ALTA 1: la tabella dei confronti del report HTML e dell'app colorava per classe (verde per
+  «stimabile») mentre la sintesi dava giallo con un fattore tecnico associato. Ora c'è una sola
+  funzione, `core.verdict.comparison_check`, usata da sintesi, report e app; test sul tag del
+  report. Rigenerati `validation_esterna/results/design_*.html` (GSE125449: ora giallo, perché
+  l'associazione con 'platform' non è valutabile con 19 righe).
+- MEDIA 1: estratto del README e docstring di `gse278694_b2_nk.py` allineati alla sezione dei
+  limiti (72% descritto, non attribuito come causa).
+- MEDIA 2: errore esplicito, con le etichette presenti, se una chiave della mappa dei marcatori o
+  un'etichetta di `--clone-error-labels` non compare nei dati, o se un'etichetta di
+  `--clone-marker-priority` non è una chiave della mappa; tre test.
+- BASSA 2 (tag del report con il motivo vero), 3 (nell'app nessun compartimento di riferimento
+  predefinito se nessuno si chiama come il sangue), 4 (matrice dei fattori dell'app con gli stessi
+  stati della sintesi), 5 (METODI, regole gialle del divario), 6 (commento in `leakage_audit.py`),
+  8 («Strumento diagnostico» → «Strumento di controllo per la ricerca»; immagine rigenerata).
+
+Dopo le correzioni: `pytest -m "not slow"` 133 passed, ruff pulito; audit del disegno rieseguito
+(D1-D4 soddisfatti sui tre dataset).
+
+## Problemi non risolti nella 0.9.0
+
+- Giro 2, BASSA 1: lo stato rosso si chiama «stima non possibile con questi dati» anche quando la
+  riga riporta la stima puntuale e manca solo l'intervallo (meno di 5 pazienti).
+- Giro 2, BASSA 7: la frazione di CD8 sperimentale è calibrata solo con 10 pazienti (il revisore
+  la misura in banda anche con 5 e 6).
+- Giro 1, BASSA 5: nessuna calibrazione dedicata delle differenze appaiate (il revisore la misura
+  in banda, 2,0%-4,6%).
+- Giro 1, BASSA 8: due test più deboli del loro nome (flag sulle righe giuste; assenza di
+  scritture su disco controllata cercando «tempfile» nel sorgente).
+- La suite completa è stata eseguita sul commit df4f539, non su quello finale (che ha solo
+  correzioni di sintesi, testi e validazione degli input, verificate con la suite veloce); le
+  prove con pip e Python 3.12 sono del commit 69cf239.
+- Tutta la Fase 4 (`docs/ROADMAP.md`), compresa la validazione esterna del Modulo B.

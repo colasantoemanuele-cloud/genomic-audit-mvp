@@ -18,7 +18,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from core.design_audit import MISSING_LEVEL_CLASS, DesignAuditResult
+from core.design_audit import DesignAuditResult
 from core.leakage_audit import GAP_ALERT, LeakageAuditResult, ModelComparisonResult
 from core.tcr_validation import BIOLOGICAL_ASSUMPTIONS, MarkerErrorResult, TcrValidationResult
 from core.verdict import (
@@ -28,16 +28,13 @@ from core.verdict import (
     TITLE,
     USE_WARNING,
     SectionSummary,
+    comparison_check,
     design_summary,
     leakage_summary,
     standing_limits,
     summarize,
     tcr_summary,
 )
-
-# Colore della classe di un confronto: lo stesso della riga corrispondente nella sintesi
-COMPARISON_STATE = {"stimabile": "verde", "stimabile con bassa potenza": GIALLO, "non stimabile": ROSSO,
-                    MISSING_LEVEL_CLASS: GRIGIO}
 
 _CSS = """
 body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -131,7 +128,7 @@ def _design_section(result: DesignAuditResult) -> str:
         parts.append("<table><tr><th>Confronto</th><th>Classe</th><th>Disegno</th>"
                      "<th>Unità indipendenti</th><th>Cosa significa</th></tr>")
         for c in result.comparisons:
-            tag = f"tag-{COMPARISON_STATE.get(c.classification, GRIGIO)}"
+            tag = f"tag-{comparison_check(c).state}"  # stesso stato della riga nella sintesi
             parts.append(
                 f"<tr><td>{html.escape(c.factor)}: {html.escape(c.level_a)} vs {html.escape(c.level_b)}</td>"
                 f'<td><span class="tag {tag}">{html.escape(c.classification)}</span></td>'
@@ -300,7 +297,7 @@ def _marker_error_chart(m: MarkerErrorResult) -> str | None:
 def _tcr_section(result: TcrValidationResult) -> str:
     d = result.discordance
     if not d.sufficient:
-        tag = '<span class="tag tag-warn">numerosità insufficiente</span>'
+        tag = f'<span class="tag tag-warn">intervallo non prodotto: {html.escape(d.reason)}</span>'
     elif d.ci_low > 0:
         tag = '<span class="tag tag-warn">eccesso di discordanza sopra lo zero</span>'
     elif d.ci_high < 0:
@@ -357,7 +354,7 @@ def _tcr_section(result: TcrValidationResult) -> str:
             if r.sufficient:
                 val = f"{r.excess:+.3f} [{r.ci_low:+.3f}, {r.ci_high:+.3f}]"
             else:
-                val = "numerosità insufficiente"
+                val = f"{r.excess:+.3f}, intervallo non prodotto"
             html_parts.append(
                 f"<tr><td>{html.escape(r.comp_a)} ↔ {html.escape(r.comp_b)}</td>"
                 f"<td>{r.n_pairs}</td><td>{r.n_patients}</td><td>{val}</td></tr>"
@@ -445,7 +442,7 @@ def render_report(
         f"<h1>Report di audit — {html.escape(dataset_name)}</h1>",
         f'<p class="warning">{html.escape(USE_WARNING)}</p>',
         f'<p class="footer" style="margin-top:0;border-top:none;padding-top:0;">'
-        f"Generato il {now}. Strumento diagnostico: non è una certificazione, è un supporto per chi "
+        f"Generato il {now}. Strumento di controllo per la ricerca: non è una certificazione, è un supporto per chi "
         f"analizza i dati.</p>",
     ]
     sections = summarize(design_result, leakage_result, tcr_result)
@@ -502,7 +499,7 @@ def render_markdown_report(
 
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     md = [f"# Report di audit — {dataset_name}", "", f"**{USE_WARNING}**", "",
-          f"Generato il {now}. Strumento diagnostico locale: non è una certificazione.", ""]
+          f"Generato il {now}. Strumento di controllo per la ricerca, eseguito in locale: non è una certificazione.", ""]
     sections = summarize(design_result, leakage_result, tcr_result)
     if sections:
         md += [f"## {TITLE}", "",
