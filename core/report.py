@@ -9,7 +9,7 @@ from __future__ import annotations
 import base64
 import html
 import io
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import matplotlib
@@ -437,7 +437,7 @@ def render_report(
     """Ritorna una stringa HTML autocontenuta: nessun asset esterno, i grafici sono
     immagini PNG incorporate come data URI. Contiene la sintesi dei controlli, le sezioni
     eseguite e i limiti dichiarati."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     body = [
         f"<h1>Report di audit — {html.escape(dataset_name)}</h1>",
         f'<p class="warning">{html.escape(USE_WARNING)}</p>',
@@ -497,7 +497,7 @@ def render_markdown_report(
     """Report in Markdown: sintesi dei controlli con le regole che la producono, numeri con la
     loro definizione e limiti dichiarati. Stesse frasi del report HTML."""
 
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     md = [f"# Report di audit — {dataset_name}", "", f"**{USE_WARNING}**", "",
           f"Generato il {now}. Strumento diagnostico locale: non è una certificazione.", ""]
     sections = summarize(design_result, leakage_result, tcr_result)

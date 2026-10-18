@@ -178,6 +178,22 @@ def sample_sheet_from_obs(obs: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     return as_levels(obs[cols])[0].drop_duplicates().reset_index(drop=True)
 
 
+def parse_comparison_lines(text: str) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """Righe 'colonna:livello_a:livello_b' (una per riga) -> (confronti validi, righe non valide).
+    Le righe vuote sono ignorate; le altre righe malformate sono restituite, non scartate in
+    silenzio, perché il chiamante le segnali."""
+    comps, bad = [], []
+    for line in text.splitlines():
+        if not line.strip():
+            continue
+        parts = [x.strip() for x in line.split(":")]
+        if len(parts) == 3 and all(parts):
+            comps.append((parts[0], parts[1], parts[2]))
+        else:
+            bad.append(line)
+    return comps, bad
+
+
 # --------------------------------------------------------------------------- #
 # 1. Associazioni e fatti strutturali
 # --------------------------------------------------------------------------- #

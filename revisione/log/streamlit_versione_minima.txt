@@ -1,0 +1,13 @@
+Prova della versione minima di Streamlit (A10): test end-to-end della web app (tests/test_app_and_io.py::test_web_app_demo_runs_end_to_end), ambiente nuovo per ogni versione.
+streamlit 1.45.1: 1 failed, 9 deselected in 4.74s (unexpected keyword argument 'width')
+streamlit 1.46.0: 1 failed, 9 deselected in 4.84s (unexpected keyword argument 'width')
+streamlit 1.46.1: 1 failed, 9 deselected in 4.75s (unexpected keyword argument 'width')
+streamlit 1.47.0: 1 failed, 9 deselected in 4.86s (unexpected keyword argument 'width')
+streamlit 1.48.0: 1 failed, 9 deselected, 1 warning in 5.07s (unexpected keyword argument 'width')
+streamlit 1.50.0: 1 failed, 9 deselected, 1 warning in 5.00s (unexpected keyword argument 'width')
+streamlit 1.51.0: 1 passed, 9 deselected, 1 warning in 11.56s 
+streamlit 1.52.2: 1 passed, 9 deselected, 1 warning in 11.25s 
+streamlit 1.53.1: 1 passed, 9 deselected, 1 warning in 12.01s 
+streamlit 1.54.0: 1 passed, 9 deselected, 1 warning in 12.01s 
+streamlit 1.55.0: 1 passed, 9 deselected, 1 warning in 11.91s 
+streamlit 1.56.0: 1 passed, 9 deselected, 1 warning in 11.80s 

@@ -1,0 +1,14 @@
+[a] falsi allarmi Cramér V: 1/200 = 0.005 (banda (0.0, 0.05)); repliche con fatti strutturali: 0/200
+[b] annidamento paziente-in-batch rilevato: 200/200
+[c] esito determinato dal paziente rilevato: 200/200; confronto tessuto classificato 'non stimabile': 200/200
+[potenza] detection rate (soglia V >= 0.5, n=60, 3x3): V=0.3: 0.020, V=0.5: 0.460, V=0.7: 0.980, V=0.9: 1.000
+[GSE278694] Confronto 'tissue': Tumor vs Adjacent_normal: stimabile con bassa potenza, disegno appaiato (entro paziente), 5 pazienti con entrambi i livelli (soglia dichiarata: 5 pazienti, la stessa del Modulo B; con 5 pazienti appaiati anche un test di Wilcoxon esatto non può scendere sotto p = 0.062: la potenza a soglia 0.05 è nulla). Un risultato non significativo qui non indica assenza di effetto. Attenzione: 16 pazienti con un solo livello esclusi dal confronto appaiato. Unità indipendenti: 5; p-value minimo raggiungibile con un test esatto di Wilcoxon appaiato: 0.062. Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere un test esatto con queste unità.
+[GSE278694] Confronto 'protocol': scRNA vs snRNA: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'scRNA' e 'snRNA' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile).
+5 passed, 6 deselected in 64.41s (0:01:04)
+[a2] 20 righe, 2 livelli: allarmi 9/1200 coppie valutabili = 0.007 (banda (0.0, 0.05))
+[a2] 30 righe, 2 livelli: allarmi 6/1200 coppie valutabili = 0.005 (banda (0.0, 0.05))
+[a2] 40 righe, 2 livelli: allarmi 1/1200 coppie valutabili = 0.001 (banda (0.0, 0.05))
+[a2] 20 righe, 3 livelli: allarmi 3/1200 coppie valutabili = 0.003 (banda (0.0, 0.05))
+[a2] 30 righe, 3 livelli: allarmi 0/1200 coppie valutabili = 0.000 (banda (0.0, 0.05))
+[a2] 40 righe, 3 livelli: allarmi 1/1200 coppie valutabili = 0.001 (banda (0.0, 0.05))
+6 passed, 11 deselected in 111.35s (0:01:51)

@@ -1,0 +1,21 @@
+{
+ "contig_TRB": {
+  "cellule_con_TRB": 123280,
+  "pari_UMI": 346,
+  "pari_anche_nelle_reads": 0
+ },
+ "maggioranza_per_clone": {
+  "Adjacent_normal": {
+   "unita": 118,
+   "pareggi": 1
+  },
+  "Tumor": {
+   "unita": 288,
+   "pareggi": 11
+  },
+  "totale": {
+   "unita": 406,
+   "pareggi": 12
+  }
+ }
+}

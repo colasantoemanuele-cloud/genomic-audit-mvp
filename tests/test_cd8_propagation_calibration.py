@@ -25,10 +25,14 @@ import functools
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from core.cd8_propagation import cd8_fraction_intervals, patient_resample_draws
 from core.stats import cluster_bootstrap
 from core.synthetic import make_cd8_fraction_dataset
+
+# Calibrazioni: girano quando cambia lo stimatore che verificano e nel giro di chiusura.
+pytestmark = pytest.mark.slow
 
 R = 200
 COVERAGE_BAND = (0.90, 0.99)

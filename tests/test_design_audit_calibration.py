@@ -53,6 +53,9 @@ from core.synthetic import (
     make_variance_units,
 )
 
+# Calibrazioni: girano quando cambia lo stimatore che verificano e nel giro di chiusura.
+pytestmark = pytest.mark.slow
+
 R = 200
 V_FALSE_ALARM_BAND = (0.0, 0.05)
 SHARE_TOL, SHARE_FRACTION_WITHIN, SHARE_BIAS_TOL = 0.10, 0.95, 0.03
@@ -84,7 +87,6 @@ def test_independent_factors_false_alarm_rate():
     assert n_structural == 0
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize("n_rows", [20, 30, 40])
 @pytest.mark.parametrize("levels", [2, 3])
 def test_false_alarm_rate_per_pair_small_sheets(n_rows, levels):

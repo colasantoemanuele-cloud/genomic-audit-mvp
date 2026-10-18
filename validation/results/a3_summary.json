@@ -1,28 +1,30 @@
 {
- "J": 0.4814095724480163,
- "cellule_di_riferimento": 4851,
+ "J": 0.4808652119910397,
+ "cellule_di_riferimento": 4853,
  "pazienti_di_riferimento": 10,
  "matrice": {
   "chiamata CD4T": {
    "vera CD4T": 0.4254,
-   "vera CD8T": 0.0055
+   "vera CD8T": 0.006
   },
   "chiamata CD8T": {
    "vera CD4T": 0.4474,
-   "vera CD8T": 0.9132
+   "vera CD8T": 0.9125
   },
   "chiamata altro": {
    "vera CD4T": 0.1272,
-   "vera CD8T": 0.0813
+   "vera CD8T": 0.0815
   }
  },
  "intervalli_prodotti_per_scenario": {
   "0.5x": 13,
-  "1x": 13,
+  "1x": 6,
   "2x": 0
  },
  "pazienti": 13,
  "rifiuti": [
-  "con errore 2x la probabilita' di errore stimata supera 1"
+  "con errore 2x la probabilità di errore stimata supera 1",
+  "frazione osservata fuori dall'intervallo invertibile [0.51, 0.99]: la frazione corretta uscirebbe da [0, 1], quindi non viene troncata ma rifiutata",
+  "inversione non definita in più del 10% delle repliche (frazione vicina al bordo dell'intervallo invertibile)"
  ]
 }

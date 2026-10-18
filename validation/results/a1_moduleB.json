@@ -5,191 +5,201 @@
    "cellule": 105809,
    "coppie": 1124,
    "pazienti": 11,
-   "d_within": 0.12399414932895836,
-   "eccesso": 0.058651661475632444,
+   "d_within": 0.12366859874039342,
+   "eccesso": 0.058874659699858695,
    "ic": [
-    0.03430766107530081,
-    0.09826435089746388
+    0.03415873023623637,
+    0.09900707683480768
    ]
   },
   "tesi (solo CD4T/CD8T/NK)": {
    "cellule": 104964,
-   "coppie": 1114,
+   "coppie": 1115,
    "pazienti": 11,
-   "d_within": 0.10699673760294877,
-   "eccesso": 0.05895091450139665,
+   "d_within": 0.10741301658242952,
+   "eccesso": 0.058941361292601205,
    "ic": [
-    0.03419465850754311,
-    0.10037066533624239
+    0.0340540405531423,
+    0.10039673384449142
    ]
   }
  },
  "errore_solo_sangue": {
   "S0 MVP (per cellula, tutte le cellule con TCR, CD4>0 non esclusivo, etichette CD4T/CD8T)": {
    "Tumor": {
-    "errore": 0.0925967851482907,
+    "errore": 0.0930285196921684,
     "ic": [
-     0.04968936199794189,
-     0.1436319299198728
+     0.049985408130962306,
+     0.14406032794591309
     ],
-    "unita": 4417,
+    "unita": 4418,
     "pazienti": 10,
-    "ic_mvp_prodotto": true
+    "ic_prodotto_dallo_strumento": true
    },
    "Adjacent_normal": {
     "errore": 0.041472265422498704,
     "ic": [
-     0.016666666666666666,
+     0.01669449081803005,
      0.05733082706766917
     ],
     "unita": 3858,
     "pazienti": 4,
-    "ic_mvp_prodotto": false
+    "ic_prodotto_dallo_strumento": false,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
-    "diff": 0.020997220687155507,
+    "diff": 0.02119262713256195,
     "ic": [
-     -0.035002523309310266,
+     -0.03457431059296196,
      0.07531934730688193
     ],
     "cloni": 132,
-    "pazienti": 4
+    "pazienti": 4,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   },
   "S1 + solo cellule etichettate CD4T/CD8T/NK (anche nel riferimento)": {
    "Tumor": {
-    "errore": 0.09310266332802185,
+    "errore": 0.09353664087391898,
     "ic": [
-     0.04973255131781785,
-     0.144588319512285
+     0.05003526280846019,
+     0.14448549669549307
     ],
-    "unita": 4393,
+    "unita": 4394,
     "pazienti": 10,
-    "ic_mvp_prodotto": true
+    "ic_prodotto_dallo_strumento": true
    },
    "Adjacent_normal": {
     "errore": 0.04160166406656266,
     "ic": [
-     0.016666666666666666,
+     0.01669449081803005,
      0.057655954631379965
     ],
     "unita": 3846,
     "pazienti": 4,
-    "ic_mvp_prodotto": false
+    "ic_prodotto_dallo_strumento": false,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
-    "diff": 0.02115750481453837,
+    "diff": 0.02135440291219983,
     "ic": [
-     -0.03560601509050527,
+     -0.035170419396288885,
      0.07531934730688193
     ],
     "cloni": 131,
-    "pazienti": 4
+    "pazienti": 4,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   },
   "S2 + CD4 positivo solo se CD8A e CD8B negativi (regola esclusiva della tesi)": {
    "Tumor": {
-    "errore": 0.09225850650833524,
+    "errore": 0.09269406392694064,
     "ic": [
-     0.04780607381557768,
-     0.1441156616007141
+     0.04791038536136327,
+     0.14402447282934816
     ],
-    "unita": 4379,
+    "unita": 4380,
     "pazienti": 10,
-    "ic_mvp_prodotto": true
+    "ic_prodotto_dallo_strumento": true
    },
    "Adjacent_normal": {
     "errore": 0.04284601402233186,
     "ic": [
-     0.016666666666666666,
+     0.01669449081803005,
      0.05987741631305988
     ],
     "unita": 3851,
     "pazienti": 4,
-    "ic_mvp_prodotto": false
+    "ic_prodotto_dallo_strumento": false,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
-    "diff": 0.020997220687155507,
+    "diff": 0.02119262713256195,
     "ic": [
-     -0.03500252330931026,
+     -0.03457431059296196,
      0.07531934730688193
     ],
     "cloni": 132,
-    "pazienti": 4
+    "pazienti": 4,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   },
   "S3 + etichetta NK contata come errore": {
    "Tumor": {
-    "errore": 0.16262902886033284,
+    "errore": 0.16319225100021056,
     "ic": [
-     0.1249911806208843,
-     0.1914654612334591
+     0.12554538857650652,
+     0.1918909771695891
     ],
-    "unita": 4747,
+    "unita": 4749,
     "pazienti": 10,
-    "ic_mvp_prodotto": true
+    "ic_prodotto_dallo_strumento": true
    },
    "Adjacent_normal": {
     "errore": 0.052929085303186026,
     "ic": [
-     0.02800658978583196,
-     0.06134492933685355
+     0.028052805280528052,
+     0.06131636137845389
     ],
     "unita": 3892,
     "pazienti": 4,
-    "ic_mvp_prodotto": false
+    "ic_prodotto_dallo_strumento": false,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
-    "diff": 0.08065763862036025,
+    "diff": 0.08084870270031322,
     "ic": [
-     0.0315448443767663,
-     0.1262623761322689
+     0.03192945976138169,
+     0.12627371400074963
     ],
     "cloni": 135,
-    "pazienti": 4
+    "pazienti": 4,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   },
   "S4 + almeno 3 cellule del clone anche nel compartimento giudicato": {
    "Tumor": {
-    "errore": 0.15554553651938682,
+    "errore": 0.15615141955835962,
     "ic": [
-     0.11590431779404954,
-     0.18442878516472855
+     0.11601900223973362,
+     0.18527709574315282
     ],
-    "unita": 4436,
+    "unita": 4438,
     "pazienti": 10,
-    "ic_mvp_prodotto": true
+    "ic_prodotto_dallo_strumento": true
    },
    "Adjacent_normal": {
     "errore": 0.05245213742460005,
     "ic": [
-     0.02901023890784983,
+     0.02905982905982906,
      0.061420345489443376
     ],
     "unita": 3813,
     "pazienti": 4,
-    "ic_mvp_prodotto": false
+    "ic_prodotto_dallo_strumento": false,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
-    "diff": 0.061863928909013224,
+    "diff": 0.06215703857712289,
     "ic": [
-     0.024859833903061512,
-     0.10626884291615528
+     0.025380667236394844,
+     0.10628868418599655
     ],
     "cloni": 88,
-    "pazienti": 4
+    "pazienti": 4,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   },
-  "S5 + unita' = coppia clone-compartimento con l'etichetta maggioritaria (= tesi)": {
+  "S5 + unità = coppia clone-compartimento con l'etichetta maggioritaria (= tesi)": {
    "Tumor": {
-    "errore": 0.1951219512195122,
+    "errore": 0.19444444444444445,
     "ic": [
-     0.12300170068027211,
-     0.27365049812586306
+     0.12252547489201314,
+     0.2731204183801179
     ],
-    "unita": 287,
+    "unita": 288,
     "pazienti": 10,
-    "ic_mvp_prodotto": true
+    "ic_prodotto_dallo_strumento": true
    },
    "Adjacent_normal": {
     "errore": 0.059322033898305086,
@@ -199,7 +209,8 @@
     ],
     "unita": 118,
     "pazienti": 4,
-    "ic_mvp_prodotto": false
+    "ic_prodotto_dallo_strumento": false,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
     "diff": 0.07954545454545454,
@@ -208,7 +219,8 @@
      0.17045454545454544
     ],
     "cloni": 88,
-    "pazienti": 4
+    "pazienti": 4,
+    "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   }
  }

@@ -22,6 +22,9 @@ import pytest
 from core.cd8_propagation import cd8_fraction_intervals
 from core.synthetic import make_cd8_fraction_dataset
 
+# Calibrazioni: girano quando cambia lo stimatore che verificano e nel giro di chiusura.
+pytestmark = pytest.mark.slow
+
 R = 200
 BASES = {"basso": dict(p_cd4_to_cd8=0.05, p_cd8_to_cd4=0.05, p_to_other=0.02),
          "alto": dict(p_cd4_to_cd8=0.10, p_cd8_to_cd4=0.03, p_to_other=0.04)}

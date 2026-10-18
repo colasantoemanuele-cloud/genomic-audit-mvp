@@ -15,7 +15,7 @@ dependencies = [
     "pandas>=2.2",
     "scikit-learn>=1.4",
     "scipy>=1.12",
-    "streamlit>=1.35",
+    "streamlit>=1.51",
     "altair>=5",
 ]
 
@@ -46,3 +46,10 @@ testpaths = ["tests"]
 markers = [
     "slow: calibrazioni e test lunghi; girano quando cambia lo stimatore che verificano e nel giro di chiusura",
 ]
+
+[tool.ruff]
+line-length = 140
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["B905"]  # zip senza strict: le lunghezze sono già controllate dove contano

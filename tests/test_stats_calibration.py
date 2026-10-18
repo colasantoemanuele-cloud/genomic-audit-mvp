@@ -68,6 +68,7 @@ def _nb_null_replicate(rep: int, seed0: int, n: int, k: int) -> float:
     return p
 
 
+@pytest.mark.slow
 def test_nadeau_bengio_calibration_null():
     """k=3 con DummyClassifier: controllo fuori dal regime d'uso (vedi il docstring del file)."""
     R, seed0, n, k = 1000, 55_003, 90, 3
@@ -79,6 +80,7 @@ def test_nadeau_bengio_calibration_null():
     )
 
 
+@pytest.mark.slow
 @pytest.mark.xfail(
     reason=(
         "Fuori dal regime d'uso (lo strumento usa Nadeau-Bengio solo con LeaveOneGroupOut, k >= 8). "
@@ -105,6 +107,7 @@ def test_nadeau_bengio_calibration_null_k5_default():
 # --------------------------------------------------------------------------- #
 # Nadeau-Bengio: potenza
 # --------------------------------------------------------------------------- #
+@pytest.mark.slow
 def test_nadeau_bengio_power():
     R, seed0, n, p, k, wscale = 300, 51_005, 120, 8, 5, 8.0
     n_sig = 0
@@ -158,6 +161,7 @@ def _simulate_grouped(rng: np.random.Generator, n_groups: int, effect: float) ->
     return np.array(values), np.array(groups)
 
 
+@pytest.mark.slow
 def test_cluster_bootstrap_calibration_null():
     R, seed0, n_groups, n_boot = 1000, 90_000, 25, 500
     n_sig = 0
@@ -175,6 +179,7 @@ def test_cluster_bootstrap_calibration_null():
     )
 
 
+@pytest.mark.slow
 def test_cluster_bootstrap_power():
     R, seed0, n_groups, n_boot, effect = 300, 95_050, 25, 500, 0.5
     n_sig = 0

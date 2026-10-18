@@ -429,7 +429,7 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
     { name = "scikit-learn", specifier = ">=1.4" },
     { name = "scipy", specifier = ">=1.12" },
-    { name = "streamlit", specifier = ">=1.35" },
+    { name = "streamlit", specifier = ">=1.51" },
 ]
 provides-extras = ["dev"]
 

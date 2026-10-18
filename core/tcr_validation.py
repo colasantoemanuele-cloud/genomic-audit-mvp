@@ -529,7 +529,7 @@ def clone_level_units(
     - Un'unità per coppia (clone, compartimento giudicato) con >= ``min_cells`` cellule;
       errore se l'etichetta di maggioranza è diversa dall'identità. Le etichette fuori mappa
       ammesse contano come errore. Pareggi: vedi ``_majority_error`` (la tesi usava l'ordine
-      delle righe: su GSE278694 11 unità su 405 sono pareggi).
+      delle righe: nel tumore di GSE278694 11 unità su 288 sono pareggi).
     """
     x = cells if error_labels is None else cells[cells["celltype"].isin(list(marker_labels) + list(error_labels))]
     x = x.copy()
@@ -621,7 +621,7 @@ def cell_flags(
     return pd.DataFrame({"audit_reference_label": ref_label, "audit_label_vs_reference": vs_ref})
 
 
-def export_audited(adata: ad.AnnData, result: "TcrValidationResult",
+def export_audited(adata: ad.AnnData, result: TcrValidationResult,
                    out_prefix: str | Path) -> tuple[Path, Path]:
     """Scrive ``<prefisso>_audited.h5ad`` (COPIA compressa gzip di adata con le due colonne
     di flag in obs e le definizioni in uns['genomic_audit_flags']) e ``<prefisso>_audit_flags.csv``

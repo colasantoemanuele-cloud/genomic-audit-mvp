@@ -63,6 +63,7 @@ def main() -> None:
     out = {"dataset": which, "cellule": r.n_cells, "geni": int(adata.n_vars), "pazienti": r.n_patients,
            "secondi": round(el, 1), "entro_10_minuti": el <= 600,
            "raggruppato": r.grouped.mean, "casuale": r.random.mean, "divario": r.gap,
+           "rapporto_dev_std": r.std_ratio,
            "logo": {m: s.mean for m, s in r.model_comparison.scores.items()} if r.model_comparison else None,
            "fold_con_classi_assenti": r.grouped.n_folds_with_absent_classes,
            "xai_jaccard": [r.xai.grouped_mean, r.xai.random_mean]}

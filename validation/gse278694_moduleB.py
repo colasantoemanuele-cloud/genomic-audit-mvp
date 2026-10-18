@@ -1,31 +1,39 @@
-"""Parte A1 -- Modulo B su GSE278694 reale: confronto con la tesi e scomposizione delle differenze.
+"""Verifica di fedeltà del porting del Modulo B su GSE278694 (non una validazione del metodo).
 
-Legge (sola lettura) i dati di pdac-ml e confronta i numeri del Modulo B dell'MVP con quelli
-della tesi (07_robustness.py, 10_loco.py). Non tara nessun parametro: per spiegare una
-differenza parte dalle definizioni dell'MVP e le sostituisce UNA ALLA VOLTA con quelle della
-tesi, fino a riprodurre il numero della tesi. Ogni passo usa gli stessi dati e lo stesso
-cluster bootstrap (core.stats.cluster_bootstrap, seme 0, 2000 repliche).
+Legge (sola lettura) i dati di pdac-ml e confronta le definizioni del Modulo B con quelle della
+tesi (07_robustness.py, 10_loco.py, versione da cui il codice è stato portato). Non tara nessun
+parametro: parte dalle definizioni dello strumento e le sostituisce UNA ALLA VOLTA con quelle della
+tesi, fino a riprodurre il numero della tesi. Per riprodurre ESATTAMENTE quei numeri usa le regole
+della tesi di allora: il bootstrap percentile (core.stats.cluster_bootstrap, seme 0, 2000 repliche)
+e, per i pareggi dell'etichetta di maggioranza, il primo valore di value_counts (dipende dall'ordine
+delle righe). Lo strumento oggi usa invece l'intervallo t cluster-robusto e una regola dei pareggi
+che non dipende dall'ordine: questi numeri servono a mostrare che il porting segue le regole della
+tesi, non che le regole siano giuste. Gli intervalli con meno di 5 pazienti qui riportati
+(min_groups=3) sono quelli della tesi: lo strumento li rifiuta, e con 4 pazienti esistono solo 35
+ricampionamenti distinti.
 
 Uso:
     python -m validation.gse278694_moduleB --vdj-manifest <manifest.csv> --out <dir>
 
-``manifest.csv``: path,patient,compartment dei CSV VDJ (copie con il barcode senza il
-suffisso "-1", perché in sc_raw.h5ad il barcode è la sola sequenza di 16 nt).
+``manifest.csv``: path,patient,compartment dei CSV VDJ originali (validation.make_vdj_manifest);
+il suffisso "-1" dei barcode è normalizzato come nello strumento (match_barcodes).
 """
 
 from __future__ import annotations
 
-import os
 import argparse
 import json
+import os
+from math import comb
 from pathlib import Path
 
 import anndata as ad
 import numpy as np
 import pandas as pd
 
+from core.io import read_vdj_manifest
 from core.stats import cluster_bootstrap
-from core.tcr_validation import build_clonotypes, pairwise_excess_discordance, parse_vdj_contigs
+from core.tcr_validation import build_clonotypes, match_barcodes, pairwise_excess_discordance, parse_vdj_contigs
 
 # Dati reali di GSE278694: non inclusi nella repo. Cartella indicata da GSE278694_DIR, altrimenti
 # una cartella "pdac-ml" accanto a questa repo.
@@ -44,10 +52,9 @@ def load_cells(manifest: Path) -> pd.DataFrame:
         i = adata.var_names.get_loc(g)
         obs[g] = np.asarray(adata.X[:, i].todense()).ravel()
     del adata
-    m = pd.read_csv(manifest)
-    contigs = parse_vdj_contigs([(Path(r.path), str(r.patient), str(r.compartment)) for r in m.itertuples()])
-    clones = build_clonotypes(contigs)
-    return obs.merge(clones, on=["patient", "compartment", "barcode"], how="inner")
+    contigs = parse_vdj_contigs(read_vdj_manifest(manifest))
+    obs, clones, _ = match_barcodes(obs, build_clonotypes(contigs))
+    return obs.merge(clones, on=["patient", "compartment", "library", "barcode"], how="inner")
 
 
 def discordance(cells: pd.DataFrame, lymphoid_only: bool) -> dict:
@@ -85,20 +92,31 @@ def error_units(cells: pd.DataFrame, *, lymphoid_only: bool, exclusive_cd4: bool
     return pd.DataFrame(rows)
 
 
+def _note(n_patients: int) -> dict:
+    """Annotazione degli intervalli calcolati come nella tesi (min_groups=3): sotto 5 pazienti lo
+    strumento non li produce; con n pazienti il bootstrap ha C(2n-1, n) ricampionamenti distinti."""
+    if n_patients >= 5:
+        return {}
+    return {"nota": (f"intervallo della tesi con {n_patients} pazienti: lo strumento lo rifiuta (servono "
+                     f"almeno 5); il bootstrap sui pazienti ha solo {comb(2 * n_patients - 1, n_patients)} "
+                     f"ricampionamenti distinti")}
+
+
 def summarize(u: pd.DataFrame) -> dict:
+    """Tasso d'errore per compartimento e differenza appaiata, con il bootstrap percentile della tesi."""
     out = {}
     for tis in ("Tumor", "Adjacent_normal"):
         g = u[u.tissue == tis]
         b3 = cluster_bootstrap(g.error.values, g.patient.values, n_boot=N_BOOT, seed=SEED, min_groups=3)
-        b5 = cluster_bootstrap(g.error.values, g.patient.values, n_boot=N_BOOT, seed=SEED, min_groups=5)
         out[tis] = {"errore": b3.mean, "ic": [b3.ci_low, b3.ci_high], "unita": len(g),
-                    "pazienti": b3.n_groups, "ic_mvp_prodotto": b5.sufficient}
+                    "pazienti": b3.n_groups, "ic_prodotto_dallo_strumento": b3.n_groups >= 5,
+                    **_note(b3.n_groups)}
     per = u.groupby(["patient", "clone", "tissue"]).error.mean().unstack("tissue")
     d = per.dropna(subset=["Tumor", "Adjacent_normal"]).reset_index()
     diff = (d.Tumor - d.Adjacent_normal).values
     b = cluster_bootstrap(diff, d.patient.values, n_boot=N_BOOT, seed=SEED, min_groups=3)
     out["Tumor-Adjacent"] = {"diff": b.mean, "ic": [b.ci_low, b.ci_high], "cloni": len(d),
-                             "pazienti": b.n_groups}
+                             "pazienti": b.n_groups, **_note(b.n_groups)}
     return out
 
 

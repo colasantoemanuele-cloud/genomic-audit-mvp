@@ -94,6 +94,7 @@ def main() -> None:
         "LOGO_TXT": (f"regressione logistica {bm['logo']['logreg']:.3f}, random forest {bm['logo']['random_forest']:.3f}, "
                      f"gradient boosting {bm['logo']['hist_gb']:.3f}"),
         "GAP_TXT": f"{bm['divario']:+.3f}** ({bm['casuale']:.3f} contro {bm['raggruppato']:.3f})",
+        "STD_RATIO": f"{bm['rapporto_dev_std']:.1f}".replace(".", ","),
         "XAI_TXT": f"{bm['xai_jaccard'][0]:.3f} fra fold per paziente, {bm['xai_jaccard'][1]:.3f} fra fold casuali",
         "SINT_S": f"{bs['secondi']:.0f}", "SUITE_FINALE": suite,
         "CO_ROW_O": corow("O", f"exit {a1_exit}, {a1_s} s"), "CO_ROW_M1": corow("M1", "exit 0, 156 s"),

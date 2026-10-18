@@ -23,8 +23,9 @@ assemblati dai file in `results/` da `make_report.py`.
 | [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449) | tumori primitivi del fegato (HCC, iCCA) | 19 | 19 campioni (uno per paziente) su 2 piattaforme; 9.946 cellule, 18.372 geni comuni | audit del disegno e Modulo A | eleggibile: E1-E3 (paziente ricavato dal titolo `LCP<id>`, regex dichiarata in `parse_geo.py`) e M1-M4 (conteggi interi in mtx, 19 pazienti, etichetta `Type` degli autori, meno di 50.000 cellule) |
 
 Tutte le accessioni sono state verificate leggendo le pagine GEO e scaricando i file (series
-matrix e file supplementari). Il Modulo B non è testato qui: resta validato su un solo
-dataset (GSE278694).
+matrix e file supplementari). Il Modulo B non è testato qui: su dati reali è stato eseguito
+solo su GSE278694, il dataset su cui è nato (verifica di fedeltà del porting, non una
+validazione); la sua validazione esterna è in `validation_esterna_B/`.
 
 ## 2. Criteri × dataset (esecuzione finale)
 
@@ -105,8 +106,12 @@ Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: {{
 
 ## 5. Risultati descrittivi (non criteri)
 
-Su GSE125449 lo split casuale sovrastima la macro-F1 dello split per paziente di
-**{{GAP_TXT}}. La deviazione standard fra fold è 15,4 volte più ampia nello split onesto.
+Su GSE125449 lo split casuale dà una macro-F1 più alta di quella dello split per paziente di
+**{{GAP_TXT}}. In GSE125449 ogni paziente ha un solo campione, sequenziato su una sola delle due
+piattaforme: il divario misura quindi anche il passaggio fra piattaforme, non solo fra pazienti.
+Il rapporto fra le deviazioni standard fra fold (per paziente / casuale) è {{STD_RATIO}}: è
+descrittivo, perché con 5 fold correlati la deviazione standard fra fold non è una stima valida
+dell'incertezza.
 Stabilità delle spiegazioni (Jaccard fra i 50 geni principali): {{XAI_TXT}}.
 
 Tempi:
@@ -244,7 +249,8 @@ Altre precisazioni che fanno parte del verdetto:
 
 ## Cosa questa validazione non dimostra
 
-- Il **Modulo B** resta validato su un solo dataset reale (GSE278694, PDAC) e non è testato qui.
+- Il **Modulo B** non è testato qui: su dati reali è stato eseguito solo su GSE278694 (PDAC),
+  il dataset su cui è nato; la sua validazione esterna è in `validation_esterna_B/`.
 - La generalità del codice non implica la sua **utilità** per un utente clinico: lo strumento
   non è stato provato da nessun utente esterno.
 - I dataset sono **pochi**: 3 per il disegno e uno solo per il Modulo A, con una sola etichetta

@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from core.design_audit import MISSING_LEVEL_CLASS, TECHNICAL_ROLES, run_design_audit
+from core.design_audit import MISSING_LEVEL_CLASS, TECHNICAL_ROLES, parse_comparison_lines, run_design_audit
 from core.io import load_matrix_market, read_table, read_vdj_manifest
 from core.leakage_audit import GAP_ALERT, run_leakage_audit
 from core.report import render_markdown_report, render_report
@@ -230,12 +230,7 @@ with tab_d:
                     technical[role] = val
             outcomes = st.multiselect("Colonne di esito", cols, key="d_out")
             comp_txt = st.text_area("Confronti, uno per riga: colonna:livello_a:livello_b", key="d_cmp")
-            comps, bad = [], []
-            for line in comp_txt.splitlines():
-                if not line.strip():
-                    continue
-                parts = [x.strip() for x in line.split(":")]
-                (comps if len(parts) == 3 and all(parts) else bad).append(tuple(parts) if len(parts) == 3 else line)
+            comps, bad = parse_comparison_lines(comp_txt)
             if bad:
                 st.error("Righe dei confronti non valide (servono tre parti colonna:livello_a:livello_b), "
                          "non usate: " + "; ".join(map(str, bad)))

@@ -15,7 +15,10 @@ Per ogni fold registra tre macro-F1:
   il default di scikit-learn;
 - "tutte_le_classi": labels = tutte le classi del dataset, zero_division=0. Una classe assente
   dal fold e mai predetta conta come F1 = 0.
-Il confronto fra le due mostra se una classe assente viene contata come zero.
+Il confronto fra le tre mostra se una classe assente viene contata come zero.
+
+Questo script verifica che lo strumento segua le regole dichiarate (stessi numeri con un codice
+scritto da capo), non che le regole siano giuste.
 
 Con `--pipeline originale` lo script applica invece la pipeline dichiarata nei criteri
 ORIGINALI (CRITERI.md, sezione 3, commit 0b5a847): tutti i geni, senza selezione dei 2000 a

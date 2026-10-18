@@ -4,6 +4,9 @@ NON importa nulla da core/: reimplementa, a partire dalle regole dichiarate in C
 fatti strutturali, le classi dei confronti e la valutabilità del Cramér V. Lettura dei
 metadati identica a quella documentata della CLI: CSV letto come stringhe e valori mancanti
 trattati come il livello "nan".
+
+Verifica che lo strumento applichi le regole dichiarate (stessi fatti e classi con un codice scritto
+da capo), non che le regole siano giuste.
 """
 
 from __future__ import annotations

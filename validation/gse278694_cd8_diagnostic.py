@@ -13,8 +13,8 @@ Uso:
 
 from __future__ import annotations
 
-import os
 import argparse
+import os
 from pathlib import Path
 
 import anndata as ad
@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 
 from core.cd8_propagation import cd8_fraction_intervals
+from core.io import read_vdj_manifest
 from core.tcr_validation import (
     assign_reference_identity,
     build_clonotypes,
@@ -44,9 +45,7 @@ def load_cells(manifest: Path) -> pd.DataFrame:
     pos = compute_marker_positivity(adata, {**MARKERS, "CD8A_only": ["CD8A"]}).reset_index(drop=True)
     obs = pd.concat([obs, pos], axis=1)
     del adata
-    m = pd.read_csv(manifest)
-    clones = build_clonotypes(parse_vdj_contigs([(Path(r.path), str(r.patient), str(r.compartment))
-                                                 for r in m.itertuples()]))
+    clones = build_clonotypes(parse_vdj_contigs(read_vdj_manifest(manifest)))
     obs, clones, bm = match_barcodes(obs, clones)
     print(bm.sentence)
     return obs.merge(clones, on=["patient", "compartment", "library", "barcode"], how="inner")

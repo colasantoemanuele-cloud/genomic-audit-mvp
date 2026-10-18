@@ -229,7 +229,6 @@ def cd8_fraction_intervals(
     df.columns = ["patient", "compartment", "celltype", "ref"]
     df = df[df["compartment"].astype(str) == str(target_compartment)]
     df["patient"] = df["patient"].astype(str)
-    lab = df["celltype"].astype(str)
 
     ref = df["ref"].astype("object")
     ref_ok = ref.notna() & ref.astype(str).isin([cd4_label, cd8_label])
