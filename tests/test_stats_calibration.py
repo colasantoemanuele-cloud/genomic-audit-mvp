@@ -24,7 +24,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
 
-from core.stats import cluster_bootstrap, nadeau_bengio_test, wilcoxon_min_pvalue
+from core.stats import (
+    bell_mccaffrey_df,
+    cluster_bootstrap,
+    cluster_t_interval,
+    nadeau_bengio_test,
+    wilcoxon_min_pvalue,
+)
 
 ALPHA = 0.05
 CALIBRATION_LOW, CALIBRATION_HIGH = 0.02, 0.08
@@ -268,3 +274,151 @@ def test_cluster_bootstrap_naive_vs_cluster_ci_width():
     cluster_width = cluster_res.ci_high - cluster_res.ci_low
     naive_width = naive_hi - naive_lo
     assert cluster_width > naive_width
+
+
+# --------------------------------------------------------------------------- #
+# Intervallo cluster-robusto (revisione, A1): calibrazione nel regime d'uso
+# --------------------------------------------------------------------------- #
+# Bande dichiarate PRIMA di eseguire questi test (non si allargano):
+#   - sotto H0, frazione di intervalli al 95% che NON contengono il valore vero in [2%, 8%],
+#     per ogni scenario e per 5, 8, 10 e 15 gruppi (il regime d'uso del Modulo B: 4-11
+#     pazienti su GSE278694), 1000 repliche per caso. Lo stimatore è in forma chiusa: 1000
+#     repliche costano pochi secondi e riducono l'errore Monte Carlo (d.s. 0,7 punti al 5%);
+#   - potenza: con un effetto noto, l'intervallo esclude lo zero nella maggioranza delle
+#     repliche (10 gruppi);
+#   - il percentile (cluster_bootstrap) nello scenario normale a 5 gruppi resta fuori banda
+#     (> 8%): documenta il difetto che ha motivato la sostituzione.
+# Scenari, con dimensioni dei gruppi diverse:
+#   normale     3-14 osservazioni per gruppo, N(0, 1) (lo scenario della revisione);
+#   eterogeneo  3-14 osservazioni, effetto di gruppo N(0, 0,7^2) più N(0, 1);
+#   cellula     tasso d'errore per cellula come su GSE278694 (scala logit): 40-1000 cellule per
+#               paziente, tasso per paziente Beta con media 0,09 e d.s. 0,06, cellule raggruppate
+#               in cloni di 1-10 cellule con tasso di clone Beta(4p, 4(1-p));
+#   clone       tasso per clone (scala logit): 5-60 unità per paziente, Beta media 0,18 d.s. 0,125;
+#   eccesso     eccesso di discordanza: 13-285 coppie per paziente, valori in [-1, 1] (metà zeri,
+#               il resto N(0, 0,28^2)), media di paziente N(0, 0,05^2), troncati a [-1, 1].
+CI_REPS = 1000
+CI_GROUPS = (5, 8, 10, 15)
+CI_SCENARIOS = ("normale", "eterogeneo", "cellula", "clone", "eccesso")
+CI_SCALE = {"cellula": "logit", "clone": "logit"}
+
+
+def _beta_params(m: float, s: float) -> tuple[float, float]:
+    k = m * (1 - m) / s ** 2 - 1
+    return m * k, (1 - m) * k
+
+
+def _ci_scenario(rng: np.random.Generator, G: int, kind: str, effect: float = 0.0):
+    """(valori, gruppi) per uno scenario; la media vera è ``_ci_truth(kind) + effect``."""
+    if kind in ("normale", "eterogeneo"):
+        sizes = rng.integers(3, 15, G)
+        shift = rng.normal(0, 0.7, G) if kind == "eterogeneo" else np.zeros(G)
+        groups = np.repeat(np.arange(G), sizes)
+        return rng.normal(effect, 1.0, sizes.sum()) + shift[groups], groups
+    if kind == "cellula":
+        sizes = rng.integers(40, 1001, G)
+        p = rng.beta(*_beta_params(0.09, 0.06), G)
+        vals, groups = [], []
+        for g, (n, pg) in enumerate(zip(sizes, p)):
+            k = rng.integers(1, 11, n)  # più cloni di quanti servono, poi si tronca a n cellule
+            q = rng.beta(4 * pg + 1e-3, 4 * (1 - pg) + 1e-3, n)
+            cell_q = np.repeat(q, k)[:n]
+            vals.append((rng.random(n) < cell_q).astype(float))
+            groups.append(np.full(n, g))
+        return np.concatenate(vals), np.concatenate(groups)
+    if kind == "clone":
+        sizes = rng.integers(5, 61, G)
+        p = rng.beta(*_beta_params(0.18, 0.125), G)
+        groups = np.repeat(np.arange(G), sizes)
+        return (rng.random(sizes.sum()) < p[groups]).astype(float), groups
+    if kind == "eccesso":
+        sizes = rng.integers(13, 286, G)
+        groups = np.repeat(np.arange(G), sizes)
+        n = sizes.sum()
+        x = np.where(rng.random(n) < 0.5, 0.0, rng.normal(0, 0.28, n)) + rng.normal(0, 0.05, G)[groups]
+        return np.clip(x + effect, -1, 1), groups
+    raise ValueError(kind)
+
+
+_TRUTH: dict[str, float] = {}
+
+
+def _ci_truth(kind: str) -> float:
+    """Media vera dello scenario sotto H0 (per 'eccesso' la troncatura a [-1, 1] la sposta di
+    pochissimo da zero: calcolata una volta con 4 milioni di estrazioni)."""
+    if kind not in _TRUTH:
+        if kind == "cellula":
+            _TRUTH[kind] = 0.09
+        elif kind == "clone":
+            _TRUTH[kind] = 0.18
+        elif kind == "eccesso":
+            rng = np.random.default_rng(123)
+            m = 4_000_000
+            x = np.where(rng.random(m) < 0.5, 0.0, rng.normal(0, 0.28, m)) + rng.normal(0, 0.05, m)
+            _TRUTH[kind] = float(np.clip(x, -1, 1).mean())
+        else:
+            _TRUTH[kind] = 0.0
+    return _TRUTH[kind]
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("n_groups", CI_GROUPS)
+@pytest.mark.parametrize("kind", CI_SCENARIOS)
+def test_cluster_t_interval_calibration_null(kind, n_groups):
+    truth = _ci_truth(kind)
+    seed0 = 3_000_000 + 100_000 * CI_SCENARIOS.index(kind) + 1_000 * n_groups
+    miss = 0
+    for rep in range(CI_REPS):
+        values, groups = _ci_scenario(np.random.default_rng(seed0 + rep), n_groups, kind)
+        r = cluster_t_interval(values, groups, min_groups=5, scale=CI_SCALE.get(kind, "identity"))
+        assert r.sufficient, r.reason
+        miss += not (r.ci_low <= truth <= r.ci_high)
+    frac = miss / CI_REPS
+    print(f"\n[A1 {kind}, {n_groups} gruppi] fuori dall'IC95%: {miss}/{CI_REPS} = {frac:.3f} "
+          f"(banda [{CALIBRATION_LOW}, {CALIBRATION_HIGH}])")
+    assert CALIBRATION_LOW <= frac <= CALIBRATION_HIGH
+
+
+@pytest.mark.slow
+def test_cluster_t_interval_power():
+    R, n_sig = 300, 0
+    for rep in range(R):
+        values, groups = _ci_scenario(np.random.default_rng(4_000_000 + rep), 10, "normale", effect=0.5)
+        r = cluster_t_interval(values, groups, min_groups=5)
+        n_sig += r.ci_low > 0 or r.ci_high < 0
+    print(f"\n[A1 potenza] effetto 0,5, 10 gruppi: {n_sig}/{R} = {n_sig / R:.3f}")
+    assert n_sig / R > 0.5
+
+
+@pytest.mark.slow
+def test_percentile_bootstrap_is_anticonservative_with_five_groups():
+    """Il difetto che ha motivato A1, misurato: il percentile a 5 gruppi è fuori banda."""
+    R, miss = 400, 0
+    for rep in range(R):
+        values, groups = _ci_scenario(np.random.default_rng(5_000_000 + rep), 5, "normale")
+        r = cluster_bootstrap(values, groups, n_boot=500, seed=rep)
+        miss += not (r.ci_low <= 0.0 <= r.ci_high)
+    print(f"\n[A1 percentile, 5 gruppi] fuori dall'IC95%: {miss}/{R} = {miss / R:.3f}")
+    assert miss / R > CALIBRATION_HIGH
+
+
+def test_cluster_t_interval_refuses_below_min_groups_and_degenerate_cases():
+    g = np.repeat(np.arange(4), 5)
+    r = cluster_t_interval(np.arange(20.0), g, min_groups=5)
+    assert not r.sufficient and np.isnan(r.ci_low) and "4 pazienti" in r.reason
+    zeros = cluster_t_interval(np.zeros(30), np.repeat(np.arange(6), 5), min_groups=5, scale="logit")
+    assert not zeros.sufficient and zeros.mean == 0.0
+    with pytest.raises(ValueError, match="logit"):
+        cluster_t_interval(np.array([-0.5, 0.2] * 10), np.repeat(np.arange(10), 2), 5, scale="logit")
+
+
+def test_bell_mccaffrey_df_equal_sizes_is_g_minus_one():
+    assert bell_mccaffrey_df(np.array([7, 7, 7, 7, 7])) == pytest.approx(4.0)
+    assert bell_mccaffrey_df(np.array([3, 300, 5, 8, 40])) < 4.0
+
+
+def test_cluster_t_interval_point_estimate_is_pooled_mean():
+    values = np.array([1, 0, 0, 1, 1, 1, 0, 0, 0, 0], dtype=float)
+    groups = np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
+    r = cluster_t_interval(values, groups, min_groups=5, scale="logit")
+    assert r.mean == pytest.approx(0.4) and r.ci_low < 0.4 < r.ci_high

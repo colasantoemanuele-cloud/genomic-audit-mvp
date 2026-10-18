@@ -43,3 +43,6 @@ package = true
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+markers = [
+    "slow: calibrazioni e test lunghi; girano quando cambia lo stimatore che verificano e nel giro di chiusura",
+]
