@@ -46,7 +46,7 @@ from core.synthetic import (
     make_tcr_validation_dataset,
     write_vdj_csvs,
 )
-from core.tcr_validation import export_audited, parse_vdj_contigs, run_tcr_validation
+from core.tcr_validation import export_audited, parse_vdj_contigs, run_tcr_validation, validate_marker_map
 from core.verdict import USE_WARNING
 
 
@@ -185,10 +185,10 @@ def _read_marker_map(path: Path | None) -> dict[str, list[str]] | None:
         mm = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
         raise InputError(f"mappa dei marcatori '{path}' illeggibile: {e}") from e
-    if not isinstance(mm, dict) or not all(isinstance(v, list) and all(isinstance(g, str) for g in v)
-                                           for v in mm.values()):
-        raise InputError('la mappa dei marcatori deve essere un JSON {"etichetta": ["gene1", "gene2"]}')
-    return mm
+    try:
+        return validate_marker_map(mm)
+    except ValueError as e:
+        raise InputError(str(e)) from e
 
 
 def _cmd_tcr(args: argparse.Namespace) -> None:
@@ -203,7 +203,7 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
     result = run_tcr_validation(
         adata, contigs, patient_col=args.patient_col, compartment_col=args.compartment_col,
         celltype_col=args.celltype_col, barcode_col=args.barcode_col, marker_map=marker_map,
-        reference_compartment=args.reference_compartment, convention=args.convention,
+        reference_compartment=args.reference_compartment, gene_col=args.gene_col, convention=args.convention,
         clone_error_labels=_csv_list(args.clone_error_labels),
         clone_marker_priority=_csv_list(args.clone_marker_priority),
         library_col=args.library_col, compartment_order=_csv_list(args.compartment_order),
@@ -334,6 +334,9 @@ def main(argv: list[str] | None = None) -> None:
                        help="colonna libreria di adata.obs, obbligatoria se il manifest ha la colonna library")
     p_tcr.add_argument("--marker-map", type=Path, default=None,
                        help="JSON {\"etichetta\": [\"gene1\", \"gene2\"]}, opzionale")
+    p_tcr.add_argument("--gene-col", default=None,
+                       help="colonna di adata.var con i nomi dei geni della mappa dei marcatori "
+                            "(default: adata.var_names)")
     p_tcr.add_argument("--reference-compartment", default=None,
                        help="richiesto insieme a --marker-map per il tasso d'errore per compartimento")
     p_tcr.add_argument("--convention", choices=["both", "cell", "clone"], default="both",

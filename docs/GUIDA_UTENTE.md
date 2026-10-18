@@ -93,7 +93,8 @@ a = ad.read_h5ad("studio.h5ad")
 pazienti = a.obs.groupby("celltype", observed=True)["patient"].nunique()
 rare = pazienti[pazienti < 2].index
 a.obs["celltype_ridotto"] = a.obs["celltype"].astype(str).where(~a.obs["celltype"].isin(rare), "altro")
-a.write_h5ad("studio.h5ad")      # poi: --target-col celltype_ridotto
+a.write_h5ad("studio_ridotto.h5ad")   # una copia: il file di partenza resta com'era
+# poi: --h5ad studio_ridotto.h5ad --target-col celltype_ridotto
 ```
 
 Con tipi cellulari grossolani (epiteliali, T, B, mieloidi) la macro-F1 è spesso vicina a 1 in
@@ -235,8 +236,9 @@ Le regole esatte sono stampate nel report, sotto la tabella.
 ## 6. Limiti, in breve
 
 - **Modulo B, ipotesi biologica.** Si assume che le cellule dello stesso clone T abbiano la stessa
-  linea CD4/CD8. Eccezioni note: CD4 citotossiche, cellule CD4 con CD8αα, MAIT, NKT e γδ, doppietti
-  T-NK, RNA ambientale. Il metodo ha senso solo con etichette di linea (CD4/CD8), non di stato
+  linea CD4/CD8. Eccezioni note: cellule CD4 con CD8αα, MAIT, NKT e γδ, doppietti T-NK, RNA
+  ambientale. Le CD4 citotossiche non sono un'eccezione: restano della linea CD4, e una loro
+  etichetta CD8 è un errore di linea. Il metodo ha senso solo con etichette di linea (CD4/CD8), non di stato
   (effettrice, esausta).
 - **Modulo B, una sola prova su dati reali.** È stato eseguito su GSE278694, il dataset su cui è
   nato: lì si è verificata la fedeltà del porting, non la correttezza del metodo.

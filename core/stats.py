@@ -6,8 +6,9 @@ cluster bootstrap percentile (solo per riprodurre numeri precedenti).
   sulla media pesata per osservazioni (cellule, cloni, coppie) con varianza cluster-robusta CR2 e
   gradi di libertà di Bell-McCaffrey; per i tassi (valori in [0, 1]) è calcolato su scala logit.
   Sostituisce il cluster bootstrap percentile (revisione, A1), che con pochi gruppi è
-  anticonservativo: sotto H0, 16-18% di falsi positivi con 5 gruppi e 9-11% con 10, contro il 5%
-  nominale (tests/test_stats_calibration.py).
+  anticonservativo: 14,5% di intervalli che mancano il valore vero con 5 gruppi nel test di
+  calibrazione (tests/test_stats_calibration.py, revisione/log/a1_calibrazione.txt), contro il 5%
+  nominale; nelle simulazioni esplorative 18% con 5 gruppi e 9% con 10 (revisione/REGISTRO.md).
 - ``cluster_bootstrap``: bootstrap percentile sui gruppi, portato da pdac-ml/src/07_robustness.py e
   10_loco.py. Resta solo per riprodurre gli intervalli della tesi (validation/) e per la frazione di
   CD8 sperimentale (core/cd8_propagation.py, che ne replica lo schema di ricampionamento). Non è
@@ -252,8 +253,8 @@ def cluster_bootstrap(
     stretti quando le osservazioni sono annidate nei gruppi).
 
     NON è usato per gli intervalli esposti: con pochi gruppi l'intervallo percentile è troppo
-    stretto (sotto H0, 16-18% di falsi positivi con 5 gruppi, 9-11% con 10; banda 2-8%
-    rispettata solo da circa 25 gruppi). Resta per riprodurre gli intervalli della tesi e per
+    stretto (14,5% di intervalli che mancano il valore vero con 5 gruppi nel test di calibrazione;
+    18% con 5 e 9% con 10 nelle simulazioni esplorative di revisione/REGISTRO.md). Resta per riprodurre gli intervalli della tesi e per
     la frazione di CD8 sperimentale. Con meno di ``min_groups`` gruppi ``sufficient`` è False e
     ci_low/ci_high sono NaN.
     """

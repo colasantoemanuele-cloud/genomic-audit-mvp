@@ -311,3 +311,24 @@ def test_app_reads_uploads_in_memory_without_temporary_files():
     assert "io.BytesIO(up.getvalue())" in src
     a = ad.read_h5ad(__import__("io").BytesIO((ROOT / "data" / "demo" / "GSE125449_demo.h5ad").read_bytes()))
     assert a.n_obs == 1861
+
+
+# --------------------------------------------------------------------------- #
+# Revisione, giro 1: errori d'input del Modulo B che facevano sparire il tasso d'errore
+# --------------------------------------------------------------------------- #
+def test_reference_compartment_not_in_data_is_an_error():
+    adata, contigs = make_tcr_validation_dataset(n_patients=5, n_clones_per_patient=5, seed=3)
+    with pytest.raises(ValueError, match="'Blood' non compare.*PBMC"):
+        _run(adata, contigs, marker_map=MARKERS, reference_compartment="Blood")
+
+
+@pytest.mark.parametrize("bad, match", [
+    ({"CD4T": ["ENSG00000010610"], "CD8T": ["CD8A"]}, "nessun gene marcatore di 'CD4T'"),
+    ({"CD4T": "CD4", "CD8T": ["CD8A"]}, "almeno un gene"),
+    (["CD4", "CD8A"], "almeno un gene"),
+    ({"CD4T": [], "CD8T": ["CD8A"]}, "almeno un gene"),
+])
+def test_malformed_marker_map_is_an_error_not_a_vanished_rate(bad, match):
+    adata, contigs = make_tcr_validation_dataset(n_patients=5, n_clones_per_patient=5, seed=3)
+    with pytest.raises(ValueError, match=match):
+        _run(adata, contigs, marker_map=bad, reference_compartment="PBMC")

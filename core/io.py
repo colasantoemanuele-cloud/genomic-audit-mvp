@@ -7,12 +7,15 @@
   metadati per cellula che contiene la colonna dei barcode.
 - manifest dei file VDJ di Cell Ranger (``read_vdj_manifest``).
 Ogni incoerenza (file mancante, barcode non trovati o ripetuti, dimensioni diverse, colonne con lo
-stesso nome) solleva un errore esplicito: nessuna riga viene scartata in silenzio.
+stesso nome) solleva un errore esplicito. L'unico scarto ammesso, dichiarato con un avviso, sono
+le righe dei metadati per cellula il cui barcode non compare nella matrice (es. cellule filtrate
+dopo l'annotazione).
 """
 
 from __future__ import annotations
 
 import io
+import warnings
 from pathlib import Path
 
 import anndata as ad
@@ -82,6 +85,10 @@ def load_matrix_market(folder: str | Path, cell_metadata: pd.DataFrame, barcode_
     if missing.any():
         raise ValueError(f"{int(missing.sum())} barcode della matrice su {len(bc)} non hanno metadati "
                          f"(es. {bc[missing].head(3).tolist()}): controlla la colonna '{barcode_col}'")
+    extra = int((~meta.index.isin(bc)).sum())
+    if extra:
+        warnings.warn(f"{extra} righe dei metadati su {len(meta)} hanno un barcode che non compare nella "
+                      f"matrice e non entrano nell'AnnData", stacklevel=2)
     obs = meta.loc[bc.values].reset_index()
     obs.index = bc.values
     symbols = feat[1] if feat.shape[1] > 1 else feat[0]

@@ -2,7 +2,7 @@
  "eccesso_035_marcatori": {
   "n_cells_with_tcr": 2285,
   "n_clones_total": 180,
-  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) ricevono etichette diverse fra compartimenti con un eccesso di discordanza di +0.107 (IC95% [+0.084, +0.131], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore entro lo stesso compartimento: l'intervallo è interamente sopra lo zero: entro lo stesso clone le etichette differiscono fra compartimenti più che entro un compartimento. È compatibile con un errore di annotazione, ma anche con le eccezioni biologiche elencate fra le ipotesi. Sensibilità a pesi uguali (valore atteso ½‖pA − pB‖² ≥ 0): +0.106 (IC95% [+0.085, +0.128]). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC'), secondo 2 convenzioni dichiarate: [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori escluse -- 'Tumor': 0.283 (IC95% [0.246, 0.324], 12 pazienti). [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza (pareggi: probabilità di errore con scelta a caso fra le etichette a pari merito); etichette fuori mappa contate come errore (etichette ammesse fuori mappa: tutte, anche non T (es. mieloidi, B)); positività non esclusiva -- 'Tumor': 0.246 (IC95% [0.190, 0.313], 12 pazienti).",
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) ricevono etichette diverse fra compartimenti con un eccesso di discordanza di +0.107 (IC95% [+0.084, +0.131], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore entro lo stesso compartimento: l'intervallo è interamente sopra lo zero: entro lo stesso clone le etichette differiscono fra compartimenti più che entro un compartimento. È compatibile con un errore di annotazione, ma anche con le eccezioni biologiche elencate fra le ipotesi. Sensibilità a pesi uguali (valore atteso ½‖pA − pB‖² ≥ 0): +0.106 (IC95% [+0.085, +0.128]). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC'), secondo 2 convenzioni dichiarate: [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori escluse -- 'Tumor': 0.283 (IC95% [0.246, 0.324], 12 pazienti, 904 unità). [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza (pareggi della maggioranza: esclusi dal calcolo); etichette fuori mappa contate come errore (etichette ammesse fuori mappa: tutte, anche non T (es. mieloidi, B)); positività non esclusiva -- 'Tumor': 0.181 (IC95% [0.119, 0.266], 12 pazienti, 149 unità; unità in pareggio: 31).",
   "discordance": {
    "n_pairs": 180,
    "n_patients": 12,
@@ -36,12 +36,44 @@
      "sufficient": true
     }
    }
+  },
+  "conventions": {
+   "cell": {
+    "by_compartment": {
+     "Tumor": {
+      "mean": 0.2831858407079646,
+      "ci_low": 0.24597333290241621,
+      "ci_high": 0.32361193706776764,
+      "n_groups": 12,
+      "n_obs": 904,
+      "sufficient": true
+     }
+    },
+    "n_ties": null,
+    "paired_differences": {}
+   },
+   "clone": {
+    "by_compartment": {
+     "Tumor": {
+      "mean": 0.18120805369127516,
+      "ci_low": 0.11911180666860094,
+      "ci_high": 0.26590482308276725,
+      "n_groups": 12,
+      "n_obs": 149,
+      "sufficient": true
+     }
+    },
+    "n_ties": {
+     "Tumor": 31
+    },
+    "paired_differences": {}
+   }
   }
  },
  "eccesso_0_marcatori": {
   "n_cells_with_tcr": 2384,
   "n_clones_total": 180,
-  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) ricevono etichette diverse fra compartimenti con un eccesso di discordanza di -0.002 (IC95% [-0.007, +0.003], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore entro lo stesso compartimento: l'intervallo include lo zero: nessun eccesso rilevato rispetto al rumore entro compartimento. Sensibilità a pesi uguali (valore atteso ½‖pA − pB‖² ≥ 0): -0.003 (IC95% [-0.005, -0.001]). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC'), secondo 2 convenzioni dichiarate: [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori escluse -- 'Tumor': 0.026 (IC95% [0.018, 0.038], 12 pazienti). [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza (pareggi: probabilità di errore con scelta a caso fra le etichette a pari merito); etichette fuori mappa contate come errore (etichette ammesse fuori mappa: tutte, anche non T (es. mieloidi, B)); positività non esclusiva -- 'Tumor': 0.000, IC non prodotto (nessuna variabilità fra pazienti: intervallo non definito).",
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) ricevono etichette diverse fra compartimenti con un eccesso di discordanza di -0.002 (IC95% [-0.007, +0.003], su 180 coppie clone-compartimenti da 12 pazienti) rispetto al rumore entro lo stesso compartimento: l'intervallo include lo zero: nessun eccesso rilevato rispetto al rumore entro compartimento. Sensibilità a pesi uguali (valore atteso ½‖pA − pB‖² ≥ 0): -0.003 (IC95% [-0.005, -0.001]). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC'), secondo 2 convenzioni dichiarate: [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori escluse -- 'Tumor': 0.026 (IC95% [0.018, 0.038], 12 pazienti, 1175 unità). [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza (pareggi della maggioranza: esclusi dal calcolo); etichette fuori mappa contate come errore (etichette ammesse fuori mappa: tutte, anche non T (es. mieloidi, B)); positività non esclusiva -- 'Tumor': 0.000, IC non prodotto (nessuna variabilità fra pazienti: intervallo non definito; 180 unità; unità in pareggio: 0).",
   "discordance": {
    "n_pairs": 180,
    "n_patients": 12,
@@ -75,12 +107,44 @@
      "sufficient": true
     }
    }
+  },
+  "conventions": {
+   "cell": {
+    "by_compartment": {
+     "Tumor": {
+      "mean": 0.026382978723404255,
+      "ci_low": 0.018101766946001303,
+      "ci_high": 0.03830489307950974,
+      "n_groups": 12,
+      "n_obs": 1175,
+      "sufficient": true
+     }
+    },
+    "n_ties": null,
+    "paired_differences": {}
+   },
+   "clone": {
+    "by_compartment": {
+     "Tumor": {
+      "mean": 0.0,
+      "ci_low": null,
+      "ci_high": null,
+      "n_groups": 12,
+      "n_obs": 180,
+      "sufficient": false
+     }
+    },
+    "n_ties": {
+     "Tumor": 0
+    },
+    "paired_differences": {}
+   }
   }
  },
  "tre_compartimenti": {
   "n_cells_with_tcr": 1589,
   "n_clones_total": 80,
-  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) ricevono etichette diverse fra compartimenti con un eccesso di discordanza di +0.035 (IC95% [+0.011, +0.059], su 240 coppie clone-compartimenti da 8 pazienti) rispetto al rumore entro lo stesso compartimento: l'intervallo è interamente sopra lo zero: entro lo stesso clone le etichette differiscono fra compartimenti più che entro un compartimento. È compatibile con un errore di annotazione, ma anche con le eccezioni biologiche elencate fra le ipotesi. Sensibilità a pesi uguali (valore atteso ½‖pA − pB‖² ≥ 0): +0.037 (IC95% [+0.015, +0.059]). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC'), secondo 2 convenzioni dichiarate: [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori escluse -- 'Adjacent': 0.019 (IC95% [0.011, 0.031], 8 pazienti). 'Tumor': 0.198 (IC95% [0.157, 0.247], 8 pazienti). Differenza 'Adjacent' - 'Tumor' sugli stessi cloni: -0.185, IC95% [-0.242, -0.129], 80 cloni. [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza (pareggi: probabilità di errore con scelta a caso fra le etichette a pari merito); etichette fuori mappa contate come errore (etichette ammesse fuori mappa: tutte, anche non T (es. mieloidi, B)); positività non esclusiva -- 'Adjacent': 0.000, IC non prodotto (nessuna variabilità fra pazienti: intervallo non definito). 'Tumor': 0.092 (IC95% [0.038, 0.206], 8 pazienti). Differenza 'Adjacent' - 'Tumor' sugli stessi cloni: -0.092, IC95% [-0.170, -0.013], 80 cloni.",
+  "narrative": "Le cellule dello stesso clone T (stessa sequenza CDR3 della catena TRB) ricevono etichette diverse fra compartimenti con un eccesso di discordanza di +0.035 (IC95% [+0.011, +0.059], su 240 coppie clone-compartimenti da 8 pazienti) rispetto al rumore entro lo stesso compartimento: l'intervallo è interamente sopra lo zero: entro lo stesso clone le etichette differiscono fra compartimenti più che entro un compartimento. È compatibile con un errore di annotazione, ma anche con le eccezioni biologiche elencate fra le ipotesi. Sensibilità a pesi uguali (valore atteso ½‖pA − pB‖² ≥ 0): +0.037 (IC95% [+0.015, +0.059]). Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori (riferimento: compartimento 'PBMC'), secondo 2 convenzioni dichiarate: [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori escluse -- 'Adjacent': 0.019 (IC95% [0.011, 0.031], 8 pazienti, 533 unità). 'Tumor': 0.198 (IC95% [0.157, 0.247], 8 pazienti, 459 unità). Differenza 'Adjacent' - 'Tumor' sugli stessi cloni: -0.185, IC95% [-0.242, -0.129], 80 cloni. [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di maggioranza (pareggi della maggioranza: esclusi dal calcolo); etichette fuori mappa contate come errore (etichette ammesse fuori mappa: tutte, anche non T (es. mieloidi, B)); positività non esclusiva -- 'Adjacent': 0.000, IC non prodotto (nessuna variabilità fra pazienti: intervallo non definito; 80 unità; unità in pareggio: 0). 'Tumor': 0.054 (IC95% [0.021, 0.134], 8 pazienti, 74 unità; unità in pareggio: 6). Differenza 'Adjacent' - 'Tumor' sugli stessi cloni: -0.054, IC95% [-0.105, -0.003], 74 cloni.",
   "discordance": {
    "n_pairs": 240,
    "n_patients": 8,
@@ -144,6 +208,75 @@
      "sufficient": true
     }
    }
+  },
+  "conventions": {
+   "cell": {
+    "by_compartment": {
+     "Adjacent": {
+      "mean": 0.01876172607879925,
+      "ci_low": 0.011416608773415347,
+      "ci_high": 0.030685795760697254,
+      "n_groups": 8,
+      "n_obs": 533,
+      "sufficient": true
+     },
+     "Tumor": {
+      "mean": 0.19825708061002179,
+      "ci_low": 0.15692179734132572,
+      "ci_high": 0.2472869422932517,
+      "n_groups": 8,
+      "n_obs": 459,
+      "sufficient": true
+     }
+    },
+    "n_ties": null,
+    "paired_differences": {
+     "Adjacent - Tumor": {
+      "mean": -0.18542658730158731,
+      "ci_low": -0.24171870433656342,
+      "ci_high": -0.1291344702666112,
+      "n_groups": 8,
+      "n_obs": 80,
+      "sufficient": true,
+      "n_clones": 80
+     }
+    }
+   },
+   "clone": {
+    "by_compartment": {
+     "Adjacent": {
+      "mean": 0.0,
+      "ci_low": null,
+      "ci_high": null,
+      "n_groups": 8,
+      "n_obs": 80,
+      "sufficient": false
+     },
+     "Tumor": {
+      "mean": 0.05405405405405406,
+      "ci_low": 0.020595016862249342,
+      "ci_high": 0.13441126163483996,
+      "n_groups": 8,
+      "n_obs": 74,
+      "sufficient": true
+     }
+    },
+    "n_ties": {
+     "Adjacent": 0,
+     "Tumor": 6
+    },
+    "paired_differences": {
+     "Adjacent - Tumor": {
+      "mean": -0.05405405405405406,
+      "ci_low": -0.10517068223105631,
+      "ci_high": -0.0029374258770517997,
+      "n_groups": 8,
+      "n_obs": 74,
+      "sufficient": true,
+      "n_clones": 74
+     }
+    }
+   }
   }
  },
  "senza_marcatori_pochi_pazienti": {
@@ -171,6 +304,7 @@
     "excess_equal": 0.09041997354497355
    }
   ],
-  "marker_error": null
+  "marker_error": null,
+  "conventions": null
  }
 }

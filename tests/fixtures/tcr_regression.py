@@ -5,8 +5,11 @@ tests.fixtures.tcr_regression`` sul codice del commit di baseline (cf61e76) e ri
 volta nella revisione (A1), per un cambiamento voluto: gli intervalli del Modulo B passano dal
 bootstrap percentile all'intervallo t cluster-robusto. Prima di rigenerarlo è stato verificato che
 cambiassero solo ci_low e ci_high: stime puntuali, conteggi, pazienti e cloni risolti identici al
-file precedente (1e-12). Non va rigenerato per far passare il test: il suo scopo è verificare che
-l'output non cambi.
+file precedente (1e-12). Rigenerato una seconda volta nella revisione (giro 1 del revisore), per
+aggiungere i numeri delle convenzioni per cellula e per clone (con le unità in pareggio), che prima
+il test non vedeva, dopo l'allineamento della regola dei pareggi alla tesi: prima di rigenerarlo è
+stato verificato che tutte le chiavi già presenti fossero identiche (1e-12). Non va rigenerato per
+far passare il test: il suo scopo è verificare che l'output non cambi.
 """
 
 from __future__ import annotations
@@ -53,7 +56,18 @@ def summarize(result) -> dict:
             for row in d.by_compartment_pair.to_dict(orient="records")
         ],
         "marker_error": None,
+        "conventions": None,
     }
+    if result.conventions is not None:
+        def ci(r):
+            return {"mean": _num(r.mean), "ci_low": _num(r.ci_low), "ci_high": _num(r.ci_high),
+                    "n_groups": r.n_groups, "n_obs": r.n_obs, "sufficient": bool(r.sufficient)}
+        out["conventions"] = {
+            name: {"by_compartment": {comp: ci(r) for comp, r in c.by_compartment.items()},
+                   "n_ties": c.n_ties,
+                   "paired_differences": {f"{a} - {b}": {**ci(r), "n_clones": n}
+                                          for (a, b), (r, n) in c.paired_differences.items()}}
+            for name, c in result.conventions.items()}
     if result.marker_error is not None:
         m = result.marker_error
         out["marker_error"] = {

@@ -197,8 +197,8 @@ def _model_comparison_chart(mc: ModelComparisonResult) -> str:
 
 def _leakage_section(result: LeakageAuditResult) -> str:
     verdict_cls = _card_class(leakage_summary(result))
-    tag = (f'<span class="tag tag-warn">divario oltre la soglia di {GAP_ALERT:g}</span>' if result.gap > GAP_ALERT
-           else f'<span class="tag tag-ok">divario entro la soglia di {GAP_ALERT:g}</span>')
+    tag = (f'<span class="tag tag-warn">divario oltre la soglia di ±{GAP_ALERT:g}</span>' if abs(result.gap) > GAP_ALERT
+           else f'<span class="tag tag-ok">divario entro la soglia di ±{GAP_ALERT:g}</span>')
     html_parts = [
         "<h2>Modulo A — Audit del leakage per paziente</h2>",
         f'<div class="card {verdict_cls}">',

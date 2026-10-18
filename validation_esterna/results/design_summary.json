@@ -212,8 +212,8 @@
   "cramer_v": [
    {
     "coppia": "platform x cancer type",
-    "V audit": 0.16944463577770047,
-    "V indipendente": 0.16944463577770047,
+    "V audit": null,
+    "V indipendente": null,
     "coincide": true
    }
   ]

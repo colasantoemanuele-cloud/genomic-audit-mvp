@@ -152,10 +152,10 @@ def _scheme(mean=0.8, absent=0, capped=False, nc=0, k=5) -> SchemeSummary:
                          not_converged=[i < nc for i in range(k)])
 
 
-def _leakage(gap=0.01, model_comparison=None, **grouped) -> LeakageAuditResult:
+def _leakage(gap=0.01, model_comparison=None, n_patients=10, **grouped) -> LeakageAuditResult:
     g = _scheme(**grouped)
     r = _scheme(mean=g.mean + gap)
-    return LeakageAuditResult(task="t", n_cells=500, n_patients=10, n_classes=2, n_folds_used=5,
+    return LeakageAuditResult(task="t", n_cells=500, n_patients=n_patients, n_classes=2, n_folds_used=5,
                               grouped=g, random=r, gap=r.mean - g.mean, std_ratio=1.0, narrative="",
                               model_comparison=model_comparison)
 
@@ -185,6 +185,41 @@ def test_leakage_per_patient_estimate_with_limits_is_yellow(kw):
 def test_leakage_gap_threshold_drives_random_split_state():
     assert _one(leakage_summary(_leakage(gap=GAP_ALERT + 0.001)), "split casuale").state == ROSSO
     assert _one(leakage_summary(_leakage(gap=GAP_ALERT - 0.001)), "split casuale").state == VERDE
+
+
+def test_leakage_negative_gap_beyond_threshold_is_yellow_not_green():
+    """Revisione, giro 1: un divario di -0,108 usciva verde «entro la soglia»."""
+    c = _one(leakage_summary(_leakage(gap=-0.108)), "split casuale")
+    assert c.state == GIALLO and "più bassa" in c.text and "entro la soglia" not in c.text
+    assert _one(leakage_summary(_leakage(gap=-GAP_ALERT + 0.001)), "split casuale").state == VERDE
+    html_txt = render_report(_leakage(gap=-0.108), None, "t")
+    assert "divario oltre la soglia" in html_txt and "divario entro la soglia" not in html_txt
+
+
+def test_leakage_with_fewer_than_five_patients_is_never_green():
+    s = leakage_summary(_leakage(gap=0.0, n_patients=2))
+    assert _one(s, "split per paziente").state == GIALLO and "2 pazienti" in _one(s, "split per paziente").text
+    assert _one(s, "split casuale").state == GIALLO
+
+
+def _partial_sheet(n_pat):
+    """Batch associato al tessuto senza separarlo: b1 nel tumore e b3 nel normale per quasi tutti
+    i pazienti, b2 in entrambi per gli ultimi 2 (scenario del revisore, giro 1)."""
+    rows = []
+    for i in range(n_pat):
+        late = i >= n_pat - 2
+        rows += [(f"P{i}", "Tumor", "b2" if late else "b1"), (f"P{i}", "Normal", "b2" if late else "b3")]
+    return pd.DataFrame(rows, columns=["patient", "tissue", "batch"])
+
+
+@pytest.mark.parametrize("n_pat, motivo", [(12, "fortemente associato"), (7, "non valutabile")])
+def test_design_comparison_with_partial_confounder_is_yellow_not_green(n_pat, motivo):
+    """Revisione, giro 1: con un batch associato al tessuto (V = 0,78) il confronto restava verde."""
+    r = run_design_audit(_partial_sheet(n_pat), "patient", "tissue", technical_cols={"batch": "batch"},
+                         comparisons=[("tissue", "Tumor", "Normal")])
+    assert r.comparisons[0].classification == "stimabile"
+    c = _one(design_summary(r), "Confronto tissue")
+    assert c.state == GIALLO and motivo in c.text and "'batch'" in c.text
 
 
 # --------------------------------------------------------------------------- #
@@ -235,6 +270,27 @@ def test_tcr_error_rate_grey_red_green():
     assert _one(s, "in Tumor").state == VERDE
     adj = _one(s, "in Adjacent")
     assert adj.state == ROSSO and "4 pazienti" in adj.text
+
+
+def test_tcr_rate_refused_for_zero_variance_is_yellow_and_empty_convention_grey():
+    """Con 8 pazienti e tasso 0 la stima esiste: giallo, non «stima non possibile». Una
+    convenzione senza unità valutabili compare in grigio invece di sparire."""
+    conv = {"clone": ConventionResult("clone", "per clone", {
+        "Tumor": _ci(0.0, 0, 0, n=8, ok=False, reason="tasso pari a 0 o a 1: intervallo su scala logit non definito")},
+        {}), "cell": ConventionResult("cell", "per cellula", {}, {})}
+    s = tcr_summary(_tcr(conventions=conv))
+    t = _one(s, "[clone] in Tumor")
+    assert t.state == GIALLO and "stima 0.000" in t.text
+    assert _one(s, "[cell]").state == GRIGIO
+
+
+def test_tcr_discordance_refused_with_enough_patients_is_yellow():
+    d = DiscordanceResult(n_pairs=50, n_patients=8, mean_excess=0.0, ci_low=float("nan"), ci_high=float("nan"),
+                          sufficient=False, by_compartment_pair=pd.DataFrame(), equal_weights=None,
+                          reason="variabilità nulla fra pazienti")
+    r = TcrValidationResult(n_cells_with_tcr=100, n_clones_total=10, discordance=d, marker_error=None, narrative="")
+    c = _one(tcr_summary(r), "discordanza")
+    assert c.state == GIALLO and "variabilità nulla" in c.text
 
 
 # --------------------------------------------------------------------------- #

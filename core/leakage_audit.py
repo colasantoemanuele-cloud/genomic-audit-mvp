@@ -1,10 +1,11 @@
 """Modulo A -- Audit del leakage per paziente.
 
 Confronta una valutazione onesta (split raggruppato per paziente) con un controllo
-negativo (split casuale sulle singole cellule, che ignora il paziente e quindi lascia
-"gemelle" della stessa cellula in train e test). Il divario fra le due misura quanto
-della performance riportata da una pipeline che non raggruppa per paziente sarebbe
-un artefatto.
+negativo (split casuale sulle singole cellule, che ignora il paziente e quindi mette
+cellule dello stesso paziente sia in train sia in test). Il divario fra le due indica quanto
+la prestazione riportata da una pipeline che non raggruppa per paziente può essere più alta
+della prestazione su pazienti non visti; include tutto ciò che distingue i pazienti (anche
+piattaforma o lotto, se coincidono con il paziente).
 
 Motore pensato per dati reali (decine di migliaia di cellule, ~20-30k geni):
 - la matrice resta SPARSA (CSR) dall'inizio alla fine: nessuna conversione globale in denso;

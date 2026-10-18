@@ -150,3 +150,51 @@ parallelo, ciascuna con `-n auto`, la suite completa durava 36 min contro 24 min
 dell'esecuzione di 69cf239 (prima di questa modifica, da ripetere): clone uv suite completa 177
 passed, 3 skipped, 7 xfailed; pip 115 passed, 3 skipped; Python 3.12 115 passed, 3 skipped; suite
 con i dati 180 passed, 7 xfailed in 24 min 30 s.
+
+## Cambio di priorità (2026-10-18): versione 0.9.0 pilota
+
+Richiesta dell'utente: versione 0.9.0 «prototipo per studio pilota» invece della 1.0; al massimo
+due giri di revisione (uno completo e uno di chiusura); Fase 3 ridotta (una installazione pulita
+con uv, suite completa una volta, solo le validazioni il cui codice è cambiato); Fase 4 rimandata
+e descritta in `docs/ROADMAP.md`; commit e push del ramo `revisione`. Commit `70279da`: chiusura
+della Fase 1 con l'allineamento dei pareggi.
+
+## Fase 2, giro 1 (revisione completa, commit 70279da)
+
+Resoconto del revisore: `revisione/log/giro1_revisore.md`. Esiti del revisore: 119 passed (not
+slow), ruff pulito. **ALTA 4, MEDIA 8, BASSA 14.**
+
+Corretti:
+- ALTA 1: `MIN_ROWS_FOR_V` da 10 a 20 (il foglio più piccolo calibrato; a 10-12 righe falsi
+  allarmi 0,058-0,096, fuori banda). Stessa soglia nello script indipendente. Effetto sui
+  risultati: GSE125449 (19 righe) V di 'platform' × 'cancer type' 0,17 → non valutabile (anche
+  nello script indipendente; D1-D4 restano soddisfatti); GSE278694 e GSE132465/GSE131907 solo il
+  testo della soglia. Test con fogli da 18 righe portati a 24.
+- ALTA 2: confronto «stimabile» con un fattore tecnico fortemente associato, o con
+  l'associazione non valutabile, ora giallo (`partial_confounders`, `unassessed_technical`).
+- ALTA 3: immagine del report nel README rigenerata dalla demo di questa versione.
+- ALTA 4: divario negativo oltre la soglia ora giallo, con la direzione; tag del report con |gap|.
+- MEDIA 1: errore se il compartimento di riferimento non c'è nei dati o se per un'etichetta non si
+  trova nessun gene; riga grigia per una convenzione senza unità; `--gene-col` nella CLI.
+- MEDIA 2: `validate_marker_map` in `core/`, usata da CLI, app e `run_tcr_validation`.
+- MEDIA 3: Modulo A con meno di 5 pazienti mai verde.
+- MEDIA 4: README, intervallo con 4 pazienti sostituito con quello attuale e la sua fonte.
+- MEDIA 6: quota NK descritta con entrambi gli ordini della scomposizione (72%; +0,070 su 0,077).
+- MEDIA 7: le CD4 citotossiche non sono più elencate fra le eccezioni (restano della linea CD4:
+  una loro etichetta CD8 è un errore di linea); «causa probabile di gran parte» → «possibile causa
+  di una parte», come nella fonte. Scostamento dalla lettera di B1, voluto (criterio 4).
+- MEDIA 8: docstring di `core/stats.py` allineate ai numeri misurati.
+- BASSA 1 (citazioni), 2 (`cli_tcr_real_vdj_originali.txt`, del codice vecchio, rimosso: lo
+  sostituisce `cli_tcr_real_conventions_tesi.txt`, che usa gli stessi file VDJ originali), 3
+  (fixture di regressione con le convenzioni e i pareggi; chiavi esistenti verificate identiche a
+  1e-12), 4 (stati: intervallo rifiutato per pochi pazienti rosso, per altri motivi giallo), 6, 7
+  (righe dei metadati senza barcode nella matrice: avviso), 9, 10, 11, 12, 13, 14; nota non
+  contata: esito NO della coorte ridotta di GSE125449 ora nel README.
+
+Non corretti: MEDIA 5 (esiti dei test sul commit finale) si chiude nella Fase 3; BASSA 5
+(calibrazione dedicata delle differenze appaiate: il revisore la misura in banda, 2,0%-4,6%) e
+BASSA 8 (due test più deboli del loro nome) rimandati.
+
+Validazioni rieseguite perché il loro codice è cambiato: audit del disegno (D1-D4 esterni,
+`cli_design_real*.txt`). A1 su GSE125449 rieseguito con `/usr/bin/time -v` (lo script lo aveva
+perso): 315 s, 1,2 GB, output identico a parte il tempo.

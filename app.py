@@ -29,7 +29,13 @@ from core.io import load_matrix_market, read_table, read_vdj_manifest
 from core.leakage_audit import GAP_ALERT, run_leakage_audit
 from core.report import render_markdown_report, render_report
 from core.synthetic import make_tcr_validation_dataset
-from core.tcr_validation import BIOLOGICAL_ASSUMPTIONS, parse_vdj_contigs, run_tcr_validation, tcr_by_celltype
+from core.tcr_validation import (
+    BIOLOGICAL_ASSUMPTIONS,
+    parse_vdj_contigs,
+    run_tcr_validation,
+    tcr_by_celltype,
+    validate_marker_map,
+)
 from core.verdict import (
     STATE_LABEL,
     TITLE,
@@ -437,11 +443,13 @@ with tab_b:
                                 "percorsi relativi al manifest)", key="b_man")
             markers = st.text_area("Mappa marcatori (JSON)", value='{"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}', key="b_mk")
             comps = sorted(adata_b.obs[sel["compartment"]].astype(str).unique())
-            ref = st.selectbox("Compartimento di riferimento (sangue)", comps, key="b_ref")
+            blood = [i for i, c in enumerate(comps) if c.lower() in ("pbmc", "blood", "sangue", "peripheral blood")]
+            ref = st.selectbox("Compartimento di riferimento (sangue)", comps, index=blood[0] if blood else 0,
+                               key="b_ref")
             if man and st.button("Esegui Modulo B", type="primary"):
                 files = safe(lambda: read_vdj_manifest(Path(man)), "manifest VDJ non utilizzabile")
                 contigs = safe(lambda: parse_vdj_contigs(files), "file VDJ non utilizzabili") if files else None
-                mk = safe(lambda: json.loads(markers), "mappa dei marcatori non è un JSON valido")
+                mk = safe(lambda: validate_marker_map(json.loads(markers)), "mappa dei marcatori non utilizzabile")
                 if contigs is not None and mk is not None:
                     st.session_state.b_ctx = dict(adata=adata_b, contigs=contigs, markers=mk,
                                                   reference=ref, label=st.session_state.dataset_name, **sel)
@@ -491,7 +499,7 @@ with tab_b:
                                  "pareggi esclusi": (c.n_ties or {}).get(comp, "—")})
             st.dataframe(pd.DataFrame(rows), hide_index=True)
         if st.session_state.tcr_table is not None:
-            st.subheader("Cellule con TCR per etichetta (contaminazioni cross-lineage)")
+            st.subheader("Cellule con TCR per etichetta")
             st.dataframe(st.session_state.tcr_table)
             st.caption("Tabella descrittiva. Un TCR in un'etichetta non-T (NK, mieloidi, stromali) può essere un "
                        "doppietto, RNA ambientale o un errore di annotazione: la tabella non li distingue e non "

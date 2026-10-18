@@ -9,12 +9,14 @@ Ipotesi biologica da cui dipendono TUTTI i risultati del modulo: le cellule dell
 (stessa sequenza CDR3 della catena TRB) hanno la stessa linea CD4/CD8. Eccezioni note, che il
 modulo non distingue da un errore di annotazione:
 - cellule CD4 che esprimono CD8αα (o CD8 su cellule attivate);
-- cellule T CD4 citotossiche, che esprimono programmi tipici delle CD8 (probabile causa reale di
-  parte delle chiamate CD8 sulle vere CD4 nel tumore di GSE278694);
 - MAIT, NKT e cellule γδ: un clonotipo definito dalla sola TRB non le separa in modo affidabile
   (le γδ non hanno TRB; MAIT e NKT hanno catene α semi-invarianti che qui non sono usate);
 - doppietti T-NK o T-mieloidi, che portano il TCR in una cellula con un'altra etichetta;
 - RNA ambientale specifico del compartimento, che sposta i marcatori fra compartimenti.
+Le cellule T CD4 citotossiche, che esprimono programmi tipici delle CD8, NON sono un'eccezione:
+restano della linea CD4, e una loro etichetta CD8 è un errore di linea che il modulo conta
+correttamente (nella tesi sono indicate come possibile causa di una parte delle chiamate CD8 sui
+cloni CD4 nel tumore di GSE278694).
 L'eccesso di discordanza è interpretabile solo con etichette di LINEA (CD4/CD8), non di STATO
 (es. effettrici contro esauste): lo stesso clone cambia legittimamente stato fra sangue e tumore.
 
@@ -28,7 +30,8 @@ Eccesso pesato (stima principale) e a pesi uguali (sensibilità). L'eccesso prin
 D(A×B) - [n_A D_A + n_B D_B] / (n_A + n_B). Sotto H0 (stesse proporzioni di etichette nei due
 compartimenti) ha media zero, ma NON è una divergenza non negativa: con n_A molto diverso da n_B
 il suo valore atteso può essere negativo anche quando le etichette differiscono davvero (es. 3
-cellule CD8 nel sangue e 60 nel tumore con il 40% di errore: circa -0,06). Per questo è riportata
+cellule CD8 nel sangue e 60 nel tumore con il 40% di errore: circa -0,06 se le cellule sbagliate
+hanno tutte la stessa etichetta, circa -0,13 se si dividono in parti uguali fra due etichette). Per questo è riportata
 anche la versione a pesi uguali, D(A×B) - (D_A + D_B) / 2, il cui valore atteso è ½‖p_A − p_B‖²:
 zero sotto H0 e positivo appena le proporzioni differiscono, a prescindere da n_A e n_B.
 """
@@ -65,8 +68,9 @@ TIE_RULE_DEFAULT = "exclude"
 BIOLOGICAL_ASSUMPTIONS = (
     "Ipotesi: le cellule dello stesso clone T (stessa CDR3 della catena TRB) hanno la stessa linea "
     "CD4/CD8. Eccezioni note che il modulo non distingue da un errore di annotazione: cellule CD4 con "
-    "CD8αα, CD4 citotossiche, MAIT, NKT e cellule γδ (non separabili da un clonotipo basato solo sulla "
-    "TRB), doppietti T-NK, RNA ambientale specifico del compartimento. L'eccesso di discordanza è "
+    "CD8αα, MAIT, NKT e cellule γδ (non separabili da un clonotipo basato solo sulla TRB), doppietti "
+    "T-NK, RNA ambientale specifico del compartimento. Le CD4 citotossiche non sono un'eccezione: "
+    "restano della linea CD4, e una loro etichetta CD8 è un errore di linea. L'eccesso di discordanza è "
     "interpretabile solo con etichette di linea (CD4/CD8), non di stato (es. effettrici contro esauste)."
 )
 
@@ -308,13 +312,15 @@ class DiscordanceResult:
     sufficient: bool
     by_compartment_pair: pd.DataFrame
     equal_weights: ClusterInterval | None = None
+    reason: str = ""  # perché l'intervallo non è stato prodotto (vuoto se prodotto)
 
 
 def _summarize_discordance(pw: pd.DataFrame, min_patients_for_ci: int) -> DiscordanceResult:
     if pw.empty:
         return DiscordanceResult(n_pairs=0, n_patients=0, mean_excess=float("nan"),
                                  ci_low=float("nan"), ci_high=float("nan"), sufficient=False,
-                                 by_compartment_pair=pd.DataFrame(), equal_weights=None)
+                                 by_compartment_pair=pd.DataFrame(), equal_weights=None,
+                                 reason="nessuna coppia clone-compartimenti comparabile")
     overall = cluster_t_interval(pw["excess"].values, pw["patient"].values, min_patients_for_ci)
     equal = cluster_t_interval(pw["excess_equal"].values, pw["patient"].values, min_patients_for_ci)
     rows = []
@@ -326,7 +332,8 @@ def _summarize_discordance(pw: pd.DataFrame, min_patients_for_ci: int) -> Discor
     return DiscordanceResult(n_pairs=len(pw), n_patients=int(pw.patient.nunique()),
                              mean_excess=overall.mean, ci_low=overall.ci_low,
                              ci_high=overall.ci_high, sufficient=overall.sufficient,
-                             by_compartment_pair=pd.DataFrame(rows), equal_weights=equal)
+                             by_compartment_pair=pd.DataFrame(rows), equal_weights=equal,
+                             reason="" if overall.sufficient else overall.reason)
 
 
 # --------------------------------------------------------------------------- #
@@ -341,13 +348,29 @@ def _check_counts(values: np.ndarray, what: str) -> None:
                          "conteggi (es. adata.layers['counts']) come adata.X.")
 
 
+def validate_marker_map(marker_map) -> dict[str, list[str]]:
+    """Controlla la forma della mappa dei marcatori: un dizionario non vuoto
+    {"etichetta": ["gene1", "gene2"]} con almeno un gene per etichetta. Errore altrimenti (una
+    stringa al posto della lista verrebbe letta lettera per lettera)."""
+    ok = (isinstance(marker_map, dict) and marker_map
+          and all(isinstance(k, str) and isinstance(v, list) and v and all(isinstance(g, str) for g in v)
+                  for k, v in marker_map.items()))
+    if not ok:
+        raise ValueError('la mappa dei marcatori deve essere un JSON {"etichetta": ["gene1", "gene2"]}, '
+                         'con almeno un gene (stringa) per etichetta')
+    return marker_map
+
+
 def compute_marker_positivity(
     adata: ad.AnnData, marker_map: dict[str, list[str]], gene_col: str | None = None
 ) -> pd.DataFrame:
     """Una colonna booleana 'pos_<etichetta>' per etichetta in marker_map: True se almeno uno
     dei geni marcatori di quell'etichetta ha conta > 0 in quella cellula. Stesso ordine di riga
     di adata.obs. Le colonne dei geni marcatori devono contenere conteggi interi non negativi:
-    altrimenti errore (su dati normalizzati "> 0" non significa "molecola rilevata")."""
+    altrimenti errore (su dati normalizzati "> 0" non significa "molecola rilevata"). Un'etichetta
+    senza nessun gene trovato è un errore (es. ID Ensembl contro simboli): altrimenti tutte le
+    cellule risulterebbero negative e il tasso d'errore sparirebbe in silenzio."""
+    validate_marker_map(marker_map)
     gene_names = (adata.var[gene_col] if gene_col else adata.var_names).astype(str).values
     gene_to_idx = {}
     for i, g in enumerate(gene_names):
@@ -358,11 +381,13 @@ def compute_marker_positivity(
     for label, genes in marker_map.items():
         idx = [gene_to_idx[g] for g in genes if g in gene_to_idx]
         missing = [g for g in genes if g not in gene_to_idx]
+        if not idx:
+            where = f"nella colonna '{gene_col}' di adata.var" if gene_col else "in adata.var_names"
+            raise ValueError(f"nessun gene marcatore di '{label}' trovato {where}: {missing} (nomi dei geni "
+                             f"in un altro formato, es. ID Ensembl contro simboli? indica la colonna dei "
+                             f"simboli con gene_col / --gene-col)")
         if missing:
             warnings.warn(f"geni marcatori non trovati per '{label}': {missing}", stacklevel=2)
-        if not idx:
-            out[f"pos_{label}"] = np.zeros(adata.n_obs, dtype=bool)
-            continue
         sub = X[:, idx]
         sub = sub.toarray() if sp.issparse(sub) else np.asarray(sub)
         _check_counts(sub, f"geni marcatori di '{label}'")
@@ -704,10 +729,13 @@ def _fmt_ci(res: ClusterInterval, signed: bool = False) -> str:
 
 
 def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> str:
-    if not d.sufficient:
+    if not d.sufficient and d.n_patients < min_patients_for_ci:
         return (f"Eccesso di discordanza: intervallo non prodotto ({d.n_patients} pazienti "
                 f"contribuiscono cloni comparabili, ne servono almeno {min_patients_for_ci}; "
                 f"numerosità insufficiente).")
+    if not d.sufficient:
+        return (f"Eccesso di discordanza: {d.mean_excess:+.3f} su {d.n_pairs:,} coppie da {d.n_patients} "
+                f"pazienti; intervallo non prodotto ({d.reason}).")
     if d.ci_low > 0:
         esito = ("l'intervallo è interamente sopra lo zero: entro lo stesso clone le etichette "
                  "differiscono fra compartimenti più che entro un compartimento. È compatibile con "
@@ -791,6 +819,8 @@ def run_tcr_validation(
         raise ValueError(f"convention deve essere cell, clone o both, non '{convention}'")
     if bool(marker_map) != bool(reference_compartment):
         raise ValueError("marker_map e reference_compartment vanno indicati insieme")
+    if marker_map:
+        validate_marker_map(marker_map)
     cols = [patient_col, compartment_col, celltype_col, barcode_col] + ([library_col] if library_col else [])
     missing = [c for c in dict.fromkeys(cols) if c not in adata.obs.columns]
     if missing:
@@ -816,6 +846,10 @@ def run_tcr_validation(
     # Posizione di riga originale: serve solo a riscrivere i flag per cellula sulle righe
     # giuste di adata.obs dopo la merge (che non preserva l'ordine). Non entra in nessun calcolo.
     obs["_row"] = np.arange(len(obs))
+    if reference_compartment and reference_compartment not in set(obs["compartment"]):
+        present = ", ".join(sorted(set(obs["compartment"]))[:10])
+        raise ValueError(f"il compartimento di riferimento '{reference_compartment}' non compare nella "
+                         f"colonna '{compartment_col}' (compartimenti presenti: {present})")
 
     # Le colonne pos_<etichetta> vengono allineate per POSIZIONE (stessa riga di adata.obs), non
     # per join sul barcode: il barcode 10x da solo NON è univoco a livello globale (si ripete fra

@@ -41,9 +41,11 @@ from core.tcr_validation import MIN_PATIENTS_FOR_CI_DEFAULT
 # Stessa soglia del Modulo B: sotto 5 pazienti nessun intervallo di confidenza.
 MIN_UNITS_DEFAULT = MIN_PATIENTS_FOR_CI_DEFAULT
 CRAMER_V_THRESHOLD = 0.5
-# Il V è "valutabile" solo con almeno 10 righe e, IN MEDIA, almeno 2 righe per cella della
-# tabella (n / (r*c) >= 2; non è un minimo per cella): sotto, il valore oscilla troppo.
-MIN_ROWS_FOR_V = 10
+# Il V è "valutabile" solo con almeno 20 righe e, IN MEDIA, almeno 2 righe per cella della
+# tabella (n / (r*c) >= 2; non è un minimo per cella). 20 è il foglio più piccolo calibrato
+# (tests/test_design_audit_calibration.py, 20-40 righe); con 10-12 righe i falsi allarmi sotto
+# fattori indipendenti superano la banda dichiarata del 5% (revisione, giro 1: 0,096 a 10 righe).
+MIN_ROWS_FOR_V = 20
 MIN_EXPECTED_PER_CELL = 2.0
 ALPHA = 0.05
 MIN_PVALUE_NOTE = ("Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere "
@@ -111,6 +113,10 @@ class ComparisonAssessment:
     # p-value minimo raggiungibile da un test esatto con queste unità (None se non definito)
     min_pvalue: float | None = None
     min_pvalue_test: str | None = None
+    # fattori tecnici associati al confronto senza separarlo (colonna, Cramér V >= soglia)
+    partial_confounders: tuple[tuple[str, float], ...] = ()
+    # fattori tecnici la cui associazione con il confronto non è valutabile (tabella troppo piccola)
+    unassessed_technical: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -366,10 +372,11 @@ def _technical_confounders(sub: pd.DataFrame, factor: str, roles: dict[str, str]
 
 
 def _partial_confounders(sub: pd.DataFrame, factor: str, roles: dict[str, str],
-                         v_threshold: float) -> list[tuple[str, float]]:
+                         v_threshold: float) -> tuple[list[tuple[str, float]], list[str]]:
     """Fattori tecnici associati al confronto (Cramér V >= ``v_threshold``, solo su tabelle
-    valutabili) senza separare perfettamente i due livelli: (colonna, V)."""
-    out = []
+    valutabili) senza separare perfettamente i due livelli: (colonna, V). Restituisce anche i
+    fattori tecnici per cui la tabella con il confronto è troppo piccola per il V."""
+    out, unassessed = [], []
     for c, role in roles.items():
         if role not in TECHNICAL_ROLES or c == factor:
             continue
@@ -382,7 +389,9 @@ def _partial_confounders(sub: pd.DataFrame, factor: str, roles: dict[str, str],
             v = cramers_v_bergsma(table.values)
             if v is not None and v >= v_threshold:
                 out.append((c, v))
-    return out
+        else:
+            unassessed.append(c)
+    return out, unassessed
 
 
 def _mann_whitney_min_pvalue(n_a: int, n_b: int) -> float:
@@ -483,8 +492,13 @@ def assess_comparison(
             tuple(reasons + [reason]), f"Confronto {label}: non stimabile -- {reason}." + tail,
             min_p, min_p_test)
 
-    for c, v in _partial_confounders(sub, factor, roles, v_threshold):
+    partial, unassessed = _partial_confounders(sub, factor, roles, v_threshold)
+    for c, v in partial:
         reasons.append(f"'{c}' è fortemente associato al confronto (Cramér V = {v:.2f})")
+    if unassessed:
+        reasons.append(f"l'associazione con il fattore tecnico {', '.join(repr(c) for c in unassessed)} non è "
+                       f"valutabile ({len(sub)} righe; servono almeno {MIN_ROWS_FOR_V} righe e in media "
+                       f"almeno {MIN_EXPECTED_PER_CELL:g} per cella)")
 
     unit_word = "pazienti con entrambi i livelli" if design.startswith("appaiato") else \
         "pazienti nel gruppo più piccolo"
@@ -504,7 +518,8 @@ def assess_comparison(
         sentence += " Attenzione: " + "; ".join(extra) + "."
     sentence += tail
     return ComparisonAssessment(factor, level_a, level_b, design, units, len(pats_a),
-                                len(pats_b), cls, tuple(reasons), sentence, min_p, min_p_test)
+                                len(pats_b), cls, tuple(reasons), sentence, min_p, min_p_test,
+                                tuple(partial), tuple(unassessed))
 
 
 # --------------------------------------------------------------------------- #

@@ -3,7 +3,9 @@
 OBBLIGATORIO: nessuno stimatore statistico va esposto nell'interfaccia prima che questi
 test passino (vedi prompt di progetto, sezione "Requisito trasversale").
 
-Per ciascuno stimatore (correzione di Nadeau-Bengio, cluster bootstrap):
+Per ciascuno stimatore (intervallo t cluster-robusto, esposto; correzione di Nadeau-Bengio, Wilcoxon e
+t non corretto in LeaveOneGroupOut, non esposti perché fuori banda o non usati; cluster bootstrap
+percentile, solo per riprodurre i numeri della tesi):
   - sotto ipotesi nulla (nessun effetto reale simulato): su >=200 repliche, la frazione
     di risultati dichiarati significativi a soglia 0.05 deve cadere approssimativamente
     fra 2% e 8% (calibrazione: né zero, né esplosa);
@@ -14,7 +16,8 @@ I semi casuali sono fissi ovunque: i test sono deterministici, non flaky.
 
 Regime d'uso (revisione, A1-A2). Lo strumento usa Nadeau-Bengio SOLO nel confronto fra modelli,
 con LeaveOneGroupOut (un fold per paziente, k >= 8 fold di dimensioni diverse) e il rapporto
-mean(n_test)/mean(n_train); l'intervallo cluster-robusto sui pazienti con 4-11 pazienti. Le
+mean(n_test)/mean(n_train), ma è fuori banda e il confronto è esposto solo in forma descrittiva;
+l'intervallo cluster-robusto sui pazienti con 5-15 pazienti (sotto 5 nessun intervallo). Le
 calibrazioni in quei regimi sono in fondo al file. I test con DummyClassifier a k = 3 e k = 5
 restano come controlli fuori dal regime d'uso: due DummyClassifier predicono a caso, senza usare
 il training, quindi le loro differenze fra fold NON sono correlate dalla sovrapposizione dei

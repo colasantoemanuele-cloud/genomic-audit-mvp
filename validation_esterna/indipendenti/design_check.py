@@ -92,7 +92,8 @@ def classify(df: pd.DataFrame, roles: dict[str, str], patient: str, factor: str,
 
 def cramer_v_expected(df: pd.DataFrame, roles: dict[str, str]) -> dict[frozenset, float | None]:
     """Per ogni coppia di fattori attivi: None se 'non valutabile' secondo le regole
-    (n < 10 o n/(r*c) < 2), altrimenti il V di Bergsma calcolato qui da zero."""
+    (n < 20 o n/(r*c) < 2; soglia di righe portata da 10 a 20 nella revisione, giro 1),
+    altrimenti il V di Bergsma calcolato qui da zero."""
     n = len(df)
     constant = {c for c in roles if df[c].nunique() < 2}
     ident = {c for c in roles if c not in constant and df[c].nunique() == n}
@@ -103,7 +104,7 @@ def cramer_v_expected(df: pd.DataFrame, roles: dict[str, str]) -> dict[frozenset
             a, b = active[i], active[j]
             t = pd.crosstab(df[a], df[b]).to_numpy(dtype=float)
             r, k = t.shape
-            if n < 10 or n / (r * k) < 2:
+            if n < 20 or n / (r * k) < 2:
                 out[frozenset((a, b))] = None
                 continue
             exp = t.sum(1, keepdims=True) * t.sum(0, keepdims=True) / n

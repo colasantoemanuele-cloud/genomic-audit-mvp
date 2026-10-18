@@ -9,9 +9,9 @@ prodotto. Ogni riga descrive UN controllo con uno di quattro stati:
 - giallo, «stima con limiti»: la stima esiste, ma va letta insieme al limite indicato
   (compresi i fatti strutturali del disegno);
 - rosso,  «stima non possibile con questi dati»: i dati non contengono l'informazione che
-  servirebbe per quella stima;
-- grigio, «controllo non eseguito o non valutabile»: non richiesto, rifiutato dallo strumento,
-  non valutabile oppure bloccato da un errore d'input (es. un livello che non esiste).
+  servirebbe per quella stima (compreso: meno pazienti del minimo per un intervallo);
+- grigio, «controllo non eseguito o non valutabile»: non richiesto, non valutabile oppure
+  bloccato da un errore d'input (es. un livello che non esiste).
 
 Il verde non compare mai per un controllo con un fatto strutturale, non eseguito, non
 valutabile, rifiutato o fuori dal regime calibrato. Non esiste un colore complessivo per
@@ -25,11 +25,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from core.design_audit import MISSING_LEVEL_CLASS, DesignAuditResult
+from core.design_audit import MIN_ROWS_FOR_V, MISSING_LEVEL_CLASS, DesignAuditResult
 from core.leakage_audit import GAP_ALERT, MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT, LeakageAuditResult
 from core.tcr_validation import BIOLOGICAL_ASSUMPTIONS, TcrValidationResult
 
 VERDE, GIALLO, ROSSO, GRIGIO = "verde", "giallo", "rosso", "grigio"
+# Modulo A: sotto questo numero di pazienti la soglia di rumore del divario (GAP_ALERT, provata con
+# 19 pazienti su GSE125449) non è verificata: nessun verde.
+MIN_PATIENTS_LEAKAGE = 5
 STATES = (VERDE, GIALLO, ROSSO, GRIGIO)
 
 STATE_LABEL = {
@@ -58,24 +61,31 @@ RULES = {
         "coincidenti, giallo per annidamento, esito determinato da un fattore o unità tecnica. "
         "Associazioni fra fattori (Cramér V, l'unico elemento inferenziale), escluse le coppie già "
         "coperte da un fatto strutturale: giallo per ogni coppia con V >= 0.5; grigio per le coppie "
-        "con V non valutabile (meno di 10 righe oppure, in media, meno di 2 righe per cella); verde "
-        "per le altre."),
+        f"con V non valutabile (meno di {MIN_ROWS_FOR_V} righe oppure, in media, meno di 2 righe per "
+        "cella); verde per le altre. Un confronto «stimabile» è giallo invece che verde se un fattore "
+        "tecnico è fortemente associato ai due livelli (V >= 0.5) o se quell'associazione non è "
+        "valutabile."),
     "Modulo A": (
         "Valutazione con split per paziente: giallo se almeno un fold di test ha classi assenti, se "
         "il training è stato sottocampionato o se il classificatore non è arrivato a convergenza in "
-        "almeno un fold; altrimenti verde. Valutazione con split casuale delle cellule: rosso se la "
-        f"sua macro-F1 supera quella dello split per paziente di più di {GAP_ALERT:g}; altrimenti "
-        f"verde. Confronto fra modelli: grigio se non è stato eseguito (meno di "
+        f"almeno un fold, oppure con meno di {MIN_PATIENTS_LEAKAGE} pazienti; altrimenti verde. "
+        "Valutazione con split casuale delle cellule: rosso se la sua macro-F1 supera quella dello "
+        f"split per paziente di più di {GAP_ALERT:g}; giallo se è più bassa di più di {GAP_ALERT:g} "
+        f"(direzione inattesa) o con meno di {MIN_PATIENTS_LEAKAGE} pazienti; altrimenti verde. "
+        "Confronto fra modelli: grigio se non è stato eseguito (meno di "
         f"{MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT} pazienti oppure modalità rapida); giallo se è stato "
         f"eseguito, perché è solo descrittivo (nessun test calibrato con un paziente per fold)."),
     "Modulo B": (
         "Eccesso di discordanza fra compartimenti: rosso se i pazienti sono meno del minimo per un "
-        "intervallo (5); giallo se l'intervallo al 95% è interamente sopra o interamente sotto lo "
+        "intervallo (5); giallo se l'intervallo non è stato prodotto per un altro motivo (variabilità "
+        "nulla), se l'intervallo al 95% è interamente sopra o interamente sotto lo "
         "zero, oppure se lo è l'intervallo della sensibilità a pesi uguali; verde («nessun eccesso "
         "rilevato») se entrambi gli intervalli includono lo zero. Tasso d'errore per compartimento, per "
-        "ogni convenzione: rosso se l'intervallo non è stato prodotto (meno di 5 pazienti o "
-        "variabilità nulla); verde se è stato prodotto; grigio se il tasso non è stato calcolato "
-        "(mappa dei marcatori o compartimento di riferimento non forniti)."),
+        "ogni convenzione: rosso se l'intervallo non è stato prodotto perché i pazienti sono meno di 5; "
+        "giallo se la stima esiste ma l'intervallo non è stato prodotto per un altro motivo "
+        "(variabilità nulla, tasso pari a 0 o 1); verde se è stato prodotto; grigio se il tasso non è "
+        "stato calcolato (mappa dei marcatori o compartimento di riferimento non forniti) o se una "
+        "convenzione non ha unità valutabili."),
 }
 
 
@@ -123,10 +133,15 @@ def design_summary(r: DesignAuditResult) -> SectionSummary:
     checks = []
     for c in r.comparisons:
         name = f"Confronto {c.factor}: {c.level_a} vs {c.level_b}"
+        limits = [f"'{f}' fortemente associato al confronto (Cramér V = {v:.2f})" for f, v in c.partial_confounders]
+        if c.unassessed_technical:
+            limits.append("associazione con " + ", ".join(repr(f) for f in c.unassessed_technical)
+                          + " non valutabile (tabella troppo piccola)")
+        lim = ("; " + "; ".join(limits)) if limits else ""
         if c.classification == "stimabile":
-            checks.append(Check(name, VERDE, f"stimabile con {c.n_units} unità indipendenti"))
+            checks.append(Check(name, GIALLO if limits else VERDE, f"stimabile con {c.n_units} unità indipendenti" + lim))
         elif c.classification == "stimabile con bassa potenza":
-            checks.append(Check(name, GIALLO, f"stimabile con bassa potenza: {c.n_units} unità indipendenti"))
+            checks.append(Check(name, GIALLO, f"stimabile con bassa potenza: {c.n_units} unità indipendenti" + lim))
         elif c.classification == MISSING_LEVEL_CLASS:
             checks.append(Check(name, GRIGIO, "errore d'input: " + c.sentence.split(": ", 1)[1]))
         else:
@@ -168,6 +183,11 @@ def leakage_summary(r: LeakageAuditResult) -> SectionSummary:
     nc = r.grouped.n_not_converged + r.random.n_not_converged
     if nc:
         limits.append(f"classificatore non convergente in {nc} fold")
+    few = r.n_patients < MIN_PATIENTS_LEAKAGE
+    few_txt = (f"solo {r.n_patients} pazienti: con meno di {MIN_PATIENTS_LEAKAGE} la soglia di rumore "
+               f"di {GAP_ALERT:g} non è verificata")
+    if few:
+        limits.append(few_txt)
     base = f"macro-F1 = {r.grouped.mean:.3f} ± {r.grouped.std:.3f} su {len(r.grouped.fold_scores)} fold"
     checks.append(Check("Valutazione con split per paziente", GIALLO if limits else VERDE,
                         base + ("; " + "; ".join(limits) if limits else "")))
@@ -175,10 +195,19 @@ def leakage_summary(r: LeakageAuditResult) -> SectionSummary:
         checks.append(Check("Valutazione con split casuale delle cellule", ROSSO,
                             f"su questi dati lo split casuale dà una macro-F1 più alta di {r.gap:+.3f} "
                             f"rispetto allo split per paziente: non stima la prestazione su pazienti nuovi"))
+    elif r.gap < -GAP_ALERT:
+        checks.append(Check("Valutazione con split casuale delle cellule", GIALLO,
+                            f"su questi dati lo split casuale dà una macro-F1 più bassa di {-r.gap:.3f} "
+                            f"rispetto allo split per paziente, oltre la soglia di {GAP_ALERT:g}: direzione "
+                            f"inattesa (variabilità fra fold, classi assenti o pochi pazienti); il divario "
+                            f"non dice nulla sul leakage"))
+    elif few:
+        checks.append(Check("Valutazione con split casuale delle cellule", GIALLO,
+                            f"divario rispetto allo split per paziente {r.gap:+.3f}; " + few_txt))
     else:
         checks.append(Check("Valutazione con split casuale delle cellule", VERDE,
                             f"divario rispetto allo split per paziente {r.gap:+.3f}, entro la soglia di "
-                            f"{GAP_ALERT:g}"))
+                            f"±{GAP_ALERT:g}"))
     if r.model_comparison is None:
         checks.append(Check("Confronto fra modelli", GRIGIO,
                             f"non eseguito (meno di {MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT} pazienti "
@@ -198,8 +227,10 @@ def tcr_summary(r: TcrValidationResult) -> SectionSummary:
     e = d.equal_weights
     name = "Eccesso di discordanza fra compartimenti"
     n_min = r.min_patients_for_ci
-    if not d.sufficient:
+    if not d.sufficient and d.n_patients < n_min:
         checks = [Check(name, ROSSO, f"intervallo non prodotto: {d.n_patients} pazienti, ne servono almeno {n_min}")]
+    elif not d.sufficient:
+        checks = [Check(name, GIALLO, f"stima {d.mean_excess:+.3f}, intervallo non prodotto: {d.reason}")]
     else:
         txt = f"{d.mean_excess:+.3f} [{d.ci_low:+.3f}, {d.ci_high:+.3f}]"
         eq_txt = (f"; pesi uguali {e.mean:+.3f} [{e.ci_low:+.3f}, {e.ci_high:+.3f}]"
@@ -223,13 +254,20 @@ def tcr_summary(r: TcrValidationResult) -> SectionSummary:
                             "non calcolato: mappa dei marcatori o compartimento di riferimento non forniti"))
     else:
         for c in r.conventions.values():
+            if not c.by_compartment:
+                checks.append(Check(f"Tasso d'errore [{c.name}]", GRIGIO,
+                                    "nessuna unità valutabile: nessun clone ha un'identità di riferimento "
+                                    "oppure nessuna cellula giudicata fuori dal compartimento di riferimento"))
             for comp, b in c.by_compartment.items():
                 n = f"Tasso d'errore [{c.name}] in {comp}"
                 if b.sufficient:
                     checks.append(Check(n, VERDE, f"{b.mean:.3f} [{b.ci_low:.3f}, {b.ci_high:.3f}], "
                                                   f"{b.n_groups} pazienti"))
+                elif b.n_groups < n_min:
+                    checks.append(Check(n, ROSSO, f"stima {b.mean:.3f}, intervallo non prodotto: {b.reason}"))
                 else:
-                    checks.append(Check(n, ROSSO, f"intervallo non prodotto: {b.reason}"))
+                    checks.append(Check(n, GIALLO, f"stima {b.mean:.3f} su {b.n_groups} pazienti, intervallo "
+                                                   f"non prodotto: {b.reason}"))
     return SectionSummary("Modulo B", checks, RULES["Modulo B"])
 
 

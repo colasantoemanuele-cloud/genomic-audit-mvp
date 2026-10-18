@@ -51,7 +51,7 @@ Tre estratti di output dello strumento su dati pubblici. I file completi sono ne
 percorsi indicati.
 
 **1. Audit del disegno — GSE278694** (adenocarcinoma duttale pancreatico; Chen M-M et al., *Cancer
-Cell* 2025). Sui metadati (37 librerie, 22 pazienti) il confronto fra protocolli scRNA-seq e
+Cell* 2025;43(9):1656-1676.e10, doi:10.1016/j.ccell.2025.06.020). Sui metadati (37 librerie, 22 pazienti) il confronto fra protocolli scRNA-seq e
 snRNA-seq non è stimabile, perché nessun paziente è stato misurato con entrambi
 (`validation/results/cli_design_real.txt`):
 
@@ -62,8 +62,8 @@ differenza fra 'scRNA' e 'snRNA' coincide con la differenza fra due gruppi di pa
 test possibile).
 ```
 
-**2. Modulo A — GSE125449** (tumori primitivi del fegato; Ma L. et al., *Cancer Cell* 2019;
-9.946 cellule, 19 pazienti, 8 tipi cellulari). Lo split casuale delle cellule dà una macro-F1
+**2. Modulo A — GSE125449** (tumori primitivi del fegato; Ma L. et al., *Cancer Cell*
+2019;36(4):418-430.e6; 9.946 cellule, 19 pazienti, 8 tipi cellulari). Lo split casuale delle cellule dà una macro-F1
 più alta di quella dello split per paziente (`validation_esterna/results/A1_cli_stdout.txt`).
 In GSE125449 ogni paziente ha un solo campione, sequenziato su una sola delle due piattaforme: il
 divario include quindi anche il passaggio fra piattaforme, non solo fra pazienti.
@@ -110,7 +110,7 @@ cloni; con la scelta dello strumento 0,152 su 231) (`validation/results/a1_modul
 l'ordine delle righe, è **superato**. I valori della tesi sono citati dal progetto da cui lo
 strumento è stato portato, non prodotti da questo codice.
 
-Il report HTML della demo, con la «Sintesi dei controlli» in apertura:
+Il report HTML della demo (`audit-sc demo`, codice di questa versione), con la «Sintesi dei controlli» in apertura:
 
 ![Report HTML della demo](docs/img/report_demo.png)
 
@@ -120,7 +120,7 @@ Il report HTML della demo, con la «Sintesi dei controlli» in apertura:
 |---|---|---|
 | [GSE132465](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132465), carcinoma colorettale | audit del disegno, criteri D1-D4, contro uno script indipendente che non importa nulla da `core/` | prima esecuzione: **D2 e D4 falliti** (un difetto nella lettura dei valori mancanti, corretto nel commit `7bb30ca`); dopo la correzione: soddisfatti |
 | [GSE131907](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131907), adenocarcinoma polmonare | audit del disegno, criteri D1-D4 | soddisfatti dalla prima esecuzione |
-| [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449), tumori primitivi del fegato | audit del disegno (D1-D4) e Modulo A (A1-A4: esecuzione, verifica indipendente, controllo negativo con 20 permutazioni, robustezza di formato) | disegno: soddisfatti. Modulo A, prima esecuzione: **A1 non terminato dopo 5 h 26 min, A4c fallito**; con il motore riscritto: A1-A4 soddisfatti |
+| [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449), tumori primitivi del fegato | audit del disegno (D1-D4) e Modulo A (A1-A4: esecuzione, verifica indipendente, controllo negativo con 20 permutazioni, robustezza di formato) | disegno: soddisfatti. Modulo A, prima esecuzione: **A1 non terminato dopo 5 h 26 min, A4c fallito**; con il motore riscritto: A1-A4 soddisfatti sul dataset completo (19 pazienti). Sulla coorte ridotta a 10 pazienti la verifica indipendente A2 **non è soddisfatta** in LeaveOneGroupOut (0,7530 contro 0,7127: in 7 fold su 10 il paziente lasciato fuori non ha tutte le classi; `validation_esterna/REPORT.md`) |
 | [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | **verifica di fedeltà del porting**: con le regole della tesi il codice riproduce i numeri della tesi (`validation/gse278694_moduleB.py`). È lo stesso dataset su cui il metodo è nato: non è una validazione | riproduzione: tasso per clone nel tumore 0,170 su 277 cloni e 10 pazienti, uguale alla versione finale della tesi (stima e numero di cloni; l'intervallo differisce perché il metodo è diverso). Il vecchio valore 0,1951 è superato (`validation/results/a1_moduleB.json`) |
 
 Gli script «indipendenti» verificano che il codice segua le regole dichiarate (stessi numeri con un
@@ -144,7 +144,7 @@ data), esiti. Riporta (1) i fatti strutturali del disegno: annidamenti, fattori 
 determinati da un fattore, fattori tecnici in corrispondenza 1:1 con la coppia paziente-tessuto.
 Sono controlli deterministici sulla tabella, utili come lista di verifica; l'unico elemento
 inferenziale dell'audit è il Cramér V con la correzione di Bergsma, riportato per ogni coppia di
-fattori («non valutabile» sotto 10 righe o con meno di 2 righe per cella in media), con allarme a
+fattori («non valutabile» sotto 20 righe o con meno di 2 righe per cella in media), con allarme a
 V >= 0.5; (2) per ogni confronto richiesto, il numero di unità indipendenti (pazienti) e la classe
 `stimabile` / `stimabile con bassa potenza` / `non stimabile`; un livello che non compare nei dati
 è segnalato come errore d'input. Funziona anche prima di sequenziare, sul foglio dei campioni.
@@ -219,30 +219,40 @@ dall'intervallo invertibile o vicino al suo bordo (`validation/results/cli_tcr_r
 abbiano la stessa linea CD4/CD8. Eccezioni note, che il modulo non distingue da un errore di
 annotazione:
 - cellule CD4 che esprimono CD8αα;
-- CD4 citotossiche, che esprimono programmi tipici delle CD8: nella tesi (progetto pdac-ml), le
-  cellule dei cloni discordanti etichettate CD8T nel tumore di GSE278694 esprimono CD8A molto più
-  di rado dei cloni concordanti ed esprimono più GNLY; sono la causa probabile di gran parte delle
-  chiamate CD8 sulle vere CD4 (0,45 nel tumore, `validation/results/a3_summary.json`);
 - MAIT, NKT e cellule γδ, che un clonotipo definito dalla sola TRB non separa;
 - doppietti T-NK;
 - RNA ambientale specifico del compartimento.
 
-L'eccesso di discordanza è interpretabile solo con etichette di **linea** (CD4/CD8), non di stato
-(es. effettrici contro esauste). Nel dataset GSE278694 l'errore è più frequente nel tumore che nel
-sangue; non è detto che valga in altri dataset.
+Le CD4 citotossiche, che esprimono programmi tipici delle CD8, **non** sono un'eccezione: restano
+della linea CD4, e una loro etichetta CD8 è un errore di linea che il modulo conta correttamente.
+Nella tesi (progetto pdac-ml) le cellule dei cloni discordanti etichettate CD8T nel tumore di
+GSE278694 esprimono CD8A più di rado dei cloni concordanti ed esprimono più GNLY, il che
+suggerisce che una parte siano CD4 citotossiche: una possibile causa di una parte delle chiamate
+CD8 sui cloni CD4 (0,45 nel tumore, `validation/results/a3_summary.json`).
 
-**Modulo B — etichette NK.** La convenzione per clone conta come errore anche le etichette NK: su
-GSE278694 spiegano il 72% della differenza fra le due convenzioni
-(`validation/results/b2_quota_nk.json`). Nella tesi (README del progetto pdac-ml, sezione sui
+L'eccesso di discordanza è interpretabile solo con etichette di **linea** (CD4/CD8), non di stato
+(es. effettrici contro esauste). Nella tesi (schemi «naive» e «LOCO» di progetto-ml, in cui anche
+il sangue viene giudicato) l'errore è più frequente nel tumore che nel sangue; lo strumento non lo
+misura, perché usa il sangue come riferimento e non lo giudica, e non è detto che valga in altri
+dataset.
+
+**Modulo B — etichette NK.** La convenzione per clone conta come errore anche le etichette NK. Su
+GSE278694 la differenza fra le due convenzioni nel tumore è 0,170 − 0,093 = 0,077. Togliendo le NK
+dalla convenzione per clone il tasso scende a 0,115, cioè del 72% di quella differenza
+(`validation/results/b2_quota_nk.json`); aggiungendole invece alla convenzione per cellula (passo
+S2 → S3 della scala in `validation/results/a1_moduleB.json`) il tasso sale da 0,093 a 0,163, cioè
+di 0,070. La scomposizione non è additiva e la quota dipende dall'ordine: descrive il peso delle
+etichette NK, non attribuisce una causa. Nella tesi (README del progetto pdac-ml, sezione sui
 doppietti) due misure fisiche stimano fra le cellule NK con TCR una maggioranza di doppietti T+NK
 su tutti i tessuti insieme, ma non nel tumore, con intervalli larghi e copertura non verificata:
 una parte degli «errori» NK può essere fatta di doppietti, non di errori di annotazione.
 
 **Modulo B — un solo dataset reale.** Su GSE278694 la riproduzione dei numeri della tesi verifica
-la fedeltà del porting, non la correttezza del metodo. Gli intervalli della tesi con 4 pazienti
-(per esempio la differenza Tumor − Adjacent_normal, [+0,021; +0,170]) sono riportati negli output
-di verifica solo per confronto: lo strumento li rifiuta, e con 4 pazienti il bootstrap ha solo 35
-ricampionamenti distinti.
+la fedeltà del porting, non la correttezza del metodo. Gli intervalli con 4 pazienti calcolati come
+nella tesi (per esempio la differenza Tumor − Adjacent_normal, +0,059 [0,000; 0,141] su 85 cloni,
+`validation/results/a1_moduleB.json`, passo S5) sono riportati negli output di verifica solo per
+confronto: lo strumento li rifiuta, e con 4 pazienti il bootstrap ha solo 35 ricampionamenti
+distinti.
 
 **Modulo A.** La deviazione standard fra 5 fold non è una stima valida dell'incertezza: il loro
 rapporto è descrittivo. Il divario include tutto ciò che distingue i pazienti (su GSE125449 anche
@@ -273,18 +283,18 @@ colore complessivo. Le regole leggono classi e soglie già calcolate dai moduli,
 | verde | nessun limite rilevato dalle regole | il controllo è stato eseguito e nessuna regola segnala un limite; **non** significa che la stima sia corretta |
 | giallo | stima con limiti | la stima esiste, ma va letta insieme al limite indicato |
 | rosso | stima non possibile con questi dati | i dati non contengono l'informazione necessaria |
-| grigio | controllo non eseguito o non valutabile | non richiesto, rifiutato, non valutabile o bloccato da un errore d'input |
+| grigio | controllo non eseguito o non valutabile | non richiesto, non valutabile o bloccato da un errore d'input |
 
 | Sezione | Controllo | Verde | Giallo | Rosso | Grigio |
 |---|---|---|---|---|---|
-| Disegno | ogni confronto richiesto | «stimabile» | «stimabile con bassa potenza»: meno di 5 unità indipendenti, oppure p-value minimo raggiungibile > 0.05 | «non stimabile»: nessun paziente con entrambi i livelli, oppure un fattore tecnico separa i due livelli | nessun confronto richiesto, oppure un livello che non compare nei dati (errore d'input) |
+| Disegno | ogni confronto richiesto | «stimabile», senza fattori tecnici associati | «stimabile con bassa potenza»: meno di 5 unità indipendenti, oppure p-value minimo raggiungibile > 0.05; oppure «stimabile» con un fattore tecnico fortemente associato ai due livelli (V >= 0.5) o con quell'associazione non valutabile | «non stimabile»: nessun paziente con entrambi i livelli, oppure un fattore tecnico separa i due livelli | nessun confronto richiesto, oppure un livello che non compare nei dati (errore d'input) |
 | Disegno | ogni fatto strutturale | — | annidamento, esito determinato da un fattore, unità tecnica | due fattori coincidenti (uno-a-uno) | — |
-| Disegno | associazioni fra fattori (escluse le coppie con un fatto strutturale) | coppie valutabili con Cramér V < 0.5 | una riga per ogni coppia con Cramér V >= 0.5 | — | coppie con V non valutabile |
-| Modulo A | valutazione con split per paziente | nessuno dei limiti a destra | classi assenti da almeno un fold di test, training sottocampionato, oppure classificatore non convergente in almeno un fold | — | — |
-| Modulo A | valutazione con split casuale delle cellule | divario <= 0.05 | — | divario > 0.05: lo split casuale non stima la prestazione su pazienti nuovi | — |
+| Disegno | associazioni fra fattori (escluse le coppie con un fatto strutturale) | coppie valutabili con Cramér V < 0.5 | una riga per ogni coppia con Cramér V >= 0.5 | — | coppie con V non valutabile (meno di 20 righe o, in media, meno di 2 per cella) |
+| Modulo A | valutazione con split per paziente | nessuno dei limiti a destra | classi assenti da almeno un fold di test, training sottocampionato, classificatore non convergente in almeno un fold, oppure meno di 5 pazienti | — | — |
+| Modulo A | valutazione con split casuale delle cellule | divario fra −0.05 e +0.05, con almeno 5 pazienti | divario < −0.05 (direzione inattesa), oppure meno di 5 pazienti | divario > +0.05: lo split casuale non stima la prestazione su pazienti nuovi | — |
 | Modulo A | confronto fra modelli | mai | eseguito (solo descrittivo: nessun test calibrato) | — | non eseguito (meno di 8 pazienti, oppure `--rapido`) |
-| Modulo B | eccesso di discordanza fra compartimenti | «nessun eccesso rilevato»: gli intervalli pesato e a pesi uguali includono lo zero | un intervallo interamente sopra o interamente sotto lo zero | meno di 5 pazienti: intervallo non prodotto | — |
-| Modulo B | tasso d'errore per compartimento (per convenzione) | intervallo prodotto | — | intervallo non prodotto (meno di 5 pazienti o variabilità nulla) | non calcolato (mappa dei marcatori o riferimento non forniti) |
+| Modulo B | eccesso di discordanza fra compartimenti | «nessun eccesso rilevato»: gli intervalli pesato e a pesi uguali includono lo zero | un intervallo interamente sopra o interamente sotto lo zero, oppure intervallo non prodotto per variabilità nulla | meno di 5 pazienti: intervallo non prodotto | — |
+| Modulo B | tasso d'errore per compartimento (per convenzione) | intervallo prodotto | stima senza intervallo per un motivo diverso dal numero di pazienti (variabilità nulla, tasso 0 o 1) | meno di 5 pazienti: intervallo non prodotto | non calcolato (mappa dei marcatori o riferimento non forniti), oppure convenzione senza unità valutabili |
 
 La frazione di CD8 non entra nella sintesi.
 

@@ -72,11 +72,12 @@ Valori attesi. L'eccesso a pesi uguali ha valore atteso ½‖p_A − p_B‖²: z
 etichette coincidono, positivo altrimenti. L'eccesso pesato ha valore atteso
 w_A‖p_A‖² + w_B‖p_B‖² − p_A·p_B, zero sotto H0 ma negativo quando le proporzioni differiscono e
 n_A ≠ n_B (esempio: 3 cellule nel sangue, tutte corrette, e 60 nel tumore con il 40% di errore:
-circa −0,13; `tests/test_input_errors.py`). Un intervallo pesato interamente sotto lo zero non
+circa −0,06 se le cellule sbagliate hanno tutte la stessa etichetta, circa −0,13 se si dividono in
+parti uguali fra due etichette, come nel caso simulato di `tests/test_input_errors.py`, −0,131). Un intervallo pesato interamente sotto lo zero non
 indica quindi assenza di errori, e la sintesi lo mostra in giallo.
 
-**Ipotesi biologica.** Lo stesso clone ha la stessa linea CD4/CD8. Eccezioni: CD4 con CD8αα, CD4
-citotossiche, MAIT, NKT e γδ, doppietti T-NK, RNA ambientale specifico del compartimento. Solo
+**Ipotesi biologica.** Lo stesso clone ha la stessa linea CD4/CD8. Eccezioni: CD4 con CD8αα,
+MAIT, NKT e γδ, doppietti T-NK, RNA ambientale specifico del compartimento. Le CD4 citotossiche, che esprimono programmi tipici delle CD8, NON sono un'eccezione: restano della linea CD4, e una loro etichetta CD8 è un errore di linea che il modulo conta correttamente; nella tesi (progetto pdac-ml) sono indicate come possibile causa di una parte delle chiamate CD8 sui cloni CD4 nel tumore di GSE278694. Solo
 etichette di linea, non di stato.
 
 ## 4. Tasso d'errore via marcatori (Modulo B)
@@ -157,8 +158,12 @@ tecnico 1:1 con la coppia paziente-tessuto). Sono controlli sulla tabella, non s
 
 **Cramér V** con la correzione del bias di Bergsma (2013):
 φ̃² = max(0, χ²/n − (k−1)(r−1)/(n−1)), r̃ = r − (r−1)²/(n−1), k̃ = k − (k−1)²/(n−1),
-V = √(φ̃² / min(k̃−1, r̃−1)). Valutabile solo con almeno 10 righe e in media almeno 2 righe per cella
-(n/(r c) ≥ 2); allarme a V ≥ 0,5 se la coppia non ha un fatto strutturale.
+V = √(φ̃² / min(k̃−1, r̃−1)). Valutabile solo con almeno 20 righe e in media almeno 2 righe per cella
+(n/(r c) ≥ 2); allarme a V ≥ 0,5 se la coppia non ha un fatto strutturale. La soglia di 20 righe
+è il foglio più piccolo calibrato: con 10-12 righe i falsi allarmi sotto fattori indipendenti
+superano il 5% (0,096 a 10 righe, 2×2, simulazione del revisore indipendente, giro 1). Un
+confronto «stimabile» è segnalato in giallo se un fattore tecnico è fortemente associato ai due
+livelli o se quell'associazione non è valutabile.
 
 **Calibrazione** (`tests/test_design_audit_calibration.py`, `revisione/log/design_calibrazione.txt`):
 - fattori indipendenti, 80 righe: almeno un allarme in 1/200 repliche (banda 0-5%);
