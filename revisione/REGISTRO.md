@@ -97,3 +97,56 @@ Numeri reali cambiati (GSE278694, codice nuovo; vecchio → nuovo):
 Incidente: `revisione/esegui_validazioni.sh` modificato mentre bash lo eseguiva; fermato lo script
 (il processo Python in corso è proseguito) e lanciati i passi restanti da una copia fissa. D'ora in
 poi lo script si lancia da una copia.
+
+## Allineamento della regola dei pareggi alla tesi (richiesta del 2026-10-18)
+
+Riferimento: versione finale di progetto-ml (ramo `revisione`, commit 05947d0), schema solo
+sangue, tumore: 0,170 [0,095; 0,252] su 277 cloni e 10 pazienti con i 10 cloni a pari merito
+esclusi (`error_rate_blood.csv`); sensibilità 0,199 (pareggi = errore) e 0,164 (pareggi =
+corretti) (`error_rate_tie_sensitivity.csv`); clone TRA+TRB 0,154 [0,084; 0,227] su 227 cloni
+(`error_rate_clone_ab.csv`).
+
+Diagnosi prima della modifica: lo strumento aveva 288 unità e 11 pareggi, la tesi 287 e 10. Il
+confronto unità per unità con `arbitration_blood.csv` trova una sola unità diversa: PA12, tumore,
+clone TGCGCCAGC…TACTTC, 3 cellule CD4T/CD8T/NK (pareggio a tre). La cellula GGCGACTCATGCTAGT ha due
+contig TRB con 2 UMI: lo strumento sceglie quello con più reads (474, la CDR3 del clone), la tesi
+quello lasciato primo da `sort_values("umis")` non stabile (278 reads, un'altra CDR3), e per la
+tesi il clone ha solo 2 cellule nel tumore. Poiché l'unità è un pareggio, con l'esclusione stima e
+numero di cloni coincidono; nelle due sensibilità differiscono di quell'unità.
+
+Modifiche: `_majority_error` e `clone_level_units` con `tie_rule` (`exclude` default, `error`,
+`correct`), `ConventionResult.n_ties`, opzione `--tie-rule` della CLI, numero di unità e di pareggi
+in narrativa, report e app; `validation/gse278694_moduleB.py` con la regola della tesi, il
+confronto automatico con le tabelle di progetto-ml, l'elenco delle unità diverse e la
+ricostruzione della scelta dei contig della tesi; la regola di prima (probabilità di errore con
+scelta a caso) è rimossa. Corretta anche l'etichetta «IC 95% (bootstrap sui pazienti)» dell'app,
+rimasta da prima di A1.
+
+Esiti (`validation/results/a1_moduleB.json`, sezione `fedelta_S5`):
+- S5 = tesi: 0,16967509025270758 su 277 cloni, 10 pazienti (coincide a 1e-12); Tumor − Adjacent
+  +0,0588 su 85 cloni (coincide);
+- sensibilità: pareggi = errore 0,2014 su 288 (tesi 0,1986 su 287); pareggi = corretti 0,1632 su
+  288 (tesi 0,1638 su 287);
+- clone TRA+TRB: 0,1515 su 231 (tesi 0,1542 su 227);
+- con la scelta dei contig della tesi ricostruita (155 cellule con CDR3 TRB diversa, 879 con CDR3
+  TRA diversa), nello stesso codice tutti e quattro i valori coincidono con la tesi.
+
+Numeri cambiati (vecchio → nuovo):
+- per clone, opzioni della tesi, Tumor 0,186 [0,113; 0,290] su 288 unità → 0,170 [0,100; 0,274]
+  su 277 (11 pareggi esclusi); Adjacent 0,064 → 0,060 (117 unità); differenza +0,064 su 88 cloni
+  → +0,059 su 85;
+- per clone, default, Tumor 0,187 [0,114; 0,293] → 0,171 [0,101; 0,277] su 280; Adjacent 0,055 →
+  0,051; differenza +0,064 su 89 cloni → +0,058 su 86;
+- B2: quota NK 0,7059 → 0,7198 (README 71% → 72%); per clone con NK come errore 0,1858 → 0,1697;
+  senza etichette fuori mappa 0,1203 → 0,1145; con tutte 0,1845 → 0,1685; per cellula invariato
+  0,0930;
+- fedeltà del porting: valore della tesi 0,1951 [0,1230; 0,2737] → 0,170 (il vecchio valore è
+  superato); valore dello strumento con la regola dei pareggi di allora 0,1944 → 0,1697 con
+  l'esclusione.
+Invariati: per cellula, eccesso di discordanza, sensibilità a pesi uguali.
+
+Tempi: le prove su clone pulito ora girano in sequenza (`revisione/prova_clone_pulito.sh`). In
+parallelo, ciascuna con `-n auto`, la suite completa durava 36 min contro 24 min da sola. Esiti
+dell'esecuzione di 69cf239 (prima di questa modifica, da ripetere): clone uv suite completa 177
+passed, 3 skipped, 7 xfailed; pip 115 passed, 3 skipped; Python 3.12 115 passed, 3 skipped; suite
+con i dati 180 passed, 7 xfailed in 24 min 30 s.

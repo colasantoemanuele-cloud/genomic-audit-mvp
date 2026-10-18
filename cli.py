@@ -207,6 +207,7 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
         clone_error_labels=_csv_list(args.clone_error_labels),
         clone_marker_priority=_csv_list(args.clone_marker_priority),
         library_col=args.library_col, compartment_order=_csv_list(args.compartment_order),
+        tie_rule=args.tie_rule,
     )
     print(result.barcode_match.sentence)
     print(result.narrative)
@@ -345,6 +346,10 @@ def main(argv: list[str] | None = None) -> None:
     p_tcr.add_argument("--clone-marker-priority", default=None,
                        help="convenzione 'clone': ordine di positività esclusiva, es. CD8T,CD4T "
                             "(default: positività non esclusiva)")
+    p_tcr.add_argument("--tie-rule", choices=["exclude", "error", "correct"], default="exclude",
+                       help="convenzione 'clone': unità con l'etichetta di maggioranza in pareggio "
+                            "escluse (default, come la tesi) oppure, come sensibilità, contate come "
+                            "errore o come corrette")
     p_tcr.add_argument("--compartment-order", default=None,
                        help="ordine dei compartimenti nelle differenze appaiate A - B, es. "
                             "Tumor,Adjacent_normal (default: alfabetico)")

@@ -3,6 +3,11 @@
 > **Strumento per la ricerca. Non è un dispositivo medico e non va usato per decisioni cliniche
 > su singoli pazienti.**
 
+**Versione 0.9.0 — prototipo per studio pilota.** È pensato per essere provato su uno studio
+pilota da chi sa leggerne i limiti, non per l'uso corrente: il Modulo B non ha ancora una
+validazione esterna su dati reali diversi da quelli su cui è nato, e lo strumento non è stato
+provato da utenti esterni. Che cosa manca per la 1.0 è in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
 ## In breve
 
 `genomic-audit` è uno strumento di controllo per studi di trascrittomica a singola cellula su
@@ -79,20 +84,31 @@ all'identità del clone stimata nel sangue, con le due convenzioni affiancate
 [cell] per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa dei marcatori
 escluse -- 'Tumor': 0.093 (IC95% [0.043, 0.188], 10 pazienti).
 [clone] per clone: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di
-maggioranza (pareggi: probabilità di errore con scelta a caso fra le etichette a pari merito);
-etichette fuori mappa contate come errore (etichette ammesse fuori mappa: NK); positività
-esclusiva in ordine CD8T > CD4T -- 'Tumor': 0.186 (IC95% [0.113, 0.290], 10 pazienti).
+maggioranza (pareggi della maggioranza: esclusi dal calcolo); etichette fuori mappa contate come
+errore (etichette ammesse fuori mappa: NK); positività esclusiva in ordine CD8T > CD4T --
+'Tumor': 0.170 (IC95% [0.100, 0.274], 10 pazienti, 277 unità; unità in pareggio: 11).
 ```
 
 I due valori misurano cose diverse (cellule contro cloni, con le etichette NK escluse oppure
 contate come errore), e per questo lo strumento li riporta sempre insieme, ciascuno con la sua
-definizione. Il 71% della differenza è dovuto alle etichette NK contate come errore
-(`validation/results/b2_quota_nk.json`). Con le stesse opzioni la tesi da cui il progetto nasce
-riportava 0,1951 [0,1230; 0,2737]: la stima puntuale differisce per due regole che lo strumento ha
-reso esplicite (i pareggi dell'etichetta di maggioranza, 11 unità su 288 nel tumore, e la scelta
-fra contig TRB a pari UMI, 346 cellule su 123.280, `validation/results/a8_pareggi.json`),
-l'intervallo perché il metodo è cambiato (sezione [Test](#test)). Il valore della tesi è citato
-dal progetto da cui lo strumento è stato portato, non prodotto da questo codice.
+definizione. Il 72% della differenza è dovuto alle etichette NK contate come errore
+(`validation/results/b2_quota_nk.json`).
+
+**Fedeltà del porting.** Con le stesse opzioni e la stessa regola dei pareggi (esclusi) la
+versione finale della tesi da cui lo strumento è stato portato (progetto-ml, ramo `revisione`,
+commit 05947d0, `results/tables/error_rate_blood.csv`) riporta nel tumore 0,170 su 277 cloni e
+10 pazienti: lo strumento dà la stessa stima (0,16967509…, uguale fino all'ultima cifra) sugli
+stessi 277 cloni. L'intervallo è diverso perché il metodo è diverso: [0,100; 0,274] con
+l'intervallo t cluster-robusto dello strumento, [0,095; 0,252] con il bootstrap della tesi. Le
+sensibilità ai pareggi (`--tie-rule error|correct`) danno 0,201 e 0,163 su 288 unità, contro
+0,199 e 0,164 su 287 nella tesi: l'unità in più è un pareggio (PA12, tumore) che compare perché
+una sua cellula ha due contig TRB a pari UMI e lo strumento sceglie quello con più reads, mentre
+la tesi tiene il primo di un ordinamento non stabile. Ricostruendo nel codice dello strumento la
+scelta dei contig della tesi, tutti i valori coincidono, anche il clone TRA+TRB (0,154 su 227
+cloni; con la scelta dello strumento 0,152 su 231) (`validation/results/a1_moduleB.json`, sezione
+`fedelta_S5`). Il vecchio valore della tesi, 0,1951 [0,1230; 0,2737], che decideva i pareggi con
+l'ordine delle righe, è **superato**. I valori della tesi sono citati dal progetto da cui lo
+strumento è stato portato, non prodotti da questo codice.
 
 Il report HTML della demo, con la «Sintesi dei controlli» in apertura:
 
@@ -105,7 +121,7 @@ Il report HTML della demo, con la «Sintesi dei controlli» in apertura:
 | [GSE132465](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132465), carcinoma colorettale | audit del disegno, criteri D1-D4, contro uno script indipendente che non importa nulla da `core/` | prima esecuzione: **D2 e D4 falliti** (un difetto nella lettura dei valori mancanti, corretto nel commit `7bb30ca`); dopo la correzione: soddisfatti |
 | [GSE131907](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131907), adenocarcinoma polmonare | audit del disegno, criteri D1-D4 | soddisfatti dalla prima esecuzione |
 | [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449), tumori primitivi del fegato | audit del disegno (D1-D4) e Modulo A (A1-A4: esecuzione, verifica indipendente, controllo negativo con 20 permutazioni, robustezza di formato) | disegno: soddisfatti. Modulo A, prima esecuzione: **A1 non terminato dopo 5 h 26 min, A4c fallito**; con il motore riscritto: A1-A4 soddisfatti |
-| [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | **verifica di fedeltà del porting**: con le regole della tesi il codice riproduce i numeri della tesi (`validation/gse278694_moduleB.py`). È lo stesso dataset su cui il metodo è nato: non è una validazione | riproduzione: tasso per clone 0,1944 [0,1225; 0,2731] contro 0,1951 [0,1230; 0,2737] della tesi; la differenza viene dalla scelta esplicita fra contig a pari UMI (`validation/results/a1_moduleB.json`) |
+| [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | **verifica di fedeltà del porting**: con le regole della tesi il codice riproduce i numeri della tesi (`validation/gse278694_moduleB.py`). È lo stesso dataset su cui il metodo è nato: non è una validazione | riproduzione: tasso per clone nel tumore 0,170 su 277 cloni e 10 pazienti, uguale alla versione finale della tesi (stima e numero di cloni; l'intervallo differisce perché il metodo è diverso). Il vecchio valore 0,1951 è superato (`validation/results/a1_moduleB.json`) |
 
 Gli script «indipendenti» verificano che il codice segua le regole dichiarate (stessi numeri con un
 codice scritto da capo), non che le regole siano giuste.
@@ -172,8 +188,9 @@ Il tasso d'errore è riportato con due convenzioni affiancate (`--convention bot
   le chiavi della mappa dei marcatori;
 - *per clone*: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di
   maggioranza. Per default conta come errore **ogni** etichetta fuori dalla mappa, anche mieloide
-  o B; `--clone-error-labels NK` limita le etichette ammesse a NK, come nella tesi. In caso di
-  pareggio l'errore vale la probabilità di errore con scelta a caso fra le etichette a pari merito.
+  o B; `--clone-error-labels NK` limita le etichette ammesse a NK, come nella tesi. Se due o più
+  etichette hanno lo stesso conteggio massimo l'unità è esclusa, come nella tesi, e il numero di
+  pareggi è riportato; `--tie-rule error|correct` li conta come errore o come corretti.
 
 Prima di ogni calcolo il Modulo B riporta la frazione di barcode VDJ ritrovati nei metadati e
 normalizza, dichiarandolo, il suffisso "-N" quando serve; sotto il 50% di match si ferma. Più
@@ -215,7 +232,7 @@ L'eccesso di discordanza è interpretabile solo con etichette di **linea** (CD4/
 sangue; non è detto che valga in altri dataset.
 
 **Modulo B — etichette NK.** La convenzione per clone conta come errore anche le etichette NK: su
-GSE278694 spiegano il 71% della differenza fra le due convenzioni
+GSE278694 spiegano il 72% della differenza fra le due convenzioni
 (`validation/results/b2_quota_nk.json`). Nella tesi (README del progetto pdac-ml, sezione sui
 doppietti) due misure fisiche stimano fra le cellule NK con TCR una maggioranza di doppietti T+NK
 su tutti i tessuti insieme, ma non nel tumore, con intervalli larghi e copertura non verificata:
@@ -336,7 +353,18 @@ uv run pytest -n auto                  # suite completa (oppure: pytest -n auto,
 uv run pytest -n auto -m "not slow"    # senza le calibrazioni lunghe
 ```
 
-{{ESITI_TEST}}
+Esiti misurati (log in `docs/sviluppo/logs/`), commit 69cf239, prima dell'allineamento dei
+pareggi; da ripetere sul commit finale:
+
+| Prova | Esito |
+|---|---|
+| clone pulito, `uv sync --extra dev`, suite completa senza i dati reali | 177 passed, 3 skipped, 7 xfailed |
+| clone pulito, `pip install -e ".[dev]"` (Python 3.13), `pytest -m "not slow"` | 115 passed, 3 skipped |
+| clone pulito, Python 3.12, `pytest -m "not slow"` | 115 passed, 3 skipped |
+| copia di lavoro con i dati di GSE278694, suite completa | 180 passed, 7 xfailed in 24 min 30 s |
+
+I 3 test saltati sono quelli sui dati reali di GSE278694, assenti nel clone pulito; i 7 xfailed
+sono gli stimatori fuori banda descritti qui sotto.
 
 Le calibrazioni dichiarano le bande nel docstring prima dell'esecuzione; una banda non si allarga
 per far passare un numero, e uno stimatore fuori banda è marcato `xfail(strict=True)` e non è

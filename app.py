@@ -475,7 +475,7 @@ with tab_b:
         d = t.discordance
         m1, m2 = st.columns(2)
         m1.metric("Eccesso di discordanza fra compartimenti", f"{d.mean_excess:+.3f}")
-        m2.metric("IC 95% (bootstrap sui pazienti)",
+        m2.metric("IC 95% (t cluster-robusto sui pazienti)",
                   f"[{d.ci_low:+.3f}, {d.ci_high:+.3f}]" if d.sufficient else "non prodotto")
         st.markdown(t.narrative)
         if t.conventions:
@@ -487,7 +487,8 @@ with tab_b:
                 for comp, b in c.by_compartment.items():
                     rows.append({"convenzione": c.name, "compartimento": comp, "tasso d'errore": f"{b.mean:.3f}",
                                  "IC 95%": f"[{b.ci_low:.3f}, {b.ci_high:.3f}]" if b.sufficient
-                                 else f"non prodotto ({b.reason})", "pazienti": b.n_groups})
+                                 else f"non prodotto ({b.reason})", "pazienti": b.n_groups, "unità": b.n_obs,
+                                 "pareggi esclusi": (c.n_ties or {}).get(comp, "—")})
             st.dataframe(pd.DataFrame(rows), hide_index=True)
         if st.session_state.tcr_table is not None:
             st.subheader("Cellule con TCR per etichetta (contaminazioni cross-lineage)")

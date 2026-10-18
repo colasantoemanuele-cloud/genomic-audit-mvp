@@ -381,24 +381,27 @@ def _tcr_section(result: TcrValidationResult) -> str:
         names = list(result.conventions)
         comps = sorted({c for conv in result.conventions.values() for c in conv.by_compartment})
 
-        def fmt(res):
+        def fmt(res, ties=None):
             if res is None:
                 return "—"
+            units = f"{res.n_obs} unità" + (f"; unità in pareggio: {ties}" if ties is not None else "")
             if not res.sufficient:
-                return f"{res.mean:.3f} (IC non prodotto: {html.escape(res.reason)})"
-            return f"{res.mean:.3f} [{res.ci_low:.3f}, {res.ci_high:.3f}], {res.n_groups} pazienti"
+                return f"{res.mean:.3f} (IC non prodotto: {html.escape(res.reason)}; {units})"
+            return f"{res.mean:.3f} [{res.ci_low:.3f}, {res.ci_high:.3f}], {res.n_groups} pazienti, {units}"
         html_parts.append("<table><tr><th>Compartimento</th>" + "".join(
             f"<th>convenzione {html.escape(n)}</th>" for n in names) + "</tr>")
         for comp in comps:
             html_parts.append(f"<tr><td>{html.escape(comp)}</td>" + "".join(
-                f"<td>{fmt(result.conventions[n].by_compartment.get(comp))}</td>" for n in names) + "</tr>")
+                f"<td>{fmt(result.conventions[n].by_compartment.get(comp), (result.conventions[n].n_ties or {}).get(comp))}</td>"
+                for n in names) + "</tr>")
         pairs = sorted({p for conv in result.conventions.values() for p in conv.paired_differences})
         for a, b in pairs:
             cells_txt = []
             for n in names:
                 v = result.conventions[n].paired_differences.get((a, b))
                 cells_txt.append("—" if v is None else
-                                 (fmt(v[0]).replace(f"{v[0].mean:.3f}", f"{v[0].mean:+.3f}", 1) + f", {v[1]} cloni"))
+                                 fmt(v[0]).replace(f"{v[0].mean:.3f}", f"{v[0].mean:+.3f}", 1)
+                                 .replace(f"{v[0].n_obs} unità", f"{v[1]} cloni"))
             html_parts.append(f"<tr><td>differenza {html.escape(a)} − {html.escape(b)} (stessi cloni)</td>"
                               + "".join(f"<td>{t}</td>" for t in cells_txt) + "</tr>")
         html_parts.append("</table>")

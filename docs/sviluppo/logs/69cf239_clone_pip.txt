@@ -1,0 +1,18 @@
+[2026-10-18 14:15:29] pip con python3.13, commit 69cf239
+Python 3.13.13
+
+[notice] A new release of pip is available: 26.0.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+[2026-10-18 14:16:40] demo
+demo exit 0
+[ok] report scritto in results/demo_report.html
+[ok] file VDJ di esempio scritti in data/synthetic/vdj
+[2026-10-18 14:50:31] pytest -m 'not slow'
+    adata = ad.read_h5ad(args.h5ad)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_real_data_gse278694.py:78: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+SKIPPED [1] tests/test_real_data_gse278694.py:52: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+SKIPPED [1] tests/test_real_data_gse278694.py:65: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+115 passed, 3 skipped, 56 warnings in 265.91s (0:04:25)

@@ -173,9 +173,15 @@ def test_marker_positivity_requires_raw_integer_counts():
 
 
 def test_clone_majority_ties_do_not_depend_on_row_order():
-    assert _majority_error(pd.Series(["CD8T", "CD4T"]), "CD4T") == 0.5
-    assert _majority_error(pd.Series(["CD8T", "CD4T", "NK"]), "CD4T") == pytest.approx(2 / 3)
-    assert _majority_error(pd.Series(["CD8T", "NK"]), "CD4T") == 1.0
+    # regola di pdac-ml: pareggio escluso (NaN); sensibilità: contato come errore o come corretto
+    e, tie = _majority_error(pd.Series(["CD8T", "CD4T"]), "CD4T")
+    assert tie and np.isnan(e)
+    assert _majority_error(pd.Series(["CD4T", "CD8T", "NK"]), "CD4T", "error") == (1.0, True)
+    assert _majority_error(pd.Series(["NK", "CD8T"]), "CD4T", "correct") == (0.0, True)
+    assert _majority_error(pd.Series(["CD8T", "CD8T", "CD4T"]), "CD4T", "correct") == (1.0, False)
+    assert _majority_error(pd.Series(["CD4T", "CD4T", "NK"]), "CD4T", "error") == (0.0, False)
+    with pytest.raises(ValueError, match="tie_rule"):
+        _majority_error(pd.Series(["CD4T"]), "CD4T", "random")
     adata, contigs = make_tcr_validation_dataset(n_patients=6, n_clones_per_patient=8, injected_excess=0.45, seed=9)
     res = _run(adata, contigs, marker_map=MARKERS, reference_compartment="PBMC")
     perm = np.random.default_rng(0).permutation(adata.n_obs)
@@ -183,6 +189,22 @@ def test_clone_majority_ties_do_not_depend_on_row_order():
                 reference_compartment="PBMC")
     a, b = res.conventions["clone"].by_compartment["Tumor"], res2.conventions["clone"].by_compartment["Tumor"]
     assert a.mean == pytest.approx(b.mean, abs=1e-12) and a.n_obs == b.n_obs
+    assert res.conventions["clone"].n_ties == res2.conventions["clone"].n_ties
+
+
+def test_clone_ties_excluded_by_default_and_sensitivities_bracket_it():
+    """Le unità in pareggio non entrano nel tasso con la regola di default; le due sensibilità
+    usano le stesse unità più i pareggi, contati come errore o come corretti."""
+    adata, contigs = make_tcr_validation_dataset(n_patients=6, n_clones_per_patient=8, injected_excess=0.45, seed=9)
+    out = {r: _run(adata, contigs, marker_map=MARKERS, reference_compartment="PBMC", tie_rule=r).conventions["clone"]
+           for r in ("exclude", "error", "correct")}
+    ex, er, co = (out[r].by_compartment["Tumor"] for r in ("exclude", "error", "correct"))
+    k = out["exclude"].n_ties["Tumor"]
+    assert k > 0 and out["error"].n_ties == out["exclude"].n_ties
+    assert er.n_obs == co.n_obs == ex.n_obs + k
+    assert er.mean * er.n_obs == pytest.approx(ex.mean * ex.n_obs + k)
+    assert co.mean * co.n_obs == pytest.approx(ex.mean * ex.n_obs)
+    assert "esclusi" in out["exclude"].definition and "come errore" in out["error"].definition
 
 
 def test_export_refuses_non_unique_obs_names(tmp_path):

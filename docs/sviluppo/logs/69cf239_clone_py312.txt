@@ -1,0 +1,11 @@
+[2026-10-18 14:15:29] python3.12 (uv venv + uv pip), commit 69cf239
+Python 3.12.3
+[2026-10-18 14:15:32] pytest -m 'not slow'
+    adata = ad.read_h5ad(args.h5ad)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_real_data_gse278694.py:52: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+SKIPPED [1] tests/test_real_data_gse278694.py:65: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+SKIPPED [1] tests/test_real_data_gse278694.py:78: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+115 passed, 3 skipped, 56 warnings in 164.33s (0:02:44)

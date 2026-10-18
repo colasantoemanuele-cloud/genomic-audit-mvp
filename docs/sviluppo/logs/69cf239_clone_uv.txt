@@ -1,0 +1,26 @@
+[2026-10-18 14:15:29] uv, commit 69cf239
+uv 0.12.5 (x86_64-unknown-linux-gnu)
+ + watchdog==6.0.0
+ + websockets==16.1.1
+ + zarr==3.3.0
+[2026-10-18 14:15:30] demo
+[ok] report scritto in results/demo_report.html
+[ok] file VDJ di esempio scritti in data/synthetic/vdj
+demo: 178.54 s, 312480 KB
+[2026-10-18 14:18:29] suite completa senza i dati reali
+    adata = ad.read_h5ad(args.h5ad)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_real_data_gse278694.py:78: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+SKIPPED [1] tests/test_real_data_gse278694.py:52: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+SKIPPED [1] tests/test_real_data_gse278694.py:65: dati reali di GSE278694 (pdac-ml) non presenti su questa macchina
+XFAIL tests/test_stats_calibration.py::test_nadeau_bengio_calibration_null_k5_default - Fuori dal regime d'uso (lo strumento usa Nadeau-Bengio solo con LeaveOneGroupOut, k >= 8). Con due DummyClassifier a k=5 la correzione è conservativa sotto H0: 18/1000=1.8% (R=1000) e 38/2000=1.9% (R=2000), sotto la banda [2%, 8%], che NON è stata allargata. Causa: i DummyClassifier predicono a caso senza usare il training, quindi le differenze fra fold non sono correlate e il termine n_test/n_train gonfia una varianza che non andava corretta. Non dipende dai gradi di libertà. strict=True: uno xpass fa fallire la suite.
+XFAIL tests/test_stats_calibration.py::test_nadeau_bengio_calibration_logo[8] - Nadeau-Bengio in LeaveOneGroupOut è conservativo sotto H0 (0.5-1.8% di p < 0.05, banda [2%, 8%]): la correzione assume fra le differenze dei fold una correlazione n_test/n_train che in LOGO quasi non c'è. Non esposto.
+XFAIL tests/test_stats_calibration.py::test_wilcoxon_calibration_logo[10] - Wilcoxon in LeaveOneGroupOut a 10 gruppi: 0.083 di p < 0.05 sotto H0, sopra la banda [2%, 8%]. Non esposto.
+XFAIL tests/test_design_audit_calibration.py::test_variance_share_bootstrap_coverage_tissue - Copertura dell'IC95% della quota del TESSUTO misurata 200/200 = 1.000, sopra la banda dichiarata [0.90, 0.99]: intervallo conservativo (troppo largo). Metodo già corretto due volte (1: divisore per effetti casuali + intervallo 'basic', copertura 0/200 -> stimatore puntuale non distorto ma intervallo ancora spostato; 2: intervallo normale stima +- 1.96 SE bootstrap -> paziente 0.965 in banda, tessuto 1.000 fuori). La banda NON è stata allargata. Conseguenza: la scomposizione della varianza non è esposta in CLI, app o report. Probabile causa: il bootstrap sui pazienti propaga all'intervallo del tessuto (effetto fisso) anche la variabilità del denominatore dovuta al paziente.
+XFAIL tests/test_stats_calibration.py::test_nadeau_bengio_calibration_logo[15] - Nadeau-Bengio in LeaveOneGroupOut è conservativo sotto H0 (0.5-1.8% di p < 0.05, banda [2%, 8%]): la correzione assume fra le differenze dei fold una correlazione n_test/n_train che in LOGO quasi non c'è. Non esposto.
+XFAIL tests/test_stats_calibration.py::test_nadeau_bengio_calibration_logo[10] - Nadeau-Bengio in LeaveOneGroupOut è conservativo sotto H0 (0.5-1.8% di p < 0.05, banda [2%, 8%]): la correzione assume fra le differenze dei fold una correlazione n_test/n_train che in LOGO quasi non c'è. Non esposto.
+XFAIL tests/test_stats_calibration.py::test_nadeau_bengio_calibration_logo[20] - Nadeau-Bengio in LeaveOneGroupOut è conservativo sotto H0 (0.5-1.8% di p < 0.05, banda [2%, 8%]): la correzione assume fra le differenze dei fold una correlazione n_test/n_train che in LOGO quasi non c'è. Non esposto.
+177 passed, 3 skipped, 7 xfailed, 58 warnings in 2155.64s (0:35:55)
+[2026-10-18 15:19:31] fine

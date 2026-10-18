@@ -3,6 +3,15 @@
 Punto di partenza (commit `cf61e76`, baseline): suite **18 passed, 1 xfailed** in 309 s (`logs/pytest_baseline.txt`).
 Tutti i numeri qui sotto sono misurati; i log completi di pytest sono in `logs/`.
 
+> **Documento storico, superato nei numeri del Modulo B.** I valori della tesi qui citati per la
+> convenzione per clone (0,1951 [0,1230; 0,2737], «0,195», Adjacent 0,0593, differenza +0,0795 su
+> 88 cloni) risolvevano i pareggi dell'etichetta di maggioranza con l'ordine delle righe e sono
+> **superati**. La versione finale della tesi (progetto-ml, ramo `revisione`, commit 05947d0)
+> esclude i pareggi: Tumor 0,170 su 277 cloni, 10 pazienti; lo strumento usa la stessa regola e
+> riproduce stima e numero di cloni. Valori attuali nel README e in
+> `validation/results/a1_moduleB.json`; anche gli intervalli qui riportati sono quelli del
+> bootstrap percentile, sostituito dall'intervallo t cluster-robusto.
+
 ## Intervento 1 — Audit del disegno e del confondimento
 
 ### 1. File modificati e creati

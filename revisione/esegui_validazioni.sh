@@ -22,6 +22,11 @@ if [[ $PART == gse278694 || $PART == tutto ]]; then
   log "GSE278694: Modulo B, convenzioni della tesi"
   $PY cli.py $TCR --clone-error-labels NK --clone-marker-priority CD8T,CD4T --out "$OUT/tcr_tesi.html" \
       > $R/cli_tcr_real_conventions_tesi.txt 2>&1
+  log "GSE278694: Modulo B, convenzioni della tesi, sensibilità ai pareggi"
+  for RULE in error correct; do
+    $PY cli.py $TCR --convention clone --clone-error-labels NK --clone-marker-priority CD8T,CD4T --tie-rule $RULE \
+        --out "$OUT/tcr_tesi_$RULE.html" > $R/cli_tcr_real_conventions_tesi_pareggi_$RULE.txt 2>&1
+  done
   log "GSE278694: Modulo B, convenzioni di default"
   $PY cli.py $TCR --out "$OUT/tcr_default.html" > $R/cli_tcr_real_conventions_default.txt 2>&1
   log "GSE278694: Modulo B con export dei flag e frazione di CD8 sperimentale"
@@ -58,7 +63,7 @@ if [[ $PART == esterna || $PART == tutto ]]; then
   $PY -m validation_esterna.run_moduleA perm > $E/moduleA_perm.txt 2>&1
   $PY -m validation_esterna.run_moduleA formati > $E/moduleA_formati.txt 2>&1
   log "Esterna: A1 con la CLI su GSE125449 completo"
-  $PY cli.py leakage --h5ad validation_esterna/data/GSE125449.h5ad --target-col Type --patient-col patient \
+  /usr/bin/time -v $PY cli.py leakage --h5ad validation_esterna/data/GSE125449.h5ad --target-col Type --patient-col patient \
       --out "$OUT/leakage_GSE125449.html" > $E/A1_cli_stdout.txt 2> $E/A1_cli_stderr.txt
   log "Esterna: coorte ridotta (criteri originali e modifica M1)"
   for step in base perm formati; do

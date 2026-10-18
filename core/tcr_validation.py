@@ -52,6 +52,16 @@ MIN_PATIENTS_FOR_CI_DEFAULT = 5
 MIN_CELLS_MARKER_DEFAULT = 3
 MIN_MARGIN_DEFAULT = 0.20
 
+# Pareggi dell'etichetta di maggioranza nella convenzione "per clone" (stessa regola di
+# pdac-ml, 10_loco.py): l'unità è esclusa ("exclude", default); come sensibilità può essere
+# contata come errore ("error") o come corretta ("correct").
+TIE_RULES = {
+    "exclude": "esclusi dal calcolo",
+    "error": "contati come errore, per sensibilità",
+    "correct": "contati come corretti, per sensibilità",
+}
+TIE_RULE_DEFAULT = "exclude"
+
 BIOLOGICAL_ASSUMPTIONS = (
     "Ipotesi: le cellule dello stesso clone T (stessa CDR3 della catena TRB) hanno la stessa linea "
     "CD4/CD8. Eccezioni note che il modulo non distingue da un errore di annotazione: cellule CD4 con "
@@ -449,11 +459,14 @@ CONVENTIONS = ("cell", "clone")
 @dataclass(frozen=True)
 class ConventionResult:
     """Tasso d'errore per compartimento secondo una convenzione dichiarata, più le
-    differenze appaiate fra compartimenti (stessi cloni)."""
+    differenze appaiate fra compartimenti (stessi cloni). ``n_ties``: unità con l'etichetta di
+    maggioranza in pareggio, per compartimento (solo convenzione "per clone"; con la regola
+    "exclude" non entrano in ``by_compartment``)."""
     name: str
     definition: str
     by_compartment: dict[str, ClusterInterval]
     paired_differences: dict[tuple[str, str], tuple[ClusterInterval, int]]
+    n_ties: dict[str, int] | None = None
 
 
 def _ordered_compartments(present: list[str], order: list[str] | None) -> list[str]:
@@ -467,11 +480,12 @@ def _ordered_compartments(present: list[str], order: list[str] | None) -> list[s
 def _paired_differences(units: pd.DataFrame, min_patients_for_ci: int,
                         compartment_order: list[str] | None = None,
                         ) -> dict[tuple[str, str], tuple[ClusterInterval, int]]:
-    """``units``: colonne patient, clone, compartment, error (una riga per unità).
-    Per ogni coppia di compartimenti giudicati (A prima di B secondo ``compartment_order``):
-    errore medio del clone in A meno quello in B, sui cloni presenti in entrambi; intervallo
-    cluster-robusto sui pazienti. Valore: (risultato, numero di cloni)."""
+    """``units``: colonne patient, clone, compartment, error (una riga per unità; le unità con
+    errore NaN, cioè i pareggi esclusi, non entrano). Per ogni coppia di compartimenti giudicati
+    (A prima di B secondo ``compartment_order``): errore medio del clone in A meno quello in B, sui
+    cloni presenti in entrambi; intervallo cluster-robusto sui pazienti. Valore: (risultato, numero di cloni)."""
     out = {}
+    units = units.dropna(subset=["error"])
     if units.empty:
         return out
     per = units.groupby(["patient", "clone", "compartment"], observed=True).error.mean().unstack("compartment")
@@ -498,14 +512,19 @@ def _cell_units(cells: pd.DataFrame, reference_identity: pd.DataFrame, marker_la
                          "error": j["error"].values.astype(float)})
 
 
-def _majority_error(labels: pd.Series, identity: str) -> float:
-    """Errore dell'unità per clone: 0 o 1 se l'etichetta di maggioranza è unica; in caso di
-    pareggio, la probabilità di errore scegliendo a caso fra le etichette a pari merito
-    (1 - 1/k se l'identità è fra le k etichette, 1 altrimenti). Non dipende dall'ordine delle
+def _majority_error(labels: pd.Series, identity: str, tie_rule: str = TIE_RULE_DEFAULT) -> tuple[float, bool]:
+    """Errore dell'unità per clone e indicatore di pareggio. Se l'etichetta di maggioranza è
+    unica: 0 se coincide con l'identità, 1 altrimenti. Se due o più etichette hanno lo stesso
+    conteggio massimo l'etichetta di maggioranza non è definita: errore NaN (unità esclusa) con
+    ``tie_rule="exclude"``, 1 con ``"error"``, 0 con ``"correct"``. Non dipende dall'ordine delle
     righe."""
+    if tie_rule not in TIE_RULES:
+        raise ValueError(f"tie_rule deve essere uno fra {sorted(TIE_RULES)}, non '{tie_rule}'")
     vc = labels.astype(str).value_counts()
     top = vc.index[vc.values == vc.values.max()]
-    return 1.0 - (1.0 / len(top) if identity in set(top) else 0.0)
+    if len(top) == 1:
+        return float(top[0] != identity), False
+    return {"exclude": float("nan"), "error": 1.0, "correct": 0.0}[tie_rule], True
 
 
 def clone_level_units(
@@ -516,6 +535,7 @@ def clone_level_units(
     marker_priority: list[str] | None = None,
     min_cells: int = MIN_CELLS_MARKER_DEFAULT,
     min_margin: float = MIN_MARGIN_DEFAULT,
+    tie_rule: str = TIE_RULE_DEFAULT,
 ) -> pd.DataFrame:
     """Unità della convenzione "per clone" (definizione della tesi, 10_loco.py schema blood).
 
@@ -528,8 +548,10 @@ def clone_level_units(
       margine >= ``min_margin``), come ``assign_reference_identity``.
     - Un'unità per coppia (clone, compartimento giudicato) con >= ``min_cells`` cellule;
       errore se l'etichetta di maggioranza è diversa dall'identità. Le etichette fuori mappa
-      ammesse contano come errore. Pareggi: vedi ``_majority_error`` (la tesi usava l'ordine
-      delle righe: nel tumore di GSE278694 11 unità su 288 sono pareggi).
+      ammesse contano come errore.
+    - Pareggi dell'etichetta di maggioranza: ``tie_rule`` (vedi ``_majority_error``), stessa regola
+      di pdac-ml: esclusi per default, contati come errore o come corretti come sensibilità. Le
+      unità in pareggio restano nella tabella con ``tie=True`` (errore NaN se escluse).
     """
     x = cells if error_labels is None else cells[cells["celltype"].isin(list(marker_labels) + list(error_labels))]
     x = x.copy()
@@ -542,21 +564,21 @@ def clone_level_units(
     ref = assign_reference_identity(x, marker_labels, reference_compartment=reference_compartment,
                                     min_cells=min_cells, min_margin=min_margin)
     if ref.empty:
-        return pd.DataFrame(columns=["patient", "clone", "compartment", "error"])
+        return pd.DataFrame(columns=["patient", "clone", "compartment", "error", "tie"])
     t = x[x["compartment"] != reference_compartment].merge(ref[["patient", "clone_id", "reference_identity"]],
                                                             on=["patient", "clone_id"])
     rows = []
     for (pat, clone, comp), g in t.groupby(["patient", "clone_id", "compartment"], observed=True):
         if len(g) < min_cells:
             continue
-        rows.append({"patient": pat, "clone": clone, "compartment": comp,
-                     "error": _majority_error(g["celltype"], str(g["reference_identity"].iloc[0]))})
-    return pd.DataFrame(rows, columns=["patient", "clone", "compartment", "error"])
+        err, tie = _majority_error(g["celltype"], str(g["reference_identity"].iloc[0]), tie_rule)
+        rows.append({"patient": pat, "clone": clone, "compartment": comp, "error": err, "tie": tie})
+    return pd.DataFrame(rows, columns=["patient", "clone", "compartment", "error", "tie"])
 
 
 def _summarize_units(units: pd.DataFrame, min_patients_for_ci: int) -> dict[str, ClusterInterval]:
     out = {}
-    for comp, g in units.groupby("compartment", observed=True):
+    for comp, g in units.dropna(subset=["error"]).groupby("compartment", observed=True):
         out[str(comp)] = cluster_t_interval(g["error"].values.astype(float), g["patient"].values,
                                             min_patients_for_ci, scale="logit")
     return out
@@ -564,7 +586,8 @@ def _summarize_units(units: pd.DataFrame, min_patients_for_ci: int) -> dict[str,
 
 def convention_definition(name: str, error_labels: list[str] | None = None,
                           marker_priority: list[str] | None = None,
-                          min_cells: int = MIN_CELLS_MARKER_DEFAULT) -> str:
+                          min_cells: int = MIN_CELLS_MARKER_DEFAULT,
+                          tie_rule: str = TIE_RULE_DEFAULT) -> str:
     """Definizione leggibile di una convenzione del tasso d'errore, con i parametri usati."""
     if name == "cell":
         return ("per cellula: ogni cellula giudicata è un'unità; etichette fuori dalla mappa "
@@ -574,9 +597,8 @@ def convention_definition(name: str, error_labels: list[str] | None = None,
     prio = ("positività non esclusiva" if not marker_priority else
             "positività esclusiva in ordine " + " > ".join(marker_priority))
     return (f"per clone: un'unità per coppia clone-compartimento con almeno {min_cells} cellule, "
-            f"etichetta di maggioranza (pareggi: probabilità di errore con scelta a caso fra le "
-            f"etichette a pari merito); etichette fuori mappa contate come errore (etichette ammesse "
-            f"fuori mappa: {labels}); {prio}")
+            f"etichetta di maggioranza (pareggi della maggioranza: {TIE_RULES[tie_rule]}); etichette "
+            f"fuori mappa contate come errore (etichette ammesse fuori mappa: {labels}); {prio}")
 
 
 # --------------------------------------------------------------------------- #
@@ -722,10 +744,12 @@ def _conventions_narrative(conv: dict[str, ConventionResult] | None, reference_c
         if not c.by_compartment:
             parts.append(" nessuna unità valutabile.")
         for comp, res in c.by_compartment.items():
+            ties = (c.n_ties or {}).get(comp)
+            units = f"{res.n_obs} unità" + (f"; unità in pareggio: {ties}" if ties is not None else "")
             if not res.sufficient:
-                parts.append(f" '{comp}': {res.mean:.3f}, IC non prodotto ({res.reason}).")
+                parts.append(f" '{comp}': {res.mean:.3f}, IC non prodotto ({res.reason}; {units}).")
             else:
-                parts.append(f" '{comp}': {res.mean:.3f} ({_fmt_ci(res)}, {res.n_groups} pazienti).")
+                parts.append(f" '{comp}': {res.mean:.3f} ({_fmt_ci(res)}, {res.n_groups} pazienti, {units}).")
         for (a, b), (res, n_cl) in c.paired_differences.items():
             ci = _fmt_ci(res, True) if res.sufficient else f"IC non prodotto ({res.reason})"
             parts.append(f" Differenza '{a}' - '{b}' sugli stessi cloni: {res.mean:+.3f}, {ci}, {n_cl} cloni.")
@@ -749,6 +773,7 @@ def run_tcr_validation(
     clone_marker_priority: list[str] | None = None,
     library_col: str | None = None,
     compartment_order: list[str] | None = None,
+    tie_rule: str = TIE_RULE_DEFAULT,
 ) -> TcrValidationResult:
     """Esegue il Modulo B. ``contigs`` è l'output di ``parse_vdj_contigs``.
 
@@ -757,8 +782,11 @@ def run_tcr_validation(
     ``convention`` ("cell", "clone" o "both", default: entrambe affiancate). ``library_col``:
     colonna di adata.obs con la libreria, da indicare quando il manifest VDJ ha più librerie per
     la stessa coppia paziente-compartimento. ``compartment_order``: ordine dei compartimenti
-    nelle differenze appaiate (A - B con A prima di B); senza, ordine alfabetico.
+    nelle differenze appaiate (A - B con A prima di B); senza, ordine alfabetico. ``tie_rule``:
+    pareggi dell'etichetta di maggioranza nella convenzione per clone (``TIE_RULES``).
     """
+    if tie_rule not in TIE_RULES:
+        raise ValueError(f"tie_rule deve essere uno fra {sorted(TIE_RULES)}, non '{tie_rule}'")
     if convention not in ("cell", "clone", "both"):
         raise ValueError(f"convention deve essere cell, clone o both, non '{convention}'")
     if bool(marker_map) != bool(reference_compartment):
@@ -828,11 +856,13 @@ def run_tcr_validation(
         if convention in ("clone", "both"):
             units = clone_level_units(cells, labels, reference_compartment,
                                       error_labels=clone_error_labels,
-                                      marker_priority=clone_marker_priority)
+                                      marker_priority=clone_marker_priority, tie_rule=tie_rule)
             conventions["clone"] = ConventionResult(
-                "clone", convention_definition("clone", clone_error_labels, clone_marker_priority),
+                "clone", convention_definition("clone", clone_error_labels, clone_marker_priority,
+                                               tie_rule=tie_rule),
                 _summarize_units(units, min_patients_for_ci),
-                _paired_differences(units, min_patients_for_ci, compartment_order))
+                _paired_differences(units, min_patients_for_ci, compartment_order),
+                n_ties={str(k): int(v) for k, v in units.groupby("compartment", observed=True)["tie"].sum().items()})
 
     narrative = _discordance_narrative(discordance, min_patients_for_ci) + (
         _conventions_narrative(conventions, reference_compartment, min_patients_for_ci)

@@ -4,8 +4,9 @@
    sceglieva secondo l'ordine dell'ordinamento (non stabile); ora vince il contig con più reads,
    poi la CDR3 minore in ordine alfabetico.
 2. Pareggi dell'etichetta di maggioranza nelle unità della convenzione per clone (opzioni della
-   tesi): prima decideva il primo valore di value_counts (ordine delle righe); ora l'errore vale la
-   probabilità di errore con scelta a caso fra le etichette a pari merito.
+   tesi): prima della revisione decideva il primo valore di value_counts (ordine delle righe); ora
+   l'unità è esclusa, come nella versione finale della tesi, e come sensibilità contata come errore
+   o come corretta (``--tie-rule``).
 
 Uso: python -m validation.gse278694_pareggi --vdj-manifest validation/results/vdj_manifest_gse278694.csv \
          --out validation/results

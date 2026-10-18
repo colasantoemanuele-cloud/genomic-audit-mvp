@@ -137,6 +137,10 @@ audit-sc tcr --h5ad dati.h5ad --vdj-manifest vdj_manifest.csv \
 Opzioni utili: `--export-flags` scrive una copia dell'`.h5ad` con due colonne di flag per cellula
 e un CSV; `--compartment-order Tumor,Normal` fissa il verso delle differenze fra compartimenti;
 `--convention cell|clone|both` sceglie la definizione del tasso d'errore (default: entrambe).
+Nella convenzione per clone le unità con l'etichetta di maggioranza in pareggio sono escluse e
+contate a parte (il report dice quante sono); `--tie-rule error` o `--tie-rule correct` le conta
+come errore o come corrette: vale la pena eseguire le due sensibilità quando i pareggi sono
+più di qualche unità.
 
 ## 4. Da Seurat (`.rds`) a `.h5ad`
 

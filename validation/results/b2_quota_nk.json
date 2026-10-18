@@ -1,7 +1,7 @@
 {
- "per_clone_NK_errore": 0.18576388888888892,
+ "per_clone_NK_errore": 0.16967509025270758,
  "per_cellula": 0.0930285196921684,
- "per_clone_nessuna_fuori_mappa": 0.12030075187969924,
- "per_clone_tutte_fuori_mappa": 0.1844827586206897,
- "quota_NK_della_differenza": 0.705913370230101
+ "per_clone_nessuna_fuori_mappa": 0.11450381679389313,
+ "per_clone_tutte_fuori_mappa": 0.16845878136200718,
+ "quota_NK_della_differenza": 0.7198139858747823
 }

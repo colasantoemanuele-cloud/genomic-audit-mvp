@@ -33,8 +33,13 @@
      0.14406032794591309
     ],
     "unita": 4418,
+    "pareggi": 0,
     "pazienti": 10,
-    "ic_prodotto_dallo_strumento": true
+    "ic_prodotto_dallo_strumento": true,
+    "ic_strumento": [
+     0.043398641533973964,
+     0.18824547127832675
+    ]
    },
    "Adjacent_normal": {
     "errore": 0.041472265422498704,
@@ -43,8 +48,10 @@
      0.05733082706766917
     ],
     "unita": 3858,
+    "pareggi": 0,
     "pazienti": 4,
     "ic_prodotto_dallo_strumento": false,
+    "ic_strumento": null,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
@@ -66,8 +73,13 @@
      0.14448549669549307
     ],
     "unita": 4394,
+    "pareggi": 0,
     "pazienti": 10,
-    "ic_prodotto_dallo_strumento": true
+    "ic_prodotto_dallo_strumento": true,
+    "ic_strumento": [
+     0.043493961712086464,
+     0.1897354981089973
+    ]
    },
    "Adjacent_normal": {
     "errore": 0.04160166406656266,
@@ -76,8 +88,10 @@
      0.057655954631379965
     ],
     "unita": 3846,
+    "pareggi": 0,
     "pazienti": 4,
     "ic_prodotto_dallo_strumento": false,
+    "ic_strumento": null,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
@@ -99,8 +113,13 @@
      0.14402447282934816
     ],
     "unita": 4380,
+    "pareggi": 0,
     "pazienti": 10,
-    "ic_prodotto_dallo_strumento": true
+    "ic_prodotto_dallo_strumento": true,
+    "ic_strumento": [
+     0.04203131817710085,
+     0.19217322767909178
+    ]
    },
    "Adjacent_normal": {
     "errore": 0.04284601402233186,
@@ -109,8 +128,10 @@
      0.05987741631305988
     ],
     "unita": 3851,
+    "pareggi": 0,
     "pazienti": 4,
     "ic_prodotto_dallo_strumento": false,
+    "ic_strumento": null,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
@@ -132,8 +153,13 @@
      0.1918909771695891
     ],
     "unita": 4749,
+    "pareggi": 0,
     "pazienti": 10,
-    "ic_prodotto_dallo_strumento": true
+    "ic_prodotto_dallo_strumento": true,
+    "ic_strumento": [
+     0.12255671650071545,
+     0.2140148686461956
+    ]
    },
    "Adjacent_normal": {
     "errore": 0.052929085303186026,
@@ -142,8 +168,10 @@
      0.06131636137845389
     ],
     "unita": 3892,
+    "pareggi": 0,
     "pazienti": 4,
     "ic_prodotto_dallo_strumento": false,
+    "ic_strumento": null,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
@@ -165,8 +193,13 @@
      0.18527709574315282
     ],
     "unita": 4438,
+    "pareggi": 0,
     "pazienti": 10,
-    "ic_prodotto_dallo_strumento": true
+    "ic_prodotto_dallo_strumento": true,
+    "ic_strumento": [
+     0.11379061312407784,
+     0.2105355012357635
+    ]
    },
    "Adjacent_normal": {
     "errore": 0.05245213742460005,
@@ -175,8 +208,10 @@
      0.061420345489443376
     ],
     "unita": 3813,
+    "pareggi": 0,
     "pazienti": 4,
     "ic_prodotto_dallo_strumento": false,
+    "ic_strumento": null,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
@@ -190,37 +225,312 @@
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    }
   },
-  "S5 + unità = coppia clone-compartimento con l'etichetta maggioritaria (= tesi)": {
+  "S5 + unità = coppia clone-compartimento con l'etichetta maggioritaria, pareggi esclusi (= tesi)": {
    "Tumor": {
-    "errore": 0.19444444444444445,
+    "errore": 0.16967509025270758,
     "ic": [
-     0.12252547489201314,
-     0.2731204183801179
+     0.10775523813205504,
+     0.2394392973812456
     ],
-    "unita": 288,
+    "unita": 277,
+    "pareggi": 11,
     "pazienti": 10,
-    "ic_prodotto_dallo_strumento": true
+    "ic_prodotto_dallo_strumento": true,
+    "ic_strumento": [
+     0.09959604946687675,
+     0.2740556009292017
+    ]
    },
    "Adjacent_normal": {
-    "errore": 0.059322033898305086,
+    "errore": 0.05982905982905983,
     "ic": [
      0.0,
-     0.08391608391608392
+     0.08571428571428572
     ],
-    "unita": 118,
+    "unita": 117,
+    "pareggi": 1,
     "pazienti": 4,
     "ic_prodotto_dallo_strumento": false,
+    "ic_strumento": null,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
    },
    "Tumor-Adjacent": {
-    "diff": 0.07954545454545454,
+    "diff": 0.058823529411764705,
     "ic": [
-     0.020833333333333332,
-     0.17045454545454544
+     0.0,
+     0.1411764705882353
     ],
-    "cloni": 88,
+    "cloni": 85,
     "pazienti": 4,
     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+   }
+  }
+ },
+ "fedelta_S5": {
+  "S5": {
+   "tesi": {
+    "Tumor": {
+     "errore": 0.1696750902527075,
+     "unita": 277,
+     "pareggi": 10,
+     "pazienti": 10,
+     "ic_tesi": [
+      0.0946077848378077,
+      0.2519366247385795
+     ]
+    },
+    "Tumor-Adjacent": {
+     "diff": 0.0588235294117647,
+     "cloni": 85,
+     "pazienti": 4
+    },
+    "fonte": "progetto-ml results/tables/error_rate_tie_sensitivity.csv, scheme=blood, version=ties_excluded"
+   },
+   "coincide_Tumor": true,
+   "coincide_Tumor-Adjacent": true
+  },
+  "S5, pareggi contati come errore": {
+   "strumento": {
+    "Tumor": {
+     "errore": 0.2013888888888889,
+     "ic": [
+      0.13070541826197934,
+      0.2767917471042471
+     ],
+     "unita": 288,
+     "pareggi": 11,
+     "pazienti": 10,
+     "ic_prodotto_dallo_strumento": true,
+     "ic_strumento": [
+      0.12049053482825813,
+      0.3170245992677285
+     ]
+    },
+    "Adjacent_normal": {
+     "errore": 0.06779661016949153,
+     "ic": [
+      0.0,
+      0.1048951048951049
+     ],
+     "unita": 118,
+     "pareggi": 1,
+     "pazienti": 4,
+     "ic_prodotto_dallo_strumento": false,
+     "ic_strumento": null,
+     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+    },
+    "Tumor-Adjacent": {
+     "diff": 0.06818181818181818,
+     "ic": [
+      0.0,
+      0.17045454545454544
+     ],
+     "cloni": 88,
+     "pazienti": 4,
+     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+    }
+   },
+   "tesi": {
+    "Tumor": {
+     "errore": 0.1986062717770035,
+     "unita": 287,
+     "pareggi": 10,
+     "pazienti": 10,
+     "ic_tesi": [
+      0.1167971113290158,
+      0.291367139599014
+     ]
+    },
+    "Tumor-Adjacent": {
+     "diff": 0.0681818181818181,
+     "cloni": 88,
+     "pazienti": 4
+    },
+    "fonte": "progetto-ml results/tables/error_rate_tie_sensitivity.csv, scheme=blood, version=ties_as_error"
+   },
+   "coincide_Tumor": false,
+   "coincide_Tumor-Adjacent": true
+  },
+  "S5, pareggi contati come corretti": {
+   "strumento": {
+    "Tumor": {
+     "errore": 0.16319444444444445,
+     "ic": [
+      0.10548482001582278,
+      0.2270791980944819
+     ],
+     "unita": 288,
+     "pareggi": 11,
+     "pazienti": 10,
+     "ic_prodotto_dallo_strumento": true,
+     "ic_strumento": [
+      0.09730407508357355,
+      0.26081174351648423
+     ]
+    },
+    "Adjacent_normal": {
+     "errore": 0.059322033898305086,
+     "ic": [
+      0.0,
+      0.08391608391608392
+     ],
+     "unita": 118,
+     "pareggi": 1,
+     "pazienti": 4,
+     "ic_prodotto_dallo_strumento": false,
+     "ic_strumento": null,
+     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+    },
+    "Tumor-Adjacent": {
+     "diff": 0.056818181818181816,
+     "ic": [
+      0.0,
+      0.13636363636363635
+     ],
+     "cloni": 88,
+     "pazienti": 4,
+     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+    }
+   },
+   "tesi": {
+    "Tumor": {
+     "errore": 0.1637630662020905,
+     "unita": 287,
+     "pareggi": 10,
+     "pazienti": 10,
+     "ic_tesi": [
+      0.0925362806875303,
+      0.2397464369558424
+     ]
+    },
+    "Tumor-Adjacent": {
+     "diff": 0.0568181818181818,
+     "cloni": 88,
+     "pazienti": 4
+    },
+    "fonte": "progetto-ml results/tables/error_rate_tie_sensitivity.csv, scheme=blood, version=ties_as_correct"
+   },
+   "coincide_Tumor": false,
+   "coincide_Tumor-Adjacent": true
+  },
+  "unita_diverse_dalla_tesi": [
+   {
+    "paziente": "PA12",
+    "clone": "TGCGCCAGCAGCTTGGAGGCGGGAGGCACCTACGAGCAGTACTTC",
+    "compartimento": "Tumor",
+    "presente_in": "strumento",
+    "pareggio_maggioranza": true,
+    "etichette_nello_strumento": {
+     "CD8T": 1,
+     "CD4T": 1,
+     "NK": 1
+    },
+    "cellule_con_contig_TRB_a_pari_UMI": [
+     {
+      "patient": "PA12",
+      "compartment": "Tumor",
+      "barcode": "GGCGACTCATGCTAGT",
+      "cdr3_nt": "TGTGCCAGCAGTTTAGTTGCGGGCTCCGCAAATACGCAGTATTTT",
+      "umis": 2,
+      "reads": 278
+     },
+     {
+      "patient": "PA12",
+      "compartment": "Tumor",
+      "barcode": "GGCGACTCATGCTAGT",
+      "cdr3_nt": "TGCGCCAGCAGCTTGGAGGCGGGAGGCACCTACGAGCAGTACTTC",
+      "umis": 2,
+      "reads": 474
+     }
+    ]
+   }
+  ],
+  "clone TRA+TRB": {
+   "strumento": {
+    "Tumor": {
+     "errore": 0.15151515151515152,
+     "ic": [
+      0.09452638382888706,
+      0.2129312672830971
+     ],
+     "unita": 231,
+     "pareggi": 9,
+     "pazienti": 10,
+     "ic_prodotto_dallo_strumento": true,
+     "ic_strumento": [
+      0.0859547651128881,
+      0.25322711954276905
+     ]
+    },
+    "Adjacent_normal": {
+     "errore": 0.05,
+     "ic": [
+      0.0,
+      0.072
+     ],
+     "unita": 100,
+     "pareggi": 0,
+     "pazienti": 4,
+     "ic_prodotto_dallo_strumento": false,
+     "ic_strumento": null,
+     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+    },
+    "Tumor-Adjacent": {
+     "diff": 0.05,
+     "ic": [
+      0.0,
+      0.11538461538461539
+     ],
+     "cloni": 60,
+     "pazienti": 4,
+     "nota": "intervallo della tesi con 4 pazienti: lo strumento lo rifiuta (servono almeno 5); il bootstrap sui pazienti ha solo 35 ricampionamenti distinti"
+    }
+   },
+   "tesi": {
+    "errore": 0.1541850220264317,
+    "unita": 227,
+    "pareggi": 11,
+    "pazienti": 10,
+    "ic_tesi": [
+     0.0840035785559784,
+     0.2274216069232379
+    ],
+    "fonte": "progetto-ml results/tables/error_rate_clone_ab.csv, clone_ab, blood, Tumor"
+   },
+   "coincide_Tumor": false
+  },
+  "con la scelta dei contig della tesi": {
+   "cellule_con_CDR3_TRB_diversa": 155,
+   "cellule_con_CDR3_TRA_diversa": 879,
+   "Tumor": {
+    "S5": {
+     "errore": 0.16967509025270758,
+     "unita": 277,
+     "pareggi": 10,
+     "pazienti": 10,
+     "coincide_con_la_tesi": true
+    },
+    "S5, pareggi contati come errore": {
+     "errore": 0.1986062717770035,
+     "unita": 287,
+     "pareggi": 10,
+     "pazienti": 10,
+     "coincide_con_la_tesi": true
+    },
+    "S5, pareggi contati come corretti": {
+     "errore": 0.16376306620209058,
+     "unita": 287,
+     "pareggi": 10,
+     "pazienti": 10,
+     "coincide_con_la_tesi": true
+    },
+    "clone TRA+TRB": {
+     "errore": 0.15418502202643172,
+     "unita": 227,
+     "pareggi": 11,
+     "pazienti": 10,
+     "coincide_con_la_tesi": true
+    }
    }
   }
  }

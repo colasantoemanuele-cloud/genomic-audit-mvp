@@ -93,9 +93,18 @@ dall'identità.
 **Convenzione per clone** (definizione della tesi). Unità = coppia clone-compartimento con almeno 3
 cellule; errore se l'etichetta di maggioranza è diversa dall'identità; le etichette fuori mappa
 ammesse (default: tutte) contano come errore; con `--clone-marker-priority` la positività è
-esclusiva in quell'ordine. Pareggi della maggioranza: errore = 1 − 1/k se l'identità è fra le k
-etichette a pari merito, 1 altrimenti (valore atteso di una scelta a caso; non dipende dall'ordine
-delle righe).
+esclusiva in quell'ordine. Pareggi della maggioranza (due o più etichette con lo stesso conteggio
+massimo): l'etichetta di maggioranza non è definita e l'unità è esclusa dal tasso, come nella tesi
+(progetto-ml, `10_loco.py`); il numero di pareggi è riportato accanto a ogni tasso. Come
+sensibilità, `--tie-rule error` li conta come errore e `--tie-rule correct` come corretti: le due
+sensibilità usano le stesse unità più i pareggi. La regola non dipende dall'ordine delle righe.
+
+**Scelta del contig.** Se una cellula ha più contig della stessa catena, vince quello con più UMI,
+poi quello con più reads, poi la CDR3 minore in ordine alfabetico. La tesi teneva il primo dopo un
+ordinamento per UMI non stabile: su GSE278694 155 cellule hanno una CDR3 TRB diversa e 879 una CDR3
+TRA diversa. Con la regola di esclusione dei pareggi il tasso per clone (TRB) coincide comunque con
+quello della tesi; la sola unità in più (PA12, tumore) è un pareggio
+(`validation/results/a1_moduleB.json`, sezione `fedelta_S5`).
 
 Intervalli: sezione 2, su scala logit. Calibrazione: scenari «cellula» e «clone» della sezione 2.
 

@@ -23,8 +23,12 @@ assemblati dai file in `results/` da `make_report.py`.
 | [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449) | tumori primitivi del fegato (HCC, iCCA) | 19 | 19 campioni (uno per paziente) su 2 piattaforme; 9.946 cellule, 18.372 geni comuni | audit del disegno e Modulo A | eleggibile: E1-E3 (paziente ricavato dal titolo `LCP<id>`, regex dichiarata in `parse_geo.py`) e M1-M4 (conteggi interi in mtx, 19 pazienti, etichetta `Type` degli autori, meno di 50.000 cellule) |
 
 Tutte le accessioni sono state verificate leggendo le pagine GEO e scaricando i file (series
-matrix e file supplementari). Il Modulo B non è testato qui: resta validato su un solo
-dataset (GSE278694).
+matrix e file supplementari). Il Modulo B non è testato qui: su dati reali è stato eseguito
+solo su GSE278694, il dataset su cui è nato (verifica di fedeltà del porting, non una
+validazione: con la regola dei pareggi della versione finale della tesi, che li esclude, lo
+strumento riproduce il tasso per clone nel tumore, 0,170 su 277 cloni e 10 pazienti; il vecchio
+valore 0,1951 è superato; `validation/results/a1_moduleB.json`); la sua validazione
+esterna è rimandata alla versione 1.0 (`docs/ROADMAP.md`).
 
 ## 2. Criteri × dataset (esecuzione finale)
 
@@ -48,7 +52,7 @@ testo del Cramér V (sezione 4).
 
 | Criterio | Esito | Numeri misurati |
 |---|---|---|
-| A1 CLI | OK | `audit-sc leakage --h5ad GSE125449.h5ad --target-col Type --patient-col patient`: exit 0, 419 s reali, 1,2 GB, confronto fra modelli incluso |
+| A1 CLI | OK | `audit-sc leakage --h5ad GSE125449.h5ad --target-col Type --patient-col patient`: exit 0, 315 s reali, 1,2 GB, confronto fra modelli incluso |
 | A2 verifica indipendente | OK | split per paziente: strumento 0.77764, indipendente 0.77789 (diff 2.5e-04; fold: max diff 0.0012); split casuale: 0.89483 contro 0.89486 (diff 2.4e-05); LeaveOneGroupOut regressione logistica: 0.77116 contro 0.76953 (diff 1.6e-03). Tolleranza 0,02 |
 | A3 controllo negativo | OK | 20 permutazioni (semi 0-19): macro-F1 per paziente media 0.1192 (range 0.1118-0.1250), atteso 1/K = 0.125 (diff 0.0058 <= 0,05); divario medio +0.0021; tag 'leakage rilevabile' in 0/20 (<= 1) |
 | A4a matrice sparsa / densa | OK | punteggi dei fold identici (uguaglianza esatta) |
@@ -69,38 +73,38 @@ in seguito dall'utente.
 
 ### Audit del disegno — GSE132465
 ```
-Audit del disegno su 33 unità (righe dei metadati) e 6 fattori. 3 fatti strutturali rilevati (annidamenti, coincidenze, esiti determinati da un fattore): Nel disegno attuale il fattore 'tumor stage' è annidato in 'tissue type': ogni livello di 'tumor stage' compare in un solo livello di 'tissue type'. Un confronto fra livelli di 'tissue type' non distingue l'effetto di 'tissue type' da quello dei livelli di 'tumor stage' che contiene. Nel disegno attuale il fattore 'region' è annidato in 'tissue type': ogni livello di 'region' compare in un solo livello di 'tissue type'. Un confronto fra livelli di 'tissue type' non distingue l'effetto di 'tissue type' da quello dei livelli di 'region' che contiene. Ogni livello di 'gsm' corrisponde a una sola coppia paziente-tessuto e viceversa: l'effetto tecnico di 'gsm' non è separabile da quello della coppia paziente-tessuto. È la norma senza multiplexing o librerie replicate, ma significa che ogni differenza fra tessuti dello stesso paziente include anche la differenza fra due librerie. 0 coppie di fattori con associazione forte (Cramér V >= 0.5). Confronto 'tissue type': Colorectal cancer vs Normal mucosa: stimabile, disegno appaiato (entro paziente), 10 pazienti con entrambi i livelli. L'unità indipendente è il paziente, non la cellula. Attenzione: 13 pazienti con un solo livello esclusi dal confronto appaiato. Unità indipendenti: 10; p-value minimo raggiungibile con un test esatto di Wilcoxon appaiato: 0.002. Il p-value minimo non misura la potenza: con questa numerosità solo effetti grandi sono rilevabili. Confronto 'tumor stage': 2 vs 3: stimabile, disegno fra pazienti, 6 pazienti nel gruppo più piccolo. L'unità indipendente è il paziente, non la cellula. Unità indipendenti: 6; p-value minimo raggiungibile con un test esatto di Mann-Whitney: 0.000. Il p-value minimo non misura la potenza: con questa numerosità solo effetti grandi sono rilevabili.
- - 'patient_id' e 'tissue type': Cramér V non valutabile (33 unità per 23x2 celle; servono almeno 10 unità e 2 unità attese per cella). Un numero su una tabella così piccola sarebbe instabile.
- - 'patient_id' e 'tumor stage': Cramér V non valutabile (33 unità per 23x5 celle; servono almeno 10 unità e 2 unità attese per cella). Un numero su una tabella così piccola sarebbe instabile.
- - 'patient_id' e 'region': Cramér V non valutabile (33 unità per 23x6 celle; servono almeno 10 unità e 2 unità attese per cella). Un numero su una tabella così piccola sarebbe instabile.
+Audit del disegno su 33 unità (righe dei metadati) e 6 fattori. 3 fatti strutturali rilevati (annidamenti, coincidenze, esiti determinati da un fattore): Nel disegno attuale il fattore 'tumor stage' è annidato in 'tissue type': ogni livello di 'tumor stage' compare in un solo livello di 'tissue type'. Un confronto fra livelli di 'tissue type' non distingue l'effetto di 'tissue type' da quello dei livelli di 'tumor stage' che contiene. Nel disegno attuale il fattore 'region' è annidato in 'tissue type': ogni livello di 'region' compare in un solo livello di 'tissue type'. Un confronto fra livelli di 'tissue type' non distingue l'effetto di 'tissue type' da quello dei livelli di 'region' che contiene. Ogni livello di 'gsm' corrisponde a una sola coppia paziente-tessuto e viceversa: l'effetto tecnico di 'gsm' non è separabile da quello della coppia paziente-tessuto. È la norma senza multiplexing o librerie replicate, ma significa che ogni differenza fra tessuti dello stesso paziente include anche la differenza fra due librerie. 0 coppie di fattori con associazione forte (Cramér V >= 0.5). Confronto 'tissue type': Colorectal cancer vs Normal mucosa: stimabile, disegno appaiato (entro paziente), 10 pazienti con entrambi i livelli. L'unità indipendente è il paziente, non la cellula. Attenzione: 13 pazienti con un solo livello esclusi dal confronto appaiato. Unità indipendenti: 10; p-value minimo raggiungibile con un test esatto di Wilcoxon appaiato: 0.002. Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere un test esatto con queste unità. Confronto 'tumor stage': 2 vs 3: stimabile, disegno fra pazienti, 6 pazienti nel gruppo più piccolo. L'unità indipendente è il paziente, non la cellula. Unità indipendenti: 6; p-value minimo raggiungibile con un test esatto di Mann-Whitney: 0.000. Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere un test esatto con queste unità.
+ - 'patient_id' e 'tissue type': Cramér V non valutabile (33 unità per 23x2 celle; servono almeno 10 unità e in media almeno 2 unità per cella). Un numero su una tabella così piccola sarebbe instabile.
+ - 'patient_id' e 'tumor stage': Cramér V non valutabile (33 unità per 23x5 celle; servono almeno 10 unità e in media almeno 2 unità per cella). Un numero su una tabella così piccola sarebbe instabile.
+ - 'patient_id' e 'region': Cramér V non valutabile (33 unità per 23x6 celle; servono almeno 10 unità e in media almeno 2 unità per cella). Un numero su una tabella così piccola sarebbe instabile.
  - 'tissue type' e 'tumor stage': Cramér V corretto = 0.95 su 33 unità. La relazione fra i due fattori è strutturale (annidamento o coincidenza, vedi i fatti strutturali): l'associazione è riportata lì, non come allarme separato.
  - 'tissue type' e 'region': Cramér V corretto = 0.93 su 33 unità. La relazione fra i due fattori è strutturale (annidamento o coincidenza, vedi i fatti strutturali): l'associazione è riportata lì, non come allarme separato.
- - 'tumor stage' e 'region': Cramér V non valutabile (33 unità per 5x6 celle; servono almeno 10 unità e 2 unità attese per cella). Un numero su una tabella così piccola sarebbe instabile.
+ - 'tumor stage' e 'region': Cramér V non valutabile (33 unità per 5x6 celle; servono almeno 10 unità e in media almeno 2 unità per cella). Un numero su una tabella così piccola sarebbe instabile.
  * Valori mancanti trattati come livello esplicito "NA": 'tumor stage' (10 righe), 'region' (10 righe). Un livello "NA" condiviso da più righe è trattato come un valore uguale per tutte.
  * Le unità di questo audit sono le righe della tabella dei metadati (campioni o librerie), non le cellule: le cellule dello stesso campione non sono osservazioni indipendenti del disegno.
 ```
 
 ### Audit del disegno — GSE131907
 ```
-Audit del disegno su 58 unità (righe dei metadati) e 5 fattori. 2 fatti strutturali rilevati (annidamenti, coincidenze, esiti determinati da un fattore): Nel disegno attuale ogni livello di 'patient id' ha un solo valore di 'tumor stage': 'tumor stage' è interamente determinato da 'patient id'. Il confronto fra i valori di 'tumor stage' può essere fatto solo fra pazienti diversi, mai entro lo stesso paziente. Ogni livello di 'gsm' corrisponde a una sola coppia paziente-tessuto e viceversa: l'effetto tecnico di 'gsm' non è separabile da quello della coppia paziente-tessuto. È la norma senza multiplexing o librerie replicate, ma significa che ogni differenza fra tessuti dello stesso paziente include anche la differenza fra due librerie. 0 coppie di fattori con associazione forte (Cramér V >= 0.5). Confronto 'tissue origin abbrevation': tLung vs nLung: stimabile, disegno appaiato (entro paziente), 10 pazienti con entrambi i livelli. L'unità indipendente è il paziente, non la cellula. Attenzione: 2 pazienti con un solo livello esclusi dal confronto appaiato. Unità indipendenti: 10; p-value minimo raggiungibile con un test esatto di Wilcoxon appaiato: 0.002. Il p-value minimo non misura la potenza: con questa numerosità solo effetti grandi sono rilevabili. Confronto 'tissue origin abbrevation': mLN vs nLN: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'mLN' e 'nLN' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile). Confronto 'tissue origin abbrevation': tLung vs mBrain: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'tLung' e 'mBrain' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile). Confronto 'tumor stage': I vs IV: stimabile, disegno fra pazienti, 17 pazienti nel gruppo più piccolo. L'unità indipendente è il paziente, non la cellula. Unità indipendenti: 17; p-value minimo raggiungibile con un test esatto di Mann-Whitney: 0.000. Il p-value minimo non misura la potenza: con questa numerosità solo effetti grandi sono rilevabili.
- - 'patient id' e 'tissue origin abbrevation': Cramér V non valutabile (58 unità per 44x7 celle; servono almeno 10 unità e 2 unità attese per cella). Un numero su una tabella così piccola sarebbe instabile.
- - 'patient id' e 'tumor stage': Cramér V non valutabile (58 unità per 44x4 celle; servono almeno 10 unità e 2 unità attese per cella). Un numero su una tabella così piccola sarebbe instabile.
+Audit del disegno su 58 unità (righe dei metadati) e 5 fattori. 2 fatti strutturali rilevati (annidamenti, coincidenze, esiti determinati da un fattore): Nel disegno attuale ogni livello di 'patient id' ha un solo valore di 'tumor stage': 'tumor stage' è interamente determinato da 'patient id'. Il confronto fra i valori di 'tumor stage' può essere fatto solo fra pazienti diversi, mai entro lo stesso paziente. Ogni livello di 'gsm' corrisponde a una sola coppia paziente-tessuto e viceversa: l'effetto tecnico di 'gsm' non è separabile da quello della coppia paziente-tessuto. È la norma senza multiplexing o librerie replicate, ma significa che ogni differenza fra tessuti dello stesso paziente include anche la differenza fra due librerie. 0 coppie di fattori con associazione forte (Cramér V >= 0.5). Confronto 'tissue origin abbrevation': tLung vs nLung: stimabile, disegno appaiato (entro paziente), 10 pazienti con entrambi i livelli. L'unità indipendente è il paziente, non la cellula. Attenzione: 2 pazienti con un solo livello esclusi dal confronto appaiato. Unità indipendenti: 10; p-value minimo raggiungibile con un test esatto di Wilcoxon appaiato: 0.002. Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere un test esatto con queste unità. Confronto 'tissue origin abbrevation': mLN vs nLN: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'mLN' e 'nLN' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile). Confronto 'tissue origin abbrevation': tLung vs mBrain: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'tLung' e 'mBrain' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile). Confronto 'tumor stage': I vs IV: stimabile, disegno fra pazienti, 17 pazienti nel gruppo più piccolo. L'unità indipendente è il paziente, non la cellula. Unità indipendenti: 17; p-value minimo raggiungibile con un test esatto di Mann-Whitney: 0.000. Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere un test esatto con queste unità.
+ - 'patient id' e 'tissue origin abbrevation': Cramér V non valutabile (58 unità per 44x7 celle; servono almeno 10 unità e in media almeno 2 unità per cella). Un numero su una tabella così piccola sarebbe instabile.
+ - 'patient id' e 'tumor stage': Cramér V non valutabile (58 unità per 44x4 celle; servono almeno 10 unità e in media almeno 2 unità per cella). Un numero su una tabella così piccola sarebbe instabile.
  - 'tissue origin abbrevation' e 'tumor stage': Cramér V corretto = 0.49 su 58 unità, sotto la soglia di 0.5: nessuna segnalazione (non significa che il disegno sia perfettamente bilanciato).
  * Le unità di questo audit sono le righe della tabella dei metadati (campioni o librerie), non le cellule: le cellule dello stesso campione non sono osservazioni indipendenti del disegno.
 ```
 
 ### Audit del disegno — GSE125449
 ```
-Audit del disegno su 19 unità (righe dei metadati) e 4 fattori. 0 fatti strutturali rilevati (annidamenti, coincidenze, esiti determinati da un fattore). 0 coppie di fattori con associazione forte (Cramér V >= 0.5). Confronto 'cancer type': Hepatocellular carcinoma vs Intrahepatic cholangiocarcinoma: stimabile, disegno fra pazienti, 9 pazienti nel gruppo più piccolo. L'unità indipendente è il paziente, non la cellula. Unità indipendenti: 9; p-value minimo raggiungibile con un test esatto di Mann-Whitney: 0.000. Il p-value minimo non misura la potenza: con questa numerosità solo effetti grandi sono rilevabili. Confronto 'platform': GPL18573 vs GPL20301: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'GPL18573' e 'GPL20301' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile).
+Audit del disegno su 19 unità (righe dei metadati) e 4 fattori. 0 fatti strutturali rilevati (annidamenti, coincidenze, esiti determinati da un fattore). 0 coppie di fattori con associazione forte (Cramér V >= 0.5). Confronto 'cancer type': Hepatocellular carcinoma vs Intrahepatic cholangiocarcinoma: stimabile, disegno fra pazienti, 9 pazienti nel gruppo più piccolo. L'unità indipendente è il paziente, non la cellula. Unità indipendenti: 9; p-value minimo raggiungibile con un test esatto di Mann-Whitney: 0.000. Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere un test esatto con queste unità. Confronto 'platform': GPL18573 vs GPL20301: non stimabile -- nessun paziente ha entrambi i livelli: la differenza fra 'GPL18573' e 'GPL20301' coincide con la differenza fra due gruppi di pazienti diversi (fattore confuso con il paziente). Unità indipendenti: 0; p-value minimo non definito (nessun test possibile).
  - 'platform' e 'cancer type': Cramér V corretto = 0.17 su 19 unità, sotto la soglia di 0.5: nessuna segnalazione (non significa che il disegno sia perfettamente bilanciato).
  * Le unità di questo audit sono le righe della tabella dei metadati (campioni o librerie), non le cellule: le cellule dello stesso campione non sono osservazioni indipendenti del disegno.
 ```
 
 ### Modulo A — GSE125449 (stdout di `audit-sc leakage`)
 ```
-Split per paziente (valutazione onesta): macro-F1 = 0.778 ± 0.060 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.895 ± 0.004. Divario sulla media: +0.117 -- lo split casuale sovrastima l'accuratezza reale del modello di circa 0.117 punti di macro-F1. La deviazione standard fra fold è 15.4x più ampia nello split onesto: lo split casuale sottostima l'incertezza reale sulla performance di quel fattore.
-Tempo di esecuzione: 416 s.
-[ok] report scritto in validation_esterna/results/leakage_GSE125449.html
+Split per paziente (stima della prestazione su pazienti non visti): macro-F1 = 0.778 ± 0.060 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.895 ± 0.004. Divario sulla media: +0.117 -- lo split casuale dà una macro-F1 più alta di 0.117 punti rispetto allo split per paziente, oltre la soglia di rumore dichiarata (±0.05). Rapporto fra le deviazioni standard fra fold (per paziente / casuale): 15.4. È descrittivo: con pochi fold, correlati fra loro, la deviazione standard fra fold non è una stima valida dell'incertezza sulla prestazione.
+Tempo di esecuzione: 313 s.
+[ok] report scritto in <out>/leakage_GSE125449.html
 ```
 Confronto fra modelli (LeaveOneGroupOut): regressione logistica 0.771, random forest 0.766, gradient boosting 0.787.
 
@@ -117,18 +121,22 @@ Confronto fra modelli (LeaveOneGroupOut): regressione logistica 0.771, random fo
 | Classi assenti non dichiarate per i fold del confronto fra modelli | onestà dell'output | elenco nell'app e nel report Markdown | commit finale |
 | Telemetria di Streamlit attiva per default; richiesta interattiva di email al primo avvio | privacy e usabilità | `gatherUsageStats=false`, solo localhost, avvio headless; verificato che il server ascolta solo su 127.0.0.1 e rifiuta le connessioni dall'IP di rete | `6938623` e commit finale |
 
-Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: 97 passed, 2 xfailed, 0 failed, 0 skipped in 473 s (docs/sviluppo/logs/pytest_finale.txt).
+Suite completa: 74 passed, 2 xfailed prima di questa fase; esecuzione finale: suite completa con i dati reali sul commit 69cf239: 180 passed, 7 xfailed in 24 min 30 s (da ripetere sul commit finale).
 
 ## 5. Risultati descrittivi (non criteri)
 
-Su GSE125449 lo split casuale sovrastima la macro-F1 dello split per paziente di
-**+0.117** (0.895 contro 0.778). La deviazione standard fra fold è 15,4 volte più ampia nello split onesto.
+Su GSE125449 lo split casuale dà una macro-F1 più alta di quella dello split per paziente di
+**+0.117** (0.895 contro 0.778). In GSE125449 ogni paziente ha un solo campione, sequenziato su una sola delle due
+piattaforme: il divario misura quindi anche il passaggio fra piattaforme, non solo fra pazienti.
+Il rapporto fra le deviazioni standard fra fold (per paziente / casuale) è 15,4: è
+descrittivo, perché con 5 fold correlati la deviazione standard fra fold non è una stima valida
+dell'incertezza.
 Stabilità delle spiegazioni (Jaccard fra i 50 geni principali): 0.274 fra fold per paziente, 0.302 fra fold casuali.
 
 Tempi:
-- GSE125449 completo: 403 s nel benchmark; in A1, 324 s alla prima misura e 419 s nella
+- GSE125449 completo: 403 s nel benchmark; in A1, 324 s alla prima misura e 315 s nella
   riesecuzione con il codice finale (2026-10-04, macchina condivisa con altri processi);
-- dati sintetici con 25.000 cellule, 20.000 geni e 20 pazienti: 374 s, misurati prima
+- dati sintetici con 25.000 cellule, 20.000 geni e 20 pazienti: 278 s, misurati prima
   della parallelizzazione dei fold. Su questi dati il segnale è troppo facile (macro-F1 = 1,0):
   la misura vale per i tempi, non per l'accuratezza.
 
@@ -208,9 +216,9 @@ originale`; numeri in `results/criteri_originali.json`).
 |---|---|---|---|---|---|---|---|---|
 | O | completo, 19 pazienti | prima esecuzione | **NO**: non terminato dopo 5 h 26 min | non valutabile (nessun output) | non valutabile | non valutabili | **NO**: fold perfetto con una classe assente = 0,667 invece di 1,0 | **NO** |
 | M1 | ridotto, 10 pazienti | motore precedente | non concluso: rieseguito in questa revisione dal commit `b08b2d2`, interrotto dopo il limite di 45 minuti che ho imposto, senza output (`results/motore_precedente_ridotta_tempo.txt`); anche i file dell'esecuzione di allora (`leakage_small_cli.txt`) sono vuoti | non valutabile (nessun output) | non valutabile | non valutabili | non valutato su questa coorte | **non determinato**: nessun criterio verificato |
-| O | completo, 19 pazienti | codice finale | OK: exit 0, 419 s | OK: split per paziente 0.7776 contro 0.7880 (diff 0.0104); LeaveOneGroupOut 0.7712 contro 0.7593 (diff 0.0119) | OK: media 0.1192, atteso 0.125, tag in 0/20 | OK | OK: 7 fold con classi assenti; strumento 0.7712, classi presenti 0.7695, assenti come zero 0.6870 | sì |
+| O | completo, 19 pazienti | codice finale | OK: exit 0, 315 s | OK: split per paziente 0.7776 contro 0.7880 (diff 0.0104); LeaveOneGroupOut 0.7712 contro 0.7593 (diff 0.0119) | OK: media 0.1192, atteso 0.125, tag in 0/20 | OK | OK: 7 fold con classi assenti; strumento 0.7712, classi presenti 0.7695, assenti come zero 0.6870 | sì |
 | M1 | ridotto, 10 pazienti | codice finale | OK: exit 0, 156 s | **NO**: split per paziente 0.7637 contro 0.7507 (diff 0.0130); LeaveOneGroupOut 0.7530 contro 0.7127 (diff 0.0403) | OK: media 0.1204, atteso 0.125, tag in 0/20 | OK | OK: 7 fold con classi assenti; strumento 0.7530, classi presenti 0.7530, assenti come zero 0.6431 | **NO** |
-| M2 | completo, 19 pazienti | codice finale | OK: exit 0, 419 s | OK: split per paziente 0.7776 contro 0.7779 (diff 0.0002); LeaveOneGroupOut 0.7712 contro 0.7695 (diff 0.0016); split casuale 0.8948 contro 0.8949 (diff 0.0000) | OK: media 0.1192, atteso 0.125, tag in 0/20 | OK | OK: 7 fold con classi assenti; strumento 0.7712, classi presenti 0.7695, assenti come zero 0.6870 | sì |
+| M2 | completo, 19 pazienti | codice finale | OK: exit 0, 315 s | OK: split per paziente 0.7776 contro 0.7779 (diff 0.0002); LeaveOneGroupOut 0.7712 contro 0.7695 (diff 0.0016); split casuale 0.8948 contro 0.8949 (diff 0.0000) | OK: media 0.1192, atteso 0.125, tag in 0/20 | OK | OK: 7 fold con classi assenti; strumento 0.7712, classi presenti 0.7695, assenti come zero 0.6870 | sì |
 
 Due precisazioni sulla riga «O, codice finale», perché non venga letta come più favorevole di
 quanto è:
@@ -260,7 +268,9 @@ Altre precisazioni che fanno parte del verdetto:
 
 ## Cosa questa validazione non dimostra
 
-- Il **Modulo B** resta validato su un solo dataset reale (GSE278694, PDAC) e non è testato qui.
+- Il **Modulo B** non è testato qui: su dati reali è stato eseguito solo su GSE278694 (PDAC),
+  il dataset su cui è nato; la sua validazione esterna è rimandata
+  alla versione 1.0 (`docs/ROADMAP.md`).
 - La generalità del codice non implica la sua **utilità** per un utente clinico: lo strumento
   non è stato provato da nessun utente esterno.
 - I dataset sono **pochi**: 3 per il disegno e uno solo per il Modulo A, con una sola etichetta

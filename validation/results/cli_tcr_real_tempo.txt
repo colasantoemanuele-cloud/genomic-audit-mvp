@@ -1,21 +1,21 @@
 	Command being timed: "uv run python -W ignore cli.py tcr --h5ad ../pdac-ml/data/interim/sc_raw.h5ad --vdj-manifest validation/results/vdj_manifest_gse278694.csv --patient-col patients --compartment-col tissue --celltype-col all_celltype --barcode-col barcode --marker-map <out>/markers.json --reference-compartment PBMC --compartment-order Tumor,Adjacent_normal --export-flags --sperimentale-cd8 Tumor --out <out>/tcr_real.html"
-	User time (seconds): 108.51
+	User time (seconds): 96.36
 	System time (seconds): 1.16
-	Percent of CPU this job got: 100%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:49.35
+	Percent of CPU this job got: 102%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:35.49
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 6159068
+	Maximum resident set size (kbytes): 6149560
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 212341
-	Voluntary context switches: 73
-	Involuntary context switches: 2644
+	Minor (reclaiming a frame) page faults: 282166
+	Voluntary context switches: 67
+	Involuntary context switches: 1475
 	Swaps: 0
 	File system inputs: 0
-	File system outputs: 1671792
+	File system outputs: 1671400
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

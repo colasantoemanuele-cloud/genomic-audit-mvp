@@ -1,3 +1,3 @@
 Split per paziente (stima della prestazione su pazienti non visti): macro-F1 = 0.778 ± 0.060 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.895 ± 0.004. Divario sulla media: +0.117 -- lo split casuale dà una macro-F1 più alta di 0.117 punti rispetto allo split per paziente, oltre la soglia di rumore dichiarata (±0.05). Rapporto fra le deviazioni standard fra fold (per paziente / casuale): 15.4. È descrittivo: con pochi fold, correlati fra loro, la deviazione standard fra fold non è una stima valida dell'incertezza sulla prestazione.
-Tempo di esecuzione: 316 s.
+Tempo di esecuzione: 313 s.
 [ok] report scritto in <out>/leakage_GSE125449.html

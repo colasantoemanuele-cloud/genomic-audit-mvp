@@ -4,12 +4,13 @@ Saltati con motivo se i dati non sono presenti. Sono test di regressione sui num
 Modulo B con il codice attuale, con le opzioni della tesi (--clone-error-labels NK
 --clone-marker-priority CD8T,CD4T) e con i file VDJ originali (barcode con "-1").
 
-Rispetto ai numeri della tesi (Tumor 0.1951 [0.1230; 0.2737], Adjacent 0.0593, differenza +0.0795
-su 88 cloni) la stima per clone è diversa per due regole rese esplicite nella revisione: i pareggi
-dell'etichetta di maggioranza (11 unità su 288 nel tumore; prima decisi dall'ordine delle righe) e la scelta
-fra contig TRB a pari UMI (346 cellule; prima decisa dall'ordine dell'ordinamento). L'intervallo è
-quello cluster-robusto (revisione A1), non più il percentile. La riproduzione della tesi con le sue
-regole di allora è in validation/gse278694_moduleB.py. Il test carica ~6 GB (circa 1 minuto).
+Convenzione per clone con le opzioni della tesi e i pareggi dell'etichetta di maggioranza esclusi
+(regola di progetto-ml, ramo revisione, commit 05947d0): stima puntuale e numero di cloni coincidono
+con la tesi (Tumor 0.1697 su 277 cloni, 10 pazienti, error_rate_blood.csv; Adjacent 0.0598 su 117;
+differenza +0.0588 su 85 cloni). L'intervallo è quello cluster-robusto (revisione A1), non il
+bootstrap della tesi. Il vecchio valore della tesi, 0.1951 su 288 unità, è superato. Il confronto
+completo, con le sensibilità ai pareggi e la ricostruzione della scelta dei contig della tesi, è in
+validation/gse278694_moduleB.py. Il test carica ~6 GB (circa 1 minuto).
 """
 
 from __future__ import annotations
@@ -56,10 +57,12 @@ def test_clone_convention_on_real_data(real):
     d, n_cl = clone.paired_differences[("Tumor", "Adjacent_normal")]
     print(f"\n[reale, per clone] Tumor {t.mean:.4f} [{t.ci_low:.4f}; {t.ci_high:.4f}] {t.n_groups} pz | "
           f"Adjacent {a.mean:.4f} ({a.n_groups} pz) | Tumor-Adj {d.mean:+.4f} su {n_cl} cloni")
-    assert abs(t.mean - 0.18576388888888892) < 1e-12 and t.n_obs == 288 and t.n_groups == 10
-    assert abs(t.ci_low - 0.11295427591468271) < 1e-9 and abs(t.ci_high - 0.2901543690548171) < 1e-9
-    assert abs(a.mean - 0.0635593220338983) < 1e-12 and not a.sufficient and a.n_groups == 4
-    assert abs(d.mean - 0.06439393939393939) < 1e-12 and n_cl == 88 and not d.sufficient
+    # = tesi: 0.16967509025270758 su 277 cloni, 10 pazienti (error_rate_blood.csv)
+    assert abs(t.mean - 0.16967509025270758) < 1e-12 and t.n_obs == 277 and t.n_groups == 10
+    assert clone.n_ties["Tumor"] == 11  # 10 nella tesi + 1 da un contig TRB a pari UMI (PA12)
+    assert abs(t.ci_low - 0.09959604946687675) < 1e-9 and abs(t.ci_high - 0.2740556009292017) < 1e-9
+    assert abs(a.mean - 0.05982905982905983) < 1e-12 and a.n_obs == 117 and not a.sufficient and a.n_groups == 4
+    assert abs(d.mean - 0.058823529411764705) < 1e-12 and n_cl == 85 and not d.sufficient
 
 
 def test_cell_convention_and_discordance_on_real_data(real):

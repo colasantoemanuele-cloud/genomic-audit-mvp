@@ -37,6 +37,7 @@ prova_dati() {
   { log "copia di lavoro con i dati reali, commit $SHA"; uv run pytest -n auto -q -p no:cacheprovider -rsx 2>&1 | tail -15; } \
     > "$L/suite_con_dati.txt" 2>&1
 }
-prova_uv & prova_pip & prova_py312 & wait
-prova_dati
-log "fine" >> "$L/clone_uv.txt"
+# In sequenza: ogni prova usa tutti i core (-n auto); in parallelo si rallentavano a vicenda
+# (suite completa 36 min in parallelo contro 24 min da sola). Si lancia da una copia dello script.
+prova_uv; prova_pip; prova_py312; prova_dati
+log "fine" >> "$L/suite_con_dati.txt"
