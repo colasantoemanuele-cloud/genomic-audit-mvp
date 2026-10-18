@@ -10,9 +10,15 @@ Per ciascuno stimatore (correzione di Nadeau-Bengio, cluster bootstrap):
   - sotto un effetto noto e sostanziale (iniettato deliberatamente): lo stimatore deve
     rilevarlo nella maggioranza delle repliche (potenza).
 
-I semi casuali sono fissi ovunque: i test sono deterministici, non flaky. I parametri
-(dimensione campionaria, numero di fold/gruppi) sono stati scelti empiricamente perché
-danno risultati stabilmente dentro le bande richieste, non a caso.
+I semi casuali sono fissi ovunque: i test sono deterministici, non flaky.
+
+Regime d'uso (revisione, A1-A2). Lo strumento usa Nadeau-Bengio SOLO nel confronto fra modelli,
+con LeaveOneGroupOut (un fold per paziente, k >= 8 fold di dimensioni diverse) e il rapporto
+mean(n_test)/mean(n_train); l'intervallo cluster-robusto sui pazienti con 4-11 pazienti. Le
+calibrazioni in quei regimi sono in fondo al file. I test con DummyClassifier a k = 3 e k = 5
+restano come controlli fuori dal regime d'uso: due DummyClassifier predicono a caso, senza usare
+il training, quindi le loro differenze fra fold NON sono correlate dalla sovrapposizione dei
+training set, cioè manca proprio il fenomeno che la correzione compensa.
 """
 
 from __future__ import annotations
@@ -40,10 +46,10 @@ CALIBRATION_LOW, CALIBRATION_HIGH = 0.02, 0.08
 # Nadeau-Bengio: ipotesi nulla
 # --------------------------------------------------------------------------- #
 def _nb_null_replicate(rep: int, seed0: int, n: int, k: int) -> float:
-    """Un confronto fra due DummyClassifier(strategy='stratified') su una CV reale a k
-    fold: nessuna vera differenza di performance (entrambi ignorano le feature), ma le
-    differenze fra fold sono correlate perché i training set si sovrappongono -- è
-    esattamente il meccanismo che la correzione di Nadeau-Bengio deve compensare."""
+    """Un confronto fra due DummyClassifier(strategy='stratified') su una CV a k fold: nessuna
+    vera differenza di performance (entrambi ignorano le feature). Poiché i DummyClassifier non
+    usano il training, le differenze fra fold non sono correlate dalla sovrapposizione dei
+    training set: questo scenario NON contiene il fenomeno che Nadeau-Bengio corregge."""
     rng = np.random.default_rng(seed0 + rep)
     y = rng.integers(0, 2, n)
     X = np.zeros((n, 1))
@@ -63,6 +69,7 @@ def _nb_null_replicate(rep: int, seed0: int, n: int, k: int) -> float:
 
 
 def test_nadeau_bengio_calibration_null():
+    """k=3 con DummyClassifier: controllo fuori dal regime d'uso (vedi il docstring del file)."""
     R, seed0, n, k = 1000, 55_003, 90, 3
     n_sig = sum(_nb_null_replicate(rep, seed0, n, k) < ALPHA for rep in range(R))
     frac = n_sig / R
@@ -74,79 +81,24 @@ def test_nadeau_bengio_calibration_null():
 
 @pytest.mark.xfail(
     reason=(
-        "Nadeau-Bengio a k=5 (default reale di leakage_audit.py) è conservativo sotto "
-        "H0: 18/1000=1.8% (R=1000) e 38/2000=1.9% (R=2000, conferma), stabile su repliche "
-        "raddoppiate -> non è rumore Monte Carlo. La banda [2%, 8%] resta quella teorica "
-        "legata al livello nominale 0.05 (stessa di k=3): NON è stata allargata per far "
-        "passare questo numero. Il fallimento è atteso e sul lato sicuro (meno gradi di "
-        "libertà a k=5 -> correzione più cautelativa, falsi positivi ancora più rari "
-        "del nominale). Se in futuro questo xfail smette di verificarsi (il test torna a "
-        "passare, es. dopo una modifica a nadeau_bengio_test), è un segnale che la "
-        "calibrazione è cambiata -- da investigare, non un progresso da ignorare "
-        "(strict=True: uno xpass qui fa fallire la suite)."
+        "Fuori dal regime d'uso (lo strumento usa Nadeau-Bengio solo con LeaveOneGroupOut, k >= 8). "
+        "Con due DummyClassifier a k=5 la correzione è conservativa sotto H0: 18/1000=1.8% (R=1000) e "
+        "38/2000=1.9% (R=2000), sotto la banda [2%, 8%], che NON è stata allargata. Causa: i "
+        "DummyClassifier predicono a caso senza usare il training, quindi le differenze fra fold non "
+        "sono correlate e il termine n_test/n_train gonfia una varianza che non andava corretta. Non "
+        "dipende dai gradi di libertà. strict=True: uno xpass fa fallire la suite."
     ),
     strict=True,
 )
 def test_nadeau_bengio_calibration_null_k5_default():
-    """k=5 è il default REALE usato da leakage_audit.py (StratifiedGroupKFold a 5
-    fold), non solo un caso di stress come k=3 sopra: va misurato separatamente, non
-    dedotto per estrapolazione. Soglia teorica, non adattata al risultato osservato:
-    stessa banda [2%, 8%] legata al livello nominale 0.05 usata per k=3."""
+    """k=5 con DummyClassifier: controllo fuori dal regime d'uso (il nome del test è storico;
+    k=5 NON è il regime in cui lo strumento usa Nadeau-Bengio). Banda [2%, 8%]."""
     R, seed0, n, k = 1000, 55_005, 90, 5
     n_sig = sum(_nb_null_replicate(rep, seed0, n, k) < ALPHA for rep in range(R))
     frac = n_sig / R
     assert CALIBRATION_LOW <= frac <= CALIBRATION_HIGH, (
         f"Nadeau-Bengio (k=5, default) non calibrato sotto H0: {n_sig}/{R} = {frac:.3f}, "
         f"atteso in [{CALIBRATION_LOW}, {CALIBRATION_HIGH}]"
-    )
-
-
-def test_nadeau_bengio_less_anticonservative_than_uncorrected_ttest():
-    """Controllo di contrasto (non di calibrazione assoluta): sullo stesso scenario
-    nullo e con lo stesso seme, il t-test appaiato ordinario (solo var/k, senza il
-    termine n_test/n_train) dichiara significativo un risultato falso positivo con
-    frequenza maggiore o uguale rispetto alla versione corretta -- è esattamente il
-    problema che la correzione di Nadeau-Bengio risolve. Confronto diretto fra le due
-    varianti sugli stessi dati simulati, invece di una soglia assoluta sul naive (che
-    dipende troppo dalla forza della correlazione fra fold indotta dallo scenario)."""
-    from scipy.stats import t as student_t
-
-    R, seed0, n, k = 1000, 55_003, 90, 3
-    n_sig_naive, n_sig_corrected = 0, 0
-    for rep in range(R):
-        rng = np.random.default_rng(seed0 + rep)
-        y = rng.integers(0, 2, n)
-        X = np.zeros((n, 1))
-        skf = StratifiedKFold(n_splits=k, shuffle=True, random_state=rep)
-        fa, fb, n_train, n_test = [], [], [], []
-        for tr, te in skf.split(X, y):
-            clf_a = DummyClassifier(strategy="stratified", random_state=2 * rep)
-            clf_b = DummyClassifier(strategy="stratified", random_state=2 * rep + 1)
-            clf_a.fit(X[tr], y[tr])
-            clf_b.fit(X[tr], y[tr])
-            fa.append(f1_score(y[te], clf_a.predict(X[te]), average="macro", zero_division=0))
-            fb.append(f1_score(y[te], clf_b.predict(X[te]), average="macro", zero_division=0))
-            n_train.append(len(tr))
-            n_test.append(len(te))
-
-        if nadeau_bengio_test(fa, fb, n_train, n_test).p_value < ALPHA:
-            n_sig_corrected += 1
-
-        d = np.array(fa) - np.array(fb)
-        if len(d) < 2 or np.allclose(d, 0):
-            continue
-        denom = np.sqrt(d.var(ddof=1) / k)
-        if denom == 0:
-            continue
-        t_stat = d.mean() / denom
-        p_naive = 2 * (1 - student_t.cdf(abs(t_stat), df=k - 1))
-        if p_naive < ALPHA:
-            n_sig_naive += 1
-
-    frac_naive, frac_corrected = n_sig_naive / R, n_sig_corrected / R
-    assert frac_naive >= frac_corrected, (
-        f"il t-test non corretto ({frac_naive:.3f}) dovrebbe essere almeno tanto "
-        f"anticonservativo quanto quello corretto ({frac_corrected:.3f})"
     )
 
 
@@ -422,3 +374,87 @@ def test_cluster_t_interval_point_estimate_is_pooled_mean():
     groups = np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
     r = cluster_t_interval(values, groups, min_groups=5, scale="logit")
     assert r.mean == pytest.approx(0.4) and r.ci_low < 0.4 < r.ci_high
+
+
+# --------------------------------------------------------------------------- #
+# Nadeau-Bengio nel regime d'uso (revisione, A2): LeaveOneGroupOut, 8-20 gruppi
+# --------------------------------------------------------------------------- #
+# Bande dichiarate PRIMA di eseguire questi test (non si allargano): sotto H0, frazione di
+# p < 0.05 in [2%, 8%] su 400 repliche, per k = 8, 10, 15 e 20 gruppi, separatamente per
+# Nadeau-Bengio (come lo usa leakage_audit: rapporto fra le medie di n_test e n_train), per il
+# Wilcoxon appaiato (core.stats.wilcoxon_test) e per il t appaiato non corretto (solo misura di
+# contrasto: lo strumento non lo usa). Uno stimatore che non entra nella banda non viene esposto.
+# Scenario: G pazienti con 15-60 cellule ciascuno (dimensioni diverse), prevalenza della classe
+# positiva per paziente U(0.3, 0.7), 10 feature con effetto paziente N(0, 0.8^2) su ciascuna; le
+# feature 0-4 e 5-9 portano lo stesso segnale (+-0.6 secondo la classe), quindi due regressioni
+# logistiche, una sulle prime cinque e una sulle altre cinque, sono ugualmente buone in
+# aspettativa (H0 esatta per simmetria) e sono addestrate sugli stessi training sovrapposti di
+# LeaveOneGroupOut. Metrica: macro-F1 sulle classi presenti nel paziente di test, come lo strumento.
+NB_LOGO_REPS = 400
+NB_LOGO_GROUPS = (8, 10, 15, 20)
+
+
+def _logo_replicate(rep: int, G: int) -> tuple[float, float, float]:
+    from scipy.stats import t as student_t
+
+    from core.stats import wilcoxon_test
+
+    rng = np.random.default_rng(6_000_000 + 10_000 * G + rep)
+    sizes = rng.integers(15, 61, G)
+    groups = np.repeat(np.arange(G), sizes)
+    n = sizes.sum()
+    y = (rng.random(n) < rng.uniform(0.3, 0.7, G)[groups]).astype(int)
+    X = rng.normal(0, 1, (n, 10)) + rng.normal(0, 0.8, (G, 10))[groups]
+    X += 0.6 * (2 * y[:, None] - 1)
+    fa, fb, n_train, n_test = [], [], [], []
+    for g in range(G):
+        te = groups == g
+        tr = ~te
+        labels = np.unique(y[te])
+        for cols, out in ((slice(0, 5), fa), (slice(5, 10), fb)):
+            clf = LogisticRegression(max_iter=500).fit(X[tr][:, cols], y[tr])
+            out.append(f1_score(y[te], clf.predict(X[te][:, cols]), average="macro", labels=labels,
+                                zero_division=0))
+        n_train.append(int(tr.sum()))
+        n_test.append(int(te.sum()))
+    p_nb = nadeau_bengio_test(fa, fb, n_train, n_test).p_value
+    p_w = wilcoxon_test(fa, fb)[0]
+    d = np.array(fa) - np.array(fb)
+    t_stat = d.mean() / np.sqrt(d.var(ddof=1) / G)
+    p_t = float(2 * (1 - student_t.cdf(abs(t_stat), G - 1)))
+    return p_nb, p_w, p_t
+
+
+_LOGO_CACHE: dict[int, np.ndarray] = {}
+
+
+def _logo_pvalues(G: int) -> np.ndarray:
+    if G not in _LOGO_CACHE:
+        _LOGO_CACHE[G] = np.array([_logo_replicate(rep, G) for rep in range(NB_LOGO_REPS)])
+    return _LOGO_CACHE[G]
+
+
+def _logo_rate(G: int, col: int, name: str) -> float:
+    p = _logo_pvalues(G)[:, col]
+    frac = float(np.mean(np.nan_to_num(p, nan=1.0) < ALPHA))
+    print(f"\n[A2 LOGO, {G} gruppi] {name}: p < 0.05 in {frac:.3f} delle {NB_LOGO_REPS} repliche "
+          f"(banda [{CALIBRATION_LOW}, {CALIBRATION_HIGH}])")
+    return frac
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("G", NB_LOGO_GROUPS)
+def test_nadeau_bengio_calibration_logo(G):
+    assert CALIBRATION_LOW <= _logo_rate(G, 0, "Nadeau-Bengio") <= CALIBRATION_HIGH
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("G", NB_LOGO_GROUPS)
+def test_wilcoxon_calibration_logo(G):
+    assert CALIBRATION_LOW <= _logo_rate(G, 1, "Wilcoxon") <= CALIBRATION_HIGH
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("G", NB_LOGO_GROUPS)
+def test_uncorrected_t_calibration_logo(G):
+    assert CALIBRATION_LOW <= _logo_rate(G, 2, "t non corretto") <= CALIBRATION_HIGH
