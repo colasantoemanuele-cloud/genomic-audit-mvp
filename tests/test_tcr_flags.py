@@ -31,7 +31,7 @@ TOL = 1e-12
 
 def _run(adata, contigs, **kw):
     return run_tcr_validation(adata, contigs, patient_col="patient_id", compartment_col="tissue",
-                              celltype_col="celltype", barcode_col="barcode", n_boot=200, seed=0,
+                              celltype_col="celltype", barcode_col="barcode",
                               marker_map=MARKERS, reference_compartment="PBMC", **kw)
 
 
@@ -146,5 +146,5 @@ def test_export_refuses_existing_flag_columns(tmp_path):
 def test_no_flags_without_marker_map():
     adata, contigs = make_tcr_validation_dataset(n_patients=6, n_clones_per_patient=8, seed=8)
     res = run_tcr_validation(adata, contigs, patient_col="patient_id", compartment_col="tissue",
-                             celltype_col="celltype", barcode_col="barcode", n_boot=100, seed=0)
+                             celltype_col="celltype", barcode_col="barcode")
     assert res.cell_flags is None

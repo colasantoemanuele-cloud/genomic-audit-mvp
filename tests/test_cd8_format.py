@@ -1,10 +1,11 @@
-"""B1 -- formato tabellare dell'output della frazione di CD8.
+"""Formato dell'output della frazione di CD8 (SPERIMENTALE, solo CLI con --sperimentale-cd8).
 
 - Regressione: i numeri (matrice, J, frazioni, intervalli, motivi di rifiuto) sono identici
-  (tolleranza 1e-12) a quelli prodotti PRIMA della modifica di formato
-  (tests/fixtures/cd8_regression_baseline.json, generato sul commit 2f03461).
-- Formato: in CLI e nel report HTML avvertenza e assunzioni compaiono una sola volta, c'è
-  una riga per paziente e i rifiuti rimandano a note numerate.
+  (tolleranza 1e-12) a tests/fixtures/cd8_regression_baseline.json (vedi il suo docstring per
+  l'unica rigenerazione, revisione A7).
+- Formato: in CLI avvertenza e assunzioni compaiono una sola volta, c'è una riga per paziente e
+  i rifiuti rimandano a note numerate.
+- La frazione di CD8 non compare nei report né nella sintesi dei controlli (revisione A7).
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import json
 import pytest
 
 from core.cd8_propagation import ASSUMPTIONS_TEXT, EXPERIMENTAL_NOTE, SCENARIO_WARNING, format_cd8_text
-from core.report import render_report
+from core.report import render_markdown_report, render_report
 from tests.fixtures.cd8_regression import BASELINE_PATH, CONFIGS, run_config, summarize
 from tests.test_tcr_flags import _assert_close
 
@@ -39,18 +40,27 @@ def test_cli_text_is_a_table_with_warnings_once():
     assert "[1] matrice di confusione mal condizionata" in txt
 
 
-def test_html_section_states_warning_and_reasons_once():
-    res = run_config("errore_alto_2x_rifiutato")
-    page = render_report(cd8_result=res, dataset_name="test")
-    assert page.count("Nessuno scenario") == 1
-    assert page.count("matrice di confusione mal condizionata") == 1
-    assert page.count("<tr><td>P0") == len(res.patients)
-
-
-def test_experimental_note_at_top_of_cli_and_html():
+def test_experimental_note_at_top_of_cli_text():
     res = run_config("simmetrico")
     txt = format_cd8_text(res)
     assert txt.splitlines()[1] == EXPERIMENTAL_NOTE and txt.count(EXPERIMENTAL_NOTE) == 1
-    page = render_report(cd8_result=res, dataset_name="test")
-    section = page[page.index("Frazione di CD8 nel compartimento"):]
-    assert section.index("FUNZIONE SPERIMENTALE") < section.index("<table>")
+
+
+def test_reports_have_no_cd8_section():
+    import inspect
+    assert "cd8" not in str(inspect.signature(render_report)).lower()
+    assert "cd8" not in str(inspect.signature(render_markdown_report)).lower()
+    page = render_report(dataset_name="test")
+    assert "Frazione di CD8" not in page
+
+
+def test_refuses_instead_of_truncating_out_of_range_fractions():
+    """Prima del troncamento a [0, 1] lo scenario 2x di 'asimmetrico' dava intervalli 0.00-0.00;
+    ora quei pazienti sono rifiutati con il motivo."""
+    res = run_config("asimmetrico")
+    for p in res.patients:
+        iv = p.scenarios[2.0]
+        assert iv.low is None or (0.0 < iv.low or iv.high < 1.0)
+        assert not (iv.low == 0.0 and iv.high == 0.0)
+    reasons = [p.scenarios[2.0].refused_reason for p in res.patients if p.scenarios[2.0].low is None]
+    assert any("intervallo invertibile" in r for r in reasons)

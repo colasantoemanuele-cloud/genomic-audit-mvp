@@ -6,8 +6,9 @@ Tre output:
 
 1. Fattori confusi fra loro: per ogni coppia, tabella di contingenza, Cramér V con la
    correzione di Bergsma (2013) e i fatti STRUTTURALI -- annidamento, mappa uno-a-uno,
-   esito determinato da un fattore. I fatti strutturali sono rilevati in modo
-   deterministico: sono proprietà del disegno, non stime.
+   esito determinato da un fattore, unità tecnica. I fatti strutturali sono controlli
+   deterministici sulla tabella (proprietà del disegno, non stime), utili come lista di
+   verifica; l'unico elemento inferenziale dell'audit è il Cramér V.
 2. Confronti stimabili: per ogni confronto richiesto, unità indipendenti (i pazienti)
    e classe `stimabile` / `stimabile con bassa potenza` / `non stimabile`.
 3. (Opzionale, richiede la matrice) scomposizione della varianza su pseudobulk
@@ -40,13 +41,19 @@ from core.tcr_validation import MIN_PATIENTS_FOR_CI_DEFAULT
 # Stessa soglia del Modulo B: sotto 5 pazienti nessun intervallo di confidenza.
 MIN_UNITS_DEFAULT = MIN_PATIENTS_FOR_CI_DEFAULT
 CRAMER_V_THRESHOLD = 0.5
-# Il V è "valutabile" solo con almeno 10 righe e almeno 2 righe attese per cella in
-# media (n / (r*c) >= 2): sotto, il valore oscilla troppo per essere riportato.
+# Il V è "valutabile" solo con almeno 10 righe e, IN MEDIA, almeno 2 righe per cella della
+# tabella (n / (r*c) >= 2; non è un minimo per cella): sotto, il valore oscilla troppo.
 MIN_ROWS_FOR_V = 10
 MIN_EXPECTED_PER_CELL = 2.0
 ALPHA = 0.05
-MIN_PVALUE_NOTE = ("Il p-value minimo non misura la potenza: con questa numerosità solo effetti "
-                   "grandi sono rilevabili.")
+MIN_PVALUE_NOTE = ("Il p-value minimo non misura la potenza: dice solo quanto in basso può scendere "
+                   "un test esatto con queste unità.")
+# Classe di un confronto con un livello che non compare nei metadati: errore d'input (es. un
+# refuso), non una proprietà del disegno.
+MISSING_LEVEL_CLASS = "livello assente"
+# Oltre questa quota di righe duplicate sulle colonne dichiarate la tabella non è un foglio
+# campioni (es. una riga per cellula, o librerie replicate senza la colonna libreria): rifiutata.
+MAX_DUPLICATE_FRACTION = 0.5
 MIN_CELLS_PER_UNIT_DEFAULT = 20
 N_HVG_DEFAULT = 1000
 TECHNICAL_ROLES = ("library", "batch", "chemistry", "protocol", "date")
@@ -95,7 +102,7 @@ class ComparisonAssessment:
     n_units: int
     n_patients_a: int
     n_patients_b: int
-    classification: str  # stimabile | stimabile con bassa potenza | non stimabile
+    classification: str  # stimabile | stimabile con bassa potenza | non stimabile | livello assente
     reasons: tuple[str, ...]
     sentence: str
     # p-value minimo raggiungibile da un test esatto con queste unità (None se non definito)
@@ -151,11 +158,20 @@ def as_levels(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     return out, missing
 
 
+LIBRARY_COLLAPSE_NOTE = (
+    "Tabella ridotta dalle cellule senza una colonna libreria: le librerie replicate con la stessa "
+    "combinazione dei fattori indicati (es. due librerie dello stesso paziente e tessuto) sono "
+    "diventate una sola riga, quindi le unità contate possono essere meno delle librerie reali.")
+
+
 def sample_sheet_from_obs(obs: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     """Riduce una tabella a livello di cellula (es. ``adata.obs``) alle combinazioni
     distinte dei fattori indicati: le cellule non sono unità indipendenti del disegno.
     Se fra le colonne c'è un identificativo di libreria, ogni riga risultante è una
-    libreria."""
+    libreria; altrimenti le librerie replicate con gli stessi fattori collassano in una riga
+    (vedi ``LIBRARY_COLLAPSE_NOTE``, che il chiamante deve riportare). Colonne ripetute in
+    ``cols`` sono considerate una volta sola."""
+    cols = list(dict.fromkeys(cols))
     missing = [c for c in cols if c not in obs.columns]
     if missing:
         raise ValueError(f"colonne non trovate nei metadati: {missing}")
@@ -192,14 +208,16 @@ def _nested(sheet: pd.DataFrame, a: str, b: str) -> bool:
 
 def _pair_sentence(a: str, b: str, n: int, r: int, c: int, v: float | None, alarm: bool,
                    v_threshold: float, structural: bool = False) -> str:
+    """Frase per una coppia di fattori: V corretto con la sua lettura, oppure il motivo per cui
+    non è valutabile o per cui la relazione è riportata fra i fatti strutturali."""
     if v is not None and structural:
         return (f"'{a}' e '{b}': Cramér V corretto = {v:.2f} su {n} unità. La relazione fra i due "
                 f"fattori è strutturale (annidamento o coincidenza, vedi i fatti strutturali): "
                 f"l'associazione è riportata lì, non come allarme separato.")
     if v is None:
         return (f"'{a}' e '{b}': Cramér V non valutabile ({n} unità per {r}x{c} celle; servono "
-                f"almeno {MIN_ROWS_FOR_V} unità e {MIN_EXPECTED_PER_CELL:g} unità attese per "
-                f"cella). Un numero su una tabella così piccola sarebbe instabile.")
+                f"almeno {MIN_ROWS_FOR_V} unità e in media almeno {MIN_EXPECTED_PER_CELL:g} unità "
+                f"per cella). Un numero su una tabella così piccola sarebbe instabile.")
     if alarm:
         return (f"'{a}' e '{b}': associazione forte (Cramér V corretto = {v:.2f}, soglia "
                 f"{v_threshold:g}, su {n} unità). I due fattori sono in parte confusi: un effetto "
@@ -327,6 +345,8 @@ def _technical_confounders(sub: pd.DataFrame, factor: str, roles: dict[str, str]
 
 def _partial_confounders(sub: pd.DataFrame, factor: str, roles: dict[str, str],
                          v_threshold: float) -> list[tuple[str, float]]:
+    """Fattori tecnici associati al confronto (Cramér V >= ``v_threshold``, solo su tabelle
+    valutabili) senza separare perfettamente i due livelli: (colonna, V)."""
     out = []
     for c, role in roles.items():
         if role not in TECHNICAL_ROLES or c == factor:
@@ -382,10 +402,13 @@ def assess_comparison(
 
     if not pats_a or not pats_b:
         missing = level_a if not pats_a else level_b
+        levels = sorted(s[factor].unique())
+        shown = ", ".join(repr(x) for x in levels[:12]) + (", ..." if len(levels) > 12 else "")
         return ComparisonAssessment(
-            factor, level_a, level_b, "-", 0, len(pats_a), len(pats_b), "non stimabile",
+            factor, level_a, level_b, "-", 0, len(pats_a), len(pats_b), MISSING_LEVEL_CLASS,
             (f"livello '{missing}' assente",),
-            f"Confronto {label}: non stimabile, il livello '{missing}' non compare nei metadati.")
+            f"Confronto {label}: non valutato, il livello '{missing}' non compare nella colonna "
+            f"'{factor}' (errore d'input? livelli presenti: {shown}).")
 
     both = pats_a & pats_b
     role = roles.get(factor, "outcome")
@@ -398,8 +421,13 @@ def assess_comparison(
             reasons.append(f"{excluded} pazienti con un solo livello esclusi dal confronto appaiato")
         min_p, min_p_test = wilcoxon_min_pvalue(units), "Wilcoxon appaiato"
         low_power = units < min_units or min_p > ALPHA
-        power_txt = (f"con {units} pazienti appaiati anche un test di Wilcoxon esatto non può "
-                     f"scendere sotto p = {min_p:.3f}" if low_power else "")
+        if min_p > ALPHA:
+            power_txt = (f"con {units} pazienti appaiati anche un test di Wilcoxon esatto non può "
+                         f"scendere sotto p = {min_p:.3f}: la potenza a soglia 0.05 è nulla")
+        elif low_power:
+            power_txt = f"meno di {min_units} pazienti appaiati"
+        else:
+            power_txt = ""
     else:
         sub = rows
         if role == "outcome":
@@ -409,7 +437,8 @@ def assess_comparison(
             min_p, min_p_test = floor, "Mann-Whitney"
             low_power = units < min_units or floor > ALPHA
             power_txt = (f"con {len(pats_a)} contro {len(pats_b)} pazienti il p-value minimo "
-                         f"raggiungibile da un test di Mann-Whitney esatto è {floor:.3f}"
+                         f"raggiungibile da un test di Mann-Whitney esatto è {floor:.3f}: la potenza "
+                         f"a soglia 0.05 è nulla"
                          if floor > ALPHA else
                          f"meno di {min_units} pazienti nel gruppo più piccolo")
         else:
@@ -442,7 +471,7 @@ def assess_comparison(
         reasons.append(power_txt)
         sentence = (f"Confronto {label}: stimabile con bassa potenza, disegno {design}, {units} "
                     f"{unit_word} (soglia dichiarata: {min_units} pazienti, la stessa del "
-                    f"Modulo B; inoltre {power_txt}). Un risultato non significativo qui non "
+                    f"Modulo B; {power_txt}). Un risultato non significativo qui non "
                     f"indica assenza di effetto.")
     else:
         cls = "stimabile"
@@ -649,12 +678,15 @@ def run_design_audit(
     comparisons: list[tuple[str, str, str]] | None = None,
     min_units: int = MIN_UNITS_DEFAULT,
     v_threshold: float = CRAMER_V_THRESHOLD,
+    extra_notes: list[str] | None = None,
 ) -> DesignAuditResult:
     """Esegue l'audit del disegno.
 
     ``sheet``: una riga per campione/libreria (usa ``sample_sheet_from_obs`` per partire
     da ``adata.obs``). ``technical_cols``: ruolo -> colonna, ruoli in
     ``TECHNICAL_ROLES``. ``comparisons``: lista di (colonna, livello_a, livello_b).
+    ``extra_notes``: note del chiamante da riportare (es. ``LIBRARY_COLLAPSE_NOTE``). Una tabella in
+    cui più della metà delle righe ripete la stessa combinazione dei fattori è rifiutata.
 
     La scomposizione della varianza (``variance_decomposition``) NON è inclusa qui: la
     calibrazione del suo intervallo è fuori banda per la quota del tessuto (vedi
@@ -678,6 +710,13 @@ def run_design_audit(
         raise ValueError(f"colonne non trovate nei metadati: {missing}")
 
     s, missing = as_levels(sheet[list(roles)].reset_index(drop=True))
+    n_dup = int(s.duplicated().sum())
+    if len(s) and n_dup / len(s) > MAX_DUPLICATE_FRACTION:
+        raise ValueError(
+            f"{n_dup} righe su {len(s)} ripetono la stessa combinazione dei fattori indicati: la "
+            f"tabella non sembra un foglio campioni (una riga per campione o libreria). Se è una "
+            f"tabella per cellula, usa --h5ad oppure riducila alle combinazioni distinte; se ci "
+            f"sono librerie replicate, indica la colonna libreria (--technical library=<colonna>).")
     outcome_like = ([tissue_col] if tissue_col else []) + outcome_cols
     pairs, findings = _pairs_and_findings(s, roles, outcome_like, v_threshold)
     findings += _technical_unit_findings(s, roles, patient_col, tissue_col)
@@ -685,7 +724,10 @@ def run_design_audit(
     comps = [assess_comparison(s, f, a, b, patient_col, roles, min_units, v_threshold)
              for f, a, b in (comparisons or [])]
 
-    notes = []
+    notes = list(extra_notes or [])
+    if n_dup:
+        notes.append(f"{n_dup} righe ripetono la stessa combinazione dei fattori indicati e contano "
+                     f"come unità separate: se sono la stessa libreria, la numerosità è sovrastimata.")
     if missing:
         notes.append("Valori mancanti trattati come livello esplicito \"NA\": " + ", ".join(
             f"'{c}' ({n} righe)" for c, n in missing.items()) + ". Un livello \"NA\" condiviso "

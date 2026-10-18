@@ -77,12 +77,12 @@ def test_patient_level_outcome_is_between_patient_comparison():
                for f in res.findings)
 
 
-def test_missing_level_is_not_estimable():
+def test_missing_level_is_an_input_error_not_a_design_property():
     sheet = pd.DataFrame({"patient": ["P1", "P2"], "tissue": ["Tumor", "Tumor"]})
     c = assess_comparison(sheet, "tissue", "Tumor", "Normal", "patient",
                           roles={"patient": "patient", "tissue": "tissue"})
-    assert c.classification == "non stimabile"
-    assert "non compare" in c.sentence
+    assert c.classification == "livello assente"
+    assert "non compare" in c.sentence and "'Tumor'" in c.sentence  # elenca i livelli presenti
 
 
 def test_sample_sheet_from_cell_level_obs():

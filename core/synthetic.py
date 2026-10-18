@@ -24,6 +24,12 @@ import scipy.sparse as sp
 # --------------------------------------------------------------------------- #
 # Modulo A
 # --------------------------------------------------------------------------- #
+DEMO_LEAKAGE_NOTE = (
+    "Dati sintetici costruiti apposta: l'etichetta è assegnata a caso a livello di paziente e ogni "
+    "paziente ha un'impronta genica propria, quindi lo split casuale delle cellule supera lo split per "
+    "paziente PER COSTRUZIONE. Il divario mostra come lo strumento lo riporta, non è un risultato.")
+
+
 def make_leakage_dataset(
     n_patients: int = 20,
     cells_per_patient: int = 40,
@@ -85,11 +91,11 @@ def make_tcr_validation_dataset(
     n_patients: int = 12,
     n_clones_per_patient: int = 15,
     cells_per_clone_range: tuple[int, int] = (3, 10),
-    compartments: tuple[str, str] = ("PBMC", "Tumor"),
+    compartments: tuple[str, ...] = ("PBMC", "Tumor"),
     noisy_compartment: str = "Tumor",
     baseline_mislabel_rate: float = 0.05,
     injected_excess: float = 0.35,
-    identities: tuple[str, str] = ("CD4T", "CD8T"),
+    identities: tuple[str, ...] = ("CD4T", "CD8T"),
     distractor_label: str = "NK",
     marker_genes: dict[str, list[str]] | None = None,
     seed: int = 0,
@@ -97,19 +103,34 @@ def make_tcr_validation_dataset(
     compartment_col: str = "tissue",
     celltype_col: str = "celltype",
     barcode_col: str = "barcode",
+    cells_per_clone_by_compartment: dict[str, tuple[int, int]] | None = None,
+    shared_fraction: float = 1.0,
+    marker_dropout: float = 0.0,
+    ambient_rate: float = 0.0,
 ) -> tuple[ad.AnnData, pd.DataFrame]:
     """Ritorna (adata, contigs) già nel formato atteso da
     ``core.tcr_validation.run_tcr_validation`` (contigs ha lo stesso schema
     dell'output di ``parse_vdj_contigs``: patient, compartment, barcode, chain,
     cdr3_nt, umis).
 
-    Ogni clone ha un'identità VERA (CD4T o CD8T) fissata alla nascita del clone.
+    Ogni clone ha un'identità VERA (una di ``identities``) fissata alla nascita del clone.
     L'etichetta assegnata alla cellula (che simula l'output del clustering) sbaglia con
-    probabilità ``baseline_mislabel_rate`` in tutti i compartimenti, PIÙ
-    ``injected_excess`` nel compartimento rumoroso. L'espressione dei geni marcatori
-    segue l'identità VERA del clone, non l'etichetta assegnata -- come nella realtà,
-    dove il trascrittoma riflette la biologia vera indipendentemente da come il
-    clustering ha etichettato la cellula.
+    probabilità ``baseline_mislabel_rate`` in tutti i compartimenti, PIÙ ``injected_excess`` nel
+    compartimento rumoroso. L'espressione dei geni marcatori segue l'identità VERA del clone.
+
+    Con i parametri di default lo scenario è ideale, e va letto come tale: TUTTI i cloni sono
+    condivisi fra tutti i compartimenti, ogni compartimento ha 3-10 cellule per clone e i marcatori
+    separano perfettamente le identità (conta media 6 sui marcatori dell'identità vera, 0.1 sugli
+    altri). Varianti più realistiche (i default non consumano numeri casuali in più, quindi i dati
+    di default restano identici):
+    - ``cells_per_clone_by_compartment``: intervallo di cellule per clone diverso per
+      compartimento (compartimenti sbilanciati, es. {"PBMC": (1, 3), "Tumor": (20, 60)});
+    - ``shared_fraction``: frazione di cloni presenti in tutti i compartimenti; gli altri sono
+      in un solo compartimento, scelto a caso (cloni non condivisi);
+    - ``marker_dropout``: probabilità che la conta di un marcatore dell'identità vera sia azzerata
+      (dropout);
+    - ``ambient_rate``: probabilità, per cellula, di una conta spuria (Poisson di media 1) sui
+      marcatori delle altre identità (RNA ambientale).
     """
     if marker_genes is None:
         marker_genes = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
@@ -132,8 +153,12 @@ def make_tcr_validation_dataset(
         for c_i in range(n_clones_per_patient):
             clone_id = f"CLONE_{p_i:03d}_{c_i:03d}"
             true_identity = identities[rng.integers(0, len(identities))]
-            for comp in compartments:
-                n_cells = rng.integers(cells_per_clone_range[0], cells_per_clone_range[1] + 1)
+            clone_comps = compartments
+            if shared_fraction < 1.0 and rng.random() >= shared_fraction:
+                clone_comps = (compartments[rng.integers(0, len(compartments))],)
+            for comp in clone_comps:
+                lo, hi = (cells_per_clone_by_compartment or {}).get(comp, cells_per_clone_range)
+                n_cells = rng.integers(lo, hi + 1)
                 mislabel_p = baseline_mislabel_rate + (injected_excess if comp == noisy_compartment else 0.0)
                 for _ in range(n_cells):
                     barcode = f"BC{barcode_counter:08d}"
@@ -161,6 +186,13 @@ def make_tcr_validation_dataset(
                         is_true_marker = gene in marker_genes.get(true_identity, [])
                         mean = 6.0 if is_true_marker else 0.1
                         expr[gene_idx[gene]] = rng.poisson(mean)
+                        if is_true_marker and marker_dropout > 0 and rng.random() < marker_dropout:
+                            expr[gene_idx[gene]] = 0
+                    if ambient_rate > 0 and rng.random() < ambient_rate:
+                        others = [g for g in marker_gene_names if g not in marker_genes.get(true_identity, [])]
+                        if others:
+                            g = others[rng.integers(0, len(others))]
+                            expr[gene_idx[g]] += max(1, int(rng.poisson(1.0)))
                     expr[len(marker_gene_names):] = rng.poisson(1.0, n_background)
                     x_rows.append(expr)
 

@@ -33,7 +33,7 @@ def test_leakage_dataset_shows_gap():
     # lo split per paziente non deve raggiungere le stesse prestazioni (nessuna
     # generalizzazione al fingerprint di un paziente mai visto)
     assert result.grouped.mean < result.random.mean - 0.1
-    assert "onesta" in result.narrative and "leakage" not in result.narrative.lower()  # no jargon
+    assert "pazienti non visti" in result.narrative and "leakage" not in result.narrative.lower()  # no jargon
 
 
 def test_leakage_dataset_model_comparison_runs_when_enough_patients():
@@ -61,7 +61,7 @@ def test_tcr_validation_detects_injected_discordance():
         n_patients=12, n_clones_per_patient=15, injected_excess=0.35, seed=0)
     result = run_tcr_validation(
         adata, contigs, patient_col="patient_id", compartment_col="tissue",
-        celltype_col="celltype", barcode_col="barcode", n_boot=1000, seed=0,
+        celltype_col="celltype", barcode_col="barcode",
     )
     assert result.n_cells_with_tcr > 0
     assert result.discordance.sufficient
@@ -84,7 +84,7 @@ def test_tcr_validation_no_injected_effect_is_not_significant():
         n_patients=12, n_clones_per_patient=15, injected_excess=0.0, seed=0)
     result = run_tcr_validation(
         adata, contigs, patient_col="patient_id", compartment_col="tissue",
-        celltype_col="celltype", barcode_col="barcode", n_boot=1000, seed=0,
+        celltype_col="celltype", barcode_col="barcode",
     )
     assert result.discordance.sufficient
     assert abs(result.discordance.mean_excess) < 0.05, (
@@ -100,7 +100,7 @@ def test_tcr_validation_marker_error_rate():
     marker_map = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
     result = run_tcr_validation(
         adata, contigs, patient_col="patient_id", compartment_col="tissue",
-        celltype_col="celltype", barcode_col="barcode", n_boot=1000, seed=0,
+        celltype_col="celltype", barcode_col="barcode",
         marker_map=marker_map, reference_compartment="PBMC",
     )
     assert result.marker_error is not None
@@ -115,7 +115,7 @@ def test_tcr_validation_insufficient_patients_flagged():
         n_patients=3, n_clones_per_patient=10, injected_excess=0.35, seed=0)
     result = run_tcr_validation(
         adata, contigs, patient_col="patient_id", compartment_col="tissue",
-        celltype_col="celltype", barcode_col="barcode", n_boot=500, seed=0,
+        celltype_col="celltype", barcode_col="barcode",
         min_patients_for_ci=5,
     )
     assert not result.discordance.sufficient

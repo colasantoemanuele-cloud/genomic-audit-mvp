@@ -37,8 +37,8 @@
       null
      ],
      "2": [
-      0.0,
-      0.3681521929066598,
+      0.023592065549851313,
+      0.36859990518553015,
       null
      ]
     }
@@ -64,8 +64,8 @@
       null
      ],
      "2": [
-      0.0,
-      0.4106029721090122,
+      0.033968224624475386,
+      0.4108579016780259,
       null
      ]
     }
@@ -118,8 +118,8 @@
       null
      ],
      "2": [
-      0.5988655852474448,
-      1.0,
+      0.5977559332022253,
+      0.9542079226533993,
       null
      ]
     }
@@ -145,8 +145,8 @@
       null
      ],
      "2": [
-      0.0,
-      0.4590534081152218,
+      0.06212883812188957,
+      0.4603761192223859,
       null
      ]
     }
@@ -172,9 +172,9 @@
       null
      ],
      "2": [
-      0.0,
-      0.20115148676331313,
-      null
+      null,
+      null,
+      "inversione non definita in più del 10% delle repliche (frazione vicina al bordo dell'intervallo invertibile)"
      ]
     }
    },
@@ -199,8 +199,8 @@
       null
      ],
      "2": [
-      0.0,
-      0.4101885364346209,
+      0.04405846549856322,
+      0.4124197925655861,
       null
      ]
     }
@@ -226,8 +226,8 @@
       null
      ],
      "2": [
-      0.1015640595971699,
-      0.5477707571735105,
+      0.12607081326400182,
+      0.5477844650999688,
       null
      ]
     }
@@ -272,9 +272,9 @@
       null
      ],
      "2": [
-      0.0,
-      0.1458720610859548,
-      null
+      null,
+      null,
+      "frazione osservata fuori dall'intervallo invertibile [0.55, 0.82]: la frazione corretta uscirebbe da [0, 1], quindi non viene troncata ma rifiutata"
      ]
     }
    },
@@ -299,9 +299,9 @@
       null
      ],
      "2": [
-      0.0,
-      0.0,
-      null
+      null,
+      null,
+      "frazione osservata fuori dall'intervallo invertibile [0.55, 0.82]: la frazione corretta uscirebbe da [0, 1], quindi non viene troncata ma rifiutata"
      ]
     }
    },
@@ -326,9 +326,9 @@
       null
      ],
      "2": [
-      0.0,
-      0.0,
-      null
+      null,
+      null,
+      "frazione osservata fuori dall'intervallo invertibile [0.55, 0.82]: la frazione corretta uscirebbe da [0, 1], quindi non viene troncata ma rifiutata"
      ]
     }
    },
@@ -353,8 +353,8 @@
       null
      ],
      "2": [
-      0.2602828912600151,
-      1.0,
+      0.2600758930687769,
+      0.8907433162926758,
       null
      ]
     }
@@ -380,9 +380,9 @@
       null
      ],
      "2": [
-      0.0,
-      0.1327715234675625,
-      null
+      null,
+      null,
+      "frazione osservata fuori dall'intervallo invertibile [0.55, 0.82]: la frazione corretta uscirebbe da [0, 1], quindi non viene troncata ma rifiutata"
      ]
     }
    },
@@ -407,9 +407,9 @@
       null
      ],
      "2": [
-      0.0,
-      0.533180361126513,
-      null
+      null,
+      null,
+      "inversione non definita in più del 10% delle repliche (frazione vicina al bordo dell'intervallo invertibile)"
      ]
     }
    },
@@ -434,8 +434,8 @@
       null
      ],
      "2": [
-      0.16926419273249538,
-      0.8857282939198652,
+      0.16900089637740773,
+      0.8770285757718936,
       null
      ]
     }
@@ -461,8 +461,8 @@
       null
      ],
      "2": [
-      0.20259075196099224,
-      0.9124856038351217,
+      0.2025778821484432,
+      0.8319417845064456,
       null
      ]
     }
@@ -556,8 +556,8 @@
       null
      ],
      "1": [
-      0.04148921482881953,
-      0.40731970937248996,
+      0.05224539952067383,
+      0.40749380017616066,
       null
      ],
      "2": [

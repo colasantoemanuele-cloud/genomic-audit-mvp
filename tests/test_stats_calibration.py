@@ -383,7 +383,8 @@ def test_cluster_t_interval_point_estimate_is_pooled_mean():
 # p < 0.05 in [2%, 8%] su 400 repliche, per k = 8, 10, 15 e 20 gruppi, separatamente per
 # Nadeau-Bengio (come lo usa leakage_audit: rapporto fra le medie di n_test e n_train), per il
 # Wilcoxon appaiato (core.stats.wilcoxon_test) e per il t appaiato non corretto (solo misura di
-# contrasto: lo strumento non lo usa). Uno stimatore che non entra nella banda non viene esposto.
+# contrasto: lo strumento non lo usa, perché in teoria è anticonservativo quando i training si
+# sovrappongono). Uno stimatore che non entra nella banda non viene esposto.
 # Scenario: G pazienti con 15-60 cellule ciascuno (dimensioni diverse), prevalenza della classe
 # positiva per paziente U(0.3, 0.7), 10 feature con effetto paziente N(0, 0.8^2) su ciascuna; le
 # feature 0-4 e 5-9 portano lo stesso segnale (+-0.6 secondo la classe), quindi due regressioni
@@ -442,14 +443,29 @@ def _logo_rate(G: int, col: int, name: str) -> float:
     return frac
 
 
+# Esito misurato (revisione/log/a2_calibrazione.txt): Nadeau-Bengio 0.018, 0.007, 0.007, 0.005 per
+# 8, 10, 15, 20 gruppi, tutti sotto la banda (conservativo: in LeaveOneGroupOut le differenze fra
+# fold sono quasi scorrelate, mentre la correzione assume una correlazione n_test/n_train e quasi
+# raddoppia la varianza); Wilcoxon 0.060, 0.083, 0.072, 0.045, fuori banda a 10 gruppi. Le bande
+# NON sono state allargate. Conseguenza: nessuno dei due p-value è mostrato da CLI, app o report;
+# il confronto fra modelli è descrittivo.
+_NB_XFAIL = pytest.mark.xfail(strict=True, reason=(
+    "Nadeau-Bengio in LeaveOneGroupOut è conservativo sotto H0 (0.5-1.8% di p < 0.05, banda [2%, 8%]): "
+    "la correzione assume fra le differenze dei fold una correlazione n_test/n_train che in LOGO quasi "
+    "non c'è. Non esposto."))
+_W_XFAIL = pytest.mark.xfail(strict=True, reason=(
+    "Wilcoxon in LeaveOneGroupOut a 10 gruppi: 0.083 di p < 0.05 sotto H0, sopra la banda [2%, 8%]. "
+    "Non esposto."))
+
+
 @pytest.mark.slow
-@pytest.mark.parametrize("G", NB_LOGO_GROUPS)
+@pytest.mark.parametrize("G", [pytest.param(g, marks=_NB_XFAIL) for g in NB_LOGO_GROUPS])
 def test_nadeau_bengio_calibration_logo(G):
     assert CALIBRATION_LOW <= _logo_rate(G, 0, "Nadeau-Bengio") <= CALIBRATION_HIGH
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("G", NB_LOGO_GROUPS)
+@pytest.mark.parametrize("G", [pytest.param(g, marks=_W_XFAIL) if g == 10 else g for g in NB_LOGO_GROUPS])
 def test_wilcoxon_calibration_logo(G):
     assert CALIBRATION_LOW <= _logo_rate(G, 1, "Wilcoxon") <= CALIBRATION_HIGH
 

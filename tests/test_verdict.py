@@ -1,20 +1,32 @@
-"""Regole della «Sintesi dei controlli» (core/verdict.py).
+"""Regole della «Sintesi dei controlli» (core/verdict.py), con oggetti risultato veri.
 
-La sintesi descrive i singoli controlli, non lo studio. Questi test fissano le regole di
-visualizzazione: il verde non compare mai per un controllo non valutabile, non stimabile,
-rifiutato o non eseguito; non esiste un colore complessivo; i testi non contengono giudizi.
-I risultati dei moduli sono sostituiti da oggetti minimi con i soli campi letti dalle regole:
-nessun calcolo statistico è coinvolto.
+La sintesi descrive i singoli controlli, non lo studio. Ogni regola ha un test: il verde non
+compare mai per un controllo con un fatto strutturale, non eseguito, non valutabile, rifiutato o
+fuori dal regime calibrato; non esiste un colore complessivo; i testi non contengono giudizi.
+I risultati sono quelli prodotti dai moduli (run_design_audit) oppure le stesse dataclass dei
+moduli costruite con i valori del caso da provare: nessun oggetto surrogato.
 """
 
 from __future__ import annotations
 
 import re
-from types import SimpleNamespace as NS
 
+import numpy as np
+import pandas as pd
 import pytest
 
+from core.design_audit import MISSING_LEVEL_CLASS, run_design_audit
+from core.leakage_audit import (
+    GAP_ALERT,
+    LeakageAuditResult,
+    ModelComparisonResult,
+    PairwiseComparison,
+    SchemeSummary,
+)
 from core.report import render_markdown_report, render_report
+from core.stats import ClusterInterval
+from core.synthetic import make_gse278694_like_sheet
+from core.tcr_validation import ConventionResult, DiscordanceResult, TcrValidationResult
 from core.verdict import (
     GIALLO,
     GRIGIO,
@@ -23,59 +35,11 @@ from core.verdict import (
     STATE_LABEL,
     VERDE,
     SectionSummary,
-    cd8_summary,
     design_summary,
     leakage_summary,
     standing_limits,
     tcr_summary,
 )
-
-
-# --------------------------------------------------------------------------- #
-# Oggetti minimi
-# --------------------------------------------------------------------------- #
-def _comparison(cls: str, n: int = 6):
-    return NS(factor="tissue", level_a="Tumor", level_b="Normal", classification=cls, n_units=n)
-
-
-def _pair(v, alarm=False):
-    return NS(factor_a="batch", factor_b="tissue", cramer_v=v, v_alarm=alarm)
-
-
-def _design(comparisons=(), pairs=()):
-    return NS(comparisons=list(comparisons), pairs=list(pairs))
-
-
-def _scheme(mean=0.8, absent=0, capped=False, nc=0):
-    return NS(mean=mean, std=0.05, fold_scores=[mean] * 5, n_folds_with_absent_classes=absent,
-              capped=capped, n_not_converged=nc)
-
-
-def _leakage(gap=0.01, model_comparison=None, **grouped):
-    return NS(gap=gap, grouped=_scheme(**grouped), random=_scheme(), model_comparison=model_comparison)
-
-
-def _mc():
-    return NS(best_model="logreg", scores={"logreg": NS(mean=0.8)})
-
-
-def _boot(sufficient=True, n=10):
-    return NS(mean=0.1, ci_low=0.05, ci_high=0.15, n_groups=n, sufficient=sufficient)
-
-
-def _tcr(ci=(-0.01, 0.03), sufficient=True, conventions=None, n_patients=10):
-    return NS(discordance=NS(mean_excess=0.01, ci_low=ci[0], ci_high=ci[1], sufficient=sufficient,
-                             n_patients=n_patients), conventions=conventions)
-
-
-def _conv(**by_comp):
-    return {"cell": NS(name="cell", by_compartment=by_comp)}
-
-
-def _cd8(refused=None, lows=(0.2, None)):
-    patients = [NS(scenarios={1.0: NS(low=x, refused_reason=None if x is not None else "J = 0.10")})
-                for x in lows]
-    return NS(target_compartment="Tumor", refused_reason=refused, patients=patients)
 
 
 def _states(summary: SectionSummary) -> list[str]:
@@ -87,131 +51,245 @@ def _one(summary: SectionSummary, name_part: str):
 
 
 # --------------------------------------------------------------------------- #
-# Il verde non compare mai per un controllo non valutabile / non stimabile / rifiutato / non eseguito
+# Disegno: risultati veri di run_design_audit
 # --------------------------------------------------------------------------- #
-def test_design_not_estimable_comparison_is_red_with_its_own_text():
-    c = _one(design_summary(_design([_comparison("non stimabile", 0)])), "Confronto")
-    assert c.state == ROSSO and c.label == "stima non possibile con questi dati"
-    assert "non stimabile" in c.text
+def _paired_sheet(n_patients: int, batch_levels: int = 3, seed: int = 0) -> pd.DataFrame:
+    rng = np.random.default_rng(seed)
+    rows = []
+    for p in range(n_patients):
+        for t in ("Tumor", "Normal"):
+            rows.append({"patient": f"P{p:02d}", "tissue": t, "library": f"L{p}{t}",
+                         "batch": f"b{rng.integers(0, batch_levels)}"})
+    return pd.DataFrame(rows)
 
 
-def test_design_low_power_is_yellow_and_estimable_is_green():
-    s = design_summary(_design([_comparison("stimabile con bassa potenza", 4), _comparison("stimabile", 12)]))
-    assert _states(s) == [GIALLO, VERDE]
+def test_design_estimable_low_power_not_estimable_and_missing_level():
+    sheet = make_gse278694_like_sheet()
+    d = run_design_audit(sheet, "patient", "tissue", {"protocol": "protocol"},
+                         comparisons=[("tissue", "Tumor", "PBMC"), ("tissue", "Tumor", "Adjacent_normal"),
+                                      ("protocol", "scRNA", "snRNA"), ("tissue", "Tumor", "Adjacent")])
+    s = design_summary(d)
+    assert _one(s, "Tumor vs PBMC").state == VERDE  # 10 pazienti appaiati
+    assert _one(s, "Tumor vs Adjacent_normal").state == GIALLO  # 5 pazienti: bassa potenza
+    assert _one(s, "scRNA vs snRNA").state == ROSSO  # nessun paziente con entrambi
+    typo = next(c for c in s.checks if c.name == "Confronto tissue: Tumor vs Adjacent")
+    assert d.comparisons[3].classification == MISSING_LEVEL_CLASS
+    assert typo.state == GRIGIO and "errore d'input" in typo.text  # refuso: grigio, non rosso
 
 
 def test_design_without_requested_comparisons_is_grey_not_green():
-    s = design_summary(_design())
-    assert _states(s) == [GRIGIO] and "non eseguito" in s.checks[0].text
+    s = design_summary(run_design_audit(_paired_sheet(8), "patient", "tissue", {"batch": "batch"}))
+    assert _one(s, "Confronti").state == GRIGIO and "non eseguito" in _one(s, "Confronti").text
 
 
-def test_design_not_evaluable_cramer_v_is_grey_not_green():
-    s = design_summary(_design([_comparison("stimabile")], [_pair(None), _pair(None)]))
-    assoc = _one(s, "Associazioni")
-    assert assoc.state == GRIGIO and "non valutabile per 2 coppie" in assoc.text
-    assert sum(c.state == VERDE for c in s.checks) == 1  # solo il confronto stimabile
+def test_nested_pair_with_strong_v_is_not_green():
+    """Il caso della revisione: batch annidato nel tessuto, 20 righe, V = 0.94. Prima finiva fra le
+    coppie «valutabili sotto soglia», cioè in verde."""
+    rows = [{"patient": f"P{i}", "tissue": "T" if i < 10 else "N",
+             "batch": ("B1", "B2")[i % 2] if i < 10 else ("B3", "B4")[i % 2]} for i in range(20)]
+    d = run_design_audit(pd.DataFrame(rows), "patient", "tissue", {"batch": "batch"})
+    pair = next(p for p in d.pairs if {p.factor_a, p.factor_b} == {"tissue", "batch"})
+    assert pair.cramer_v is not None and pair.cramer_v >= 0.5 and not pair.v_alarm
+    s = design_summary(d)
+    assert not any(c.state == VERDE and "Associazion" in c.name for c in s.checks)
+    nest = _one(s, "batch / tissue")  # batch annidato nel tessuto: esito determinato dal batch
+    assert nest.state == GIALLO
 
 
-def test_design_strong_association_is_yellow_and_evaluable_pairs_green():
-    s = design_summary(_design([_comparison("stimabile")], [_pair(0.7, alarm=True), _pair(0.2), _pair(None)]))
-    assert _one(s, "batch × tissue").state == GIALLO
-    assert sorted(c.state for c in s.checks if c.name == "Associazioni fra fattori") == [GRIGIO, VERDE]
+@pytest.mark.parametrize("kind,state", [("uno-a-uno", ROSSO), ("annidamento", GIALLO),
+                                        ("esito-determinato", GIALLO), ("unità-tecnica", GIALLO)])
+def test_every_structural_fact_enters_the_summary(kind, state):
+    sheets = {
+        "uno-a-uno": pd.DataFrame([{"patient": f"P{p}", "tissue": t, "batch": "r1" if t == "Tumor" else "r2"}
+                                   for p in range(6) for t in ("Tumor", "Normal")]),
+        "annidamento": pd.DataFrame([{"patient": f"P{p}", "tissue": t, "batch": f"B{p // 2}"}
+                                     for p in range(8) for t in ("Tumor", "Normal")]),
+        "esito-determinato": pd.DataFrame([{"patient": f"P{p}", "tissue": "Tumor" if p < 4 else "Normal",
+                                            "batch": f"B{p % 3}", "rep": r}
+                                           for p in range(8) for r in range(2)]),
+        "unità-tecnica": make_gse278694_like_sheet(),
+    }
+    tech = {"unità-tecnica": {"library": "library", "protocol": "protocol"}}.get(kind, {"batch": "batch"})
+    if kind == "esito-determinato":
+        tech = {"batch": "batch", "date": "rep"}
+    d = run_design_audit(sheets[kind], "patient", "tissue", tech)
+    found = [f for f in d.findings if f.kind == kind]
+    assert found, [f.kind for f in d.findings]
+    checks = [c for c in design_summary(d).checks if c.text in {f.sentence for f in found}]
+    assert len(checks) == len(found) and all(c.state == state for c in checks)
 
 
-def test_leakage_model_comparison_not_run_is_grey_not_green():
+def test_strong_association_without_structure_is_yellow_and_weak_is_green():
+    rng = np.random.default_rng(3)
+    rows = []
+    for i in range(60):
+        a = int(rng.integers(0, 3))
+        b = a if rng.random() < 0.9 else int(rng.integers(0, 3))
+        rows.append({"patient": f"P{i}", "batch": f"b{a}", "chemistry": f"c{b}", "date": f"d{rng.integers(0, 3)}"})
+    d = run_design_audit(pd.DataFrame(rows), "patient",
+                         technical_cols={"batch": "batch", "chemistry": "chemistry", "date": "date"})
+    s = design_summary(d)
+    assert _one(s, "Associazione batch × chemistry").state == GIALLO
+    assert _one(s, "Associazioni fra fattori").state == VERDE
+
+
+def test_not_evaluable_cramer_v_is_grey():
+    d = run_design_audit(_paired_sheet(4), "patient", "tissue", {"batch": "batch"},
+                         comparisons=[("tissue", "Tumor", "Normal")])
+    s = design_summary(d)
+    grey = [c for c in s.checks if c.name == "Associazioni fra fattori"]
+    assert grey and all(c.state == GRIGIO for c in grey)
+
+
+# --------------------------------------------------------------------------- #
+# Modulo A: dataclass vere di leakage_audit
+# --------------------------------------------------------------------------- #
+def _scheme(mean=0.8, absent=0, capped=False, nc=0, k=5) -> SchemeSummary:
+    return SchemeSummary(scheme="x", fold_scores=[mean + 0.01 * (i - 2) for i in range(k)],
+                         n_train=[100] * k, n_test=[25] * k,
+                         absent_classes=[["A"] if i < absent else [] for i in range(k)],
+                         n_train_before_cap=[200 if capped else 100] * k, top_genes=[],
+                         not_converged=[i < nc for i in range(k)])
+
+
+def _leakage(gap=0.01, model_comparison=None, **grouped) -> LeakageAuditResult:
+    g = _scheme(**grouped)
+    r = _scheme(mean=g.mean + gap)
+    return LeakageAuditResult(task="t", n_cells=500, n_patients=10, n_classes=2, n_folds_used=5,
+                              grouped=g, random=r, gap=r.mean - g.mean, std_ratio=1.0, narrative="",
+                              model_comparison=model_comparison)
+
+
+def _mc() -> ModelComparisonResult:
+    ref = _scheme(k=10)
+    other = _scheme(mean=0.82, k=10)
+    comp = PairwiseComparison("random_forest", other.mean, other.mean - ref.mean, 10, 0, 0,
+                              0.01, 0.02, 0.01, 0.02, "esatto", 2 / 2 ** 10, False, "")
+    return ModelComparisonResult("fold_lopo", "logreg", "random_forest",
+                                 {"logreg": ref, "random_forest": other}, [comp])
+
+
+def test_leakage_model_comparison_not_run_is_grey_and_run_is_yellow_descriptive():
     c = _one(leakage_summary(_leakage(model_comparison=None)), "Confronto fra modelli")
     assert c.state == GRIGIO and "non eseguito" in c.text
-    assert _one(leakage_summary(_leakage(model_comparison=_mc())), "Confronto fra modelli").state == VERDE
+    run = _one(leakage_summary(_leakage(model_comparison=_mc())), "Confronto fra modelli")
+    assert run.state == GIALLO and "descrittivo" in run.text  # nessun test calibrato: mai verde
 
 
 @pytest.mark.parametrize("kw", [{"absent": 2}, {"capped": True}, {"nc": 1}])
 def test_leakage_per_patient_estimate_with_limits_is_yellow(kw):
-    assert _one(leakage_summary(_leakage(model_comparison=_mc(), **kw)), "split per paziente").state == GIALLO
+    assert _one(leakage_summary(_leakage(**kw)), "split per paziente").state == GIALLO
+    assert _one(leakage_summary(_leakage()), "split per paziente").state == VERDE
 
 
 def test_leakage_gap_threshold_drives_random_split_state():
-    assert _one(leakage_summary(_leakage(gap=0.051)), "split casuale").state == ROSSO
-    assert _one(leakage_summary(_leakage(gap=0.05)), "split casuale").state == VERDE  # soglia: > 0.05
-    assert _states(leakage_summary(_leakage(gap=0.0, model_comparison=_mc()))) == [VERDE, VERDE, VERDE]
+    assert _one(leakage_summary(_leakage(gap=GAP_ALERT + 0.001)), "split casuale").state == ROSSO
+    assert _one(leakage_summary(_leakage(gap=GAP_ALERT - 0.001)), "split casuale").state == VERDE
 
 
-def test_tcr_insufficient_patients_is_red_never_green():
+# --------------------------------------------------------------------------- #
+# Modulo B: dataclass vere di tcr_validation e stats
+# --------------------------------------------------------------------------- #
+def _ci(mean, lo, hi, n=10, ok=True, reason=""):
+    return ClusterInterval(mean, lo if ok else float("nan"), hi if ok else float("nan"), n, 100, ok,
+                           "t cluster-robusto CR2, gdl Bell-McCaffrey", 5.0, reason)
+
+
+def _tcr(ci=(-0.01, 0.03), sufficient=True, n_patients=10, equal=(-0.01, 0.02), conventions=None):
+    eq = _ci(0.005, *equal) if equal is not None else None
+    d = DiscordanceResult(n_pairs=200, n_patients=n_patients, mean_excess=0.01,
+                          ci_low=ci[0] if sufficient else float("nan"),
+                          ci_high=ci[1] if sufficient else float("nan"), sufficient=sufficient,
+                          by_compartment_pair=pd.DataFrame(), equal_weights=eq)
+    return TcrValidationResult(n_cells_with_tcr=1000, n_clones_total=100, discordance=d, marker_error=None,
+                               narrative="", conventions=conventions)
+
+
+def test_tcr_insufficient_patients_is_red():
     c = _one(tcr_summary(_tcr(sufficient=False, n_patients=3)), "discordanza")
     assert c.state == ROSSO and "3 pazienti" in c.text
 
 
-def test_tcr_interval_above_zero_is_yellow_and_including_zero_is_green():
+def test_tcr_interval_above_or_below_zero_is_yellow_never_green():
     assert _one(tcr_summary(_tcr(ci=(0.02, 0.09))), "discordanza").state == GIALLO
-    assert _one(tcr_summary(_tcr(ci=(-0.01, 0.03))), "discordanza").state == VERDE
+    below = _one(tcr_summary(_tcr(ci=(-0.09, -0.02))), "discordanza")
+    assert below.state == GIALLO and "sotto lo zero" in below.text
 
 
-def test_tcr_error_rate_not_computed_is_grey_and_without_interval_is_red():
+def test_tcr_interval_including_zero_says_no_excess_detected():
+    c = _one(tcr_summary(_tcr(ci=(-0.01, 0.03))), "discordanza")
+    assert c.state == VERDE and "nessun eccesso rilevato" in c.text and "affidabile" not in c.text
+
+
+def test_tcr_equal_weights_above_zero_makes_it_yellow():
+    c = _one(tcr_summary(_tcr(ci=(-0.01, 0.03), equal=(0.01, 0.05))), "discordanza")
+    assert c.state == GIALLO and "pesi uguali" in c.text
+
+
+def test_tcr_error_rate_grey_red_green():
     assert _one(tcr_summary(_tcr(conventions=None)), "Tasso d'errore").state == GRIGIO
-    s = tcr_summary(_tcr(conventions=_conv(Tumor=_boot(True), Adjacent=_boot(False, n=4))))
+    conv = {"cell": ConventionResult("cell", "per cellula", {
+        "Tumor": _ci(0.1, 0.05, 0.15), "Adjacent": _ci(0.04, 0, 0, n=4, ok=False, reason="4 pazienti, ne servono almeno 5")},
+        {})}
+    s = tcr_summary(_tcr(conventions=conv))
     assert _one(s, "in Tumor").state == VERDE
     adj = _one(s, "in Adjacent")
     assert adj.state == ROSSO and "4 pazienti" in adj.text
-
-
-def test_cd8_is_never_green_refused_is_grey():
-    refused = cd8_summary(_cd8(refused="2 pazienti con riferimento, ne servono almeno 5"))
-    assert _states(refused) == [GRIGIO] and "rifiutato" in refused.checks[0].text
-    produced = cd8_summary(_cd8())
-    assert _states(produced) == [GIALLO] and "per 1 su 2 pazienti" in produced.checks[0].text
-    none_produced = cd8_summary(_cd8(lows=(None, None)))
-    assert _states(none_produced) == [GRIGIO] and "J = 0.10" in none_produced.checks[0].text
 
 
 # --------------------------------------------------------------------------- #
 # Nessun colore complessivo, nessun giudizio
 # --------------------------------------------------------------------------- #
 def test_no_overall_color_only_counts_per_state():
-    s = design_summary(_design([_comparison("non stimabile", 0), _comparison("stimabile")], [_pair(None)]))
+    d = run_design_audit(make_gse278694_like_sheet(), "patient", "tissue", {"protocol": "protocol"},
+                         comparisons=[("protocol", "scRNA", "snRNA"), ("tissue", "Tumor", "PBMC")])
+    s = design_summary(d)
     assert not hasattr(s, "color")
-    assert s.counts == {VERDE: 1, ROSSO: 1, GRIGIO: 1}
-    assert s.counts_text == ("1 × stima affidabile; 1 × stima non possibile con questi dati; "
-                             "1 × controllo non eseguito o non valutabile")
+    assert sum(s.counts.values()) == len(s.checks)
+    assert s.counts_text.count("×") == len(s.counts)
 
 
 JUDGEMENTS = re.compile(r"errat|sbagliat|scars|inaffidabil|pessim|cattiv|mediocr|scorrett|verdett|"
-                        r"errore sistematico|bocciat|promoss", re.IGNORECASE)
+                        r"errore sistematico|bocciat|promoss|affidabile|validat|dimostra|effetto reale",
+                        re.IGNORECASE)
 
 
 def _all_texts() -> list[str]:
-    sections = [
-        design_summary(_design([_comparison("non stimabile", 0), _comparison("stimabile con bassa potenza", 3),
-                                _comparison("stimabile")], [_pair(0.8, True), _pair(0.1), _pair(None)])),
-        design_summary(_design()),
-        leakage_summary(_leakage(gap=0.3, absent=1, capped=True, nc=2)),
-        leakage_summary(_leakage(model_comparison=_mc())),
-        tcr_summary(_tcr(sufficient=False)), tcr_summary(_tcr(ci=(0.02, 0.09))),
-        tcr_summary(_tcr(conventions=_conv(Tumor=_boot(True), Adjacent=_boot(False)))),
-        cd8_summary(_cd8()), cd8_summary(_cd8(refused="matrice di confusione mal condizionata")),
-    ]
+    d = run_design_audit(make_gse278694_like_sheet(), "patient", "tissue", {"protocol": "protocol"},
+                         comparisons=[("protocol", "scRNA", "snRNA"), ("tissue", "Tumor", "Adjacent_normal"),
+                                      ("tissue", "Tumor", "X")])
+    sections = [design_summary(d), leakage_summary(_leakage(gap=0.3, absent=1, capped=True, nc=2)),
+                leakage_summary(_leakage(model_comparison=_mc())), tcr_summary(_tcr(sufficient=False)),
+                tcr_summary(_tcr(ci=(0.02, 0.09))), tcr_summary(_tcr(ci=(-0.09, -0.02)))]
     texts = [t for s in sections for c in s.checks for t in (c.name, c.text, c.label)]
-    return texts + list(RULES.values()) + list(STATE_LABEL.values()) + standing_limits(_cd8())
+    return texts + list(RULES.values()) + list(STATE_LABEL.values()) + standing_limits()
 
 
 def test_texts_describe_what_data_allow_without_judgements():
     for t in _all_texts():
-        assert not JUDGEMENTS.search(t), t
+        if "Dati sintetici" in t:
+            continue
+        found = JUDGEMENTS.search(t)
+        # "non è un dispositivo medico" e "verificata/verifica" sono ammessi; "validat" no
+        assert not found, t
 
 
 def test_state_labels_describe_the_check():
     assert STATE_LABEL == {
-        VERDE: "stima affidabile", GIALLO: "stima con limiti",
+        VERDE: "nessun limite rilevato dalle regole", GIALLO: "stima con limiti",
         ROSSO: "stima non possibile con questi dati", GRIGIO: "controllo non eseguito o non valutabile"}
 
 
-def test_reports_use_neutral_title_and_one_row_per_check():
-    from core.design_audit import run_design_audit
-    from core.synthetic import make_gse278694_like_sheet
+def test_reports_use_neutral_title_one_row_per_check_and_print_limits():
     d = run_design_audit(make_gse278694_like_sheet(), "patient", "tissue", {"protocol": "protocol"},
                          comparisons=[("protocol", "scRNA", "snRNA"), ("tissue", "Tumor", "Adjacent_normal")])
     md = render_markdown_report(design_result=d, dataset_name="prova")
     page = render_report(design_result=d, dataset_name="prova")
     for text in (md, page):
-        assert "Sintesi dei controlli" in text and "Verdetto" not in text and "verdetto" not in text
+        assert "Sintesi dei controlli" in text and "erdetto" not in text
         assert "stima non possibile con questi dati" in text and "stima con limiti" in text
+        assert "Non è un dispositivo medico" in text and "Limiti dichiarati" in text
     assert "| Disegno | Confronto protocol: scRNA vs snRNA | rosso: stima non possibile con questi dati |" in md
     assert 'class="tag tag-rosso"' in page and 'class="tag tag-giallo"' in page
+    for limit in standing_limits():
+        assert limit in md

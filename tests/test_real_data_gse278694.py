@@ -53,7 +53,7 @@ def real(tmp_path_factory):
     contigs = parse_vdj_contigs(_vdj_files(tmp_path_factory.mktemp("vdj"), strip_suffix=False))
     res = run_tcr_validation(
         adata, contigs, patient_col="patients", compartment_col="tissue",
-        celltype_col="all_celltype", barcode_col="barcode", n_boot=2000, seed=0,
+        celltype_col="all_celltype", barcode_col="barcode",
         marker_map={"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}, reference_compartment="PBMC",
         convention="both", clone_error_labels=["NK"], clone_marker_priority=["CD8T", "CD4T"])
     return adata, res

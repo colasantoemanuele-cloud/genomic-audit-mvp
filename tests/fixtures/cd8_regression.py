@@ -2,8 +2,12 @@
 
 ``cd8_regression_baseline.json`` è stato generato con ``python -m
 tests.fixtures.cd8_regression`` sul codice del commit 2f03461, PRIMA della modifica di
-formato B1 (tabella al posto del testo ripetuto). Non va rigenerato dopo: serve a
-verificare che i numeri non cambino.
+formato B1 (tabella al posto del testo ripetuto), e rigenerato UNA volta nella revisione (A7)
+per un cambiamento voluto: le frazioni fuori dall'intervallo invertibile sono rifiutate invece
+di essere troncate a [0, 1]. Prima di rigenerarlo è stato verificato che cambiassero solo gli
+intervalli prima troncati (scenario 2x, più un estremo inferiore 0.041 -> 0.052 dello scenario
+1x di un paziente con repliche troncate), con matrici, J e frazioni riportate identiche. Non va
+rigenerato per far passare il test: serve a verificare che i numeri non cambino.
 """
 
 from __future__ import annotations

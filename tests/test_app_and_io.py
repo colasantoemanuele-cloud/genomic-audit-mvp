@@ -76,12 +76,12 @@ def test_summary_rules_on_real_module_outputs():
                              "label", "patient_id", benchmark=False)
     assert _state(leakage_summary(leak), "Confronto fra modelli") == GRIGIO  # non eseguito: mai verde
     adata, contigs = make_tcr_validation_dataset(n_patients=12, injected_excess=0.35, seed=0)
-    t = run_tcr_validation(adata, contigs, "patient_id", "tissue", "celltype", "barcode", n_boot=200,
+    t = run_tcr_validation(adata, contigs, "patient_id", "tissue", "celltype", "barcode",
                            marker_map={"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}, reference_compartment="PBMC")
     assert _state(tcr_summary(t), "discordanza") == GIALLO  # intervallo sopra lo zero: stima con limiti
     assert _state(tcr_summary(t), "[cell] in Tumor") == VERDE  # tasso con intervallo prodotto
     adata0, contigs0 = make_tcr_validation_dataset(n_patients=3, seed=0)
-    t0 = run_tcr_validation(adata0, contigs0, "patient_id", "tissue", "celltype", "barcode", n_boot=100)
+    t0 = run_tcr_validation(adata0, contigs0, "patient_id", "tissue", "celltype", "barcode")
     assert _state(tcr_summary(t0), "discordanza") == ROSSO  # 3 pazienti: stima non possibile
     assert _state(tcr_summary(t0), "Tasso d'errore") == GRIGIO  # non calcolato senza mappa dei marcatori
 
@@ -92,7 +92,7 @@ def test_markdown_report_contains_verdicts_definitions_and_limits():
     md = render_markdown_report(design_result=d, dataset_name="prova")
     assert "## Sintesi dei controlli" in md and "giallo: stima con limiti" in md and "Regola Disegno" in md
     assert "Verdetto" not in md
-    assert "## Limiti dichiarati" in md and "un solo dataset reale" in md
+    assert "## Limiti dichiarati" in md and "solo in GSE278694" in md
 
 
 def test_tcr_by_celltype_is_descriptive_table():

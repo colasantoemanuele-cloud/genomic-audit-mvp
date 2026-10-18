@@ -1,9 +1,12 @@
 """Configurazioni e serializzazione per il test di regressione di run_tcr_validation.
 
 ``tcr_regression_baseline.json`` è stato generato eseguendo ``python -m
-tests.fixtures.tcr_regression`` sul codice del commit di baseline (cf61e76), PRIMA di
-qualunque modifica a core/tcr_validation.py. Non va rigenerato dopo le modifiche: il suo
-scopo è proprio verificare che l'output non cambi.
+tests.fixtures.tcr_regression`` sul codice del commit di baseline (cf61e76) e rigenerato UNA
+volta nella revisione (A1), per un cambiamento voluto: gli intervalli del Modulo B passano dal
+bootstrap percentile all'intervallo t cluster-robusto. Prima di rigenerarlo è stato verificato che
+cambiassero solo ci_low e ci_high: stime puntuali, conteggi, pazienti e cloni risolti identici al
+file precedente (1e-12). Non va rigenerato per far passare il test: il suo scopo è verificare che
+l'output non cambi.
 """
 
 from __future__ import annotations
@@ -20,14 +23,14 @@ MARKERS = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
 
 CONFIGS = {
     "eccesso_035_marcatori": dict(data=dict(n_patients=12, n_clones_per_patient=15, injected_excess=0.35, seed=0),
-                                  run=dict(n_boot=500, seed=0, marker_map=MARKERS, reference_compartment="PBMC")),
+                                  run=dict(marker_map=MARKERS, reference_compartment="PBMC")),
     "eccesso_0_marcatori": dict(data=dict(n_patients=12, n_clones_per_patient=15, injected_excess=0.0, seed=1),
-                                run=dict(n_boot=500, seed=3, marker_map=MARKERS, reference_compartment="PBMC")),
+                                run=dict(marker_map=MARKERS, reference_compartment="PBMC")),
     "tre_compartimenti": dict(data=dict(n_patients=8, n_clones_per_patient=10, injected_excess=0.25,
                                         compartments=("PBMC", "Adjacent", "Tumor"), seed=2),
-                              run=dict(n_boot=400, seed=1, marker_map=MARKERS, reference_compartment="PBMC")),
+                              run=dict(marker_map=MARKERS, reference_compartment="PBMC")),
     "senza_marcatori_pochi_pazienti": dict(data=dict(n_patients=4, n_clones_per_patient=10, injected_excess=0.35, seed=4),
-                                           run=dict(n_boot=300, seed=0)),
+                                           run=dict()),
 }
 
 

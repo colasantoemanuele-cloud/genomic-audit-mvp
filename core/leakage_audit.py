@@ -41,7 +41,7 @@ from sklearn.model_selection import LeaveOneGroupOut, StratifiedGroupKFold, Stra
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from core.stats import NadeauBengioResult, nadeau_bengio_test, paired_wilcoxon, wilcoxon_min_pvalue
+from core.stats import NadeauBengioResult, holm_adjust, nadeau_bengio_test, wilcoxon_min_pvalue, wilcoxon_test
 
 ALPHA = 0.05
 N_HVG_DEFAULT = 2000
@@ -49,8 +49,11 @@ N_SVD_DEFAULT = 50
 MAX_TRAIN_CELLS_DEFAULT = 20_000
 N_TOP_GENES_XAI = 50
 MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT = 8
-# soglia del divario oltre la quale il report segnala "leakage rilevabile"
+# soglia del divario oltre la quale il report segnala "leakage rilevabile"; sotto, in valore
+# assoluto, il divario è considerato entro il rumore e non se ne indica la direzione
 GAP_ALERT = 0.05
+# modello di riferimento del confronto fra modelli, fissato prima di vedere i dati (A3)
+REFERENCE_MODEL = "logreg"
 
 Progress = Callable[[str], None]
 
@@ -140,8 +143,11 @@ def fold_macro_f1(y_true: np.ndarray, y_pred: np.ndarray,
 
 
 def cap_training(tr: np.ndarray, groups: np.ndarray, max_cells: int, seed: int) -> np.ndarray:
-    """Se il training supera ``max_cells`` cellule, ne estrae ``max_cells`` con allocazione
-    proporzionale per paziente (almeno 1 cellula per paziente), con seme fisso."""
+    """Se il training supera ``max_cells`` cellule, ne estrae circa ``max_cells`` con allocazione
+    proporzionale per paziente, con seme fisso. La quota di ogni paziente è arrotondata per
+    difetto ma vale almeno 1 cellula: il totale può quindi essere qualche cellula sotto
+    ``max_cells`` (arrotondamento per difetto) o, con molti pazienti piccoli, qualche cellula
+    sopra (minimo di 1 per paziente)."""
     if max_cells is None or len(tr) <= max_cells:
         return tr
     rng = np.random.default_rng(seed)
@@ -266,11 +272,24 @@ def _run_folds(X, y, groups, splits, classes, make_pipe, label: str, clock: _Clo
 
 @dataclass(frozen=True)
 class PairwiseComparison:
+    """Confronto di un modello con il modello di riferimento (fold appaiati di LeaveOneGroupOut).
+
+    Esposti (CLI, app, report): ``mean_macro_f1``, ``delta_vs_reference`` e i conteggi dei pazienti
+    lasciati fuori in cui il modello fa meglio, peggio o uguale al riferimento. I p-value (Nadeau-
+    Bengio e Wilcoxon, anche corretti con Holm) restano nell'oggetto per chi fa ricerca sul metodo ma
+    NON sono mostrati: in LeaveOneGroupOut con 8-20 pazienti nessuno dei due è calibrato
+    (tests/test_stats_calibration.py, revisione A2)."""
     model: str
     mean_macro_f1: float
-    delta_vs_best: float
+    delta_vs_reference: float
+    n_better: int
+    n_worse: int
+    n_ties: int
     p_nadeau_bengio: float
+    p_nadeau_bengio_holm: float
     p_wilcoxon: float
+    p_wilcoxon_holm: float
+    wilcoxon_method: str
     wilcoxon_floor: float
     divergent: bool
     note: str
@@ -278,43 +297,59 @@ class PairwiseComparison:
 
 @dataclass(frozen=True)
 class ModelComparisonResult:
+    """Confronto fra modelli: ogni modello contro ``reference_model`` (fissato prima di vedere i
+    dati), con correzione di Holm. ``best_model`` è solo descrittivo (media più alta)."""
     scheme: str
+    reference_model: str
     best_model: str
     scores: dict[str, SchemeSummary]
     comparisons: list[PairwiseComparison]
 
 
-def _compare(scores: dict[str, SchemeSummary]) -> ModelComparisonResult:
-    best_model = max(scores, key=lambda m: scores[m].mean)
-    best = scores[best_model]
+def _compare(scores: dict[str, SchemeSummary], reference: str = REFERENCE_MODEL) -> ModelComparisonResult:
+    """Confronta ogni modello con il modello di riferimento ``reference`` (la regressione
+    logistica, fissata prima di vedere i dati), fold per fold. Il confronto esposto è descrittivo:
+    differenza delle medie e numero di pazienti in cui il modello fa meglio o peggio. I p-value di
+    Nadeau-Bengio e Wilcoxon (corretti con Holm sui confronti fatti) sono calcolati ma non
+    esposti, perché non calibrati in questo regime (vedi ``PairwiseComparison``). Il modello con
+    la media più alta è solo un'informazione descrittiva: non è scelto e poi testato."""
+    if reference not in scores:
+        raise ValueError(f"modello di riferimento '{reference}' assente dal confronto")
+    ref = scores[reference]
+    others = [m for m in scores if m != reference]
+    raw = []
+    for name in others:
+        other = scores[name]
+        nb: NadeauBengioResult = nadeau_bengio_test(other.fold_scores, ref.fold_scores, ref.n_train, ref.n_test)
+        p_w, method = wilcoxon_test(other.fold_scores, ref.fold_scores)
+        d = np.array(other.fold_scores) - np.array(ref.fold_scores)
+        raw.append((name, nb.p_value, p_w, method, wilcoxon_min_pvalue(int(np.sum(~np.isclose(d, 0))))))
+    nb_holm = holm_adjust([r[1] for r in raw])
+    w_holm = holm_adjust([r[2] for r in raw])
     comparisons = []
-    for name, summary in scores.items():
-        if name == best_model:
-            continue
-        nb: NadeauBengioResult = nadeau_bengio_test(
-            best.fold_scores, summary.fold_scores, best.n_train, best.n_test)
-        p_w = paired_wilcoxon(best.fold_scores, summary.fold_scores)
-        d = np.array(best.fold_scores) - np.array(summary.fold_scores)
-        k_nonzero = int(np.sum(~np.isclose(d, 0)))
-        floor = wilcoxon_min_pvalue(k_nonzero)
-        sig_nb = nb.p_value < ALPHA
-        sig_w = (not np.isnan(p_w)) and p_w < ALPHA
+    for (name, p_nb, p_w, method, floor), p_nbh, p_wh in zip(raw, nb_holm, w_holm):
+        sig_nb = p_nbh < ALPHA
+        sig_w = (not np.isnan(p_wh)) and p_wh < ALPHA
         divergent = sig_nb != sig_w
         note = ""
         if divergent:
-            if sig_nb and not sig_w and p_w >= floor - 1e-12 and floor > ALPHA:
-                note = (f"Nadeau-Bengio trova una differenza significativa, Wilcoxon no -- ma con "
-                        f"{k_nonzero} coppie non nulle il p-value minimo raggiungibile da Wilcoxon "
-                        f"è {floor:.3f} > 0.05: strutturalmente incapace di essere significativo "
-                        f"con così pochi fold, indipendentemente dalla dimensione dell'effetto.")
+            if sig_nb and not sig_w and method != "approssimazione normale" and floor > ALPHA:
+                note = (f"Nadeau-Bengio trova una differenza significativa, Wilcoxon no: con le coppie "
+                        f"non nulle disponibili il p-value minimo raggiungibile da Wilcoxon esatto è "
+                        f"{floor:.3f} > 0.05, quindi non può essere significativo qualunque sia "
+                        f"l'effetto.")
             else:
-                note = "Le due conclusioni divergono a soglia 0.05: da riportare, non da ignorare."
+                note = "Le due conclusioni (dopo la correzione di Holm) divergono a soglia 0.05: da riportare."
+        d = np.array(scores[name].fold_scores) - np.array(ref.fold_scores)
+        tie = np.isclose(d, 0)
         comparisons.append(PairwiseComparison(
-            model=name, mean_macro_f1=summary.mean, delta_vs_best=summary.mean - best.mean,
-            p_nadeau_bengio=nb.p_value, p_wilcoxon=p_w, wilcoxon_floor=floor,
-            divergent=divergent, note=note))
-    return ModelComparisonResult(scheme="fold_lopo", best_model=best_model, scores=scores,
-                                 comparisons=comparisons)
+            model=name, mean_macro_f1=scores[name].mean, delta_vs_reference=scores[name].mean - ref.mean,
+            n_better=int(np.sum((d > 0) & ~tie)), n_worse=int(np.sum((d < 0) & ~tie)), n_ties=int(tie.sum()),
+            p_nadeau_bengio=p_nb, p_nadeau_bengio_holm=p_nbh, p_wilcoxon=p_w, p_wilcoxon_holm=p_wh,
+            wilcoxon_method=method, wilcoxon_floor=floor, divergent=divergent, note=note))
+    best_model = max(scores, key=lambda m: scores[m].mean)
+    return ModelComparisonResult(scheme="fold_lopo", reference_model=reference, best_model=best_model,
+                                 scores=scores, comparisons=comparisons)
 
 
 # --------------------------------------------------------------------------- #
@@ -323,8 +358,8 @@ def _compare(scores: dict[str, SchemeSummary]) -> ModelComparisonResult:
 @dataclass(frozen=True)
 class XaiStability:
     """Jaccard fra i ``k`` geni con coefficiente più grande della regressione logistica nei
-    diversi fold. Misura DESCRITTIVA, senza inferenza: se rimuovere pazienti cambia i geni
-    scelti più di quanto lo cambi rimuovere cellule a caso, l'informazione è organizzata per
+    diversi fold, con split per paziente e con split casuale. Misura DESCRITTIVA: non ha una
+    distribuzione di riferimento né una soglia, e non va letta come prova di una struttura per
     paziente."""
     k: int
     grouped_matrix: np.ndarray
@@ -370,30 +405,27 @@ class LeakageAuditResult:
 
 
 def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_ratio: float) -> str:
-    direzione = "sovrastima" if gap > 0 else ("sottostima" if gap < 0 else "non altera")
+    if abs(gap) <= GAP_ALERT:
+        gap_txt = (f"Divario sulla media: {gap:+.3f}, entro la soglia di rumore dichiarata (±{GAP_ALERT:g}): "
+                   f"nessuna direzione indicata.")
+    else:
+        direzione = "più alta" if gap > 0 else "più bassa"
+        gap_txt = (f"Divario sulla media: {gap:+.3f} -- lo split casuale dà una macro-F1 {direzione} di "
+                   f"{abs(gap):.3f} punti rispetto allo split per paziente, oltre la soglia di rumore "
+                   f"dichiarata (±{GAP_ALERT:g}).")
     parts = [
-        f"Split per paziente (valutazione onesta): macro-F1 = {grouped.mean:.3f} ± {grouped.std:.3f} "
-        f"su {len(grouped.fold_scores)} fold.",
+        f"Split per paziente (stima della prestazione su pazienti non visti): macro-F1 = "
+        f"{grouped.mean:.3f} ± {grouped.std:.3f} su {len(grouped.fold_scores)} fold.",
         f"Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché "
         f"mette cellule dello stesso paziente sia in train sia in test): macro-F1 = "
         f"{random_.mean:.3f} ± {random_.std:.3f}.",
-        f"Divario sulla media: {gap:+.3f} -- lo split casuale {direzione} l'accuratezza reale "
-        f"del modello di circa {abs(gap):.3f} punti di macro-F1.",
+        gap_txt,
     ]
     if std_ratio > 0 and np.isfinite(std_ratio):
-        if std_ratio > 1.05:
-            parts.append(
-                f"La deviazione standard fra fold è {std_ratio:.1f}x più ampia nello split onesto: "
-                f"lo split casuale sottostima l'incertezza reale sulla performance di quel fattore."
-            )
-        elif std_ratio < 0.95:
-            parts.append(
-                f"La deviazione standard fra fold è più ampia nello split casuale "
-                f"({1/std_ratio:.1f}x): in questo caso specifico non mostra il pattern atteso, "
-                f"da verificare con più fold o più pazienti."
-            )
-        else:
-            parts.append("Le due deviazioni standard sono simili in questo dataset.")
+        parts.append(
+            f"Rapporto fra le deviazioni standard fra fold (per paziente / casuale): {std_ratio:.1f}. "
+            f"È descrittivo: con pochi fold, correlati fra loro, la deviazione standard fra fold non "
+            f"è una stima valida dell'incertezza sulla prestazione.")
     if grouped.n_folds_with_absent_classes:
         parts.append(
             f"In {grouped.n_folds_with_absent_classes} fold su {len(grouped.fold_scores)} dello "
@@ -408,7 +440,7 @@ def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_r
             f"assente).")
     if grouped.capped or random_.capped:
         parts.append(
-            f"Il training è stato limitato a {max(grouped.n_train + random_.n_train):,} cellule "
+            f"Il training è stato limitato a circa {max(grouped.n_train + random_.n_train):,} cellule "
             f"per fold con un sottocampionamento stratificato per paziente (seme fisso).")
     return " ".join(parts)
 

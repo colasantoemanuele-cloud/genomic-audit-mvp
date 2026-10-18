@@ -1,7 +1,13 @@
-"""Propagazione dell'errore di annotazione sulla frazione di CD8 (Intervento 3).
+"""Propagazione dell'errore di annotazione sulla frazione di CD8 (SPERIMENTALE).
 
 Traduce l'errore misurato dal Modulo B in un intervallo sulla frazione di CD8 per
 paziente: "frazione CD8 nel tumore del paziente X: riportata 0.22, plausibile fra A e B".
+
+Stato (revisione, A7): disponibile solo da riga di comando con ``--sperimentale-cd8``; non è
+nell'app, nei report né nella sintesi dei controlli. Sui dati reali di GSE278694 è
+inutilizzabile: P(chiamata CD8 | vera CD4) = 0.45 nel tumore, gli scenari 0.5x e 1x danno
+intervalli disgiunti e, prima della revisione, 8 pazienti su 13 venivano troncati a 0 nello
+scenario 1x; il controllo su J (0.48 > 0.2) non intercettava il problema.
 
 Metodo
 ------
@@ -17,8 +23,11 @@ Metodo
    b8 = P(chiamata CD8 | vera CD8):
        n_CD4 = a4 x + a8 y,   n_CD8 = b4 x + b8 y
    da cui, con (n_CD4, n_CD8) proporzionali a (1 - r, r):
-       x ∝ b8 (1 - r) - a8 r,   y ∝ a4 r - b4 (1 - r),   frazione vera = y / (x + y)
-   troncata a [0, 1]. Le chiamate "altro" non entrano nel denominatore: la perdita
+       x ∝ b8 (1 - r) - a8 r,   y ∝ a4 r - b4 (1 - r),   frazione vera = y / (x + y).
+   L'inversione è definita solo se x >= 0 e y >= 0, cioè se r cade nell'intervallo invertibile
+   [b4/(a4+b4), b8/(a8+b8)]. Fuori, la frazione invertita uscirebbe da [0, 1]: il paziente è
+   rifiutato (nessun troncamento a 0 o 1), e le repliche bootstrap fuori intervallo sono non
+   valide (oltre il 10% di repliche non valide, rifiuto). Le chiamate "altro" non entrano nel denominatore: la perdita
    differenziale verso "altro" è già nelle a/b, che per riga non sommano a 1.
    Condizionamento: J = b8/(a8+b8) - b4/(a4+b4), differenza fra le probabilità di essere
    chiamata CD8 (fra le chiamate CD4/CD8) per una vera CD8 e per una vera CD4. Con J
@@ -173,13 +182,21 @@ def _youden(P: np.ndarray) -> float:
 
 
 def _invert(P: np.ndarray, r: np.ndarray) -> np.ndarray:
+    """Frazione vera di CD8 dalla frazione osservata ``r`` e dalla matrice ``P``. NaN dove
+    l'inversione non è definita (r fuori dall'intervallo invertibile): nessun troncamento."""
     a4, b4, a8, b8 = P[..., 0, 0], P[..., 0, 1], P[..., 1, 0], P[..., 1, 1]
     x = b8 * (1 - r) - a8 * r
     y = a4 * r - b4 * (1 - r)
     with np.errstate(divide="ignore", invalid="ignore"):
         frac = y / (x + y)
-    frac = np.where((x + y) > 0, frac, np.nan)
-    return np.clip(frac, 0.0, 1.0)
+    return np.where((x >= 0) & (y >= 0) & ((x + y) > 0), frac, np.nan)
+
+
+def invertible_range(P: np.ndarray) -> tuple[float, float]:
+    """Intervallo delle frazioni osservate per cui l'inversione è definita: [b4/(a4+b4),
+    b8/(a8+b8)], cioè le frazioni osservate attese con frazione vera 0 e 1."""
+    a4, b4, a8, b8 = P[0, 0], P[0, 1], P[1, 0], P[1, 1]
+    return float(b4 / (a4 + b4)), float(b8 / (a8 + b8))
 
 
 def _fmt_interval(iv: ScenarioInterval) -> str:
@@ -303,10 +320,18 @@ def cd8_fraction_intervals(
             if scen_P[k] is None:
                 ivs[k] = ScenarioInterval(k, None, None, scen_reason[k])
                 continue
-            _, B_k = scen_P[k]
+            P_k, B_k = scen_P[k]
+            lo_r, hi_r = invertible_range(P_k)
+            if not lo_r <= reported <= hi_r:
+                ivs[k] = ScenarioInterval(k, None, None, (
+                    f"frazione osservata fuori dall'intervallo invertibile [{lo_r:.2f}, {hi_r:.2f}]: la "
+                    f"frazione corretta uscirebbe da [0, 1], quindi non viene troncata ma rifiutata"))
+                continue
             fr = _invert(B_k, r_draws[: len(B_k)])
             if np.isnan(fr).mean() > MAX_INVALID_FRACTION:
-                ivs[k] = ScenarioInterval(k, None, None, "inversione non definita in troppe repliche")
+                ivs[k] = ScenarioInterval(k, None, None, (
+                    f"inversione non definita in più del {MAX_INVALID_FRACTION:.0%} delle repliche "
+                    f"(frazione vicina al bordo dell'intervallo invertibile)"))
                 continue
             lo, hi = np.nanpercentile(fr, (2.5, 97.5))
             ivs[k] = ScenarioInterval(k, float(lo), float(hi), None)

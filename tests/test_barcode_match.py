@@ -14,7 +14,7 @@ MARKERS = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
 
 def _run(adata, contigs):
     return run_tcr_validation(adata, contigs, patient_col="patient_id", compartment_col="tissue",
-                              celltype_col="celltype", barcode_col="barcode", n_boot=200, seed=0,
+                              celltype_col="celltype", barcode_col="barcode",
                               marker_map=MARKERS, reference_compartment="PBMC")
 
 

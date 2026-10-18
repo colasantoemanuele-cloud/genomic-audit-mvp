@@ -1,35 +1,39 @@
 """Sintesi dei controlli: regole dichiarate, applicate ai risultati già calcolati.
 
 La sintesi non è una nuova stima e non è un giudizio sullo studio né sul lavoro di chi lo ha
-prodotto. Ogni riga descrive UN controllo e dice che cosa i dati permettono di stimare, con uno
-di quattro stati:
+prodotto. Ogni riga descrive UN controllo con uno di quattro stati:
 
-- verde,  «stima affidabile»: il controllo è stato eseguito e non segnala limiti;
-- giallo, «stima con limiti»: la stima esiste, ma va letta insieme al limite indicato;
+- verde,  «nessun limite rilevato dalle regole»: il controllo è stato eseguito e nessuna delle
+  regole scritte qui sotto segnala un limite. NON significa che la stima sia corretta: le
+  regole non vedono le ipotesi biologiche, la qualità delle etichette o i limiti dichiarati;
+- giallo, «stima con limiti»: la stima esiste, ma va letta insieme al limite indicato
+  (compresi i fatti strutturali del disegno);
 - rosso,  «stima non possibile con questi dati»: i dati non contengono l'informazione che
   servirebbe per quella stima;
-- grigio, «controllo non eseguito o non valutabile»: non richiesto, rifiutato dallo strumento
-  oppure non valutabile. Non è mai mostrato in verde.
+- grigio, «controllo non eseguito o non valutabile»: non richiesto, rifiutato dallo strumento,
+  non valutabile oppure bloccato da un errore d'input (es. un livello che non esiste).
 
-Non esiste un colore complessivo per sezione o per studio: ogni sezione riporta solo quanti
-controlli sono in ciascuno stato. Le regole sono scritte in RULES (mostrate nella web app e nel
-report) e non cambiano nessun calcolo: leggono le classi e le soglie già prodotte dai moduli.
+Il verde non compare mai per un controllo con un fatto strutturale, non eseguito, non
+valutabile, rifiutato o fuori dal regime calibrato. Non esiste un colore complessivo per
+sezione o per studio: ogni sezione riporta solo quanti controlli sono in ciascuno stato. Le
+regole sono scritte in RULES (mostrate nella web app e nel report) e non cambiano nessun
+calcolo: leggono le classi e le soglie già prodotte dai moduli. La frazione di CD8, funzione
+sperimentale disponibile solo da riga di comando, non entra nella sintesi.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-from core.cd8_propagation import CD8PropagationResult
-from core.design_audit import DesignAuditResult
-from core.leakage_audit import GAP_ALERT, LeakageAuditResult
-from core.tcr_validation import TcrValidationResult
+from core.design_audit import MISSING_LEVEL_CLASS, DesignAuditResult
+from core.leakage_audit import GAP_ALERT, MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT, LeakageAuditResult
+from core.tcr_validation import BIOLOGICAL_ASSUMPTIONS, TcrValidationResult
 
 VERDE, GIALLO, ROSSO, GRIGIO = "verde", "giallo", "rosso", "grigio"
 STATES = (VERDE, GIALLO, ROSSO, GRIGIO)
 
 STATE_LABEL = {
-    VERDE: "stima affidabile",
+    VERDE: "nessun limite rilevato dalle regole",
     GIALLO: "stima con limiti",
     ROSSO: "stima non possibile con questi dati",
     GRIGIO: "controllo non eseguito o non valutabile",
@@ -37,35 +41,41 @@ STATE_LABEL = {
 
 TITLE = "Sintesi dei controlli"
 
+# Fatti strutturali del disegno e stato con cui entrano nella sintesi
+STRUCTURAL_STATE = {"uno-a-uno": ROSSO, "annidamento": GIALLO, "esito-determinato": GIALLO,
+                    "unità-tecnica": GIALLO}
+STRUCTURAL_NAME = {"uno-a-uno": "Fattori coincidenti", "annidamento": "Annidamento",
+                   "esito-determinato": "Esito determinato da un fattore", "unità-tecnica": "Unità tecnica"}
+
 RULES = {
     "Disegno": (
         "Un controllo per ogni confronto richiesto: verde se il confronto è «stimabile»; giallo se è "
         "«stimabile con bassa potenza» (meno di 5 unità indipendenti, oppure p-value minimo "
         "raggiungibile sopra 0.05); rosso se è «non stimabile» (nessun paziente con entrambi i "
-        "livelli, oppure un fattore tecnico che separa i due livelli). Se non è stato richiesto "
-        "nessun confronto: grigio. Un controllo per le associazioni fra fattori: giallo per ogni "
-        "coppia con Cramér V >= 0.5; grigio per le coppie con V non valutabile (meno di 10 righe "
-        "oppure meno di 2 righe attese per cella); verde per le coppie valutabili sotto la soglia."),
+        "livelli, oppure un fattore tecnico che separa i due livelli); grigio se un livello non "
+        "compare nei metadati (errore d'input). Nessun confronto richiesto: grigio. Un controllo per "
+        "ogni fatto strutturale (controlli deterministici sulla tabella): rosso per due fattori "
+        "coincidenti, giallo per annidamento, esito determinato da un fattore o unità tecnica. "
+        "Associazioni fra fattori (Cramér V, l'unico elemento inferenziale), escluse le coppie già "
+        "coperte da un fatto strutturale: giallo per ogni coppia con V >= 0.5; grigio per le coppie "
+        "con V non valutabile (meno di 10 righe oppure, in media, meno di 2 righe per cella); verde "
+        "per le altre."),
     "Modulo A": (
         "Valutazione con split per paziente: giallo se almeno un fold di test ha classi assenti, se "
         "il training è stato sottocampionato o se il classificatore non è arrivato a convergenza in "
         "almeno un fold; altrimenti verde. Valutazione con split casuale delle cellule: rosso se la "
         f"sua macro-F1 supera quella dello split per paziente di più di {GAP_ALERT:g}; altrimenti "
-        "verde. Confronto fra modelli: grigio se non è stato eseguito (meno di 8 pazienti oppure "
-        "modalità rapida); altrimenti verde."),
+        f"verde. Confronto fra modelli: grigio se non è stato eseguito (meno di "
+        f"{MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT} pazienti oppure modalità rapida); giallo se è stato "
+        f"eseguito, perché è solo descrittivo (nessun test calibrato con un paziente per fold)."),
     "Modulo B": (
         "Eccesso di discordanza fra compartimenti: rosso se i pazienti sono meno del minimo per un "
-        "intervallo (5); giallo se l'intervallo al 95% è interamente sopra lo zero; verde se "
-        "l'intervallo include lo zero. Tasso d'errore per compartimento, per ogni convenzione: "
-        "rosso se l'intervallo non è stato prodotto (meno di 5 pazienti); verde se è stato "
-        "prodotto; grigio se il tasso non è stato calcolato (mappa dei marcatori o compartimento di "
-        "riferimento non forniti)."),
-    "Frazione di CD8": (
-        "Funzione sperimentale: mai verde. Grigio se lo strumento ha rifiutato il calcolo (meno di "
-        "5 pazienti con riferimento, cellule di riferimento mancanti) oppure se nello scenario 1x "
-        "nessun intervallo è stato prodotto (indice J della matrice di confusione sotto 0.2); "
-        "giallo se almeno un intervallo è stato prodotto, perché la copertura nominale non è "
-        "garantita."),
+        "intervallo (5); giallo se l'intervallo al 95% è interamente sopra o interamente sotto lo "
+        "zero, oppure se lo è l'intervallo della sensibilità a pesi uguali; verde («nessun eccesso "
+        "rilevato») se entrambi gli intervalli includono lo zero. Tasso d'errore per compartimento, per "
+        "ogni convenzione: rosso se l'intervallo non è stato prodotto (meno di 5 pazienti o "
+        "variabilità nulla); verde se è stato prodotto; grigio se il tasso non è stato calcolato "
+        "(mappa dei marcatori o compartimento di riferimento non forniti)."),
 }
 
 
@@ -78,11 +88,13 @@ class Check:
 
     @property
     def label(self) -> str:
+        """Testo dello stato (es. «stima con limiti»)."""
         return STATE_LABEL[self.state]
 
 
 @dataclass(frozen=True)
 class SectionSummary:
+    """Controlli di una sezione, con la regola che li produce."""
     section: str
     checks: list[Check]
     rule: str
@@ -94,6 +106,7 @@ class SectionSummary:
 
     @property
     def counts_text(self) -> str:
+        """Conteggi per stato in una riga di testo."""
         return "; ".join(f"{n} × {STATE_LABEL[s]}" for s, n in self.counts.items())
 
 
@@ -101,7 +114,12 @@ def _coppie(n: int) -> str:
     return "1 coppia" if n == 1 else f"{n} coppie"
 
 
+def _is_structural(p) -> bool:
+    return bool(p.a_nested_in_b or p.b_nested_in_a or p.one_to_one)
+
+
 def design_summary(r: DesignAuditResult) -> SectionSummary:
+    """Controlli dell'audit del disegno: confronti richiesti, fatti strutturali, associazioni."""
     checks = []
     for c in r.comparisons:
         name = f"Confronto {c.factor}: {c.level_a} vs {c.level_b}"
@@ -109,14 +127,21 @@ def design_summary(r: DesignAuditResult) -> SectionSummary:
             checks.append(Check(name, VERDE, f"stimabile con {c.n_units} unità indipendenti"))
         elif c.classification == "stimabile con bassa potenza":
             checks.append(Check(name, GIALLO, f"stimabile con bassa potenza: {c.n_units} unità indipendenti"))
+        elif c.classification == MISSING_LEVEL_CLASS:
+            checks.append(Check(name, GRIGIO, f"non valutato, errore d'input: {'; '.join(c.reasons)}"))
         else:
             checks.append(Check(name, ROSSO, "non stimabile: i due livelli non sono separabili dal paziente "
                                              "o da un fattore tecnico in questo disegno"))
     if not r.comparisons:
         checks.append(Check("Confronti", GRIGIO, "nessun confronto richiesto: controllo non eseguito"))
-    strong = [p for p in r.pairs if p.v_alarm]
-    not_evaluable = [p for p in r.pairs if p.cramer_v is None]
-    evaluable = [p for p in r.pairs if p.cramer_v is not None and not p.v_alarm]
+    for f in r.findings:
+        if f.kind in STRUCTURAL_STATE:
+            checks.append(Check(f"{STRUCTURAL_NAME[f.kind]}: {' / '.join(f.factors)}",
+                                STRUCTURAL_STATE[f.kind], f.sentence))
+    pairs = [p for p in r.pairs if not _is_structural(p)]
+    strong = [p for p in pairs if p.v_alarm]
+    not_evaluable = [p for p in pairs if p.cramer_v is None]
+    evaluable = [p for p in pairs if p.cramer_v is not None and not p.v_alarm]
     for p in strong:
         checks.append(Check(f"Associazione {p.factor_a} × {p.factor_b}", GIALLO,
                             f"Cramér V = {p.cramer_v:.2f}, sopra la soglia di 0.5: l'effetto di un fattore "
@@ -124,7 +149,7 @@ def design_summary(r: DesignAuditResult) -> SectionSummary:
     if evaluable:
         checks.append(Check("Associazioni fra fattori", VERDE,
                             f"Cramér V sotto la soglia di 0.5 per {_coppie(len(evaluable))} "
-                            f"fra quelle valutabili"))
+                            f"fra quelle valutabili (non significa disegno bilanciato)"))
     if not_evaluable:
         checks.append(Check("Associazioni fra fattori", GRIGIO,
                             f"Cramér V non valutabile per {_coppie(len(not_evaluable))} (tabelle troppo "
@@ -133,6 +158,7 @@ def design_summary(r: DesignAuditResult) -> SectionSummary:
 
 
 def leakage_summary(r: LeakageAuditResult) -> SectionSummary:
+    """Controlli del Modulo A."""
     checks = []
     limits = []
     if r.grouped.n_folds_with_absent_classes:
@@ -155,28 +181,43 @@ def leakage_summary(r: LeakageAuditResult) -> SectionSummary:
                             f"{GAP_ALERT:g}"))
     if r.model_comparison is None:
         checks.append(Check("Confronto fra modelli", GRIGIO,
-                            "non eseguito (meno di 8 pazienti oppure modalità rapida)"))
+                            f"non eseguito (meno di {MIN_PATIENTS_FOR_MODEL_COMPARISON_DEFAULT} pazienti "
+                            f"oppure modalità rapida)"))
     else:
         mc = r.model_comparison
-        checks.append(Check("Confronto fra modelli", VERDE,
-                            f"eseguito con un paziente alla volta fuori; macro-F1 più alta: {mc.best_model} "
-                            f"({mc.scores[mc.best_model].mean:.3f})"))
+        checks.append(Check("Confronto fra modelli", GIALLO,
+                            f"eseguito con un paziente alla volta fuori, ogni modello contro "
+                            f"{mc.reference_model} (riferimento fissato prima); solo descrittivo: nessun "
+                            f"test è calibrato in questo regime"))
     return SectionSummary("Modulo A", checks, RULES["Modulo A"])
 
 
 def tcr_summary(r: TcrValidationResult) -> SectionSummary:
+    """Controlli del Modulo B."""
     d = r.discordance
+    e = d.equal_weights
     name = "Eccesso di discordanza fra compartimenti"
+    n_min = r.min_patients_for_ci
     if not d.sufficient:
-        checks = [Check(name, ROSSO, f"intervallo non prodotto: {d.n_patients} pazienti, ne servono almeno 5")]
-    elif d.ci_low > 0:
-        checks = [Check(name, GIALLO,
-                        f"{d.mean_excess:+.3f} [{d.ci_low:+.3f}, {d.ci_high:+.3f}]: entro lo stesso clone le "
-                        f"etichette differiscono fra compartimenti oltre il rumore di base; le quantità "
-                        f"calcolate da queste etichette vanno lette insieme al tasso d'errore stimato")]
+        checks = [Check(name, ROSSO, f"intervallo non prodotto: {d.n_patients} pazienti, ne servono almeno {n_min}")]
     else:
-        checks = [Check(name, VERDE,
-                        f"{d.mean_excess:+.3f} [{d.ci_low:+.3f}, {d.ci_high:+.3f}]: l'intervallo include lo zero")]
+        txt = f"{d.mean_excess:+.3f} [{d.ci_low:+.3f}, {d.ci_high:+.3f}]"
+        eq_txt = (f"; pesi uguali {e.mean:+.3f} [{e.ci_low:+.3f}, {e.ci_high:+.3f}]"
+                  if e is not None and e.sufficient else "")
+        if d.ci_low > 0:
+            checks = [Check(name, GIALLO, txt + eq_txt + ": entro lo stesso clone le etichette differiscono "
+                            "fra compartimenti oltre il rumore entro compartimento; le quantità calcolate da "
+                            "queste etichette vanno lette insieme al tasso d'errore stimato")]
+        elif d.ci_high < 0:
+            checks = [Check(name, GIALLO, txt + eq_txt + ": intervallo interamente sotto lo zero; con "
+                            "compartimenti di dimensioni diverse lo stimatore pesato può essere negativo anche "
+                            "in presenza di errori, quindi non indica assenza di errori")]
+        elif e is not None and e.sufficient and (e.ci_low > 0 or e.ci_high < 0):
+            checks = [Check(name, GIALLO, txt + eq_txt + ": l'intervallo pesato include lo zero, quello a "
+                            "pesi uguali no")]
+        else:
+            checks = [Check(name, VERDE, txt + eq_txt + ": nessun eccesso rilevato (l'intervallo include lo "
+                            "zero; non dimostra l'assenza di errori)")]
     if not r.conventions:
         checks.append(Check("Tasso d'errore per compartimento", GRIGIO,
                             "non calcolato: mappa dei marcatori o compartimento di riferimento non forniti"))
@@ -188,31 +229,12 @@ def tcr_summary(r: TcrValidationResult) -> SectionSummary:
                     checks.append(Check(n, VERDE, f"{b.mean:.3f} [{b.ci_low:.3f}, {b.ci_high:.3f}], "
                                                   f"{b.n_groups} pazienti"))
                 else:
-                    checks.append(Check(n, ROSSO, f"intervallo non prodotto: {b.n_groups} pazienti, ne "
-                                                  f"servono almeno 5"))
+                    checks.append(Check(n, ROSSO, f"intervallo non prodotto: {b.reason}"))
     return SectionSummary("Modulo B", checks, RULES["Modulo B"])
 
 
-def cd8_summary(r: CD8PropagationResult) -> SectionSummary:
-    name = f"Intervalli della frazione di CD8 in {r.target_compartment}"
-    if r.refused_reason:
-        checks = [Check(name, GRIGIO, f"calcolo rifiutato dallo strumento: {r.refused_reason}")]
-    else:
-        n_ok = sum(1 for p in r.patients if p.scenarios[1.0].low is not None)
-        if n_ok == 0:
-            why = next((p.scenarios[1.0].refused_reason for p in r.patients
-                        if p.scenarios[1.0].refused_reason), "nessun paziente valutabile")
-            checks = [Check(name, GRIGIO, f"nessun intervallo prodotto nello scenario 1x: {why}")]
-        else:
-            checks = [Check(name, GIALLO, f"funzione sperimentale: intervalli prodotti per {n_ok} su "
-                                          f"{len(r.patients)} pazienti nello scenario 1x; copertura nominale non "
-                                          f"garantita")]
-    return SectionSummary("Frazione di CD8", checks, RULES["Frazione di CD8"])
-
-
 def summarize(design: DesignAuditResult | None = None, leakage: LeakageAuditResult | None = None,
-              tcr: TcrValidationResult | None = None, cd8: CD8PropagationResult | None = None,
-              ) -> list[SectionSummary]:
+              tcr: TcrValidationResult | None = None) -> list[SectionSummary]:
     """Sintesi delle sole sezioni eseguite, nell'ordine dell'interfaccia."""
     out = []
     if design is not None:
@@ -221,23 +243,27 @@ def summarize(design: DesignAuditResult | None = None, leakage: LeakageAuditResu
         out.append(leakage_summary(leakage))
     if tcr is not None:
         out.append(tcr_summary(tcr))
-    if cd8 is not None:
-        out.append(cd8_summary(cd8))
     return out
 
 
-def standing_limits(cd8: CD8PropagationResult | None = None) -> list[str]:
+USE_WARNING = ("Strumento per la ricerca. Non è un dispositivo medico e non va usato per decisioni "
+               "cliniche su singoli pazienti.")
+
+
+def standing_limits() -> list[str]:
     """Limiti dichiarati formalmente, sempre riportati insieme alla sintesi."""
-    out = [
-        "Il Modulo B è validato su un solo dataset reale (GSE278694, PDAC): la sua generalità ad "
-        "altri tumori non è verificata.",
+    return [
+        USE_WARNING,
+        "Il verde significa che nessuna delle regole scritte segnala un limite, non che la stima sia "
+        "corretta. I colori descrivono i singoli controlli: non valutano lo studio e non sostituiscono la "
+        "lettura dei numeri e delle definizioni di ciascuna sezione.",
+        "Il Modulo B è stato eseguito su dati reali solo in GSE278694 (PDAC), il dataset su cui è stato "
+        "sviluppato: lì la riproduzione dei numeri della tesi verifica la fedeltà del porting, non la "
+        "correttezza del metodo. La sua generalità ad altri tumori e laboratori non è verificata.",
+        BIOLOGICAL_ASSUMPTIONS,
+        "I fatti strutturali del disegno sono controlli deterministici sulla tabella dei metadati; "
+        "l'unico elemento inferenziale dell'audit del disegno è il Cramér V.",
         "Con pochi pazienti la potenza statistica è bassa: «non significativo» non significa "
         "«equivalente».",
-        "I colori della sintesi descrivono i singoli controlli secondo regole fisse: non valutano lo "
-        "studio e non sostituiscono la lettura dei numeri e delle definizioni di ciascuna sezione.",
         "Nessuna sezione modifica le etichette originali: lo strumento segnala, non corregge.",
     ]
-    if cd8 is not None:
-        out.append("La frazione di CD8 è una funzione sperimentale: la copertura nominale dei suoi "
-                   "intervalli non è garantita.")
-    return out

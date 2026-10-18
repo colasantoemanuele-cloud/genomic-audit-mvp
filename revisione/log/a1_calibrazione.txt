@@ -1,0 +1,23 @@
+[A1 normale, 5 gruppi] fuori dall'IC95%: 44/1000 = 0.044 (banda [0.02, 0.08])
+[A1 normale, 8 gruppi] fuori dall'IC95%: 47/1000 = 0.047 (banda [0.02, 0.08])
+[A1 normale, 10 gruppi] fuori dall'IC95%: 49/1000 = 0.049 (banda [0.02, 0.08])
+[A1 normale, 15 gruppi] fuori dall'IC95%: 51/1000 = 0.051 (banda [0.02, 0.08])
+[A1 eterogeneo, 5 gruppi] fuori dall'IC95%: 44/1000 = 0.044 (banda [0.02, 0.08])
+[A1 eterogeneo, 8 gruppi] fuori dall'IC95%: 46/1000 = 0.046 (banda [0.02, 0.08])
+[A1 eterogeneo, 10 gruppi] fuori dall'IC95%: 63/1000 = 0.063 (banda [0.02, 0.08])
+[A1 eterogeneo, 15 gruppi] fuori dall'IC95%: 58/1000 = 0.058 (banda [0.02, 0.08])
+[A1 cellula, 5 gruppi] fuori dall'IC95%: 41/1000 = 0.041 (banda [0.02, 0.08])
+[A1 cellula, 8 gruppi] fuori dall'IC95%: 55/1000 = 0.055 (banda [0.02, 0.08])
+[A1 cellula, 10 gruppi] fuori dall'IC95%: 60/1000 = 0.060 (banda [0.02, 0.08])
+[A1 cellula, 15 gruppi] fuori dall'IC95%: 61/1000 = 0.061 (banda [0.02, 0.08])
+[A1 clone, 5 gruppi] fuori dall'IC95%: 58/1000 = 0.058 (banda [0.02, 0.08])
+[A1 clone, 8 gruppi] fuori dall'IC95%: 58/1000 = 0.058 (banda [0.02, 0.08])
+[A1 clone, 10 gruppi] fuori dall'IC95%: 46/1000 = 0.046 (banda [0.02, 0.08])
+[A1 clone, 15 gruppi] fuori dall'IC95%: 53/1000 = 0.053 (banda [0.02, 0.08])
+[A1 eccesso, 5 gruppi] fuori dall'IC95%: 36/1000 = 0.036 (banda [0.02, 0.08])
+[A1 eccesso, 8 gruppi] fuori dall'IC95%: 54/1000 = 0.054 (banda [0.02, 0.08])
+[A1 eccesso, 10 gruppi] fuori dall'IC95%: 60/1000 = 0.060 (banda [0.02, 0.08])
+[A1 eccesso, 15 gruppi] fuori dall'IC95%: 56/1000 = 0.056 (banda [0.02, 0.08])
+[A1 potenza] effetto 0,5, 10 gruppi: 291/300 = 0.970
+[A1 percentile, 5 gruppi] fuori dall'IC95%: 58/400 = 0.145
+24 passed, 11 deselected in 16.16s

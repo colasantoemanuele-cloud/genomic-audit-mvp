@@ -49,7 +49,7 @@ def load_cells(manifest: Path) -> pd.DataFrame:
                                                  for r in m.itertuples()]))
     obs, clones, bm = match_barcodes(obs, clones)
     print(bm.sentence)
-    return obs.merge(clones, on=["patient", "compartment", "barcode"], how="inner")
+    return obs.merge(clones, on=["patient", "compartment", "library", "barcode"], how="inner")
 
 
 def diagnose(cells: pd.DataFrame, min_cells: int, min_margin: float) -> dict:
