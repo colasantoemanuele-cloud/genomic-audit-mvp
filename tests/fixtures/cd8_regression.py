@@ -33,12 +33,14 @@ def _num(x):
 
 
 def run_config(name: str):
+    """Esegue la frazione di CD8 su una configurazione di regressione."""
     obs, _ = make_cd8_fraction_dataset(n_patients=8, **CONFIGS[name])
     return cd8_fraction_intervals(obs, "patient", "compartment", "celltype",
                                   "audit_reference_label", "Tumor", n_boot=300, seed=5)
 
 
 def summarize(res) -> dict:
+    """Numeri del risultato della frazione di CD8 in un dizionario serializzabile."""
     return {
         "J": _num(res.youden_j), "n_ref": res.n_reference_cells, "refused": res.refused_reason,
         "matrix": None if res.matrix is None else [[float(v) for v in r] for r in res.matrix.values],

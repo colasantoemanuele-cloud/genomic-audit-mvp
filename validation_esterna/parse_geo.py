@@ -23,6 +23,7 @@ OUT = Path(__file__).parent / "results"
 
 
 def parse_series_matrix(path: Path) -> pd.DataFrame:
+    """Tabella dei campioni dal series matrix di GEO."""
     fields: dict[str, list[list[str]]] = {}
     with gzip.open(path, "rt") as fh:
         for line in fh:
@@ -50,6 +51,7 @@ def parse_series_matrix(path: Path) -> pd.DataFrame:
 
 
 def main() -> None:
+    """Scrive i fogli campioni dei tre dataset esterni."""
     OUT.mkdir(exist_ok=True)
     for gse in ("GSE132465", "GSE131907"):
         df = parse_series_matrix(DATA / f"{gse}_series_matrix.txt.gz")

@@ -26,6 +26,7 @@ RES = Path(__file__).parent / "results"
 
 
 def synthetic(n_cells=25_000, n_patients=20, n_genes=20_000, n_classes=4, density=0.05, seed=0) -> ad.AnnData:
+    """Dataset sintetico per il benchmark dei tempi (impronta per paziente e segnale di classe)."""
     rng = np.random.default_rng(seed)
     patient = rng.integers(0, n_patients, n_cells)
     label = rng.integers(0, n_classes, n_cells)
@@ -47,6 +48,7 @@ def synthetic(n_cells=25_000, n_patients=20, n_genes=20_000, n_classes=4, densit
 
 
 def main() -> None:
+    """Misura il tempo del Modulo A e scrive benchmark_moduleA_<dataset>.json."""
     which = sys.argv[1]
     if which == "sintetico":
         t = time.time()

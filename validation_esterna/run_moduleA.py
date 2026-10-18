@@ -41,6 +41,7 @@ def _scores(r) -> dict:
 
 
 def base() -> None:
+    """Modulo A sul dataset indicato, con il confronto fra modelli."""
     adata = ad.read_h5ad(H5AD)
     r = run_leakage_audit(adata, target_col=TARGET, patient_col=PATIENT, seed=0)
     (RES / f"moduleA_base{SUFFIX}.json").write_text(json.dumps(_scores(r), indent=1, ensure_ascii=False, default=float))
@@ -60,6 +61,7 @@ def _perm(seed: int) -> dict:
 
 def perm() -> None:
     # sequenziale: ogni esecuzione usa già tutti i core per i fold (nessuna sovrascrittura di thread)
+    """Controllo negativo: 20 permutazioni dell'etichetta."""
     rows = [_perm(seed) for seed in range(20)]
     y = ad.read_h5ad(H5AD, backed="r").obs[TARGET].astype(str)
     k = y.nunique()
@@ -76,6 +78,7 @@ def perm() -> None:
 
 
 def formati() -> None:
+    """Robustezza ai formati: matrice densa e colonne categoriche."""
     adata = ad.read_h5ad(H5AD)
     run = lambda a: run_leakage_audit(a, target_col=TARGET, patient_col=PATIENT,  # noqa: E731
                                       min_patients_for_model_comparison=NO_LOGO, seed=0)

@@ -23,6 +23,7 @@ DATA = Path(__file__).parent / "data"
 
 
 def load_set(name: str) -> ad.AnnData:
+    """Legge uno dei due set 10x di GSE125449 con i suoi campioni."""
     X = scipy.io.mmread(DATA / f"GSE125449_{name}_matrix.mtx.gz").T.tocsr()
     genes = pd.read_csv(DATA / f"GSE125449_{name}_genes.tsv.gz", sep="\t", header=None, names=["id", "symbol"])
     bc = pd.read_csv(DATA / f"GSE125449_{name}_barcodes.tsv.gz", sep="\t", header=None)[0].astype(str)
@@ -40,6 +41,7 @@ def load_set(name: str) -> ad.AnnData:
 
 
 def main() -> None:
+    """Costruisce l'AnnData completo di GSE125449."""
     a1, a2 = load_set("Set1"), load_set("Set2")
     common = a1.var_names.intersection(a2.var_names)
     print(f"geni Set1 {a1.n_vars}, Set2 {a2.n_vars}, in comune {len(common)}")

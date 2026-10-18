@@ -1,0 +1,4 @@
+Split per paziente (stima della prestazione su pazienti non visti): macro-F1 = 0.999 ± 0.001 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.999 ± 0.000. Divario sulla media: +0.001, entro la soglia di rumore dichiarata (±0.05): nessuna direzione indicata. Rapporto fra le deviazioni standard fra fold (per paziente / casuale): 3.6. È descrittivo: con pochi fold, correlati fra loro, la deviazione standard fra fold non è una stima valida dell'incertezza sulla prestazione. Il training è stato limitato a circa 19,998 cellule per fold con un sottocampionamento stratificato per paziente (seme fisso).
+Tempo di esecuzione: 34 s.
+[ok] report scritto in risultati/moduloA.html
+exit 0

@@ -91,6 +91,7 @@ def majority_ties(manifest: Path) -> dict:
 
 
 def main() -> None:
+    """Conta le scelte che dipendevano dall'ordine e scrive a8_pareggi.json."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--vdj-manifest", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)

@@ -20,6 +20,7 @@ DEMO = HERE.parent / "data" / "demo"
 
 
 def main() -> None:
+    """Costruisce il sottoinsieme di GSE125449 usato dalla demo."""
     DEMO.mkdir(parents=True, exist_ok=True)
     a = ad.read_h5ad(HERE / "data" / "GSE125449_small.h5ad")
     a.write_h5ad(DEMO / "GSE125449_demo.h5ad", compression="gzip")

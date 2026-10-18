@@ -39,6 +39,7 @@ def _num(x):
 
 
 def summarize(result) -> dict:
+    """Numeri del risultato del Modulo B in un dizionario serializzabile."""
     d = result.discordance
     out = {
         "n_cells_with_tcr": result.n_cells_with_tcr,
@@ -65,6 +66,7 @@ def summarize(result) -> dict:
 
 
 def run_config(name: str):
+    """Esegue il Modulo B su una configurazione di regressione."""
     cfg = CONFIGS[name]
     adata, contigs = make_tcr_validation_dataset(**cfg["data"])
     return adata, contigs, run_tcr_validation(

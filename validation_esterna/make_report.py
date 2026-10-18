@@ -16,6 +16,7 @@ UA, UI = "unità audit", "unità indipendenti"
 
 
 def main() -> None:
+    """Compila REPORT.md dal modello e dai file di risultato."""
     suite = sys.argv[1] if len(sys.argv) > 1 else "(non disponibile)"
     ds = json.loads((R / "design_summary.json").read_text())
     ds0 = json.loads((R / "prima_esecuzione" / "design_summary.json").read_text())
@@ -31,9 +32,11 @@ def main() -> None:
     n_abs = sum(bool(x) for x in ind["logo_logreg"]["classi_assenti_e_non_predette"])
 
     def cli(g):
+        """Output della CLI di un dataset, per il report."""
         return "\n".join(x for x in (R / f"design_{g}_cli.txt").read_text().splitlines() if not x.startswith("[ok]"))
 
     def drow(g):
+        """Riga della tabella dei criteri del disegno per un dataset."""
         v = ds[g]
         comps = "; ".join(f"{c['confronto']}: {c['classe audit']} ({c[UA]} u.) = {c['classe indipendente']} "
                           f"({c[UI]} u.)" for c in v["confronti"])
@@ -46,6 +49,7 @@ def main() -> None:
     co = json.loads((R / "criteri_originali.json").read_text())
 
     def corow(key, a1_txt):
+        """Riga della tabella dei criteri originali e modificati."""
         v = co[key]
         ok = lambda b: "OK" if b else "**NO**"  # noqa: E731
         nomi = {"raggruppato": "split per paziente", "logo_logreg": "LeaveOneGroupOut", "casuale": "split casuale"}
@@ -60,6 +64,7 @@ def main() -> None:
                 f"{a4c['assenti_come_zero']:.4f} | {'sì' if v['tutti_i_criteri_A'] else '**NO**'} |")
 
     def logo(key):
+        """Testo del confronto LeaveOneGroupOut."""
         r = co[key]["A2"]["confronti"]["logo_logreg"]
         return (f"{r['strumento']:.4f} contro {r['indipendente']:.4f}, differenza {r['diff']:.4f}",
                 f"{r['diff_altre_metriche']['classi_del_test']:.4f}")

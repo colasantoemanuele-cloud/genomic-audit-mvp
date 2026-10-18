@@ -20,9 +20,8 @@ Tutto gira sul computer dell'utente: nessun dato esce dalla macchina (sezione 8)
 ## 2. Installazione
 
 Le istruzioni sono nel [README](../README.md#avvio-rapido): con `uv` bastano `uv sync` e poi
-`uv run audit-sc demo`. Su un server senza accesso a internet si usa il pacchetto offline
-descritto in [`docs/INSTALLAZIONE_OFFLINE.md`](INSTALLAZIONE_OFFLINE.md). Per una prova senza dati
-propri: `audit-sc demo`, che scrive `results/demo_report.html`.
+`uv run audit-sc demo`. Per una prova senza dati propri: `audit-sc demo`, che scrive
+`results/demo_report.html`.
 
 In questa guida i comandi sono scritti come `audit-sc ...`. Se lo strumento è installato con
 `uv`, si scrivono `uv run audit-sc ...`.
@@ -43,7 +42,10 @@ ruolo.
 
 Ruoli possibili: paziente (obbligatorio), tessuto o condizione, fattori tecnici (`library`,
 `batch`, `chemistry`, `protocol`, `date`) ed esiti a livello di paziente (es. risposta alla
-terapia). Le celle vuote diventano un livello esplicito `NA`, dichiarato nel report.
+terapia). Le celle vuote diventano un livello esplicito `NA`, dichiarato nel report. Se una colonna
+identifica il campione o la libreria (spesso si chiama `sample`, `Sample` o `library`), va sempre
+dichiarata con `--technical library=<colonna>`: lo strumento segnala allora se ogni libreria
+coincide con una coppia paziente-tessuto, un limite comune che altrimenti resta nascosto.
 
 Se la tabella ha molte righe ripetute con gli stessi valori, lo strumento si ferma: è il segno di
 una tabella per cellula, oppure di librerie replicate senza la colonna libreria. In quel caso si
@@ -80,6 +82,23 @@ audit-sc leakage --h5ad dati.h5ad --target-col celltype --patient-col patient \
 
 Con almeno 8 pazienti lo strumento esegue anche un confronto fra tre modelli lasciando fuori un
 paziente alla volta; richiede più tempo (sezione 9). `--rapido` lo salta.
+
+Ogni classe deve comparire in almeno 2 pazienti, altrimenti lo strumento si ferma («il training
+contiene una sola classe»). Per togliere o accorpare le classi rare si crea una nuova colonna, per
+esempio in Python:
+
+```python
+import anndata as ad
+a = ad.read_h5ad("studio.h5ad")
+pazienti = a.obs.groupby("celltype", observed=True)["patient"].nunique()
+rare = pazienti[pazienti < 2].index
+a.obs["celltype_ridotto"] = a.obs["celltype"].astype(str).where(~a.obs["celltype"].isin(rare), "altro")
+a.write_h5ad("studio.h5ad")      # poi: --target-col celltype_ridotto
+```
+
+Con tipi cellulari grossolani (epiteliali, T, B, mieloidi) la macro-F1 è spesso vicina a 1 in
+entrambi gli schemi e il divario è nullo: il controllo è più informativo con etichette più fini
+(sottotipi) o con etichette di condizione.
 
 ### 3.3 Modulo B: matrice, file VDJ, manifest e riferimento
 
@@ -148,6 +167,32 @@ c.obs = a.obs
 c.write_h5ad("studio_conteggi.h5ad")
 ```
 
+### Da una matrice di conteggi in testo (es. file supplementari di GEO)
+
+Molti dataset pubblici danno i conteggi grezzi come tabella di testo, una riga per gene e una
+colonna per cellula, più una tabella di annotazione per cellula. La matrice va letta a blocchi:
+caricata tutta insieme in forma densa può richiedere decine di GB.
+
+```python
+import anndata as ad, numpy as np, pandas as pd, scipy.sparse as sp
+
+parts, genes = [], []
+for chunk in pd.read_csv("conteggi.txt.gz", sep="\t", index_col=0, chunksize=2000):  # 2000 geni per volta
+    parts.append(sp.csr_matrix(chunk.to_numpy(dtype=np.float32)))
+    genes.extend(chunk.index.astype(str))
+cells = chunk.columns.astype(str)
+X = sp.vstack(parts).T.tocsr()                                  # cellule x geni
+obs = pd.read_csv("annotazione.txt.gz", sep="\t", index_col=0, dtype=str)
+obs = obs.loc[cells]                                            # stesse cellule, stesso ordine
+a = ad.AnnData(X=X, obs=obs, var=pd.DataFrame(index=genes))
+a.var_names_make_unique()
+a.write_h5ad("studio.h5ad")
+```
+
+`obs.loc[cells]` si ferma con un errore se una cellula della matrice non ha annotazione: è voluto.
+Se i nomi delle colonne (separatore, colonna indice) sono diversi, vanno adattati gli argomenti di
+`read_csv`.
+
 Dopo la conversione, controllare:
 - che `X` contenga interi: `python -c "import anndata as ad, numpy as np; a=ad.read_h5ad('studio.h5ad'); x=a.X[:1000]; x=x.toarray() if hasattr(x,'toarray') else x; print(np.allclose(x, np.round(x)), x.min())"`
   deve stampare `True` e un minimo `>= 0`;
@@ -190,7 +235,7 @@ Le regole esatte sono stampate nel report, sotto la tabella.
   T-NK, RNA ambientale. Il metodo ha senso solo con etichette di linea (CD4/CD8), non di stato
   (effettrice, esausta).
 - **Modulo B, una sola prova su dati reali.** È stato eseguito su GSE278694, il dataset su cui è
-  nato; la validazione esterna è descritta in [`docs/VALIDAZIONE.md`](VALIDAZIONE.md).
+  nato: lì si è verificata la fedeltà del porting, non la correttezza del metodo.
 - **Convenzione «per clone».** Di default conta come errore ogni etichetta fuori dalla mappa dei
   marcatori, anche mieloide o B; `--clone-error-labels` limita le etichette ammesse.
 - **Pochi pazienti.** Sotto 5 pazienti nessun intervallo; con 5-10 pazienti gli intervalli sono
@@ -224,8 +269,10 @@ utente**: «localhost» non protegge da altri utenti della stessa macchina o di 
 
 ## 9. Tempi e memoria
 
-I requisiti misurati per tre dimensioni di dataset sono in
-[`docs/REQUISITI.md`](REQUISITI.md).
+Ordini di grandezza misurati su una workstation con 12 core: la conversione di una matrice di testo
+da 27.000 cellule e 34.000 geni richiede alcuni minuti e circa 2,5 GB; il Modulo A su 10.000 cellule
+con il confronto fra modelli circa 7 minuti; il Modulo B su 200.000 cellule circa 2 minuti e 6 GB
+(il file `.h5ad` viene caricato tutto in memoria).
 
 ## 10. Messaggi d'errore frequenti
 

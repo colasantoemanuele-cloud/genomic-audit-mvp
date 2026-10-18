@@ -135,6 +135,7 @@ class _ProgressLine:
         sys.stderr.flush()
 
     def close(self) -> None:
+        """Chiude la riga di avanzamento sul terminale."""
         if self.tty:
             sys.stderr.write("\n")
 

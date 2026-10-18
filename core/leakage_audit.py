@@ -69,9 +69,11 @@ class LogCPM(BaseEstimator, TransformerMixin):
         self.target_sum = target_sum
 
     def fit(self, X, y=None):  # noqa: ARG002
+        """Nessun parametro da stimare: ritorna il trasformatore."""
         return self
 
     def transform(self, X):
+        """Applica la trasformazione alla matrice (sparsa)."""
         X = sp.csr_matrix(X, dtype=np.float64)
         counts = np.asarray(X.sum(axis=1)).ravel()
         counts[counts == 0] = 1.0
@@ -90,6 +92,7 @@ class HVGSelector(BaseEstimator, TransformerMixin):
         self.n_top = n_top
 
     def fit(self, X, y=None):  # noqa: ARG002
+        """Nessun parametro da stimare: ritorna il trasformatore."""
         X = sp.csr_matrix(X)
         mean = np.asarray(X.mean(axis=0)).ravel()
         sq = np.asarray(X.multiply(X).mean(axis=0)).ravel()
@@ -100,6 +103,7 @@ class HVGSelector(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        """Applica la trasformazione alla matrice (sparsa)."""
         return sp.csr_matrix(X)[:, self.genes_]
 
 
@@ -166,6 +170,8 @@ def cap_training(tr: np.ndarray, groups: np.ndarray, max_cells: int, seed: int) 
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
 class SchemeSummary:
+    """Punteggi fold per fold di uno schema di valutazione, con dimensioni dei training e dei test,
+    classi assenti, sottocampionamento e convergenza."""
     scheme: str
     fold_scores: list[float]
     n_train: list[int]
@@ -177,22 +183,27 @@ class SchemeSummary:
 
     @property
     def mean(self) -> float:
+        """Media dei punteggi dei fold."""
         return float(np.mean(self.fold_scores))
 
     @property
     def std(self) -> float:
+        """Deviazione standard dei punteggi fra fold (ddof=1); 0 con un solo fold."""
         return float(np.std(self.fold_scores, ddof=1)) if len(self.fold_scores) > 1 else 0.0
 
     @property
     def n_folds_with_absent_classes(self) -> int:
+        """Numero di fold di test in cui manca almeno una classe del dataset."""
         return sum(bool(a) for a in self.absent_classes)
 
     @property
     def n_not_converged(self) -> int:
+        """Numero di fold in cui il classificatore non è arrivato a convergenza."""
         return sum(self.not_converged)
 
     @property
     def capped(self) -> bool:
+        """True se in almeno un fold il training è stato sottocampionato."""
         return any(b > a for a, b in zip(self.n_train, self.n_train_before_cap))
 
 
@@ -203,6 +214,7 @@ class _Clock:
         self.total, self.done, self.t0, self.progress = total, 0, time.time(), progress
 
     def step(self, what: str) -> None:
+        """Registra un addestramento concluso e, se richiesto, ne stampa l'avanzamento."""
         self.done += 1
         if self.progress is None:
             return
@@ -388,6 +400,7 @@ def _off_diag_mean(m: np.ndarray) -> float:
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
 class LeakageAuditResult:
+    """Risultato completo del Modulo A."""
     task: str
     n_cells: int
     n_patients: int

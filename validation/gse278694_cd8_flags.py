@@ -26,6 +26,7 @@ H5AD = Path(os.environ.get("GSE278694_DIR", Path(__file__).resolve().parents[2] 
 
 
 def main() -> None:
+    """Copertura dei flag e frazione di CD8 sui flag esportati dalla CLI."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--flags", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)

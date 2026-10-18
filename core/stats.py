@@ -25,6 +25,7 @@ from scipy.stats import wilcoxon as _scipy_wilcoxon
 
 @dataclass(frozen=True)
 class NadeauBengioResult:
+    """Esito del t-test corretto di Nadeau-Bengio: differenza media, statistica, p-value, gradi di libertà e fold."""
     mean_diff: float
     t_stat: float
     p_value: float

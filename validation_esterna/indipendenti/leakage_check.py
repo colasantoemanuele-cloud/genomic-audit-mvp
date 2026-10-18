@@ -42,6 +42,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 def log_cpm(X):
+    """CPM a 1e4 e log1p, riga per riga."""
     X = sp.csr_matrix(X, dtype=np.float64)
     tot = np.asarray(X.sum(axis=1)).ravel()
     tot[tot == 0] = 1.0
@@ -61,6 +62,7 @@ N_TOP = 2000  # None = tutti i geni (pipeline dei criteri originali)
 
 
 def fit_predict(X, y, tr, te, seed=0):
+    """Addestra la pipeline dichiarata sul training e predice il test."""
     if N_TOP is not None:
         X = X[:, hvg_columns(X[tr], N_TOP)]
     sc = StandardScaler(with_mean=False).fit(X[tr])
@@ -70,6 +72,7 @@ def fit_predict(X, y, tr, te, seed=0):
 
 
 def fold_scores(X, y, splits, classes):
+    """Le tre macro-F1 di ogni fold."""
     test_cls, std, allc, absent = [], [], [], []
     for tr, te in splits:
         pred = fit_predict(X, y, tr, te)
@@ -82,6 +85,7 @@ def fold_scores(X, y, splits, classes):
 
 
 def main() -> None:
+    """Esegue la verifica indipendente e scrive il JSON."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--h5ad", type=Path, required=True)
     ap.add_argument("--target-col", required=True)

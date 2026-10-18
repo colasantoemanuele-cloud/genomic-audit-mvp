@@ -45,6 +45,7 @@ CONFIGS = {
 
 
 def cli_args(gse: str, cfg: dict) -> list[str]:
+    """Argomenti della CLI per un dataset, con i soli flag documentati."""
     a = [sys.executable, "cli.py", "design", "--meta", str(REL / f"{gse}_samples.csv"),
          "--patient-col", cfg["patient"]]
     if cfg["tissue"]:
@@ -59,6 +60,7 @@ def cli_args(gse: str, cfg: dict) -> list[str]:
 
 
 def tool_facts(res) -> set[tuple]:
+    """Fatti strutturali dell'audit nel formato della verifica indipendente."""
     out = set()
     for f in res.findings:
         if f.kind == "uno-a-uno":
@@ -69,6 +71,7 @@ def tool_facts(res) -> set[tuple]:
 
 
 def main() -> None:
+    """Esegue D1-D4 sui tre dataset e scrive design_summary.json."""
     summary = {}
     for gse, cfg in CONFIGS.items():
         # D1

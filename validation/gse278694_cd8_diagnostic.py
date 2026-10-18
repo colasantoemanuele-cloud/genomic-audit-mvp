@@ -52,6 +52,7 @@ def load_cells(manifest: Path) -> pd.DataFrame:
 
 
 def diagnose(cells: pd.DataFrame, min_cells: int, min_margin: float) -> dict:
+    """Matrice di confusione del tumore con soglie di riferimento diverse da quelle di default."""
     ref = assign_reference_identity(cells, list(MARKERS), reference_compartment="PBMC",
                                     min_cells=min_cells, min_margin=min_margin)
     j = cells.merge(ref[["patient", "clone_id", "reference_identity"]], on=["patient", "clone_id"], how="left")
@@ -79,6 +80,7 @@ def diagnose(cells: pd.DataFrame, min_cells: int, min_margin: float) -> dict:
 
 
 def main() -> None:
+    """Esegue la diagnostica per le quattro combinazioni di soglie e scrive la tabella."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--vdj-manifest", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)

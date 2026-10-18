@@ -78,6 +78,7 @@ COLOR_OF = {"stimabile": "verde", "stimabile con bassa potenza": "giallo", "non 
 
 
 def badge(color: str, text: str) -> str:
+    """Etichetta colorata HTML per uno stato o una classe."""
     return f'<span class="badge b-{color}">{html.escape(text)}</span>'
 
 
@@ -150,6 +151,7 @@ def _read_uploaded_h5ad(up):
 
 
 def load_matrix_ui(key: str):
+    """Controlli per caricare la matrice (.h5ad o cartella 10x); ritorna l'AnnData o None."""
     kind = st.radio("Formato della matrice", ["AnnData (.h5ad)", "Cartella 10x (Matrix Market)"],
                     horizontal=True, key=f"{key}_kind")
     if kind.startswith("AnnData"):
@@ -182,6 +184,7 @@ def summary_line(s) -> None:
 # Tab 1: disegno
 # --------------------------------------------------------------------------- #
 def factor_matrix_chart(res) -> alt.Chart:
+    """Matrice delle coppie di fattori colorata per tipo di relazione, con il Cramér V."""
     rows = []
     facts = {(f.factors[0], f.factors[1]): f.kind for f in res.findings if len(f.factors) == 2}
     for p in res.pairs:
@@ -282,6 +285,7 @@ with tab_d:
 # Tab 2: Modulo A
 # --------------------------------------------------------------------------- #
 def folds_chart(r) -> alt.Chart:
+    """Punteggi dei fold dei due schemi del Modulo A, con media e deviazione standard."""
     df = pd.concat([
         pd.DataFrame({"schema": "per paziente", "fold": range(1, len(r.grouped.fold_scores) + 1),
                       "macro-F1": r.grouped.fold_scores}),
@@ -303,6 +307,7 @@ def folds_chart(r) -> alt.Chart:
 
 
 def jaccard_chart(m: np.ndarray, title: str) -> alt.Chart:
+    """Matrice di Jaccard fra i geni principali dei fold."""
     n = m.shape[0]
     df = pd.DataFrame([{"fold i": f"F{i + 1}", "fold j": f"F{j + 1}", "Jaccard": float(m[i, j])}
                        for i in range(n) for j in range(n)])

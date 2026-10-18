@@ -64,6 +64,7 @@ def _a4c(tool_logo: float, ind: dict) -> dict:
 
 
 def main() -> None:
+    """Valuta il codice attuale con le tre versioni dei criteri e scrive criteri_originali.json."""
     bm, fm, pm = _j("benchmark_moduleA_reale.json"), _j("moduleA_formati.json"), _j("moduleA_perm.json")
     ind6, ind_o = _j("A2_indipendente.json"), _j("A2_originale_completo.json")
     full_tool = {"raggruppato": sum(fm["fold_raggruppati"]["riferimento"]) / len(fm["fold_raggruppati"]["riferimento"]),
@@ -75,10 +76,12 @@ def main() -> None:
     a1_small = int((R / "A1_ridotta_exit.txt").read_text().strip()) == 0
 
     def a3(p):
+        """Esito del criterio A3 (controllo negativo con permutazioni)."""
         return {"media": p["media_raggruppata"], "atteso": p["atteso_1_su_K"],
                 "tag_leakage": p["permutazioni_con_tag_leakage"], "esito": bool(p["A3_i"] and p["A3_ii"])}
 
     def a4ab(f):
+        """Esito dei criteri A4a e A4b (formati della matrice e delle colonne)."""
         return bool(f["A4a_densa_identica"] and f["A4b_stringhe_identica"] and f["A4b_categoriche_identica"])
 
     out = {

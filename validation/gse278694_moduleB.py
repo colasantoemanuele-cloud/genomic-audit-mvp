@@ -58,6 +58,7 @@ def load_cells(manifest: Path) -> pd.DataFrame:
 
 
 def discordance(cells: pd.DataFrame, lymphoid_only: bool) -> dict:
+    """Eccesso di discordanza con il bootstrap percentile della tesi."""
     x = cells[cells.celltype.isin(LYMPHOID)] if lymphoid_only else cells
     pw = pairwise_excess_discordance(x)
     b = cluster_bootstrap(pw.excess.values, pw.patient.values, n_boot=N_BOOT, seed=SEED, min_groups=5)
@@ -137,6 +138,7 @@ LADDER = [
 
 
 def main() -> None:
+    """Esegue la scala delle definizioni e scrive a1_moduleB.json."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--vdj-manifest", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)

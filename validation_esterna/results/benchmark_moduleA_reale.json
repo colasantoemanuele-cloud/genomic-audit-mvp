@@ -3,11 +3,12 @@
  "cellule": 9946,
  "geni": 18372,
  "pazienti": 19,
- "secondi": 403.1,
+ "secondi": 314.6,
  "entro_10_minuti": true,
  "raggruppato": 0.777640179913546,
  "casuale": 0.8948344820651398,
  "divario": 0.11719430215159388,
+ "rapporto_dev_std": 15.409865645963507,
  "logo": {
   "logreg": 0.7711638057980308,
   "random_forest": 0.765572290231095,

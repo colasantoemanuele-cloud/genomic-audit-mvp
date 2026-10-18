@@ -26,7 +26,7 @@ if [[ $PART == gse278694 || $PART == tutto ]]; then
   $PY cli.py $TCR --out "$OUT/tcr_default.html" > $R/cli_tcr_real_conventions_default.txt 2>&1
   log "GSE278694: Modulo B con export dei flag e frazione di CD8 sperimentale"
   /usr/bin/time -v $PY cli.py $TCR --export-flags --sperimentale-cd8 Tumor --out "$OUT/tcr_real.html" \
-      > $R/cli_tcr_real.txt 2> "$OUT/tcr_real_time.txt"
+      > $R/cli_tcr_real.txt 2> $R/cli_tcr_real_tempo.txt
   log "GSE278694: verifica di fedeltà del porting (scala delle definizioni)"
   $PY -m validation.gse278694_moduleB --vdj-manifest $R/vdj_manifest_gse278694.csv --out $R > "$OUT/moduleB.log" 2>&1
   log "GSE278694: quota delle etichette NK nella differenza fra convenzioni (B2)"
@@ -71,5 +71,6 @@ if [[ $PART == esterna || $PART == tutto ]]; then
   /usr/bin/time -v $PY -m validation_esterna.benchmark_moduleA sintetico > $E/benchmark_sintetico.log 2> $E/benchmark_sintetico.err
   log "Esterna: verdetti con i criteri originali e modificati"
   $PY -m validation_esterna.criteri_originali > "$OUT/criteri.log" 2>&1
+  grep -rl "$OUT" $E | xargs -r sed -i "s#$OUT#<out>#g"
 fi
 log "fine"

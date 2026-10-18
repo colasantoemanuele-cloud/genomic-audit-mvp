@@ -102,6 +102,7 @@ SCENARIO_WARNING = (
 
 @dataclass(frozen=True)
 class ScenarioInterval:
+    """Intervallo della frazione di CD8 in uno scenario di errore (0.5x, 1x, 2x), o il motivo del rifiuto."""
     factor: float
     low: float | None
     high: float | None
@@ -110,6 +111,7 @@ class ScenarioInterval:
 
 @dataclass(frozen=True)
 class PatientCD8:
+    """Frazione di CD8 di un paziente: conteggi, frazione riportata, intervallo dei soli conteggi e scenari."""
     patient: str
     n_cd4_called: int
     n_cd8_called: int
@@ -122,6 +124,7 @@ class PatientCD8:
 
 @dataclass(frozen=True)
 class CD8PropagationResult:
+    """Risultato della frazione di CD8 sperimentale per il compartimento bersaglio."""
     target_compartment: str
     n_reference_cells: int
     n_reference_patients: int

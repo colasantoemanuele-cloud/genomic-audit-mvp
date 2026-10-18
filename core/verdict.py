@@ -128,7 +128,7 @@ def design_summary(r: DesignAuditResult) -> SectionSummary:
         elif c.classification == "stimabile con bassa potenza":
             checks.append(Check(name, GIALLO, f"stimabile con bassa potenza: {c.n_units} unità indipendenti"))
         elif c.classification == MISSING_LEVEL_CLASS:
-            checks.append(Check(name, GRIGIO, f"non valutato, errore d'input: {'; '.join(c.reasons)}"))
+            checks.append(Check(name, GRIGIO, "errore d'input: " + c.sentence.split(": ", 1)[1]))
         else:
             checks.append(Check(name, ROSSO, "non stimabile: i due livelli non sono separabili dal paziente "
                                              "o da un fattore tecnico in questo disegno"))

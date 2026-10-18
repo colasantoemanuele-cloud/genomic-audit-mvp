@@ -35,6 +35,7 @@ def build_manifest(out: Path, pdac: Path = PDAC) -> int:
 
 
 def main() -> None:
+    """Riga di comando: scrive il manifest in --out."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()

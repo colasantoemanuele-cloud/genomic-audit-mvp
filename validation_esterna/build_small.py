@@ -17,6 +17,7 @@ DATA = Path(__file__).parent / "data"
 
 
 def main() -> None:
+    """Costruisce la coorte ridotta di GSE125449."""
     a = ad.read_h5ad(DATA / "GSE125449.h5ad")
     rng = np.random.default_rng(0)
     patients = sorted(a.obs["patient"].astype(str).unique())

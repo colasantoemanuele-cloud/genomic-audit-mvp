@@ -21,15 +21,18 @@ TECHNICAL = {"library", "batch", "chemistry", "protocol", "date"}
 
 def read_sheet(path, cols: list[str]) -> pd.DataFrame:
     # valori mancanti -> livello esplicito "nan" (con pandas 3, astype(str) li lascia mancanti)
+    """Legge il foglio campioni come la CLI: stringhe, mancanti come livello."""
     return pd.read_csv(path, dtype=str)[cols].fillna("nan").astype(str).reset_index(drop=True)
 
 
 def nested(df: pd.DataFrame, a: str, b: str) -> bool:
+    """True se ogni livello di a compare in un solo livello di b."""
     return all(len(set(g)) == 1 for _, g in df.groupby(a)[b])
 
 
 def structural_facts(df: pd.DataFrame, roles: dict[str, str], outcome_like: list[str],
                      patient: str, tissue: str | None) -> set[tuple]:
+    """Fatti strutturali calcolati da capo."""
     n = len(df)
     constant = {c for c in roles if df[c].nunique() < 2}
     ident = {c for c in roles if c not in constant and df[c].nunique() == n}
@@ -61,6 +64,7 @@ def structural_facts(df: pd.DataFrame, roles: dict[str, str], outcome_like: list
 
 def classify(df: pd.DataFrame, roles: dict[str, str], patient: str, factor: str, a: str, b: str,
              min_units: int = 5) -> tuple[str, int]:
+    """Classe di un confronto calcolata da capo."""
     rows = df[df[factor].isin([a, b])]
     pa = set(rows.loc[rows[factor] == a, patient])
     pb = set(rows.loc[rows[factor] == b, patient])

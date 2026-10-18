@@ -72,6 +72,7 @@ PROTOCOL_NOTE = (
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
 class PairAssociation:
+    """Associazione fra due fattori: tabella, Cramér V (None se non valutabile), annidamenti e frase."""
     factor_a: str
     factor_b: str
     n_rows: int
@@ -88,6 +89,7 @@ class PairAssociation:
 
 @dataclass(frozen=True)
 class StructuralFinding:
+    """Fatto strutturale del disegno (controllo deterministico sulla tabella)."""
     kind: str  # annidamento | uno-a-uno | esito-determinato | unità-tecnica | costante | identificatore
     factors: tuple[str, ...]
     sentence: str
@@ -95,6 +97,7 @@ class StructuralFinding:
 
 @dataclass(frozen=True)
 class ComparisonAssessment:
+    """Valutazione di un confronto richiesto: disegno, unità indipendenti, classe e motivi."""
     factor: str
     level_a: str
     level_b: str
@@ -112,6 +115,7 @@ class ComparisonAssessment:
 
 @dataclass(frozen=True)
 class VarianceShare:
+    """Quota di varianza di un fattore con il suo intervallo (scomposizione non esposta)."""
     factor: str
     share: float
     ci_low: float
@@ -120,6 +124,7 @@ class VarianceShare:
 
 @dataclass(frozen=True)
 class VarianceDecomposition:
+    """Scomposizione della varianza su pseudobulk (non esposta: calibrazione fuori banda)."""
     identifiable: bool
     reason: str
     n_units: int
@@ -132,6 +137,7 @@ class VarianceDecomposition:
 
 @dataclass(frozen=True)
 class DesignAuditResult:
+    """Risultato completo dell'audit del disegno."""
     n_rows: int
     roles: dict[str, str]
     pairs: list[PairAssociation]

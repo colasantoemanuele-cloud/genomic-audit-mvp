@@ -17,7 +17,7 @@
  "random_mean": 0.8665110982846553,
  "gap": 0.10283967957995221,
  "tag_leakage_rilevabile": true,
- "narrative": "Split per paziente (valutazione onesta): macro-F1 = 0.764 ± 0.089 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perche' mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.867 ± 0.015. Divario sulla media: +0.103 -- lo split casuale sovrastima l'accuratezza reale del modello di circa 0.103 punti di macro-F1. La deviazione standard fra fold e' 5.9x piu' ampia nello split onesto: lo split casuale sottostima l'incertezza reale sulla performance di quel fattore.",
+ "narrative": "Split per paziente (stima della prestazione su pazienti non visti): macro-F1 = 0.764 ± 0.089 su 5 fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché mette cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.867 ± 0.015. Divario sulla media: +0.103 -- lo split casuale dà una macro-F1 più alta di 0.103 punti rispetto allo split per paziente, oltre la soglia di rumore dichiarata (±0.05). Rapporto fra le deviazioni standard fra fold (per paziente / casuale): 5.9. È descrittivo: con pochi fold, correlati fra loro, la deviazione standard fra fold non è una stima valida dell'incertezza sulla prestazione.",
  "logo": {
   "logreg": [
    0.7157263501525797,
@@ -66,9 +66,15 @@
   {
    "model": "random_forest",
    "mean_macro_f1": 0.7154379828980245,
-   "delta_vs_best": -0.0376103653120915,
+   "delta_vs_reference": -0.0376103653120915,
+   "n_better": 4,
+   "n_worse": 6,
+   "n_ties": 0,
    "p_nadeau_bengio": 0.16783801978268498,
+   "p_nadeau_bengio_holm": 0.33567603956536995,
    "p_wilcoxon": 0.10546875,
+   "p_wilcoxon_holm": 0.2109375,
+   "wilcoxon_method": "esatto",
    "wilcoxon_floor": 0.001953125,
    "divergent": false,
    "note": ""
@@ -76,9 +82,15 @@
   {
    "model": "hist_gb",
    "mean_macro_f1": 0.7091474255742378,
-   "delta_vs_best": -0.04390092263587819,
+   "delta_vs_reference": -0.04390092263587819,
+   "n_better": 3,
+   "n_worse": 7,
+   "n_ties": 0,
    "p_nadeau_bengio": 0.18404503862222343,
+   "p_nadeau_bengio_holm": 0.33567603956536995,
    "p_wilcoxon": 0.130859375,
+   "p_wilcoxon_holm": 0.2109375,
+   "wilcoxon_method": "esatto",
    "wilcoxon_floor": 0.001953125,
    "divergent": false,
    "note": ""

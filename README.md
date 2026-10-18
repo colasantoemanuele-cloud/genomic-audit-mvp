@@ -64,7 +64,11 @@ In GSE125449 ogni paziente ha un solo campione, sequenziato su una sola delle du
 divario include quindi anche il passaggio fra piattaforme, non solo fra pazienti.
 
 ```
-{{A1_ESTRATTO}}
+Split per paziente (stima della prestazione su pazienti non visti): macro-F1 = 0.778 ± 0.060 su 5
+fold. Split casuale sulle cellule (controllo negativo, NON una valutazione valida perché mette
+cellule dello stesso paziente sia in train sia in test): macro-F1 = 0.895 ± 0.004. Divario sulla
+media: +0.117 -- lo split casuale dà una macro-F1 più alta di 0.117 punti rispetto allo split per
+paziente, oltre la soglia di rumore dichiarata (±0.05).
 ```
 
 **3. Modulo B — GSE278694.** Tasso d'errore dell'annotazione delle cellule T nel tumore, rispetto
@@ -146,8 +150,8 @@ training, si calcolano log-CPM, i 2.000 geni più variabili e (per random forest
 boosting) 50 componenti SVD. Il training è limitato a circa 20.000 cellule per fold con
 sottocampionamento stratificato per paziente, dichiarato. La macro-F1 è calcolata sulle sole classi
 presenti nel fold di test, e le classi assenti sono dichiarate. Tempi misurati in
-[`docs/REQUISITI.md`](docs/REQUISITI.md). Mostra anche la stabilità delle spiegazioni (Jaccard fra
-i 50 geni principali dei fold), una misura descrittiva.
+[`validation_esterna/REPORT.md`](validation_esterna/REPORT.md). Mostra anche la stabilità delle
+spiegazioni (Jaccard fra i 50 geni principali dei fold), una misura descrittiva.
 
 **Modulo B — Verifica dell'annotazione via TCR.** Usa il repertorio T-cell receptor come
 riferimento indipendente dal clustering: se le cellule dello stesso clone T (stessa sequenza CDR3

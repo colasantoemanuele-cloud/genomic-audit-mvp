@@ -3,11 +3,12 @@
  "cellule": 25000,
  "geni": 20000,
  "pazienti": 20,
- "secondi": 373.6,
+ "secondi": 277.7,
  "entro_10_minuti": true,
  "raggruppato": 1.0,
  "casuale": 1.0,
  "divario": 0.0,
+ "rapporto_dev_std": Infinity,
  "logo": {
   "logreg": 1.0,
   "random_forest": 1.0,

@@ -27,6 +27,7 @@ MARKERS = {"CD4T": ["CD4"], "CD8T": ["CD8A", "CD8B"]}
 
 
 def main() -> None:
+    """Calcola la quota NK della differenza fra convenzioni e scrive b2_quota_nk.json."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--vdj-manifest", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
