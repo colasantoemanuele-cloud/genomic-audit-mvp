@@ -1,0 +1,44 @@
+{
+  "clone_tumor": {
+    "n_units": 114,
+    "n_ties": 0,
+    "n_errors": 1,
+    "n_patients": 16,
+    "rate": {
+      "mean": 0.008771929824561403,
+      "ci_low": 0.0007190662705245778,
+      "ci_high": 0.09815118259909579,
+      "df": 6.376705749354266,
+      "n_groups": 16,
+      "n_obs": 114,
+      "sufficient": true,
+      "reason": ""
+    }
+  },
+  "excess_PBMC_Tumor": {
+    "n_pairs": 198,
+    "n_patients": 18,
+    "weighted": {
+      "mean": 0.014776250952296337,
+      "ci_low": -0.0003612491154537708,
+      "ci_high": 0.029913751020046446,
+      "df": 7.793480487510651,
+      "n_groups": 18,
+      "n_obs": 198,
+      "sufficient": true,
+      "reason": ""
+    },
+    "equal": {
+      "mean": 0.01498214079900037,
+      "ci_low": -0.0005458620267390565,
+      "ci_high": 0.030510143624739798,
+      "df": 7.793480487510651,
+      "n_groups": 18,
+      "n_obs": 198,
+      "sufficient": true,
+      "reason": ""
+    }
+  },
+  "n_cells_with_trb": 54190,
+  "n_reference_clones": 394
+}
