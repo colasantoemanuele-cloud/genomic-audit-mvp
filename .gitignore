@@ -21,3 +21,6 @@ data/synthetic/*
 # validazione esterna: dati scaricati (pesanti), non versionati
 validation_esterna/data/
 !validation_esterna/results/
+
+# validazione esterna del Modulo B: risultati piccoli, da versionare (dati in ../dati_esterni)
+!validation_esterna_B/results/

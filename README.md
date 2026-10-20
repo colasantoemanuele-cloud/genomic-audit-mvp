@@ -134,7 +134,8 @@ di ogni dataset con entrambe le versioni sono in
 [`validation_esterna/REPORT.md`](validation_esterna/REPORT.md).
 
 **Il Modulo B è stato eseguito su dati reali in un solo dataset (GSE278694), quello su cui è
-nato; la frazione di CD8 è sperimentale e disponibile solo da riga di comando.**
+nato: la validazione tecnica esterna prevista su GSE139555 non è eseguibile, perché solo 4
+pazienti hanno il sangue e ne servono 5 ([`validation_esterna_B/REPORT.md`](validation_esterna_B/REPORT.md)); la frazione di CD8 è sperimentale e disponibile solo da riga di comando.**
 
 ## Cosa fa
 

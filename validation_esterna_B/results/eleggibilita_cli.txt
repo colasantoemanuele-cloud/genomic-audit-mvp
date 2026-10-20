@@ -1,0 +1,16 @@
+campioni 32, pazienti 14, per regione {'Tumor': 14, 'Normal adjacent tissue': 14, 'Blood': 4}
+  Colon1  sangue no  tumore sì  cellule T {'NAT': 1651, 'Tumor': 2422}
+  Colon2  sangue no  tumore sì  cellule T {'NAT': 153, 'Tumor': 642}
+  Endo1   sangue no  tumore sì  cellule T {'NAT': 7278, 'Tumor': 10670}
+  Endo2   sangue no  tumore sì  cellule T {'NAT': 1718, 'Tumor': 7425}
+  Endo3   sangue no  tumore sì  cellule T {'NAT': 355, 'Tumor': 5228}
+  Lung1   sangue no  tumore sì  cellule T {'NAT': 5944, 'Tumor': 7335}
+  Lung2   sangue no  tumore sì  cellule T {'NAT': 7105, 'Tumor': 8486}
+  Lung3   sangue no  tumore sì  cellule T {'NAT': 11594, 'Tumor': 6698}
+  Lung4   sangue no  tumore sì  cellule T {'NAT': 6120, 'Tumor': 8992}
+  Lung5   sangue no  tumore sì  cellule T {'NAT': 3765, 'Tumor': 2901}
+  Lung6   sangue sì  tumore sì  cellule T {'Blood': 4154, 'NAT': 7211, 'Tumor': 3809}
+  Renal1  sangue sì  tumore sì  cellule T {'Blood': 1216, 'NAT': 2698, 'Tumor': 2362}
+  Renal2  sangue sì  tumore sì  cellule T {'Blood': 1653, 'NAT': 4270, 'Tumor': 2799}
+  Renal3  sangue sì  tumore sì  cellule T {'Blood': 2051, 'NAT': 1610, 'Tumor': 1308}
+E1: 4 pazienti con sangue e tumore completi (Lung6, Renal1, Renal2, Renal3); richiesti 5: NON SODDISFATTA

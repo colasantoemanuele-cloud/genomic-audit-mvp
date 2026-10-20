@@ -109,6 +109,12 @@ quello della tesi; la sola unità in più (PA12, tumore) è un pareggio
 
 Intervalli: sezione 2, su scala logit. Calibrazione: scenari «cellula» e «clone» della sezione 2.
 
+**Limiti delle sezioni 3-4 su dati reali.** Le formule sono calibrate su dati simulati (sezione 2),
+ma su dati reali il Modulo B è stato eseguito solo su GSE278694, il dataset su cui è nato. La
+validazione tecnica esterna prevista su GSE139555 non è eseguibile (sangue per soli 4 pazienti, ne
+servono 5: `validation_esterna_B/REPORT.md`), e nessun riferimento proteico indipendente dai
+trascritti è stato ancora usato per verificare le etichette segnalate come errate.
+
 ## 5. Modulo A
 
 **Schemi.** Split per paziente: `StratifiedGroupKFold` a min(5, pazienti) fold, con shuffle e seme

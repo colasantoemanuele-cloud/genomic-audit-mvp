@@ -241,7 +241,9 @@ Le regole esatte sono stampate nel report, sotto la tabella.
   etichetta CD8 è un errore di linea. Il metodo ha senso solo con etichette di linea (CD4/CD8), non di stato
   (effettrice, esausta).
 - **Modulo B, una sola prova su dati reali.** È stato eseguito su GSE278694, il dataset su cui è
-  nato: lì si è verificata la fedeltà del porting, non la correttezza del metodo.
+  nato: lì si è verificata la fedeltà del porting, non la correttezza del metodo. La validazione
+  tecnica esterna prevista su GSE139555 non è stata eseguita: il dataset ha il sangue per soli 4
+  pazienti, ne servono 5 (`validation_esterna_B/REPORT.md`).
 - **Convenzione «per clone».** Di default conta come errore ogni etichetta fuori dalla mappa dei
   marcatori, anche mieloide o B; `--clone-error-labels` limita le etichette ammesse.
 - **Pochi pazienti.** Sotto 5 pazienti nessun intervallo; con 5-10 pazienti gli intervalli sono

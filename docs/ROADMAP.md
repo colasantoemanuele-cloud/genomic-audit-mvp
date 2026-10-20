@@ -7,7 +7,7 @@ quando dominano).
 
 | # | Voce | Che cosa serve | Stima |
 |---|---|---|---|
-| 1 | **Validazione esterna del Modulo B** su GSE139555 (Wu et al., *Nature* 2020: scRNA-seq + TCR di sangue, tumore e tessuto adiacente in più tipi di tumore) | Scrivere e committare `validation_esterna_B/CRITERI.md` (criteri B-E1…B-E6) **prima di qualsiasi download**, senza modificarli dopo; scaricare i dati; script `indipendente.py` che non importa nulla da `core/`; eseguire e riportare l'esito di ogni criterio | 6-10 h, di cui 1-2 h di download e conversione |
+| 1 | **Validazione esterna del Modulo B** su GSE139555 (Wu et al., *Nature* 2020: scRNA-seq + TCR di sangue, tumore e tessuto adiacente in più tipi di tumore) | **Stato (20 ottobre 2026, branch `validazione-b`): tentata, non eseguibile.** Criteri B-E1…B-E6 committati prima del download (`validation_esterna_B/CRITERI.md`); GSE139555 non soddisfa l'eleggibilità E1: solo 4 pazienti su 14 (Lung6, Renal1-3) hanno il sangue, ne servono 5 (`validation_esterna_B/REPORT.md`). Resta da scegliere un altro dataset (o da dichiarare criteri modificati). Piano originale: scrivere e committare `validation_esterna_B/CRITERI.md` (criteri B-E1…B-E6) **prima di qualsiasi download**, senza modificarli dopo; scaricare i dati; script `indipendente.py` che non importa nulla da `core/`; eseguire e riportare l'esito di ogni criterio | 6-10 h, di cui 1-2 h di download e conversione |
 | 2 | **Criterio B-E5 su un dataset CITE-seq + TCR** (proteine di superficie CD4/CD8 come riferimento indipendente dai trascritti) | Individuare un dataset pubblico adatto; se non esiste, dichiarare il criterio non valutabile | 3-5 h |
 | 3 | **Pacchetto `genomic_audit`** | Spostare `core/`, `cli.py` e `app.py` in un pacchetto importabile, mantenere il comando `audit-sc`, includere o incorporare `.streamlit/config.toml`, aggiornare test e documenti | 2-3 h |
 | 4 | **Installazione senza rete** | Pacchetto di wheel per Linux, script di installazione, prova su una macchina senza connessione | 1-2 h |
@@ -24,7 +24,9 @@ Totale stimato: **circa 22-35 h** di lavoro.
 ## Limiti della 0.9 che la 1.0 dovrebbe affrontare
 
 - Il Modulo B è stato eseguito su dati reali solo su GSE278694, il dataset su cui è nato: è una
-  verifica di fedeltà del porting, non una validazione (voci 1-2).
+  verifica di fedeltà del porting, non una validazione (voci 1-2). La validazione tecnica esterna
+  prevista su GSE139555 non è eseguibile: solo 4 pazienti hanno il sangue, ne servono 5
+  (`validation_esterna_B/REPORT.md`).
 - Il confronto fra modelli del Modulo A è descrittivo: Nadeau-Bengio e Wilcoxon sono fuori banda
   in LeaveOneGroupOut e non sono esposti (`revisione/log/a2_calibrazione.txt`).
 - Nessun utente esterno ha provato lo strumento; la prova della guida (C2, GSE144735) è stata
