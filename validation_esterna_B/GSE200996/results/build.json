@@ -1,0 +1,1275 @@
+{
+  "campioni_matrici": [
+    {
+      "campione": "P13_Post-Tx",
+      "file": "GSM6048148_raw_feature_bc_matrix_P13_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 442,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P14_Post-Tx",
+      "file": "GSM6048149_raw_feature_bc_matrix_P14_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1162,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P15_Post-Tx",
+      "file": "GSM6048150_raw_feature_bc_matrix_P15_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2354,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P16_Post-Tx",
+      "file": "GSM6048151_raw_feature_bc_matrix_P16_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2109,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P18_Post-Tx",
+      "file": "GSM6048152_raw_feature_bc_matrix_P18_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2069,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P19_Post-Tx",
+      "file": "GSM6048153_raw_feature_bc_matrix_P19_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1707,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P20_Post-Tx",
+      "file": "GSM6048154_raw_feature_bc_matrix_P20_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2690,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P21_Post-Tx",
+      "file": "GSM6048155_raw_feature_bc_matrix_P21_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2035,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P22_Post-Tx",
+      "file": "GSM6048156_raw_feature_bc_matrix_P22_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2023,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P23_Post-Tx",
+      "file": "GSM6048157_raw_feature_bc_matrix_P23_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1698,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P24_Post-Tx",
+      "file": "GSM6048158_raw_feature_bc_matrix_P24_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 476,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P25_Post-Tx",
+      "file": "GSM6048159_raw_feature_bc_matrix_P25_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 716,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P26_Post-Tx",
+      "file": "GSM6048160_raw_feature_bc_matrix_P26_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 854,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P28_Post-Tx",
+      "file": "GSM6048162_raw_feature_bc_matrix_P28_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1953,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P29_Post-Tx",
+      "file": "GSM6048163_raw_feature_bc_matrix_P29_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2896,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P30_Post-Tx",
+      "file": "GSM6048164_raw_feature_bc_matrix_P30_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 693,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P31_Post-Tx",
+      "file": "GSM6048165_raw_feature_bc_matrix_P31_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1935,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P32_Post-Tx",
+      "file": "GSM6048166_raw_feature_bc_matrix_P32_post-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1207,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P18_Pre-Tx",
+      "file": "GSM6048142_raw_feature_bc_matrix_P18_pre-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 3207,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P24_Pre-Tx",
+      "file": "GSM6048144_raw_feature_bc_matrix_P24_pre-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1418,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P29_Pre-Tx",
+      "file": "GSM6048146_raw_feature_bc_matrix_P29_pre-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1983,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "P32_Pre-Tx",
+      "file": "GSM6048147_raw_feature_bc_matrix_P32_pre-Tx_GEX_sc_tumor.h5",
+      "compartimento": "Tumor",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 1154,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": []
+    },
+    {
+      "campione": "PBMC_P13-P14",
+      "file": "GSM6048239_raw_feature_bc_matrix_P13-P14_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 4845,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 6755,
+        "barcode_is_cell": 6755,
+        "barcode_assegnati": 5100,
+        "barcode_is_cell_non_assegnati": 1655
+      }
+    },
+    {
+      "campione": "PBMC_P15-P17",
+      "file": "GSM6048240_raw_feature_bc_matrix_P15-P17_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 3037,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 6547,
+        "barcode_is_cell": 6547,
+        "barcode_assegnati": 4949,
+        "barcode_is_cell_non_assegnati": 1598
+      }
+    },
+    {
+      "campione": "PBMC_P16-P24-P26",
+      "file": "GSM6048241_raw_feature_bc_matrix_P16-P24-P26_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2899,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 5556,
+        "barcode_is_cell": 5556,
+        "barcode_assegnati": 3234,
+        "barcode_is_cell_non_assegnati": 2322
+      }
+    },
+    {
+      "campione": "PBMC_P18-P29-P30",
+      "file": "GSM6048242_raw_feature_bc_matrix_P18-P29-P30_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2913,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 3976,
+        "barcode_is_cell": 3976,
+        "barcode_assegnati": 3074,
+        "barcode_is_cell_non_assegnati": 902
+      }
+    },
+    {
+      "campione": "PBMC_P19-P20",
+      "file": "GSM6048243_raw_feature_bc_matrix_P19-P20_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 3718,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 5212,
+        "barcode_is_cell": 5212,
+        "barcode_assegnati": 3806,
+        "barcode_is_cell_non_assegnati": 1406
+      }
+    },
+    {
+      "campione": "PBMC_P21-P25-P28",
+      "file": "GSM6048244_raw_feature_bc_matrix_P21-P25-P28_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 5376,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 7709,
+        "barcode_is_cell": 7709,
+        "barcode_assegnati": 5693,
+        "barcode_is_cell_non_assegnati": 2016
+      }
+    },
+    {
+      "campione": "PBMC_P22-P23",
+      "file": "GSM6048245_raw_feature_bc_matrix_P22-P23_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 4210,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 5549,
+        "barcode_is_cell": 5549,
+        "barcode_assegnati": 4466,
+        "barcode_is_cell_non_assegnati": 1083
+      }
+    },
+    {
+      "campione": "PBMC_P31-P32",
+      "file": "GSM6048246_raw_feature_bc_matrix_P31-P32_GEX_sc_PBMC.h5",
+      "compartimento": "PBMC",
+      "dtype": "int32",
+      "interi_non_negativi": true,
+      "barcode_nella_matrice": 737280,
+      "cellule_cercate": 2604,
+      "cellule_non_trovate": 0,
+      "feature_per_tipo": {
+        "Antibody Capture": 7,
+        "Gene Expression": 36601
+      },
+      "feature_non_GEX": [
+        "Hashtag1_TotalSeqC",
+        "Hashtag2_TotalSeqC",
+        "Hashtag3_TotalSeqC",
+        "Hashtag4_TotalSeqC",
+        "Hashtag5_TotalSeqC",
+        "Hashtag6_TotalSeqC",
+        "Hashtag7_TotalSeqC"
+      ],
+      "vdj_corsia": {
+        "barcode": 3812,
+        "barcode_is_cell": 3812,
+        "barcode_assegnati": 2957,
+        "barcode_is_cell_non_assegnati": 855
+      }
+    }
+  ],
+  "campioni_vdj": [
+    {
+      "campione": "P13_Post-Tx",
+      "patient": "P13",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048172_filtered_contig_annotations_P13_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 1965,
+      "barcode_vdj": 690,
+      "cellule_CD45": 1871,
+      "T_CD45_non_etichettate": 141,
+      "etichettate": 442,
+      "etichettate_con_TRB_produttiva": 316,
+      "etichettate_con_TCR_produttivo": 326
+    },
+    {
+      "campione": "P14_Post-Tx",
+      "patient": "P14",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048173_filtered_contig_annotations_P14_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 4040,
+      "barcode_vdj": 1407,
+      "cellule_CD45": 1881,
+      "T_CD45_non_etichettate": 115,
+      "etichettate": 1162,
+      "etichettate_con_TRB_produttiva": 1074,
+      "etichettate_con_TCR_produttivo": 1098
+    },
+    {
+      "campione": "P15_Post-Tx",
+      "patient": "P15",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048174_filtered_contig_annotations_P15_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 5961,
+      "barcode_vdj": 2574,
+      "cellule_CD45": 3480,
+      "T_CD45_non_etichettate": 549,
+      "etichettate": 2354,
+      "etichettate_con_TRB_produttiva": 1994,
+      "etichettate_con_TCR_produttivo": 2076
+    },
+    {
+      "campione": "P16_Post-Tx",
+      "patient": "P16",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048175_filtered_contig_annotations_P16_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 6622,
+      "barcode_vdj": 2525,
+      "cellule_CD45": 3170,
+      "T_CD45_non_etichettate": 353,
+      "etichettate": 2109,
+      "etichettate_con_TRB_produttiva": 1932,
+      "etichettate_con_TCR_produttivo": 1970
+    },
+    {
+      "campione": "P18_Post-Tx",
+      "patient": "P18",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048176_filtered_contig_annotations_P18_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 6258,
+      "barcode_vdj": 2258,
+      "cellule_CD45": 3386,
+      "T_CD45_non_etichettate": 290,
+      "etichettate": 2069,
+      "etichettate_con_TRB_produttiva": 1738,
+      "etichettate_con_TCR_produttivo": 1767
+    },
+    {
+      "campione": "P19_Post-Tx",
+      "patient": "P19",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048177_filtered_contig_annotations_P19_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 5387,
+      "barcode_vdj": 2023,
+      "cellule_CD45": 2569,
+      "T_CD45_non_etichettate": 254,
+      "etichettate": 1707,
+      "etichettate_con_TRB_produttiva": 1578,
+      "etichettate_con_TCR_produttivo": 1619
+    },
+    {
+      "campione": "P20_Post-Tx",
+      "patient": "P20",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048178_filtered_contig_annotations_P20_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 9085,
+      "barcode_vdj": 2986,
+      "cellule_CD45": 4069,
+      "T_CD45_non_etichettate": 371,
+      "etichettate": 2690,
+      "etichettate_con_TRB_produttiva": 2397,
+      "etichettate_con_TCR_produttivo": 2409
+    },
+    {
+      "campione": "P21_Post-Tx",
+      "patient": "P21",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048179_filtered_contig_annotations_P21_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 6154,
+      "barcode_vdj": 2282,
+      "cellule_CD45": 3169,
+      "T_CD45_non_etichettate": 179,
+      "etichettate": 2035,
+      "etichettate_con_TRB_produttiva": 1914,
+      "etichettate_con_TCR_produttivo": 1936
+    },
+    {
+      "campione": "P22_Post-Tx",
+      "patient": "P22",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048180_filtered_contig_annotations_P22_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 6216,
+      "barcode_vdj": 2257,
+      "cellule_CD45": 3049,
+      "T_CD45_non_etichettate": 243,
+      "etichettate": 2023,
+      "etichettate_con_TRB_produttiva": 1902,
+      "etichettate_con_TCR_produttivo": 1933
+    },
+    {
+      "campione": "P23_Post-Tx",
+      "patient": "P23",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048181_filtered_contig_annotations_P23_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 5973,
+      "barcode_vdj": 2071,
+      "cellule_CD45": 3009,
+      "T_CD45_non_etichettate": 194,
+      "etichettate": 1698,
+      "etichettate_con_TRB_produttiva": 1571,
+      "etichettate_con_TCR_produttivo": 1604
+    },
+    {
+      "campione": "P24_Post-Tx",
+      "patient": "P24",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048182_filtered_contig_annotations_P24_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 1790,
+      "barcode_vdj": 621,
+      "cellule_CD45": 1369,
+      "T_CD45_non_etichettate": 88,
+      "etichettate": 476,
+      "etichettate_con_TRB_produttiva": 447,
+      "etichettate_con_TCR_produttivo": 451
+    },
+    {
+      "campione": "P25_Post-Tx",
+      "patient": "P25",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048183_filtered_contig_annotations_P25_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 2615,
+      "barcode_vdj": 1001,
+      "cellule_CD45": 1812,
+      "T_CD45_non_etichettate": 203,
+      "etichettate": 716,
+      "etichettate_con_TRB_produttiva": 594,
+      "etichettate_con_TCR_produttivo": 617
+    },
+    {
+      "campione": "P26_Post-Tx",
+      "patient": "P26",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048184_filtered_contig_annotations_P26_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 2993,
+      "barcode_vdj": 1077,
+      "cellule_CD45": 1888,
+      "T_CD45_non_etichettate": 148,
+      "etichettate": 854,
+      "etichettate_con_TRB_produttiva": 756,
+      "etichettate_con_TCR_produttivo": 773
+    },
+    {
+      "campione": "P28_Post-Tx",
+      "patient": "P28",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048186_filtered_contig_annotations_P28_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 6010,
+      "barcode_vdj": 2272,
+      "cellule_CD45": 3190,
+      "T_CD45_non_etichettate": 336,
+      "etichettate": 1953,
+      "etichettate_con_TRB_produttiva": 1790,
+      "etichettate_con_TCR_produttivo": 1822
+    },
+    {
+      "campione": "P29_Post-Tx",
+      "patient": "P29",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048187_filtered_contig_annotations_P29_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 8192,
+      "barcode_vdj": 3177,
+      "cellule_CD45": 4108,
+      "T_CD45_non_etichettate": 201,
+      "etichettate": 2896,
+      "etichettate_con_TRB_produttiva": 2731,
+      "etichettate_con_TCR_produttivo": 2789
+    },
+    {
+      "campione": "P30_Post-Tx",
+      "patient": "P30",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048188_filtered_contig_annotations_P30_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 1983,
+      "barcode_vdj": 785,
+      "cellule_CD45": 2712,
+      "T_CD45_non_etichettate": 80,
+      "etichettate": 693,
+      "etichettate_con_TRB_produttiva": 586,
+      "etichettate_con_TCR_produttivo": 599
+    },
+    {
+      "campione": "P31_Post-Tx",
+      "patient": "P31",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048189_filtered_contig_annotations_P31_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 6537,
+      "barcode_vdj": 2279,
+      "cellule_CD45": 3987,
+      "T_CD45_non_etichettate": 371,
+      "etichettate": 1935,
+      "etichettate_con_TRB_produttiva": 1675,
+      "etichettate_con_TCR_produttivo": 1704
+    },
+    {
+      "campione": "P32_Post-Tx",
+      "patient": "P32",
+      "compartment": "Tumor",
+      "timepoint": "Post-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048190_filtered_contig_annotations_P32_post-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 4275,
+      "barcode_vdj": 1397,
+      "cellule_CD45": 2984,
+      "T_CD45_non_etichettate": 289,
+      "etichettate": 1207,
+      "etichettate_con_TRB_produttiva": 1079,
+      "etichettate_con_TCR_produttivo": 1088
+    },
+    {
+      "campione": "P18_Pre-Tx",
+      "patient": "P18",
+      "compartment": "Tumor",
+      "timepoint": "Pre-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048167_filtered_contig_annotations_P18_pre-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 10505,
+      "barcode_vdj": 3700,
+      "cellule_CD45": 4551,
+      "T_CD45_non_etichettate": 439,
+      "etichettate": 3207,
+      "etichettate_con_TRB_produttiva": 2907,
+      "etichettate_con_TCR_produttivo": 2979
+    },
+    {
+      "campione": "P23_Pre-Tx",
+      "nota": "matrice senza TCR single-cell: escluso"
+    },
+    {
+      "campione": "P24_Pre-Tx",
+      "patient": "P24",
+      "compartment": "Tumor",
+      "timepoint": "Pre-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048168_filtered_contig_annotations_P24_pre-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 4878,
+      "barcode_vdj": 1729,
+      "cellule_CD45": 3497,
+      "T_CD45_non_etichettate": 198,
+      "etichettate": 1418,
+      "etichettate_con_TRB_produttiva": 1311,
+      "etichettate_con_TCR_produttivo": 1332
+    },
+    {
+      "campione": "P29_Pre-Tx",
+      "patient": "P29",
+      "compartment": "Tumor",
+      "timepoint": "Pre-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048170_filtered_contig_annotations_P29_pre-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 5733,
+      "barcode_vdj": 2122,
+      "cellule_CD45": 2739,
+      "T_CD45_non_etichettate": 186,
+      "etichettate": 1983,
+      "etichettate_con_TRB_produttiva": 1871,
+      "etichettate_con_TCR_produttivo": 1899
+    },
+    {
+      "campione": "P32_Pre-Tx",
+      "patient": "P32",
+      "compartment": "Tumor",
+      "timepoint": "Pre-Tx",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/estratti/GSM6048171_filtered_contig_annotations_P32_pre-Tx_TCR_sc_tumor.csv.gz",
+      "righe_vdj": 3854,
+      "barcode_vdj": 1379,
+      "cellule_CD45": 3463,
+      "T_CD45_non_etichettate": 183,
+      "etichettate": 1154,
+      "etichettate_con_TRB_produttiva": 1018,
+      "etichettate_con_TCR_produttivo": 1050
+    },
+    {
+      "campione": "P13_PBMC",
+      "patient": "P13",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P13-P14",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P13_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 8261,
+      "barcode_vdj": 3253,
+      "cellule_CD45": 6746,
+      "cellule_per_prelievo": {
+        "B2": 2800,
+        "B1": 2196,
+        "B3": 1750
+      },
+      "T_CD45_non_etichettate": 221,
+      "etichettate": 3119,
+      "etichettate_con_TRB_produttiva": 2983,
+      "etichettate_con_TCR_produttivo": 3053
+    },
+    {
+      "campione": "P14_PBMC",
+      "patient": "P14",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P13-P14",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P14_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 4573,
+      "barcode_vdj": 1847,
+      "cellule_CD45": 5411,
+      "cellule_per_prelievo": {
+        "B3": 2288,
+        "B2": 1778,
+        "B1": 1345
+      },
+      "T_CD45_non_etichettate": 178,
+      "etichettate": 1726,
+      "etichettate_con_TRB_produttiva": 1658,
+      "etichettate_con_TCR_produttivo": 1678
+    },
+    {
+      "campione": "P15_PBMC",
+      "patient": "P15",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P15-P17",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P15_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 8152,
+      "barcode_vdj": 3463,
+      "cellule_CD45": 6171,
+      "cellule_per_prelievo": {
+        "B2": 2386,
+        "B3": 1920,
+        "B1": 1865
+      },
+      "T_CD45_non_etichettate": 640,
+      "etichettate": 3037,
+      "etichettate_con_TRB_produttiva": 2893,
+      "etichettate_con_TCR_produttivo": 2939
+    },
+    {
+      "campione": "P16_PBMC",
+      "patient": "P16",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P16-P24-P26",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P16_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 2572,
+      "barcode_vdj": 1044,
+      "cellule_CD45": 4386,
+      "cellule_per_prelievo": {
+        "B2": 2261,
+        "B1": 2125
+      },
+      "T_CD45_non_etichettate": 322,
+      "etichettate": 786,
+      "etichettate_con_TRB_produttiva": 731,
+      "etichettate_con_TCR_produttivo": 750
+    },
+    {
+      "campione": "P24_PBMC",
+      "patient": "P24",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P16-P24-P26",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P24_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 3057,
+      "barcode_vdj": 1221,
+      "cellule_CD45": 4591,
+      "cellule_per_prelievo": {
+        "B1": 2428,
+        "B2": 2163
+      },
+      "T_CD45_non_etichettate": 120,
+      "etichettate": 1199,
+      "etichettate_con_TRB_produttiva": 1130,
+      "etichettate_con_TCR_produttivo": 1153
+    },
+    {
+      "campione": "P26_PBMC",
+      "patient": "P26",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P16-P24-P26",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P26_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 2487,
+      "barcode_vdj": 969,
+      "cellule_CD45": 3595,
+      "cellule_per_prelievo": {
+        "B1": 1818,
+        "B2": 1777
+      },
+      "T_CD45_non_etichettate": 71,
+      "etichettate": 914,
+      "etichettate_con_TRB_produttiva": 861,
+      "etichettate_con_TCR_produttivo": 878
+    },
+    {
+      "campione": "P18_PBMC",
+      "patient": "P18",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P18-P29-P30",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P18_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 2102,
+      "barcode_vdj": 916,
+      "cellule_CD45": 1906,
+      "cellule_per_prelievo": {
+        "B1": 1906
+      },
+      "T_CD45_non_etichettate": 163,
+      "etichettate": 869,
+      "etichettate_con_TRB_produttiva": 788,
+      "etichettate_con_TCR_produttivo": 802
+    },
+    {
+      "campione": "P29_PBMC",
+      "patient": "P29",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P18-P29-P30",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P29_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 3343,
+      "barcode_vdj": 1338,
+      "cellule_CD45": 6076,
+      "cellule_per_prelievo": {
+        "B2": 3925,
+        "B1": 2151
+      },
+      "T_CD45_non_etichettate": 144,
+      "etichettate": 1265,
+      "etichettate_con_TRB_produttiva": 1219,
+      "etichettate_con_TCR_produttivo": 1234
+    },
+    {
+      "campione": "P30_PBMC",
+      "patient": "P30",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P18-P29-P30",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P30_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 2052,
+      "barcode_vdj": 820,
+      "cellule_CD45": 3846,
+      "cellule_per_prelievo": {
+        "B1": 2528,
+        "B2": 1318
+      },
+      "T_CD45_non_etichettate": 60,
+      "etichettate": 779,
+      "etichettate_con_TRB_produttiva": 750,
+      "etichettate_con_TCR_produttivo": 761
+    },
+    {
+      "campione": "P19_PBMC",
+      "patient": "P19",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P19-P20",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P19_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 4195,
+      "barcode_vdj": 1683,
+      "cellule_CD45": 5959,
+      "cellule_per_prelievo": {
+        "B3": 2563,
+        "B1": 1778,
+        "B2": 1618
+      },
+      "T_CD45_non_etichettate": 109,
+      "etichettate": 1640,
+      "etichettate_con_TRB_produttiva": 1567,
+      "etichettate_con_TCR_produttivo": 1592
+    },
+    {
+      "campione": "P20_PBMC",
+      "patient": "P20",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P19-P20",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P20_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 5244,
+      "barcode_vdj": 2123,
+      "cellule_CD45": 6634,
+      "cellule_per_prelievo": {
+        "B1": 2371,
+        "B3": 2221,
+        "B2": 2042
+      },
+      "T_CD45_non_etichettate": 136,
+      "etichettate": 2078,
+      "etichettate_con_TRB_produttiva": 1968,
+      "etichettate_con_TCR_produttivo": 2003
+    },
+    {
+      "campione": "P21_PBMC",
+      "patient": "P21",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P21-P25-P28",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P21_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 2223,
+      "barcode_vdj": 932,
+      "cellule_CD45": 3669,
+      "cellule_per_prelievo": {
+        "B3": 2106,
+        "B1": 1563
+      },
+      "T_CD45_non_etichettate": 56,
+      "etichettate": 933,
+      "etichettate_con_TRB_produttiva": 885,
+      "etichettate_con_TCR_produttivo": 893
+    },
+    {
+      "campione": "P25_PBMC",
+      "patient": "P25",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P21-P25-P28",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P25_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 5249,
+      "barcode_vdj": 1998,
+      "cellule_CD45": 5232,
+      "cellule_per_prelievo": {
+        "B1": 3313,
+        "B3": 1919
+      },
+      "T_CD45_non_etichettate": 165,
+      "etichettate": 1887,
+      "etichettate_con_TRB_produttiva": 1825,
+      "etichettate_con_TCR_produttivo": 1860
+    },
+    {
+      "campione": "P28_PBMC",
+      "patient": "P28",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P21-P25-P28",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P28_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 7169,
+      "barcode_vdj": 2763,
+      "cellule_CD45": 5227,
+      "cellule_per_prelievo": {
+        "B2": 2853,
+        "B1": 2374
+      },
+      "T_CD45_non_etichettate": 356,
+      "etichettate": 2556,
+      "etichettate_con_TRB_produttiva": 2435,
+      "etichettate_con_TCR_produttivo": 2469
+    },
+    {
+      "campione": "P22_PBMC",
+      "patient": "P22",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P22-P23",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P22_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 4296,
+      "barcode_vdj": 1747,
+      "cellule_CD45": 5000,
+      "cellule_per_prelievo": {
+        "B1": 2008,
+        "B2": 1579,
+        "B3": 1413
+      },
+      "T_CD45_non_etichettate": 156,
+      "etichettate": 1653,
+      "etichettate_con_TRB_produttiva": 1576,
+      "etichettate_con_TCR_produttivo": 1614
+    },
+    {
+      "campione": "P23_PBMC",
+      "patient": "P23",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P22-P23",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P23_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 6635,
+      "barcode_vdj": 2719,
+      "cellule_CD45": 5905,
+      "cellule_per_prelievo": {
+        "B2": 2608,
+        "B3": 1988,
+        "B1": 1309
+      },
+      "T_CD45_non_etichettate": 353,
+      "etichettate": 2557,
+      "etichettate_con_TRB_produttiva": 2406,
+      "etichettate_con_TCR_produttivo": 2458
+    },
+    {
+      "campione": "P31_PBMC",
+      "patient": "P31",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P31-P32",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P31_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 3846,
+      "barcode_vdj": 1582,
+      "cellule_CD45": 3916,
+      "cellule_per_prelievo": {
+        "B2": 2079,
+        "B1": 1837
+      },
+      "T_CD45_non_etichettate": 333,
+      "etichettate": 1400,
+      "etichettate_con_TRB_produttiva": 1293,
+      "etichettate_con_TCR_produttivo": 1322
+    },
+    {
+      "campione": "P32_PBMC",
+      "patient": "P32",
+      "compartment": "PBMC",
+      "timepoint": "B1-B3",
+      "lane": "P31-P32",
+      "path": "/home/nemo/Uni/PROGETTO_ML/dati_esterni/GSE200996/build/vdj/P32_PBMC_filtered_contig_annotations.csv",
+      "righe_vdj": 3638,
+      "barcode_vdj": 1375,
+      "cellule_CD45": 7112,
+      "cellule_per_prelievo": {
+        "B1": 2663,
+        "B2": 2398,
+        "B3": 2051
+      },
+      "T_CD45_non_etichettate": 199,
+      "etichettate": 1204,
+      "etichettate_con_TRB_produttiva": 1148,
+      "etichettate_con_TCR_produttivo": 1163
+    }
+  ],
+  "uscite": {
+    "principale": {
+      "cellule": 58621,
+      "geni": 36601,
+      "pazienti": [
+        "P13",
+        "P14",
+        "P15",
+        "P16",
+        "P18",
+        "P19",
+        "P20",
+        "P21",
+        "P22",
+        "P23",
+        "P24",
+        "P25",
+        "P26",
+        "P28",
+        "P29",
+        "P30",
+        "P31",
+        "P32"
+      ],
+      "per_compartimento_ed_etichetta": {
+        "PBMC|CD4T": 21000,
+        "PBMC|CD8T": 8602,
+        "Tumor|CD4T": 16563,
+        "Tumor|CD8T": 12456
+      },
+      "file_vdj": 36
+    },
+    "descrittivo": {
+      "cellule": 12299,
+      "geni": 36601,
+      "pazienti": [
+        "P18",
+        "P24",
+        "P29",
+        "P32"
+      ],
+      "per_compartimento_ed_etichetta": {
+        "PBMC|CD4T": 3279,
+        "PBMC|CD8T": 1258,
+        "Tumor|CD4T": 3853,
+        "Tumor|CD8T": 3909
+      },
+      "file_vdj": 8
+    }
+  },
+  "E3_principale": {
+    "PBMC": {
+      "etichettate": 29602,
+      "con_TRB_produttiva": 28116,
+      "con_TCR_produttivo": 28622
+    },
+    "Tumor": {
+      "etichettate": 29019,
+      "con_TRB_produttiva": 26074,
+      "con_TCR_produttivo": 26581
+    }
+  },
+  "pazienti_pre_tx_descrittivo": [
+    "P18",
+    "P24",
+    "P29",
+    "P32"
+  ]
+}

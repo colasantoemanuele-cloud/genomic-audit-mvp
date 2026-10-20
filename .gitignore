@@ -24,3 +24,4 @@ validation_esterna/data/
 
 # validazione esterna del Modulo B: risultati piccoli, da versionare (dati in ../dati_esterni)
 !validation_esterna_B/results/
+!validation_esterna_B/GSE200996/results/

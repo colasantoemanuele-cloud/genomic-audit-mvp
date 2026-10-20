@@ -1,0 +1,952 @@
+{
+  "accessione": "GSE200996",
+  "hashtag": {
+    "corsie_non_selezionate": [
+      "P01-P02",
+      "P04-P05",
+      "P08-P09",
+      "P10-P12",
+      "P13-P14",
+      "P15-P17",
+      "P16-P24-P26",
+      "P18-P29-P30",
+      "P19-P20",
+      "P21-P25-P28",
+      "P22-P23",
+      "P31-P32"
+    ],
+    "campioni_per_corsia": {
+      "P01-P02": [
+        "P01-B1",
+        "P01-B2",
+        "P01-B3",
+        "P02-B1",
+        "P02-B2",
+        "P02-B3"
+      ],
+      "P04-P05": [
+        "P04-B1",
+        "P04-B2",
+        "P04-B3",
+        "P05-B1",
+        "P05-B2",
+        "P05-B3"
+      ],
+      "P08-P09": [
+        "P08-B1",
+        "P08-B2",
+        "P09-B1",
+        "P09-B2",
+        "P09-B3"
+      ],
+      "P10-P12": [
+        "P10-B1",
+        "P10-B2",
+        "P10-B3",
+        "P12-B1",
+        "P12-B2",
+        "P12-B3"
+      ],
+      "P13-P14": [
+        "P13-B1",
+        "P13-B2",
+        "P13-B3",
+        "P14-B1",
+        "P14-B2",
+        "P14-B3"
+      ],
+      "P15-P17": [
+        "P15-B1",
+        "P15-B2",
+        "P15-B3",
+        "P17-B1",
+        "P17-B2",
+        "P17-B3"
+      ],
+      "P16-P24-P26": [
+        "P16-B1",
+        "P16-B2",
+        "P24-B1",
+        "P24-B2",
+        "P26-B1",
+        "P26-B2"
+      ],
+      "P18-P29-P30": [
+        "P18-B1",
+        "P29-B1",
+        "P29-B2",
+        "P30-B1",
+        "P30-B2"
+      ],
+      "P19-P20": [
+        "P19-B1",
+        "P19-B2",
+        "P19-B3",
+        "P20-B1",
+        "P20-B2",
+        "P20-B3"
+      ],
+      "P21-P25-P28": [
+        "P21-B1",
+        "P21-B3",
+        "P25-B1",
+        "P25-B3",
+        "P28-B1",
+        "P28-B2"
+      ],
+      "P22-P23": [
+        "P22-B1",
+        "P22-B2",
+        "P22-B3",
+        "P23-B1",
+        "P23-B2",
+        "P23-B3"
+      ],
+      "P31-P32": [
+        "P31-B1",
+        "P31-B2",
+        "P32-B1",
+        "P32-B2",
+        "P32-B3"
+      ]
+    },
+    "pazienti_in_piu_corsie": [],
+    "corsie_selezionate": [
+      "P13-P19-P26-P32_sorted_B1_CD4",
+      "P13-P19-P26-P32_sorted_B1_CD8",
+      "P13-P19-P26-P32_sorted_B2_CD4",
+      "P13-P19-P26-P32_sorted_B2_CD8"
+    ],
+    "pazienti_nelle_corsie_selezionate": [
+      "P13",
+      "P19",
+      "P26",
+      "P32"
+    ]
+  },
+  "etichette_PBMC": {
+    "cellule_CD45": 145584,
+    "tipi_CD45": {
+      "Myeloid": 60285,
+      "T cell": 53861,
+      "NK cell": 19768,
+      "B cell": 10423,
+      "Cycling": 1247
+    },
+    "CD4": 33446,
+    "CD8": 14207,
+    "in_entrambi": 0,
+    "etichettate_non_in_CD45": 0,
+    "etichettate_per_tipo_CD45": {
+      "T cell": 47060,
+      "Cycling": 458,
+      "NK cell": 135
+    },
+    "T_CD45_senza_etichetta": 6801
+  },
+  "etichette_tumor": {
+    "cellule_CD45": 74557,
+    "tipi_CD45": {
+      "T cell": 45836,
+      "Myeloid": 13208,
+      "B cell": 6689,
+      "NK cell": 4027,
+      "Cycling": 3273,
+      "Mast": 1524
+    },
+    "CD4": 24032,
+    "CD8": 18126,
+    "in_entrambi": 0,
+    "etichettate_non_in_CD45": 0,
+    "etichettate_per_tipo_CD45": {
+      "T cell": 39527,
+      "Cycling": 2232,
+      "NK cell": 294,
+      "B cell": 52,
+      "Myeloid": 50,
+      "Mast": 3
+    },
+    "T_CD45_senza_etichetta": 6309
+  },
+  "coppie_paziente_prelievo_sangue_fuori_chiave": [],
+  "pazienti": {
+    "P01": {
+      "conteggi": {
+        "CD4_PBMC_B1": 431,
+        "CD4_PBMC_B2": 265,
+        "CD4_PBMC_B3": 46,
+        "CD8_PBMC_B1": 163,
+        "CD8_PBMC_B2": 201,
+        "CD8_PBMC_B3": 81
+      },
+      "sangue": {
+        "CD4": 742,
+        "CD8": 445
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P01-P02",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P02": {
+      "conteggi": {
+        "CD4_PBMC_B1": 267,
+        "CD4_PBMC_B2": 266,
+        "CD4_PBMC_B3": 197,
+        "CD8_PBMC_B1": 111,
+        "CD8_PBMC_B2": 142,
+        "CD8_PBMC_B3": 110
+      },
+      "sangue": {
+        "CD4": 730,
+        "CD8": 363
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P01-P02",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P04": {
+      "conteggi": {
+        "CD4_PBMC_B1": 491,
+        "CD4_PBMC_B2": 462,
+        "CD4_PBMC_B3": 772,
+        "CD8_PBMC_B1": 395,
+        "CD8_PBMC_B2": 388,
+        "CD8_PBMC_B3": 545
+      },
+      "sangue": {
+        "CD4": 1725,
+        "CD8": 1328
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P04-P05",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P05": {
+      "conteggi": {
+        "CD4_PBMC_B1": 482,
+        "CD4_PBMC_B2": 495,
+        "CD4_PBMC_B3": 444,
+        "CD8_PBMC_B1": 222,
+        "CD8_PBMC_B2": 225,
+        "CD8_PBMC_B3": 289
+      },
+      "sangue": {
+        "CD4": 1421,
+        "CD8": 736
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P04-P05",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P08": {
+      "conteggi": {
+        "CD4_PBMC_B1": 311,
+        "CD4_PBMC_B2": 317,
+        "CD8_PBMC_B1": 169,
+        "CD8_PBMC_B2": 167
+      },
+      "sangue": {
+        "CD4": 628,
+        "CD8": 336
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P08-P09",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P09": {
+      "conteggi": {
+        "CD4_PBMC_B1": 716,
+        "CD4_PBMC_B2": 694,
+        "CD4_PBMC_B3": 582,
+        "CD8_PBMC_B1": 178,
+        "CD8_PBMC_B2": 129,
+        "CD8_PBMC_B3": 124
+      },
+      "sangue": {
+        "CD4": 1992,
+        "CD8": 431
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P08-P09",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P10": {
+      "conteggi": {
+        "CD4_PBMC_B1": 622,
+        "CD4_PBMC_B2": 358,
+        "CD4_PBMC_B3": 663,
+        "CD8_PBMC_B1": 213,
+        "CD8_PBMC_B2": 130,
+        "CD8_PBMC_B3": 96
+      },
+      "sangue": {
+        "CD4": 1643,
+        "CD8": 439
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P10-P12",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P12": {
+      "conteggi": {
+        "CD4_PBMC_B1": 742,
+        "CD4_PBMC_B2": 781,
+        "CD4_PBMC_B3": 994,
+        "CD8_PBMC_B1": 329,
+        "CD8_PBMC_B2": 409,
+        "CD8_PBMC_B3": 465
+      },
+      "sangue": {
+        "CD4": 2517,
+        "CD8": 1203
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P10-P12",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P13": {
+      "conteggi": {
+        "CD4_PBMC_B1": 704,
+        "CD4_PBMC_B2": 1001,
+        "CD4_PBMC_B3": 557,
+        "CD4_tumor_Post-Tx": 253,
+        "CD8_PBMC_B1": 423,
+        "CD8_PBMC_B2": 273,
+        "CD8_PBMC_B3": 161,
+        "CD8_tumor_Post-Tx": 189
+      },
+      "sangue": {
+        "CD4": 2262,
+        "CD8": 857
+      },
+      "tumore_post": {
+        "CD4": 253,
+        "CD8": 189
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P13-P14",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P14": {
+      "conteggi": {
+        "CD4_PBMC_B1": 289,
+        "CD4_PBMC_B2": 363,
+        "CD4_PBMC_B3": 593,
+        "CD4_tumor_Post-Tx": 677,
+        "CD8_PBMC_B1": 132,
+        "CD8_PBMC_B2": 157,
+        "CD8_PBMC_B3": 192,
+        "CD8_tumor_Post-Tx": 485
+      },
+      "sangue": {
+        "CD4": 1245,
+        "CD8": 481
+      },
+      "tumore_post": {
+        "CD4": 677,
+        "CD8": 485
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P13-P14",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P15": {
+      "conteggi": {
+        "CD4_PBMC_B1": 551,
+        "CD4_PBMC_B2": 758,
+        "CD4_PBMC_B3": 756,
+        "CD4_tumor_Post-Tx": 1276,
+        "CD8_PBMC_B1": 330,
+        "CD8_PBMC_B2": 347,
+        "CD8_PBMC_B3": 295,
+        "CD8_tumor_Post-Tx": 1078
+      },
+      "sangue": {
+        "CD4": 2065,
+        "CD8": 972
+      },
+      "tumore_post": {
+        "CD4": 1276,
+        "CD8": 1078
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P15-P17",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P16": {
+      "conteggi": {
+        "CD4_PBMC_B1": 208,
+        "CD4_PBMC_B2": 290,
+        "CD4_tumor_Post-Tx": 1120,
+        "CD8_PBMC_B1": 150,
+        "CD8_PBMC_B2": 138,
+        "CD8_tumor_Post-Tx": 989
+      },
+      "sangue": {
+        "CD4": 498,
+        "CD8": 288
+      },
+      "tumore_post": {
+        "CD4": 1120,
+        "CD8": 989
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P16-P24-P26",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P17": {
+      "conteggi": {
+        "CD4_PBMC_B1": 302,
+        "CD4_PBMC_B2": 279,
+        "CD4_PBMC_B3": 467,
+        "CD8_PBMC_B1": 103,
+        "CD8_PBMC_B2": 92,
+        "CD8_PBMC_B3": 129
+      },
+      "sangue": {
+        "CD4": 1048,
+        "CD8": 324
+      },
+      "tumore_post": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P15-P17",
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P18": {
+      "conteggi": {
+        "CD4_PBMC_B1": 377,
+        "CD4_tumor_Post-Tx": 737,
+        "CD4_tumor_Pre-Tx": 1353,
+        "CD8_PBMC_B1": 492,
+        "CD8_tumor_Post-Tx": 1332,
+        "CD8_tumor_Pre-Tx": 1854
+      },
+      "sangue": {
+        "CD4": 377,
+        "CD8": 492
+      },
+      "tumore_post": {
+        "CD4": 737,
+        "CD8": 1332
+      },
+      "tumore_pre": {
+        "CD4": 1353,
+        "CD8": 1854
+      },
+      "corsia_sangue": "P18-P29-P30",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P19": {
+      "conteggi": {
+        "CD4_PBMC_B1": 425,
+        "CD4_PBMC_B2": 389,
+        "CD4_PBMC_B3": 627,
+        "CD4_tumor_Post-Tx": 1270,
+        "CD8_PBMC_B1": 60,
+        "CD8_PBMC_B2": 51,
+        "CD8_PBMC_B3": 88,
+        "CD8_tumor_Post-Tx": 437
+      },
+      "sangue": {
+        "CD4": 1441,
+        "CD8": 199
+      },
+      "tumore_post": {
+        "CD4": 1270,
+        "CD8": 437
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P19-P20",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P20": {
+      "conteggi": {
+        "CD4_PBMC_B1": 694,
+        "CD4_PBMC_B2": 475,
+        "CD4_PBMC_B3": 513,
+        "CD4_tumor_Post-Tx": 1212,
+        "CD8_PBMC_B1": 165,
+        "CD8_PBMC_B2": 82,
+        "CD8_PBMC_B3": 149,
+        "CD8_tumor_Post-Tx": 1478
+      },
+      "sangue": {
+        "CD4": 1682,
+        "CD8": 396
+      },
+      "tumore_post": {
+        "CD4": 1212,
+        "CD8": 1478
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P19-P20",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P21": {
+      "conteggi": {
+        "CD4_PBMC_B1": 393,
+        "CD4_PBMC_B3": 298,
+        "CD4_tumor_Post-Tx": 1103,
+        "CD8_PBMC_B1": 88,
+        "CD8_PBMC_B3": 154,
+        "CD8_tumor_Post-Tx": 932
+      },
+      "sangue": {
+        "CD4": 691,
+        "CD8": 242
+      },
+      "tumore_post": {
+        "CD4": 1103,
+        "CD8": 932
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P21-P25-P28",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P22": {
+      "conteggi": {
+        "CD4_PBMC_B1": 466,
+        "CD4_PBMC_B2": 430,
+        "CD4_PBMC_B3": 471,
+        "CD4_tumor_Post-Tx": 1278,
+        "CD8_PBMC_B1": 102,
+        "CD8_PBMC_B2": 81,
+        "CD8_PBMC_B3": 103,
+        "CD8_tumor_Post-Tx": 745
+      },
+      "sangue": {
+        "CD4": 1367,
+        "CD8": 286
+      },
+      "tumore_post": {
+        "CD4": 1278,
+        "CD8": 745
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P22-P23",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P23": {
+      "conteggi": {
+        "CD4_PBMC_B1": 454,
+        "CD4_PBMC_B2": 625,
+        "CD4_PBMC_B3": 647,
+        "CD4_tumor_Post-Tx": 1128,
+        "CD4_tumor_Pre-Tx": 1724,
+        "CD8_PBMC_B1": 183,
+        "CD8_PBMC_B2": 317,
+        "CD8_PBMC_B3": 331,
+        "CD8_tumor_Post-Tx": 570,
+        "CD8_tumor_Pre-Tx": 566
+      },
+      "sangue": {
+        "CD4": 1726,
+        "CD8": 831
+      },
+      "tumore_post": {
+        "CD4": 1128,
+        "CD8": 570
+      },
+      "tumore_pre": {
+        "CD4": 1724,
+        "CD8": 566
+      },
+      "corsia_sangue": "P22-P23",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P24": {
+      "conteggi": {
+        "CD4_PBMC_B1": 567,
+        "CD4_PBMC_B2": 354,
+        "CD4_tumor_Post-Tx": 316,
+        "CD4_tumor_Pre-Tx": 971,
+        "CD8_PBMC_B1": 132,
+        "CD8_PBMC_B2": 146,
+        "CD8_tumor_Post-Tx": 160,
+        "CD8_tumor_Pre-Tx": 447
+      },
+      "sangue": {
+        "CD4": 921,
+        "CD8": 278
+      },
+      "tumore_post": {
+        "CD4": 316,
+        "CD8": 160
+      },
+      "tumore_pre": {
+        "CD4": 971,
+        "CD8": 447
+      },
+      "corsia_sangue": "P16-P24-P26",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P25": {
+      "conteggi": {
+        "CD4_PBMC_B1": 910,
+        "CD4_PBMC_B3": 510,
+        "CD4_tumor_Post-Tx": 497,
+        "CD8_PBMC_B1": 327,
+        "CD8_PBMC_B3": 140,
+        "CD8_tumor_Post-Tx": 219
+      },
+      "sangue": {
+        "CD4": 1420,
+        "CD8": 467
+      },
+      "tumore_post": {
+        "CD4": 497,
+        "CD8": 219
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P21-P25-P28",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P26": {
+      "conteggi": {
+        "CD4_PBMC_B1": 601,
+        "CD4_PBMC_B2": 176,
+        "CD4_tumor_Post-Tx": 432,
+        "CD8_PBMC_B1": 63,
+        "CD8_PBMC_B2": 74,
+        "CD8_tumor_Post-Tx": 422
+      },
+      "sangue": {
+        "CD4": 777,
+        "CD8": 137
+      },
+      "tumore_post": {
+        "CD4": 432,
+        "CD8": 422
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P16-P24-P26",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P27": {
+      "conteggi": {
+        "CD4_tumor_Post-Tx": 851,
+        "CD4_tumor_Pre-Tx": 1041,
+        "CD8_tumor_Post-Tx": 640,
+        "CD8_tumor_Pre-Tx": 555
+      },
+      "sangue": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "tumore_post": {
+        "CD4": 851,
+        "CD8": 640
+      },
+      "tumore_pre": {
+        "CD4": 1041,
+        "CD8": 555
+      },
+      "corsia_sangue": null,
+      "e1_metadati": false,
+      "e5_cd4_e_cd8_nel_sangue": false
+    },
+    "P28": {
+      "conteggi": {
+        "CD4_PBMC_B1": 480,
+        "CD4_PBMC_B2": 552,
+        "CD4_tumor_Post-Tx": 1142,
+        "CD8_PBMC_B1": 734,
+        "CD8_PBMC_B2": 790,
+        "CD8_tumor_Post-Tx": 811
+      },
+      "sangue": {
+        "CD4": 1032,
+        "CD8": 1524
+      },
+      "tumore_post": {
+        "CD4": 1142,
+        "CD8": 811
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P21-P25-P28",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P29": {
+      "conteggi": {
+        "CD4_PBMC_B1": 457,
+        "CD4_PBMC_B2": 596,
+        "CD4_tumor_Post-Tx": 2274,
+        "CD4_tumor_Pre-Tx": 688,
+        "CD8_PBMC_B1": 73,
+        "CD8_PBMC_B2": 139,
+        "CD8_tumor_Post-Tx": 622,
+        "CD8_tumor_Pre-Tx": 1295
+      },
+      "sangue": {
+        "CD4": 1053,
+        "CD8": 212
+      },
+      "tumore_post": {
+        "CD4": 2274,
+        "CD8": 622
+      },
+      "tumore_pre": {
+        "CD4": 688,
+        "CD8": 1295
+      },
+      "corsia_sangue": "P18-P29-P30",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P30": {
+      "conteggi": {
+        "CD4_PBMC_B1": 370,
+        "CD4_PBMC_B2": 245,
+        "CD4_tumor_Post-Tx": 419,
+        "CD8_PBMC_B1": 94,
+        "CD8_PBMC_B2": 70,
+        "CD8_tumor_Post-Tx": 274
+      },
+      "sangue": {
+        "CD4": 615,
+        "CD8": 164
+      },
+      "tumore_post": {
+        "CD4": 419,
+        "CD8": 274
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P18-P29-P30",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P31": {
+      "conteggi": {
+        "CD4_PBMC_B1": 404,
+        "CD4_PBMC_B2": 496,
+        "CD4_tumor_Post-Tx": 635,
+        "CD8_PBMC_B1": 220,
+        "CD8_PBMC_B2": 280,
+        "CD8_tumor_Post-Tx": 1300
+      },
+      "sangue": {
+        "CD4": 900,
+        "CD8": 500
+      },
+      "tumore_post": {
+        "CD4": 635,
+        "CD8": 1300
+      },
+      "tumore_pre": {
+        "CD4": 0,
+        "CD8": 0
+      },
+      "corsia_sangue": "P31-P32",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    },
+    "P32": {
+      "conteggi": {
+        "CD4_PBMC_B1": 392,
+        "CD4_PBMC_B2": 413,
+        "CD4_PBMC_B3": 123,
+        "CD4_tumor_Post-Tx": 794,
+        "CD4_tumor_Pre-Tx": 841,
+        "CD8_PBMC_B1": 59,
+        "CD8_PBMC_B2": 166,
+        "CD8_PBMC_B3": 51,
+        "CD8_tumor_Post-Tx": 413,
+        "CD8_tumor_Pre-Tx": 313
+      },
+      "sangue": {
+        "CD4": 928,
+        "CD8": 276
+      },
+      "tumore_post": {
+        "CD4": 794,
+        "CD8": 413
+      },
+      "tumore_pre": {
+        "CD4": 841,
+        "CD8": 313
+      },
+      "corsia_sangue": "P31-P32",
+      "e1_metadati": true,
+      "e5_cd4_e_cd8_nel_sangue": true
+    }
+  },
+  "E1_hashtag": {
+    "pazienti": [
+      "P13",
+      "P14",
+      "P15",
+      "P16",
+      "P18",
+      "P19",
+      "P20",
+      "P21",
+      "P22",
+      "P23",
+      "P24",
+      "P25",
+      "P26",
+      "P28",
+      "P29",
+      "P30",
+      "P31",
+      "P32"
+    ],
+    "n": 18,
+    "richiesti": 5,
+    "soddisfatta": true
+  },
+  "E2": {
+    "soddisfatta": true
+  },
+  "E5": {
+    "pazienti_eleggibili_con_CD4_e_CD8_nel_sangue": [
+      "P13",
+      "P14",
+      "P15",
+      "P16",
+      "P18",
+      "P19",
+      "P20",
+      "P21",
+      "P22",
+      "P23",
+      "P24",
+      "P25",
+      "P26",
+      "P28",
+      "P29",
+      "P30",
+      "P31",
+      "P32"
+    ],
+    "soddisfatta": true
+  },
+  "pazienti_con_tumore_pre": [
+    "P18",
+    "P23",
+    "P24",
+    "P29",
+    "P32"
+  ]
+}
