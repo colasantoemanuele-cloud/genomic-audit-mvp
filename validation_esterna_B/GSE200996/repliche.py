@@ -137,7 +137,7 @@ def main(h5ad: Path, manifest: Path, marker_path: Path) -> None:
         rng = np.random.default_rng(seed)
         perm = cells.copy()
         perm["compartment"] = perm.groupby(["patient", "clone_id"], observed=True)["compartment"].transform(
-            lambda s: s.values[rng.permutation(len(s))])
+            lambda s: s.values[rng.permutation(len(s))])  # noqa: B023 (eseguita subito, nella stessa iterazione)
         ex = excess(perm)
         w = ex["weighted"]
         be3.append({"seme": seed, **ex, "contiene_zero": bool(w["sufficient"] and w["ci_low"] <= 0 <= w["ci_high"])})
@@ -193,7 +193,7 @@ def main(h5ad: Path, manifest: Path, marker_path: Path) -> None:
     dirs = dirs.merge(maj, on=["patient", "clone"])
     descr = {"unita_per_identita": {str(k): int(v) for k, v in base_units.merge(ident, on=["patient", "clone"])
                                     .groupby("reference_identity").size().items()},
-             "errori_per_direzione": {f"{a}->{m_}": int(n) for (a, m_), n in dirs.groupby(["reference_identity", "maggioranza"]).size().items()},
+             "errori_per_direzione": {f"{a}->{m_}": int(n) for (a, m_), n in dirs.groupby(["reference_identity", "maggioranza"]).size().items()},  # noqa: E501
              "errori_per_paziente": {str(k): int(v) for k, v in dirs.groupby("patient").size().items()},
              "cloni_con_riferimento": int(len(ident)), "cellule_con_trb": int(len(cells))}
 
@@ -203,7 +203,7 @@ def main(h5ad: Path, manifest: Path, marker_path: Path) -> None:
     (HERE / "results" / "BE2_strumento.json").write_text(json.dumps(strumento, indent=2) + "\n")
     print("controllo:", eq)
     print("B-E3:", be3_sum)
-    print("B-E4:", {k: v for k, v in be4.items() if k != "dosi"}, [(d["unita_iniettate"], d["aumento_errori"], d["eccesso_pesi_uguali_prima"], d["eccesso_pesi_uguali_dopo"]) for d in be4["dosi"]])
+    print("B-E4:", {k: v for k, v in be4.items() if k != "dosi"}, [(d["unita_iniettate"], d["aumento_errori"], d["eccesso_pesi_uguali_prima"], d["eccesso_pesi_uguali_dopo"]) for d in be4["dosi"]])  # noqa: E501
     print("B-E6:", be6["differenze"], "superato", be6["superato"])
     print("descrittivi:", descr, f"{out['secondi']} s")
 

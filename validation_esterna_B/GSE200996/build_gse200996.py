@@ -180,7 +180,8 @@ def main(meta_dir: Path, raw_dir: Path, out_dir: Path) -> None:
             ap = allc[allc.patient == p]
             vdj_rows.append({"campione": f"{p}_PBMC", "patient": p, "compartment": "PBMC", "timepoint": "B1-B3",
                              "lane": lane, "path": str(path), "righe_vdj": len(vp), "barcode_vdj": int(vp["barcode"].nunique()),
-                             "cellule_CD45": len(ap), "cellule_per_prelievo": {k: int(n) for k, n in ap["timepoint"].value_counts().items()},
+                             "cellule_CD45": len(ap),
+                             "cellule_per_prelievo": {k: int(n) for k, n in ap["timepoint"].value_counts().items()},
                              "T_CD45_non_etichettate": int(((ap["CellType_ID"] == "T cell") & ~ap.index.isin(labelled.index)).sum()),
                              "etichettate": len(mp),
                              "etichettate_con_TRB_produttiva": int(mp["barcode"].isin(productive_cells(vp, "TRB")).sum()),
@@ -211,7 +212,7 @@ def main(meta_dir: Path, raw_dir: Path, out_dir: Path) -> None:
 
     per_comp = {}
     for comp in ("PBMC", "Tumor"):
-        sub = vr[(vr.compartment == comp) & ((vr.timepoint != "Pre-Tx"))]
+        sub = vr[(vr.compartment == comp) & (vr.timepoint != "Pre-Tx")]
         per_comp[comp] = {"etichettate": int(sub["etichettate"].sum()),
                           "con_TRB_produttiva": int(sub["etichettate_con_TRB_produttiva"].sum()),
                           "con_TCR_produttivo": int(sub["etichettate_con_TCR_produttivo"].sum())}

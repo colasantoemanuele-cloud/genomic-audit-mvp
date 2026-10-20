@@ -1,3 +1,4 @@
+# ruff: noqa: I001, B007 -- file dell'implementazione indipendente, lasciato com'era scritto (solo stile)
 """Implementazione indipendente di alcune statistiche del Modulo B.
 
 Scritta partendo solo da docs/METODI.md, sezioni 1-4, senza consultare il codice dello strumento.

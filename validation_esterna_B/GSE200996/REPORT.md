@@ -157,4 +157,177 @@ pazienti ({'PBMC|CD4T': 21000, 'PBMC|CD8T': 8602, 'Tumor|CD4T': 16563, 'Tumor|CD
 P18, P24, P29, P32 (tumore prima della terapia con matrice e TCR single-cell; P23 ha la matrice ma non il TCR ed è
 escluso; P27 ha il tumore ma non il sangue).
 
-**Eleggibilità: E1-E5 soddisfatte.** Questa versione del report è scritta prima di eseguire il Modulo B; i criteri B-E1…B-E6 seguono nelle sezioni successive dopo l'esecuzione.
+## 2. Criteri × esito (esecuzione finale, dopo la correzione del margine)
+
+| Criterio | Esito | Numeri misurati |
+|---|---|---|
+| B-E1 esecuzione | **superato** | `audit-sc tcr --h5ad GSE200996_principale.h5ad --vdj-manifest manifest_principale.csv --patient-col patient --compartment-col compartment --celltype-col label --barcode-col barcode --marker-map marcatori.json --reference-compartment PBMC`: exit 0, report HTML scritto; 0:46.73 reali, 1,14 GB di memoria massima (`/usr/bin/time -v`); barcode VDJ con TRB ritrovati: 84,3% |
+| B-E2 implementazione indipendente | **superato** | conteggi identici; stime puntuali: differenza massima 1.7e-18 (tolleranza 1e-9); estremi: 3.5e-18 (tolleranza 1e-6); gradi di libertà: 0.0e+00 |
+| B-E3 controllo negativo | **superato** | 20 permutazioni (semi 0-19): eccesso pesato medio +0,00004 (banda [−0,01; +0,01]; da −0,0040 a +0,0051); intervallo con lo zero in 20/20 (≥ 18) |
+| B-E4 controllo positivo | **non valutabile** | unità clone-tumore con identità CD4 e maggioranza corretta: 3, meno delle 20 richieste; delle 114 unità nel tumore, 110 hanno identità CD8 e 4 CD4 |
+| B-E5 riferimento proteico | **non valutabile su questo dataset** | nessuna proteina di superficie per cellula: nelle matrici del sangue le sole feature non geniche sono i 7 hashtag TotalSeq-C; nel tumore nessuna; rimandato alla voce 2 della roadmap |
+| B-E6 sensibilità | **superato** | differenza massima dal default 0,0031 (soglia 0,05); nessun intervallo sotto 5 pazienti; tabella sotto |
+
+**Controllo dello script delle repliche.** Sui dati originali lo script unico (tabella costruita una
+volta, funzioni pubbliche del modulo) dà gli stessi numeri di `run_tcr_validation`, la funzione
+chiamata da `cli.py`, con uguaglianza esatta (eccesso_pesato, eccesso_pesi_uguali, coppie, tasso_clone, pareggi),
+e coincide con l'output della riga di comando di B-E1 arrotondato a 3 decimali (tasso per clone:
+sì; eccesso: sì).
+Tempo dello script (25 analisi): 596 s nella prima esecuzione, 1348 s
+nella seconda, in parallelo con la suite completa dei test.
+
+### B-E2 in dettaglio
+
+`indipendente.py` è stato scritto da un sottoagente che ha letto solo `docs/METODI.md` §1-4 e non
+importa nulla da `core/`; legge da sé h5ad, manifest e file VDJ (scelta del contig, clone,
+positività ai marcatori, identità di riferimento, unità, eccesso, intervalli CR2 con gradi di
+libertà di Bell-McCaffrey). Le assunzioni che ha dovuto fare dove METODI.md tace sono elencate nel
+suo JSON (`results/BE2_indipendente.json`, campo `assunzioni`); nessuna ha prodotto una differenza
+su questi dati, quindi nessuna correzione di METODI.md è richiesta dal criterio. Due erano
+potenzialmente rilevanti: il filtro `full_length` dei contig (lo strumento lo applica, METODI non lo
+dice; qui non cambia nessun numero) e il confronto con il margine 0,20 (sezione 5).
+
+| Grandezza | Strumento | Indipendente |
+|---|---|---|
+| `clone_tumor.n_units` | 114 | 114 |
+| `clone_tumor.n_ties` | 0 | 0 |
+| `clone_tumor.n_errors` | 1 | 1 |
+| `clone_tumor.n_patients` | 16 | 16 |
+| `clone_tumor.rate.n_groups` | 16 | 16 |
+| `clone_tumor.rate.n_obs` | 114 | 114 |
+| `excess_PBMC_Tumor.n_pairs` | 198 | 198 |
+| `excess_PBMC_Tumor.n_patients` | 18 | 18 |
+| `excess_PBMC_Tumor.weighted.n_groups` | 18 | 18 |
+| `excess_PBMC_Tumor.equal.n_groups` | 18 | 18 |
+| `clone_tumor.rate.mean` | 0.008771929824561403 | 0.008771929824561403 |
+| `excess_PBMC_Tumor.weighted.mean` | 0.014776250952296337 | 0.014776250952296338 |
+| `excess_PBMC_Tumor.equal.mean` | 0.014982140799000371 | 0.014982140799000369 |
+| `clone_tumor.rate.ci_low` | 0.00071906627052457776 | 0.00071906627052457776 |
+| `clone_tumor.rate.ci_high` | 0.09815118259909579 | 0.09815118259909579 |
+| `excess_PBMC_Tumor.weighted.ci_low` | -0.00036124911545377079 | -0.00036124911545376732 |
+| `excess_PBMC_Tumor.weighted.ci_high` | 0.029913751020046446 | 0.029913751020046446 |
+| `excess_PBMC_Tumor.equal.ci_low` | -0.00054586202673905654 | -0.00054586202673905654 |
+| `excess_PBMC_Tumor.equal.ci_high` | 0.030510143624739798 | 0.030510143624739795 |
+
+### B-E3 per replica (eccesso pesato sangue-tumore)
+
+0: +0,0041; 1: +0,0021; 2: −0,0003; 3: −0,0039; 4: −0,0028; 5: +0,0029; 6: −0,0002; 7: +0,0018; 8: −0,0040; 9: −0,0035; 10: −0,0002; 11: +0,0050; 12: −0,0038; 13: −0,0021; 14: +0,0001; 15: +0,0049; 16: −0,0003; 17: −0,0029; 18: +0,0051; 19: −0,0011;
+
+### B-E6
+
+| Variante | Pazienti | Unità | Pareggi | Unità in errore | Tasso per clone nel tumore [IC95%] | Differenza dal default |
+|---|---|---|---|---|---|---|
+| TRB, pareggi esclusi (default) | 16 | 114 | 0 | 1 | 0,009 [0,001; 0,098] | +0,0000 |
+| TRA+TRB, pareggi esclusi | 14 | 84 | 0 | 1 | 0,012 [0,001; 0,144] | +0,0031 |
+| TRB, pareggi = errore | 16 | 114 | 0 | 1 | 0,009 [0,001; 0,098] | +0,0000 |
+| TRB, pareggi = corretti | 16 | 114 | 0 | 1 | 0,009 [0,001; 0,098] | +0,0000 |
+
+Nessuna unità in pareggio: le varianti «pareggi = errore» e «pareggi = corretti» coincidono per
+costruzione con il default. Variante TRA+TRB: 48.963 cellule con entrambe le
+catene su 54.190 con TRB.
+
+## 3. Prima e dopo la correzione
+
+La correzione del margine (sezione 5) è stata fatta dopo una prima esecuzione completa con il codice
+0.9.0 (risultati in `results/prima_della_correzione/`, commit `be4d239`). Esito prima della
+correzione: B-E1 superato (stesso output della CLI), B-E2
+superato (differenza massima delle stime 1.7e-18),
+B-E3 superato, B-E4 non valutabile
+(3 candidate), B-E6 superato.
+Dopo la correzione i numeri sono identici: output della CLI identico,
+analisi descrittiva identica, script delle repliche
+strumento_BE2 identico, BE3 identico, BE4 identico, BE6 identico, descrittivi identico. Nessun clone di
+GSE200996 ha un margine esattamente pari a 0,20.
+
+## 4. Risultati descrittivi (non sono criteri)
+
+**Tumore dopo la terapia** (18 pazienti nell'h5ad principale):
+- tasso d'errore per clone (convenzione della tesi): 0,009 [0,001; 0,098], 114 unità da
+  16 pazienti, 1 unità in errore, nessun pareggio;
+- tasso d'errore per cellula: 0,006 [0,001; 0,033],
+  1234 cellule da 18 pazienti;
+- eccesso di discordanza sangue-tumore: pesato +0,015 [−0,000; +0,030], a pesi uguali
+  +0,015 [−0,001; +0,031], su 198 coppie clone-compartimenti da 18 pazienti
+  (l'intervallo include lo zero di poco);
+- direzione degli errori (identità → etichetta di maggioranza nel tumore): CD4→CD8: 1; per paziente:
+  P31 (1); nessun errore CD8→CD4;
+- cloni con identità di riferimento: 394; cellule con TRB abbinata:
+  54.190; flag per cellula valutabili: 2,1% delle cellule.
+
+**Tumore prima della terapia** (h5ad descrittivo, `audit-sc tcr` eseguito una volta: exit 0;
+barcode VDJ ritrovati 84,3%): 4 pazienti, quindi nessun intervallo. Tasso per
+clone 0,000 su 21 unità (pareggi: 0); per cellula
+0,000 su 175 cellule; eccesso non riportato dallo strumento con
+meno di 5 pazienti.
+
+**Come leggere questi numeri.** Il tasso d'errore è molto più basso di quello della tesi su
+GSE278694 (0,170 per clone nel tumore), ma il confronto non è alla pari, per tre ragioni (le prime due
+scritte in `MAPPA_ETICHETTE.md` prima dell'esecuzione): (1) gli autori hanno tolto dalle etichette CD4 le cellule
+con CD8A/CD8B rilevati e dalle CD8 quelle con CD4 rilevato, cioè hanno già ripulito le etichette con
+gli stessi geni che il Modulo B usa per l'identità di riferimento; (2) le etichette vengono da un
+trasferimento da un riferimento CITE-seq con soglia di predizione, non da cluster; (3) i metadati
+contengono solo cellule T CD4/CD8: gli errori verso NK della tesi qui non possono comparire, e il
+confronto con la tesi riguarda solo CD4↔CD8. Inoltre quasi tutte le unità giudicate nel tumore
+appartengono a cloni CD8 (i cloni CD4 con almeno 3 cellule nel sangue e 3 nel tumore sono rari), e
+per questo il controllo positivo B-E4 non è valutabile.
+
+## 5. Difetti trovati e correzioni
+
+**Difetto dello strumento: margine 0,20 confrontato in virgola mobile** (corretto nel commit
+`8b8e761`). METODI §4 dice: identità = etichetta con la frazione più alta «se il margine sulla
+seconda è almeno 0,20». `assign_reference_identity` confrontava `best - second < 0.20` in virgola
+mobile: un margine esattamente 0,20 era rifiutato in alcuni casi (3/5 contro 2/5 = 0,19999999999999996;
+7/10 contro 5/10; 3/10 contro 1/10; 6/10 contro 4/10) e accettato in altri (1/5 contro 0/5; 4/10
+contro 2/10; 8/10 contro 6/10). L'ha fatto emergere `indipendente.py`, che confronta in aritmetica
+esatta e aveva elencato il punto fra le sue assunzioni; verificato direttamente sulla funzione dello
+strumento. La tesi (pdac-ml, `src/10_loco.py`, `abs(f8 - f4) < MIN_MARGIN`) ha lo stesso confronto,
+quindi lo strumento la riproduceva anche in questo. Correzione: confronto con tolleranza 1e-9 (un
+margine diverso da 0,20 ne dista almeno 1/(5n) per un clone di n cellule). Test di regressione
+`tests/test_reference_margin.py`: fallisce sul codice precedente (5 casi su 8 con margine
+esattamente 0,20), passa dopo. Effetto: nessuno su GSE200996 (sezione 3) e nessuno su GSE278694
+(`tests/test_real_data_gse278694.py` passa con gli stessi numeri: 0,1697 su 277 unità).
+
+**Difetti degli script di validazione** (non dello strumento), corretti prima di eseguire il modulo:
+- nella prima versione di `build_gse200996.py` i percorsi del manifest erano relativi alla cartella
+  di lavoro, mentre la guida (e `read_vdj_manifest`) li legge rispetto alla cartella del manifest:
+  resi assoluti;
+- `GSE200996_series_matrix.txt.gz` non esiste (404): la serie ha una series matrix per piattaforma.
+
+**Lacune di METODI.md senza effetto sui numeri** (dalle assunzioni di `indipendente.py`): i filtri
+dei contig (`is_cell`, `high_confidence`, `productive`, `full_length`), la regola di abbinamento dei
+barcode e del suffisso `-1`, il trattamento delle cellule senza TRB e il quantile t con gradi di
+libertà non interi non sono descritti. Il criterio B-E2 chiede di correggere METODI.md solo quando
+una lacuna produce una differenza; qui non l'ha prodotta, e METODI.md non è stato modificato.
+
+## 6. Verdetto con i criteri originali
+
+**Validazione tecnica esterna superata nei criteri valutabili: B-E1, B-E2, B-E3 e B-E6 superati
+(4 su 4); B-E4 non valutabile (3 unità candidate, ne servono 20); B-E5 non valutabile (nessuna
+proteina di superficie).** Nessun criterio è stato modificato dopo aver visto i dati: non c'è una
+sezione «Criteri modificati dopo aver visto i dati». Esito identico prima e dopo la correzione del
+margine.
+
+## 7. Che cosa questa validazione dimostra e che cosa no
+
+Dimostra, su dati di un altro laboratorio (Dana-Farber, 10x 5′, sangue demultiplato con hashtag):
+- che il Modulo B si esegue con i soli comandi e input della guida (B-E1), su 18 pazienti e circa
+  59.000 cellule in meno di un minuto;
+- che i suoi calcoli coincidono con un'implementazione scritta solo da METODI.md §1-4 (B-E2), e che
+  quell'implementazione ha trovato un difetto vero, piccolo e ora corretto;
+- che non segnala un eccesso di discordanza quando il legame fra clone e compartimento è rotto
+  (controllo negativo, B-E3);
+- che il tasso d'errore per clone è stabile alla definizione del clone (TRB o TRA+TRB) e alla regola
+  dei pareggi (B-E6), qui senza pareggi.
+
+Non dimostra:
+- che il modulo rilevi errori iniettati su dati reali: B-E4 non è valutabile su GSE200996 (la
+  sensibilità resta provata solo sui dati sintetici dei test);
+- che le etichette segnalate come errate lo siano davvero: serve un riferimento proteico (B-E5,
+  voce 2 della roadmap);
+- che il tasso d'errore basso di GSE200996 descriva la qualità di un'annotazione qualsiasi: le
+  etichette degli autori erano già state ripulite con gli stessi geni marcatori usati dal modulo.
+
+## 8. Test
+
+Codice cambiato (`core/tcr_validation.py`): suite completa su un clone pulito del branch
+(`uv sync --extra dev`, dati di GSE278694 con `GSE278694_DIR`). Esito: 206 superati, 0 falliti, 7 fallimenti attesi (xfail strict, gli stessi della 0.9.0), nessun test saltato (inclusi i test su GSE278694), in 27 min 40 s con 6 processi (commit 8b8e761).

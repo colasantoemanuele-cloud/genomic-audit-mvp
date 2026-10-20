@@ -4,9 +4,9 @@
 > su singoli pazienti.**
 
 **Versione 0.9.0 — prototipo per studio pilota.** È pensato per essere provato su uno studio
-pilota da chi sa leggerne i limiti, non per l'uso corrente: il Modulo B non ha ancora una
-validazione esterna su dati reali diversi da quelli su cui è nato, e lo strumento non è stato
-provato da utenti esterni. Che cosa manca per la 1.0 è in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+pilota da chi sa leggerne i limiti, non per l'uso corrente: il Modulo B ha solo una validazione
+tecnica esterna (senza riferimento proteico né controllo positivo su dati reali), e lo strumento
+non è stato provato da utenti esterni. Che cosa manca per la 1.0 è in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## In breve
 
@@ -133,9 +133,11 @@ dopo aver visto i risultati, **PRONTO**. Il testo dei criteri prima e dopo, i mo
 di ogni dataset con entrambe le versioni sono in
 [`validation_esterna/REPORT.md`](validation_esterna/REPORT.md).
 
-**Il Modulo B è stato eseguito su dati reali in un solo dataset (GSE278694), quello su cui è
-nato: la validazione tecnica esterna prevista su GSE139555 non è eseguibile, perché solo 4
-pazienti hanno il sangue e ne servono 5 ([`validation_esterna_B/REPORT.md`](validation_esterna_B/REPORT.md)); la frazione di CD8 è sperimentale e disponibile solo da riga di comando.**
+**Il Modulo B ha una validazione tecnica esterna su GSE200996 (18 pazienti, altro laboratorio):
+esecuzione, implementazione indipendente, controllo negativo e sensibilità superati; controllo
+positivo e riferimento proteico non valutabili
+([`validation_esterna_B/GSE200996/REPORT.md`](validation_esterna_B/GSE200996/REPORT.md);
+GSE139555 non era eleggibile); la frazione di CD8 è sperimentale e disponibile solo da riga di comando.**
 
 ## Cosa fa
 
