@@ -3,7 +3,7 @@
 > **Strumento per la ricerca. Non è un dispositivo medico e non va usato per decisioni cliniche
 > su singoli pazienti.**
 
-**Versione 0.9.0 — prototipo per studio pilota.** È pensato per essere provato su uno studio
+**Versione 0.9.1 — prototipo per studio pilota.** È pensato per essere provato su uno studio
 pilota da chi sa leggerne i limiti, non per l'uso corrente: il Modulo B ha solo una validazione
 tecnica esterna (senza riferimento proteico né controllo positivo su dati reali), e lo strumento
 non è stato provato da utenti esterni. Che cosa manca per la 1.0 è in [`docs/ROADMAP.md`](docs/ROADMAP.md).

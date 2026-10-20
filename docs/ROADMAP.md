@@ -1,6 +1,6 @@
 # Roadmap verso la versione 1.0
 
-La versione 0.9.0 è un **prototipo per studio pilota**. Le voci qui sotto erano previste per la
+La versione 0.9.1 è un **prototipo per studio pilota**. Le voci qui sotto erano previste per la
 1.0 (Fase 4 della revisione) e sono **rimandate, non eseguite**. Le stime sono di lavoro effettivo
 su una workstation come quella usata per la revisione (i tempi di calcolo sono indicati a parte
 quando dominano).
