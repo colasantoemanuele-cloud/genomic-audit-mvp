@@ -1,0 +1,5 @@
+controllo: {'eccesso_pesato': True, 'eccesso_pesi_uguali': True, 'coppie': True, 'tasso_clone': True, 'pareggi': True, 'cli_tasso_clone_arrotondato': True, 'cli_eccesso_arrotondato': True}
+B-E3: {'media': 3.6954400087979286e-05, 'min': -0.003995027662020784, 'max': 0.0051023675237781025, 'contiene_zero': 20, 'superato': True}
+B-E4: {'candidate': 3, 'valutabile': False} []
+B-E6: {'TRB, pareggi esclusi (default)': 0.0, 'TRA+TRB, pareggi esclusi': 0.003132832080200501, 'TRB, pareggi = errore': 0.0, 'TRB, pareggi = corretti': 0.0} superato True
+descrittivi: {'unita_per_identita': {'CD4T': 4, 'CD8T': 110}, 'errori_per_direzione': {'CD4T->CD8T': 1}, 'errori_per_paziente': {'P31': 1}, 'cloni_con_riferimento': 394, 'cellule_con_trb': 54190} 1347.9 s

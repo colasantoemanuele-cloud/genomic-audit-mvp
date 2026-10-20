@@ -1,0 +1,70 @@
+{
+  "clone_tumor": {
+    "n_units": 114,
+    "n_ties": 0,
+    "n_errors": 1,
+    "n_patients": 16,
+    "rate": {
+      "mean": 0.008771929824561403,
+      "df": 6.376705749354266,
+      "se": 0.0090451704491927,
+      "ci_low": 0.0007190662705245778,
+      "ci_high": 0.09815118259909579,
+      "n_groups": 16,
+      "n_obs": 114
+    }
+  },
+  "excess_PBMC_Tumor": {
+    "n_pairs": 198,
+    "n_patients": 18,
+    "weighted": {
+      "mean": 0.014776250952296338,
+      "df": 7.793480487510651,
+      "se": 0.006534123729823971,
+      "ci_low": -0.0003612491154537673,
+      "ci_high": 0.029913751020046446,
+      "n_groups": 18,
+      "n_obs": 198
+    },
+    "equal": {
+      "mean": 0.014982140799000369,
+      "df": 7.793480487510651,
+      "se": 0.006702684808345504,
+      "ci_low": -0.0005458620267390565,
+      "ci_high": 0.030510143624739795,
+      "n_groups": 18,
+      "n_obs": 198
+    }
+  },
+  "n_cells_with_trb": 54190,
+  "n_reference_clones": 394,
+  "assunzioni": [
+    "Filtri sui contig: METODI non dice quali contig usare. Tengo solo le righe con chain == 'TRB', is_cell vero (se la colonna esiste), high_confidence vero, productive vero e cdr3_nt non vuota e diversa da 'None'. Non filtro su full_length. I valori booleani sono letti come veri solo se il testo è 'true' (senza distinzione di maiuscole); 'None' o vuoto valgono falso.",
+    "Ordine filtri/scelta: la regola di scelta del contig (più UMI, poi più reads, poi CDR3 minore) è applicata DOPO i filtri, solo fra i contig TRB rimasti; METODI non dice se i filtri precedano la scelta.",
+    "Nella regola di scelta del contig, 'la CDR3 minore in ordine alfabetico' è intesa come la cdr3_nt (nucleotidica), coerente con la definizione del clone; METODI non dice se sia la CDR3 aminoacidica o nucleotidica. UMI e reads sono le colonne 'umis' e 'reads', convertite in numero (valori non numerici = 0). L'ordine alfabetico è quello dei codici carattere (Python).",
+    "Il clone è definito dalla sola cdr3_nt della TRB scelta; la TRA è ignorata e cellule senza TRA sono incluse. METODI non dice se cellule con TRB ma senza TRA, o con più TRB, siano escluse.",
+    "Il clone è definito entro paziente: la stessa cdr3_nt in due pazienti dà due cloni distinti (METODI §3 dice 'per ogni paziente, clone T', non lo dice esplicitamente per §4).",
+    "Le cellule dell'AnnData senza TRB valida (nessun contig che passi i filtri, o barcode assente dai file VDJ, o coppia paziente-compartimento assente dal manifest) sono escluse da tutto il Modulo B. I contig VDJ senza cellula corrispondente nell'AnnData sono ignorati.",
+    "Abbinamento dei barcode: METODI non lo descrive. Una cellula è la terna (patient, compartment, barcode); da entrambi i lati tolgo spazi e un eventuale suffisso finale '-<cifre>' (es. '-1'), e confronto le stringhe esattamente (maiuscole incluse). patient e compartment devono coincidere come stringhe fra AnnData e manifest.",
+    "Terne (patient, compartment, barcode normalizzato) duplicate nell'AnnData o coppie paziente-compartimento ripetute nel manifest: errore bloccante, non una scelta silenziosa.",
+    "Cellule con etichetta mancante (NaN o stringa vuota) nell'AnnData: escluse dalle convenzioni per clone e dall'eccesso di discordanza, ma incluse nel calcolo dell'identità di riferimento, che usa solo l'espressione. METODI non tratta le etichette mancanti.",
+    "Identità di riferimento: le cellule del clone nel compartimento di riferimento sono contate tutte, qualunque sia la loro etichetta (anche fuori mappa); METODI non dice se le cellule con etichetta fuori mappa entrino nel denominatore.",
+    "Positività per un'etichetta con più marcatori (es. CD8T: CD8A, CD8B): una cellula è positiva se almeno uno dei geni ha conta > 0 (regola OR). METODI dice solo 'conta > 0' e non dice come combinare più geni.",
+    "La positività non è esclusiva (senza --clone-marker-priority): una cellula positiva a CD4 e a CD8 conta per entrambe le etichette; una cellula negativa a tutto resta nel denominatore. La frazione di positivi è (cellule positive) / (tutte le cellule del clone nel riferimento).",
+    "Geni marcatori assenti da var_names: ignorati (contano come zero); se nessun gene di un'etichetta è presente il calcolo si interrompe. Se un simbolo compare più volte in var_names vale l'OR su tutte le colonne con quel nome. Nessun controllo che X sia davvero intera: si usa X così com'è con il test > 0.",
+    "Il margine 0,20 fra prima e seconda frazione è confrontato in aritmetica esatta: 5·(pos_1 − pos_2) ≥ n. In virgola mobile, per esempio 0,6 − 0,4 = 0,19999999999999996 < 0,20, cioè un clone 3/5 contro 2/5 perderebbe il riferimento; METODI non specifica la precisione del confronto. Con una sola etichetta in mappa la seconda frazione vale 0. Se le prime due frazioni sono uguali il margine è 0 e il clone non ha riferimento.",
+    "Etichette candidate per l'identità: solo le chiavi della mappa dei marcatori.",
+    "Convenzione per clone: la soglia di 3 cellule della coppia clone-compartimento è contata sulle cellule con TRB valida ed etichetta non mancante; tutte le etichette osservate entrano nel conteggio della maggioranza (etichette fuori mappa ammesse: tutte, come il default di METODI); una maggioranza fuori mappa conta come errore. Unità solo per i cloni con riferimento.",
+    "clone_tumor.n_patients = pazienti con almeno un'unità che entra nel tasso (uguale a rate.n_groups); i pazienti con soli pareggi esclusi non sono contati. METODI non definisce il conteggio dei pazienti accanto al tasso.",
+    "Con tie-rule error/correct i pareggi entrano nel tasso (1 o 0) e sono comunque riportati in n_ties; n_errors include i pareggi contati come errore.",
+    "Eccesso di discordanza: calcolato per tutti i cloni con almeno 2 cellule per lato, con o senza identità di riferimento (METODI §3 non richiede il riferimento). Le etichette k sono tutte le etichette osservate, anche fuori mappa. Il conteggio per lato usa le cellule con TRB valida ed etichetta non mancante.",
+    "excess.n_patients = pazienti con almeno una coppia clone-compartimenti; n_pairs = numero di coppie (= n_obs di entrambi gli intervalli).",
+    "Quantile t con gradi di libertà non interi: scipy.stats.t.ppf(0.975, ν) con ν reale, senza arrotondare; METODI non dice se ν vada arrotondato.",
+    "G = numero di pazienti con almeno un'osservazione; con G < 5 l'intervallo non è prodotto e df, se, ci_low, ci_high sono null, mentre mean, n_groups e n_obs sono riportati. Senza osservazioni anche mean è null.",
+    "Quando l'intervallo non è prodotto (G < 5, θ̂ = 0 o 1, variabilità nulla) riporto null anche per df e se, benché calcolabili; METODI non dice cosa riportare.",
+    "'Variabilità nulla fra pazienti' (solo per i tassi) è intesa come: tutte le medie per paziente uguali a θ̂ entro 1e-12, cioè V̂ = 0. Per l'eccesso di discordanza METODI non prevede questo caso: con V̂ = 0 l'intervallo prodotto è degenere [θ̂, θ̂] con se = 0.",
+    "Per i tassi il campo 'se' è l'errore standard sulla scala originale, √V̂; l'errore standard sulla scala logit, √V̂ / (θ̂(1−θ̂)), è usato solo per costruire l'intervallo, poi riportato con la funzione logistica. METODI non dice quale dei due esporre.",
+    "tr(M²) è calcolata come somma dei quadrati degli elementi di M (M è simmetrica).",
+    "n_cells_with_trb = cellule dell'AnnData (tutti i compartimenti, tutte le etichette, anche mancanti) a cui è stata assegnata una TRB valida. n_reference_clones = cloni (paziente, cdr3_nt) con identità di riferimento definita (non solo con almeno 3 cellule)."
+  ]
+}

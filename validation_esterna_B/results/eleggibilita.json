@@ -1,0 +1,610 @@
+{
+  "accessione": "GSE139555",
+  "file_letti": [
+    "filelist.txt",
+    "GSE139555_series_matrix.txt.gz",
+    "GSE139555_tcell_metadata.txt.gz"
+  ],
+  "n_campioni": 32,
+  "n_pazienti": 14,
+  "campioni_per_regione": {
+    "Tumor": 14,
+    "Normal adjacent tissue": 14,
+    "Blood": 4
+  },
+  "campioni": [
+    {
+      "gsm": "GSM4143655",
+      "title": "LT1",
+      "patient": "Lung1",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143656",
+      "title": "LN1",
+      "patient": "Lung1",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143657",
+      "title": "LT2",
+      "patient": "Lung2",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143658",
+      "title": "LN2",
+      "patient": "Lung2",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143659",
+      "title": "LT3",
+      "patient": "Lung3",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143660",
+      "title": "LN3",
+      "patient": "Lung3",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143661",
+      "title": "LT4",
+      "patient": "Lung4",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143662",
+      "title": "LN4",
+      "patient": "Lung4",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143663",
+      "title": "LT5",
+      "patient": "Lung5",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143664",
+      "title": "LN5",
+      "patient": "Lung5",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143665",
+      "title": "LT6",
+      "patient": "Lung6",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143666",
+      "title": "LN6",
+      "patient": "Lung6",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143667",
+      "title": "LB6",
+      "patient": "Lung6",
+      "region": "Blood",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143668",
+      "title": "ET1",
+      "patient": "Endo1",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143669",
+      "title": "EN1",
+      "patient": "Endo1",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143670",
+      "title": "ET2",
+      "patient": "Endo2",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143671",
+      "title": "EN2",
+      "patient": "Endo2",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143672",
+      "title": "ET3",
+      "patient": "Endo3",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143673",
+      "title": "EN3",
+      "patient": "Endo3",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143674",
+      "title": "CT1",
+      "patient": "Colon1",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143675",
+      "title": "CN1",
+      "patient": "Colon1",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143676",
+      "title": "CT2",
+      "patient": "Colon2",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143677",
+      "title": "CN2",
+      "patient": "Colon2",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143678",
+      "title": "RT1",
+      "patient": "Renal1",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143679",
+      "title": "RN1",
+      "patient": "Renal1",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143680",
+      "title": "RB1",
+      "patient": "Renal1",
+      "region": "Blood",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143681",
+      "title": "RT2",
+      "patient": "Renal2",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143682",
+      "title": "RN2",
+      "patient": "Renal2",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143683",
+      "title": "RB2",
+      "patient": "Renal2",
+      "region": "Blood",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143684",
+      "title": "RT3",
+      "patient": "Renal3",
+      "region": "Tumor",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143685",
+      "title": "RN3",
+      "patient": "Renal3",
+      "region": "Normal adjacent tissue",
+      "matrice": true,
+      "vdj_filtrato": true
+    },
+    {
+      "gsm": "GSM4143686",
+      "title": "RB3",
+      "patient": "Renal3",
+      "region": "Blood",
+      "matrice": true,
+      "vdj_filtrato": true
+    }
+  ],
+  "pazienti": {
+    "Lung1": {
+      "regioni": {
+        "Tumor": {
+          "campione": "LT1",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "LN1",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 5944,
+        "Tumor": 7335
+      }
+    },
+    "Lung2": {
+      "regioni": {
+        "Tumor": {
+          "campione": "LT2",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "LN2",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 7105,
+        "Tumor": 8486
+      }
+    },
+    "Lung3": {
+      "regioni": {
+        "Tumor": {
+          "campione": "LT3",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "LN3",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 11594,
+        "Tumor": 6698
+      }
+    },
+    "Lung4": {
+      "regioni": {
+        "Tumor": {
+          "campione": "LT4",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "LN4",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 6120,
+        "Tumor": 8992
+      }
+    },
+    "Lung5": {
+      "regioni": {
+        "Tumor": {
+          "campione": "LT5",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "LN5",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 3765,
+        "Tumor": 2901
+      }
+    },
+    "Lung6": {
+      "regioni": {
+        "Tumor": {
+          "campione": "LT6",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "LN6",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Blood": {
+          "campione": "LB6",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": true,
+      "tumore_completo": true,
+      "e1": true,
+      "cellule_T_metadati": {
+        "Blood": 4154,
+        "NAT": 7211,
+        "Tumor": 3809
+      }
+    },
+    "Endo1": {
+      "regioni": {
+        "Tumor": {
+          "campione": "ET1",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "EN1",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 7278,
+        "Tumor": 10670
+      }
+    },
+    "Endo2": {
+      "regioni": {
+        "Tumor": {
+          "campione": "ET2",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "EN2",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 1718,
+        "Tumor": 7425
+      }
+    },
+    "Endo3": {
+      "regioni": {
+        "Tumor": {
+          "campione": "ET3",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "EN3",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 355,
+        "Tumor": 5228
+      }
+    },
+    "Colon1": {
+      "regioni": {
+        "Tumor": {
+          "campione": "CT1",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "CN1",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 1651,
+        "Tumor": 2422
+      }
+    },
+    "Colon2": {
+      "regioni": {
+        "Tumor": {
+          "campione": "CT2",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "CN2",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": false,
+      "tumore_completo": true,
+      "e1": false,
+      "cellule_T_metadati": {
+        "NAT": 153,
+        "Tumor": 642
+      }
+    },
+    "Renal1": {
+      "regioni": {
+        "Tumor": {
+          "campione": "RT1",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "RN1",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Blood": {
+          "campione": "RB1",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": true,
+      "tumore_completo": true,
+      "e1": true,
+      "cellule_T_metadati": {
+        "Blood": 1216,
+        "NAT": 2698,
+        "Tumor": 2362
+      }
+    },
+    "Renal2": {
+      "regioni": {
+        "Tumor": {
+          "campione": "RT2",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "RN2",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Blood": {
+          "campione": "RB2",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": true,
+      "tumore_completo": true,
+      "e1": true,
+      "cellule_T_metadati": {
+        "Blood": 1653,
+        "NAT": 4270,
+        "Tumor": 2799
+      }
+    },
+    "Renal3": {
+      "regioni": {
+        "Tumor": {
+          "campione": "RT3",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Normal adjacent tissue": {
+          "campione": "RN3",
+          "matrice": true,
+          "vdj_filtrato": true
+        },
+        "Blood": {
+          "campione": "RB3",
+          "matrice": true,
+          "vdj_filtrato": true
+        }
+      },
+      "sangue_completo": true,
+      "tumore_completo": true,
+      "e1": true,
+      "cellule_T_metadati": {
+        "Blood": 2051,
+        "NAT": 1610,
+        "Tumor": 1308
+      }
+    }
+  },
+  "E1": {
+    "richiesti": 5,
+    "pazienti_eleggibili": [
+      "Lung6",
+      "Renal1",
+      "Renal2",
+      "Renal3"
+    ],
+    "n": 4,
+    "soddisfatta": false
+  },
+  "pazienti_con_sangue_nei_metadati": [
+    "Lung6",
+    "Renal1",
+    "Renal2",
+    "Renal3"
+  ]
+}

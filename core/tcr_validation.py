@@ -54,6 +54,9 @@ MIN_CELLS_DEFAULT = 2
 MIN_PATIENTS_FOR_CI_DEFAULT = 5
 MIN_CELLS_MARKER_DEFAULT = 3
 MIN_MARGIN_DEFAULT = 0.20
+# Tolleranza del confronto con il margine: le frazioni sono rapporti k/n, e un margine diverso da
+# min_margin ne dista almeno 1/(5n), molto più di 1e-9 per ogni numero realistico di cellule.
+_MARGIN_TOL = 1e-9
 
 # Pareggi dell'etichetta di maggioranza nella convenzione "per clone" (stessa regola di
 # pdac-ml, 10_loco.py): l'unità è esclusa ("exclude", default); come sensibilità può essere
@@ -418,7 +421,9 @@ def assign_reference_identity(
         ranked = sorted(fracs.items(), key=lambda kv: kv[1], reverse=True)
         best_label, best_frac = ranked[0]
         second_frac = ranked[1][1] if len(ranked) > 1 else 0.0
-        if best_frac - second_frac < min_margin:
+        # margine "almeno min_margin" con tolleranza: in virgola mobile 3/5 - 2/5 = 0.19999...
+        # e un margine esattamente 0,20 verrebbe rifiutato o accettato secondo l'arrotondamento
+        if best_frac - second_frac < min_margin - _MARGIN_TOL:
             continue
         rows.append({patient_col: pat, clone_col: clone, "reference_identity": best_label,
                      "n_ref_cells": len(g)})

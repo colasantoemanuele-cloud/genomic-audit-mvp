@@ -4,9 +4,9 @@
 > su singoli pazienti.**
 
 **Versione 0.9.0 — prototipo per studio pilota.** È pensato per essere provato su uno studio
-pilota da chi sa leggerne i limiti, non per l'uso corrente: il Modulo B non ha ancora una
-validazione esterna su dati reali diversi da quelli su cui è nato, e lo strumento non è stato
-provato da utenti esterni. Che cosa manca per la 1.0 è in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+pilota da chi sa leggerne i limiti, non per l'uso corrente: il Modulo B ha solo una validazione
+tecnica esterna (senza riferimento proteico né controllo positivo su dati reali), e lo strumento
+non è stato provato da utenti esterni. Che cosa manca per la 1.0 è in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## In breve
 
@@ -133,8 +133,11 @@ dopo aver visto i risultati, **PRONTO**. Il testo dei criteri prima e dopo, i mo
 di ogni dataset con entrambe le versioni sono in
 [`validation_esterna/REPORT.md`](validation_esterna/REPORT.md).
 
-**Il Modulo B è stato eseguito su dati reali in un solo dataset (GSE278694), quello su cui è
-nato; la frazione di CD8 è sperimentale e disponibile solo da riga di comando.**
+**Il Modulo B ha una validazione tecnica esterna su GSE200996 (18 pazienti, altro laboratorio):
+esecuzione, implementazione indipendente, controllo negativo e sensibilità superati; controllo
+positivo e riferimento proteico non valutabili
+([`validation_esterna_B/GSE200996/REPORT.md`](validation_esterna_B/GSE200996/REPORT.md);
+GSE139555 non era eleggibile); la frazione di CD8 è sperimentale e disponibile solo da riga di comando.**
 
 ## Cosa fa
 
@@ -248,12 +251,17 @@ doppietti) due misure fisiche stimano fra le cellule NK con TCR una maggioranza 
 su tutti i tessuti insieme, ma non nel tumore, con intervalli larghi e copertura non verificata:
 una parte degli «errori» NK può essere fatta di doppietti, non di errori di annotazione.
 
-**Modulo B — un solo dataset reale.** Su GSE278694 la riproduzione dei numeri della tesi verifica
-la fedeltà del porting, non la correttezza del metodo. Gli intervalli con 4 pazienti calcolati come
-nella tesi (per esempio la differenza Tumor − Adjacent_normal, +0,059 [0,000; 0,141] su 85 cloni,
-`validation/results/a1_moduleB.json`, passo S5) sono riportati negli output di verifica solo per
-confronto: lo strumento li rifiuta, e con 4 pazienti il bootstrap ha solo 35 ricampionamenti
-distinti.
+**Modulo B — validazione tecnica su due dataset reali.** Su GSE278694 la riproduzione dei numeri
+della tesi verifica la fedeltà del porting, non la correttezza del metodo. Gli intervalli con 4
+pazienti calcolati come nella tesi (per esempio la differenza Tumor − Adjacent_normal, +0,059
+[0,000; 0,141] su 85 cloni, `validation/results/a1_moduleB.json`, passo S5) sono riportati negli
+output di verifica solo per confronto: lo strumento li rifiuta, e con 4 pazienti il bootstrap ha
+solo 35 ricampionamenti distinti. Su GSE200996 (carcinoma squamoso del cavo orale, 18 pazienti,
+altro laboratorio) la validazione tecnica esterna verifica esecuzione, ricalcolo indipendente,
+controllo negativo e sensibilità
+([`validation_esterna_B/GSE200996/REPORT.md`](validation_esterna_B/GSE200996/REPORT.md)). Nessuno
+dei due dataset verifica la correttezza del metodo: il controllo positivo su dati reali e il
+riferimento proteico restano da fare.
 
 **Modulo A.** La deviazione standard fra 5 fold non è una stima valida dell'incertezza: il loro
 rapporto è descrittivo. Il divario include tutto ciò che distingue i pazienti (su GSE125449 anche

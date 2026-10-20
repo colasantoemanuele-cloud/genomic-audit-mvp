@@ -1,0 +1,23 @@
+PBMC {'cellule_CD45': 145584, 'tipi_CD45': {'Myeloid': 60285, 'T cell': 53861, 'NK cell': 19768, 'B cell': 10423, 'Cycling': 1247}, 'CD4': 33446, 'CD8': 14207, 'in_entrambi': 0, 'etichettate_non_in_CD45': 0, 'etichettate_per_tipo_CD45': {'T cell': 47060, 'Cycling': 458, 'NK cell': 135}, 'T_CD45_senza_etichetta': 6801}
+tumor {'cellule_CD45': 74557, 'tipi_CD45': {'T cell': 45836, 'Myeloid': 13208, 'B cell': 6689, 'NK cell': 4027, 'Cycling': 3273, 'Mast': 1524}, 'CD4': 24032, 'CD8': 18126, 'in_entrambi': 0, 'etichettate_non_in_CD45': 0, 'etichettate_per_tipo_CD45': {'T cell': 39527, 'Cycling': 2232, 'NK cell': 294, 'B cell': 52, 'Myeloid': 50, 'Mast': 3}, 'T_CD45_senza_etichetta': 6309}
+hashtag: {'corsie_non_selezionate': ['P01-P02', 'P04-P05', 'P08-P09', 'P10-P12', 'P13-P14', 'P15-P17', 'P16-P24-P26', 'P18-P29-P30', 'P19-P20', 'P21-P25-P28', 'P22-P23', 'P31-P32'], 'pazienti_in_piu_corsie': [], 'corsie_selezionate': ['P13-P19-P26-P32_sorted_B1_CD4', 'P13-P19-P26-P32_sorted_B1_CD8', 'P13-P19-P26-P32_sorted_B2_CD4', 'P13-P19-P26-P32_sorted_B2_CD8'], 'pazienti_nelle_corsie_selezionate': ['P13', 'P19', 'P26', 'P32']}
+coppie paziente-prelievo del sangue fuori chiave: []
+  P13 corsia P13-P14: sangue {'CD4': 2262, 'CD8': 857}, tumore post {'CD4': 253, 'CD8': 189}, pre {'CD4': 0, 'CD8': 0}
+  P14 corsia P13-P14: sangue {'CD4': 1245, 'CD8': 481}, tumore post {'CD4': 677, 'CD8': 485}, pre {'CD4': 0, 'CD8': 0}
+  P15 corsia P15-P17: sangue {'CD4': 2065, 'CD8': 972}, tumore post {'CD4': 1276, 'CD8': 1078}, pre {'CD4': 0, 'CD8': 0}
+  P16 corsia P16-P24-P26: sangue {'CD4': 498, 'CD8': 288}, tumore post {'CD4': 1120, 'CD8': 989}, pre {'CD4': 0, 'CD8': 0}
+  P18 corsia P18-P29-P30: sangue {'CD4': 377, 'CD8': 492}, tumore post {'CD4': 737, 'CD8': 1332}, pre {'CD4': 1353, 'CD8': 1854}
+  P19 corsia P19-P20: sangue {'CD4': 1441, 'CD8': 199}, tumore post {'CD4': 1270, 'CD8': 437}, pre {'CD4': 0, 'CD8': 0}
+  P20 corsia P19-P20: sangue {'CD4': 1682, 'CD8': 396}, tumore post {'CD4': 1212, 'CD8': 1478}, pre {'CD4': 0, 'CD8': 0}
+  P21 corsia P21-P25-P28: sangue {'CD4': 691, 'CD8': 242}, tumore post {'CD4': 1103, 'CD8': 932}, pre {'CD4': 0, 'CD8': 0}
+  P22 corsia P22-P23: sangue {'CD4': 1367, 'CD8': 286}, tumore post {'CD4': 1278, 'CD8': 745}, pre {'CD4': 0, 'CD8': 0}
+  P23 corsia P22-P23: sangue {'CD4': 1726, 'CD8': 831}, tumore post {'CD4': 1128, 'CD8': 570}, pre {'CD4': 1724, 'CD8': 566}
+  P24 corsia P16-P24-P26: sangue {'CD4': 921, 'CD8': 278}, tumore post {'CD4': 316, 'CD8': 160}, pre {'CD4': 971, 'CD8': 447}
+  P25 corsia P21-P25-P28: sangue {'CD4': 1420, 'CD8': 467}, tumore post {'CD4': 497, 'CD8': 219}, pre {'CD4': 0, 'CD8': 0}
+  P26 corsia P16-P24-P26: sangue {'CD4': 777, 'CD8': 137}, tumore post {'CD4': 432, 'CD8': 422}, pre {'CD4': 0, 'CD8': 0}
+  P28 corsia P21-P25-P28: sangue {'CD4': 1032, 'CD8': 1524}, tumore post {'CD4': 1142, 'CD8': 811}, pre {'CD4': 0, 'CD8': 0}
+  P29 corsia P18-P29-P30: sangue {'CD4': 1053, 'CD8': 212}, tumore post {'CD4': 2274, 'CD8': 622}, pre {'CD4': 688, 'CD8': 1295}
+  P30 corsia P18-P29-P30: sangue {'CD4': 615, 'CD8': 164}, tumore post {'CD4': 419, 'CD8': 274}, pre {'CD4': 0, 'CD8': 0}
+  P31 corsia P31-P32: sangue {'CD4': 900, 'CD8': 500}, tumore post {'CD4': 635, 'CD8': 1300}, pre {'CD4': 0, 'CD8': 0}
+  P32 corsia P31-P32: sangue {'CD4': 928, 'CD8': 276}, tumore post {'CD4': 794, 'CD8': 413}, pre {'CD4': 841, 'CD8': 313}
+E1 (parte hashtag): 18 pazienti; E2: True; E5: True; tumore pre-terapia per ['P18', 'P23', 'P24', 'P29', 'P32']

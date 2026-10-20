@@ -109,6 +109,15 @@ quello della tesi; la sola unità in più (PA12, tumore) è un pareggio
 
 Intervalli: sezione 2, su scala logit. Calibrazione: scenari «cellula» e «clone» della sezione 2.
 
+**Limiti delle sezioni 3-4 su dati reali.** Le formule sono calibrate su dati simulati (sezione 2),
+e su dati reali il Modulo B è stato eseguito su GSE278694 (il dataset su cui è nato: verifica di
+fedeltà) e su GSE200996 (validazione tecnica esterna: un'implementazione scritta solo da queste
+sezioni dà gli stessi conteggi e le stesse stime, entro 1e-15; controllo negativo e sensibilità
+superati; `validation_esterna_B/GSE200996/REPORT.md`). Il controllo positivo con errori iniettati
+non è stato valutabile su dati reali (su GSE200996 le unità con identità CD4 erano 3), e nessun
+riferimento proteico indipendente dai trascritti è stato ancora usato per verificare le etichette
+segnalate come errate. GSE139555 non era eleggibile (`validation_esterna_B/REPORT.md`).
+
 ## 5. Modulo A
 
 **Schemi.** Split per paziente: `StratifiedGroupKFold` a min(5, pazienti) fold, con shuffle e seme

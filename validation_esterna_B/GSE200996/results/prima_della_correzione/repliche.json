@@ -1,0 +1,684 @@
+{
+  "controllo_su_dati_originali": {
+    "eccesso_pesato": true,
+    "eccesso_pesi_uguali": true,
+    "coppie": true,
+    "tasso_clone": true,
+    "pareggi": true,
+    "cli_tasso_clone_arrotondato": true,
+    "cli_eccesso_arrotondato": true
+  },
+  "strumento_BE2": {
+    "clone_tumor": {
+      "n_units": 114,
+      "n_ties": 0,
+      "n_errors": 1,
+      "n_patients": 16,
+      "rate": {
+        "mean": 0.008771929824561403,
+        "ci_low": 0.0007190662705245778,
+        "ci_high": 0.09815118259909579,
+        "df": 6.376705749354266,
+        "n_groups": 16,
+        "n_obs": 114,
+        "sufficient": true,
+        "reason": ""
+      }
+    },
+    "excess_PBMC_Tumor": {
+      "n_pairs": 198,
+      "n_patients": 18,
+      "weighted": {
+        "mean": 0.014776250952296337,
+        "ci_low": -0.0003612491154537708,
+        "ci_high": 0.029913751020046446,
+        "df": 7.793480487510651,
+        "n_groups": 18,
+        "n_obs": 198,
+        "sufficient": true,
+        "reason": ""
+      },
+      "equal": {
+        "mean": 0.01498214079900037,
+        "ci_low": -0.0005458620267390565,
+        "ci_high": 0.030510143624739798,
+        "df": 7.793480487510651,
+        "n_groups": 18,
+        "n_obs": 198,
+        "sufficient": true,
+        "reason": ""
+      }
+    },
+    "n_cells_with_trb": 54190,
+    "n_reference_clones": 394
+  },
+  "BE3": {
+    "repliche": [
+      {
+        "seme": 0,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.0040885344338264665,
+          "ci_low": -0.007696805144468446,
+          "ci_high": 0.01587387401212138,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.005356521988655037,
+          "ci_low": -0.006833509458936544,
+          "ci_high": 0.017546553436246618,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 1,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.0021041311922084366,
+          "ci_low": -0.003321607254302314,
+          "ci_high": 0.007529869638719187,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.002994386030542951,
+          "ci_low": -0.0024379221319218323,
+          "ci_high": 0.008426694193007733,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 2,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0002913239583170796,
+          "ci_low": -0.005578087699402116,
+          "ci_high": 0.004995439782767956,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.001262341102420686,
+          "ci_low": -0.003158069158802428,
+          "ci_high": 0.0056827513636438,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 3,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0039204962780021,
+          "ci_low": -0.009693432618273129,
+          "ci_high": 0.001852440062268929,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.0016486348226663079,
+          "ci_low": -0.0064767286166984555,
+          "ci_high": 0.00317945897136584,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 4,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0028406265076196297,
+          "ci_low": -0.007786013251821563,
+          "ci_high": 0.0021047602365823035,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.002561612721533139,
+          "ci_low": -0.006677990477566963,
+          "ci_high": 0.0015547650345006862,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 5,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.0028884465087528656,
+          "ci_low": -0.0026997879757786874,
+          "ci_high": 0.008476680993284419,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.0027971511117677187,
+          "ci_low": -0.0027832881090359496,
+          "ci_high": 0.008377590332571388,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 6,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0001673212528972484,
+          "ci_low": -0.005490982394712767,
+          "ci_high": 0.005156339888918271,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.0012598358489622602,
+          "ci_low": -0.0031609827526657814,
+          "ci_high": 0.0056806544505903014,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 7,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.0017674308555080999,
+          "ci_low": -0.0029028135761453785,
+          "ci_high": 0.006437675287161578,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.00037293340909032877,
+          "ci_low": -0.004439981437249701,
+          "ci_high": 0.005185848255430359,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 8,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.003995027662020784,
+          "ci_low": -0.008870583017285672,
+          "ci_high": 0.0008805276932441052,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.0021046622645826815,
+          "ci_low": -0.006836703391985792,
+          "ci_high": 0.0026273788628204293,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 9,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0035276792185183737,
+          "ci_low": -0.00760653739282368,
+          "ci_high": 0.0005511789557869321,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.0016486348226663072,
+          "ci_low": -0.0064767286166984555,
+          "ci_high": 0.0031794589713658415,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 10,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.00022681936756021334,
+          "ci_low": -0.0051289199906580174,
+          "ci_high": 0.00467528125553759,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.004355950139216005,
+          "ci_low": -0.00897466803149795,
+          "ci_high": 0.00026276775306594,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 11,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.004952836685392774,
+          "ci_low": -0.00175549063100759,
+          "ci_high": 0.011661164001793138,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.0007302152550202654,
+          "ci_low": -0.006345379816902861,
+          "ci_high": 0.007805810326943392,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 12,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0037724191099749475,
+          "ci_low": -0.007687447971460876,
+          "ci_high": 0.0001426097515109812,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.001632937011102342,
+          "ci_low": -0.006461312225193633,
+          "ci_high": 0.0031954382029889487,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 13,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0021281859748091734,
+          "ci_low": -0.004885704217559787,
+          "ci_high": 0.0006293322679414401,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.0025503120590681205,
+          "ci_low": -0.007417696965513339,
+          "ci_high": 0.0023170728473770976,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 14,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.00011259155018333126,
+          "ci_low": -0.003607795336759016,
+          "ci_high": 0.0038329784371256784,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.000838665792210493,
+          "ci_low": -0.006753668671493698,
+          "ci_high": 0.005076337087072712,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 15,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.0048864043731145085,
+          "ci_low": -0.008734553523892692,
+          "ci_high": 0.01850736227012171,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.004183694674938613,
+          "ci_low": -0.00819789919288039,
+          "ci_high": 0.016565288542757614,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 16,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.00025921382558775446,
+          "ci_low": -0.0034708518081799965,
+          "ci_high": 0.002952424157004488,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.001287265484853602,
+          "ci_low": -0.006892879047078815,
+          "ci_high": 0.004318348077371611,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 17,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0028900978290207773,
+          "ci_low": -0.008773061969248567,
+          "ci_high": 0.0029928663112070123,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.00210308002615834,
+          "ci_low": -0.006493496671245387,
+          "ci_high": 0.0022873366189287074,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 18,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": 0.0051023675237781025,
+          "ci_low": -0.008431923346284204,
+          "ci_high": 0.01863665839384041,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": 0.0030184360545929736,
+          "ci_low": -0.009803625984763548,
+          "ci_high": 0.015840498093949495,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      },
+      {
+        "seme": 19,
+        "n_pairs": 198,
+        "n_patients": 18,
+        "weighted": {
+          "mean": -0.0011444441366769168,
+          "ci_low": -0.007456269943314264,
+          "ci_high": 0.00516738166996043,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "equal": {
+          "mean": -0.00234084295228239,
+          "ci_low": -0.007119626403608807,
+          "ci_high": 0.002437940499044027,
+          "df": 7.793480487510651,
+          "n_groups": 18,
+          "n_obs": 198,
+          "sufficient": true,
+          "reason": ""
+        },
+        "contiene_zero": true
+      }
+    ],
+    "sintesi": {
+      "media": 3.6954400087979286e-05,
+      "min": -0.003995027662020784,
+      "max": 0.0051023675237781025,
+      "contiene_zero": 20,
+      "superato": true
+    }
+  },
+  "BE4": {
+    "candidate": 3,
+    "valutabile": false,
+    "dosi": []
+  },
+  "BE6": {
+    "varianti": {
+      "TRB, pareggi esclusi (default)": {
+        "n_units": 114,
+        "n_ties": 0,
+        "n_errors": 1,
+        "n_patients": 16,
+        "rate": {
+          "mean": 0.008771929824561403,
+          "ci_low": 0.0007190662705245778,
+          "ci_high": 0.09815118259909579,
+          "df": 6.376705749354266,
+          "n_groups": 16,
+          "n_obs": 114,
+          "sufficient": true,
+          "reason": ""
+        }
+      },
+      "TRA+TRB, pareggi esclusi": {
+        "n_units": 84,
+        "n_ties": 0,
+        "n_errors": 1,
+        "n_patients": 14,
+        "rate": {
+          "mean": 0.011904761904761904,
+          "ci_low": 0.0008633403052289671,
+          "ci_high": 0.14382921134079052,
+          "df": 5.405461887465824,
+          "n_groups": 14,
+          "n_obs": 84,
+          "sufficient": true,
+          "reason": ""
+        }
+      },
+      "TRB, pareggi = errore": {
+        "n_units": 114,
+        "n_ties": 0,
+        "n_errors": 1,
+        "n_patients": 16,
+        "rate": {
+          "mean": 0.008771929824561403,
+          "ci_low": 0.0007190662705245778,
+          "ci_high": 0.09815118259909579,
+          "df": 6.376705749354266,
+          "n_groups": 16,
+          "n_obs": 114,
+          "sufficient": true,
+          "reason": ""
+        }
+      },
+      "TRB, pareggi = corretti": {
+        "n_units": 114,
+        "n_ties": 0,
+        "n_errors": 1,
+        "n_patients": 16,
+        "rate": {
+          "mean": 0.008771929824561403,
+          "ci_low": 0.0007190662705245778,
+          "ci_high": 0.09815118259909579,
+          "df": 6.376705749354266,
+          "n_groups": 16,
+          "n_obs": 114,
+          "sufficient": true,
+          "reason": ""
+        }
+      }
+    },
+    "differenze": {
+      "TRB, pareggi esclusi (default)": 0.0,
+      "TRA+TRB, pareggi esclusi": 0.003132832080200501,
+      "TRB, pareggi = errore": 0.0,
+      "TRB, pareggi = corretti": 0.0
+    },
+    "ci_sotto_5_pazienti": [],
+    "cellule_TRA_TRB": 48963,
+    "cellule_TRB": 54190,
+    "superato": true
+  },
+  "descrittivi": {
+    "unita_per_identita": {
+      "CD4T": 4,
+      "CD8T": 110
+    },
+    "errori_per_direzione": {
+      "CD4T->CD8T": 1
+    },
+    "errori_per_paziente": {
+      "P31": 1
+    },
+    "cloni_con_riferimento": 394,
+    "cellule_con_trb": 54190
+  },
+  "secondi": 595.7
+}
