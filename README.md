@@ -96,19 +96,19 @@ definizione. Togliendo le etichette NK dalla convenzione per clone il tasso scen
 la quota dipende dall'ordine della scomposizione (sezione [Ipotesi e limiti](#ipotesi-e-limiti)).
 
 **Fedeltà del porting.** Con le stesse opzioni e la stessa regola dei pareggi (esclusi) la
-versione finale della tesi da cui lo strumento è stato portato (progetto-ml, ramo `revisione`,
+versione finale del caso studio da cui lo strumento è stato portato (progetto-ml, ramo `revisione`,
 commit 05947d0, `results/tables/error_rate_blood.csv`) riporta nel tumore 0,170 su 277 cloni e
 10 pazienti: lo strumento dà la stessa stima (0,16967509…, uguale fino all'ultima cifra) sugli
 stessi 277 cloni. L'intervallo è diverso perché il metodo è diverso: [0,100; 0,274] con
-l'intervallo t cluster-robusto dello strumento, [0,095; 0,252] con il bootstrap della tesi. Le
+l'intervallo t cluster-robusto dello strumento, [0,095; 0,252] con il bootstrap del caso studio. Le
 sensibilità ai pareggi (`--tie-rule error|correct`) danno 0,201 e 0,163 su 288 unità, contro
-0,199 e 0,164 su 287 nella tesi: l'unità in più è un pareggio (PA12, tumore) che compare perché
+0,199 e 0,164 su 287 nel caso studio: l'unità in più è un pareggio (PA12, tumore) che compare perché
 una sua cellula ha due contig TRB a pari UMI e lo strumento sceglie quello con più reads, mentre
-la tesi tiene il primo di un ordinamento non stabile. Ricostruendo nel codice dello strumento la
-scelta dei contig della tesi, tutti i valori coincidono, anche il clone TRA+TRB (0,154 su 227
+il caso studio tiene il primo di un ordinamento non stabile. Ricostruendo nel codice dello strumento la
+scelta dei contig del caso studio, tutti i valori coincidono, anche il clone TRA+TRB (0,154 su 227
 cloni; con la scelta dello strumento 0,152 su 231) (`validation/results/a1_moduleB.json`, sezione
-`fedelta_S5`). Il vecchio valore della tesi, 0,1951 [0,1230; 0,2737], che decideva i pareggi con
-l'ordine delle righe, è **superato**. I valori della tesi sono citati dal progetto da cui lo
+`fedelta_S5`). Il vecchio valore del caso studio, 0,1951 [0,1230; 0,2737], che decideva i pareggi con
+l'ordine delle righe, è **superato**. I valori del caso studio sono citati dal progetto da cui lo
 strumento è stato portato, non prodotti da questo codice.
 
 Il report HTML della demo (`audit-sc demo`, codice di questa versione), con la «Sintesi dei controlli» in apertura:
@@ -122,7 +122,7 @@ Il report HTML della demo (`audit-sc demo`, codice di questa versione), con la �
 | [GSE132465](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132465), carcinoma colorettale | audit del disegno, criteri D1-D4, contro uno script indipendente che non importa nulla da `core/` | prima esecuzione: **D2 e D4 falliti** (un difetto nella lettura dei valori mancanti, corretto nel commit `7bb30ca`); dopo la correzione: soddisfatti |
 | [GSE131907](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131907), adenocarcinoma polmonare | audit del disegno, criteri D1-D4 | soddisfatti dalla prima esecuzione |
 | [GSE125449](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125449), tumori primitivi del fegato | audit del disegno (D1-D4) e Modulo A (A1-A4: esecuzione, verifica indipendente, controllo negativo con 20 permutazioni, robustezza di formato) | disegno: soddisfatti. Modulo A, prima esecuzione: **A1 non terminato dopo 5 h 26 min, A4c fallito**; con il motore riscritto: A1-A4 soddisfatti sul dataset completo (19 pazienti). Sulla coorte ridotta a 10 pazienti la verifica indipendente A2 **non è soddisfatta** in LeaveOneGroupOut (0,7530 contro 0,7127: in 7 fold su 10 il paziente lasciato fuori non ha tutte le classi; `validation_esterna/REPORT.md`) |
-| [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | **verifica di fedeltà del porting**: con le regole della tesi il codice riproduce i numeri della tesi (`validation/gse278694_moduleB.py`). È lo stesso dataset su cui il metodo è nato: non è una validazione | riproduzione: tasso per clone nel tumore 0,170 su 277 cloni e 10 pazienti, uguale alla versione finale della tesi (stima e numero di cloni; l'intervallo differisce perché il metodo è diverso). Il vecchio valore 0,1951 è superato (`validation/results/a1_moduleB.json`) |
+| [GSE278694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE278694), adenocarcinoma pancreatico | **verifica di fedeltà del porting**: con le regole del caso studio il codice riproduce i numeri del caso studio (`validation/gse278694_moduleB.py`). È lo stesso dataset su cui il metodo è nato: non è una validazione | riproduzione: tasso per clone nel tumore 0,170 su 277 cloni e 10 pazienti, uguale alla versione finale del caso studio (stima e numero di cloni; l'intervallo differisce perché il metodo è diverso). Il vecchio valore 0,1951 è superato (`validation/results/a1_moduleB.json`) |
 
 Gli script «indipendenti» verificano che il codice segua le regole dichiarate (stessi numeri con un
 codice scritto da capo), non che le regole siano giuste.
@@ -161,7 +161,10 @@ pipeline che non raggruppa per paziente cambierebbe la macro-F1; sotto ±0,05 è
 e non se ne indica la direzione. Con almeno 8 pazienti ripete la valutazione con
 `LeaveOneGroupOut` su tre modelli (regressione logistica, random forest, gradient boosting),
 ciascuno confrontato con la regressione logistica, fissata come riferimento prima di vedere i
-dati. Il confronto è **descrittivo** (differenza delle medie e pazienti in cui un modello fa
+dati. La scelta dei tre modelli viene dal confronto di 13 modelli nel caso studio
+([progetto-ml](https://github.com/colasantoemanuele-cloud/progetto-ml), `src/11_model_zoo.py`): la
+logistica è veloce, stabile e fa già emergere la fuga di informazione; random forest e gradient
+boosting sono fra i migliori dove il confine fra le classi non è lineare (CD4/CD8/NK). Il confronto è **descrittivo** (differenza delle medie e pazienti in cui un modello fa
 meglio o peggio): né Nadeau-Bengio né Wilcoxon sono calibrati con un paziente per fold
 (sezione [Test](#test)), quindi nessun p-value è mostrato.
 
@@ -192,8 +195,8 @@ Il tasso d'errore è riportato con due convenzioni affiancate (`--convention bot
   le chiavi della mappa dei marcatori;
 - *per clone*: un'unità per coppia clone-compartimento con almeno 3 cellule, etichetta di
   maggioranza. Per default conta come errore **ogni** etichetta fuori dalla mappa, anche mieloide
-  o B; `--clone-error-labels NK` limita le etichette ammesse a NK, come nella tesi. Se due o più
-  etichette hanno lo stesso conteggio massimo l'unità è esclusa, come nella tesi, e il numero di
+  o B; `--clone-error-labels NK` limita le etichette ammesse a NK, come nel caso studio. Se due o più
+  etichette hanno lo stesso conteggio massimo l'unità è esclusa, come nel caso studio, e il numero di
   pareggi è riportato; `--tie-rule error|correct` li conta come errore o come corretti.
 
 Prima di ogni calcolo il Modulo B riporta la frazione di barcode VDJ ritrovati nei metadati e
@@ -229,13 +232,13 @@ annotazione:
 
 Le CD4 citotossiche, che esprimono programmi tipici delle CD8, **non** sono un'eccezione: restano
 della linea CD4, e una loro etichetta CD8 è un errore di linea che il modulo conta correttamente.
-Nella tesi (progetto pdac-ml) le cellule dei cloni discordanti etichettate CD8T nel tumore di
+Nel caso studio (progetto-ml) le cellule dei cloni discordanti etichettate CD8T nel tumore di
 GSE278694 esprimono CD8A più di rado dei cloni concordanti ed esprimono più GNLY, il che
 suggerisce che una parte siano CD4 citotossiche: una possibile causa di una parte delle chiamate
 CD8 sui cloni CD4 (0,45 nel tumore, `validation/results/a3_summary.json`).
 
 L'eccesso di discordanza è interpretabile solo con etichette di **linea** (CD4/CD8), non di stato
-(es. effettrici contro esauste). Nella tesi (schemi «naive» e «LOCO» di progetto-ml, in cui anche
+(es. effettrici contro esauste). Nel caso studio (schemi «naive» e «LOCO» di progetto-ml, in cui anche
 il sangue viene giudicato) l'errore è più frequente nel tumore che nel sangue; lo strumento non lo
 misura, perché usa il sangue come riferimento e non lo giudica, e non è detto che valga in altri
 dataset.
@@ -246,14 +249,14 @@ dalla convenzione per clone il tasso scende a 0,115, cioè del 72% di quella dif
 (`validation/results/b2_quota_nk.json`); aggiungendole invece alla convenzione per cellula (passo
 S2 → S3 della scala in `validation/results/a1_moduleB.json`) il tasso sale da 0,093 a 0,163, cioè
 di 0,070. La scomposizione non è additiva e la quota dipende dall'ordine: descrive il peso delle
-etichette NK, non attribuisce una causa. Nella tesi (README del progetto pdac-ml, sezione sui
+etichette NK, non attribuisce una causa. Nel caso studio (README di progetto-ml, sezione sui
 doppietti) due misure fisiche stimano fra le cellule NK con TCR una maggioranza di doppietti T+NK
 su tutti i tessuti insieme, ma non nel tumore, con intervalli larghi e copertura non verificata:
 una parte degli «errori» NK può essere fatta di doppietti, non di errori di annotazione.
 
 **Modulo B — validazione tecnica su due dataset reali.** Su GSE278694 la riproduzione dei numeri
-della tesi verifica la fedeltà del porting, non la correttezza del metodo. Gli intervalli con 4
-pazienti calcolati come nella tesi (per esempio la differenza Tumor − Adjacent_normal, +0,059
+del caso studio verifica la fedeltà del porting, non la correttezza del metodo. Gli intervalli con 4
+pazienti calcolati come nel caso studio (per esempio la differenza Tumor − Adjacent_normal, +0,059
 [0,000; 0,141] su 85 cloni, `validation/results/a1_moduleB.json`, passo S5) sono riportati negli
 output di verifica solo per confronto: lo strumento li rifiuta, e con 4 pazienti il bootstrap ha
 solo 35 ricampionamenti distinti. Su GSE200996 (carcinoma squamoso del cavo orale, 18 pazienti,
@@ -376,6 +379,8 @@ Esiti misurati (log in `docs/sviluppo/logs/`):
 
 | Prova | Commit | Esito |
 |---|---|---|
+| clone pulito della 0.9.1 (Python 3.13), `pytest --collect-only` e `pytest -m "not slow"`, senza i dati reali | 1342eed | 213 test raccolti; suite veloce **141 passed, 3 skipped**, in 3 min 46 s (`pytest_veloce_0.9.1_clone_pulito.txt`) |
+| suite completa della 0.9.1 con i dati di GSE278694, esecuzione dell'autore (log non incluso) | 0.9.1 | **206 passed, 7 xfailed** (213 test) |
 | clone pulito, `uv sync --extra dev`, demo e suite completa con i dati di GSE278694 (`GSE278694_DIR`) | df4f539 | demo exit 0 in 97 s; **192 passed, 7 xfailed**, 0 skipped, in 25 min 20 s |
 | copia di lavoro, `pytest -m "not slow"`, dopo le correzioni del giro di chiusura | commit finale della 0.9.0 | 133 passed |
 | clone pulito, `pip install -e ".[dev]"` (Python 3.13), `pytest -m "not slow"`, senza i dati reali | 69cf239 (non ripetuta) | 115 passed, 3 skipped |
@@ -435,7 +440,7 @@ data/demo/            dati pubblici GEO ridotti, usati dalla demo della web app
 tests/                test e calibrazioni (fixtures/: riferimenti di regressione)
 validation/           verifiche su GSE278694 (fedeltà del porting, diagnostiche) e results/
 validation_esterna/   validazione esterna su tre dataset GEO (criteri, report, verifiche indipendenti)
-revisione/            criteri, registro e risultati della revisione per la versione 1.0
+revisione/            criteri, registro e risultati della revisione che ha portato alla 0.9
 docs/                 guida per l'utente; sviluppo/: documenti interni e log delle suite
 LICENSE               licenza MIT
 ```
@@ -445,14 +450,16 @@ LICENSE               licenza MIT
 La correzione di Nadeau-Bengio, il cluster bootstrap e lo stimatore di discordanza a coppie del
 Modulo B sono stati portati (generalizzati: nomi di colonna configurabili) da un progetto
 precedente di ricerca su un dataset scRNA-seq + TCR-seq di adenocarcinoma duttale pancreatico.
-Nella revisione per la versione 1.0 il bootstrap percentile è stato sostituito, per gli intervalli
+Nella revisione che ha portato alla versione 0.9 il bootstrap percentile è stato sostituito, per gli intervalli
 esposti, dall'intervallo t cluster-robusto, perché con pochi pazienti non era calibrato.
 
 ## Autore e contesto
 
-**Emanuele Colasanto.** Il progetto nasce dal lavoro di tesi dell'autore su GSE278694
-(scRNA-seq e scTCR-seq di adenocarcinoma duttale pancreatico): i controlli che lì erano serviti
-per un solo dataset sono stati generalizzati in uno strumento riutilizzabile.
+**Emanuele Colasanto.** Il progetto nasce dal caso studio dell'autore su GSE278694
+(scRNA-seq e scTCR-seq di adenocarcinoma duttale pancreatico), svolto per l'esame di Machine
+Learning e pubblicato in [progetto-ml](https://github.com/colasantoemanuele-cloud/progetto-ml):
+i controlli che lì erano serviti per un solo dataset sono stati generalizzati in uno strumento
+riutilizzabile.
 
 Chi usa i dati citati in questa repo deve citare gli articoli di origine, non questo progetto:
 

@@ -25,7 +25,7 @@ assemblati dai file in `results/` da `make_report.py`.
 Tutte le accessioni sono state verificate leggendo le pagine GEO e scaricando i file (series
 matrix e file supplementari). Il Modulo B non è testato qui: su dati reali è stato eseguito
 solo su GSE278694, il dataset su cui è nato (verifica di fedeltà del porting, non una
-validazione: con la regola dei pareggi della versione finale della tesi, che li esclude, lo
+validazione: con la regola dei pareggi della versione finale del caso studio, che li esclude, lo
 strumento riproduce il tasso per clone nel tumore, 0,170 su 277 cloni e 10 pazienti; il vecchio
 valore 0,1951 è superato; `validation/results/a1_moduleB.json`); la sua validazione
 esterna è rimandata alla versione 1.0 (`docs/ROADMAP.md`).

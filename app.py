@@ -349,6 +349,7 @@ with tab_a:
         state = {"total": None}
 
         def cb(msg: str) -> None:
+            """Aggiorna la barra di avanzamento dai messaggi del Modulo A: totale previsto, poi passi [fatti/totale]."""
             if msg.startswith("Modulo A:"):
                 state["total"] = int(msg.split("Addestramenti previsti: ")[1].split()[0].rstrip("."))
                 bar.progress(0.0, text=msg)

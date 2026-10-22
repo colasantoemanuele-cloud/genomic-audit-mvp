@@ -242,7 +242,7 @@ GSE200996 ha un margine esattamente pari a 0,20.
 ## 4. Risultati descrittivi (non sono criteri)
 
 **Tumore dopo la terapia** (18 pazienti nell'h5ad principale):
-- tasso d'errore per clone (convenzione della tesi): 0,009 [0,001; 0,098], 114 unità da
+- tasso d'errore per clone (convenzione del caso studio): 0,009 [0,001; 0,098], 114 unità da
   16 pazienti, 1 unità in errore, nessun pareggio;
 - tasso d'errore per cellula: 0,006 [0,001; 0,033],
   1234 cellule da 18 pazienti;
@@ -260,14 +260,14 @@ clone 0,000 su 21 unità (pareggi: 0); per cellula
 0,000 su 175 cellule; eccesso non riportato dallo strumento con
 meno di 5 pazienti.
 
-**Come leggere questi numeri.** Il tasso d'errore è molto più basso di quello della tesi su
+**Come leggere questi numeri.** Il tasso d'errore è molto più basso di quello del caso studio su
 GSE278694 (0,170 per clone nel tumore), ma il confronto non è alla pari, per tre ragioni (le prime due
 scritte in `MAPPA_ETICHETTE.md` prima dell'esecuzione): (1) gli autori hanno tolto dalle etichette CD4 le cellule
 con CD8A/CD8B rilevati e dalle CD8 quelle con CD4 rilevato, cioè hanno già ripulito le etichette con
 gli stessi geni che il Modulo B usa per l'identità di riferimento; (2) le etichette vengono da un
 trasferimento da un riferimento CITE-seq con soglia di predizione, non da cluster; (3) i metadati
-contengono solo cellule T CD4/CD8: gli errori verso NK della tesi qui non possono comparire, e il
-confronto con la tesi riguarda solo CD4↔CD8. Inoltre quasi tutte le unità giudicate nel tumore
+contengono solo cellule T CD4/CD8: gli errori verso NK del caso studio qui non possono comparire, e il
+confronto con il caso studio riguarda solo CD4↔CD8. Inoltre quasi tutte le unità giudicate nel tumore
 appartengono a cloni CD8 (i cloni CD4 con almeno 3 cellule nel sangue e 3 nel tumore sono rari), e
 per questo il controllo positivo B-E4 non è valutabile.
 
@@ -280,7 +280,7 @@ mobile: un margine esattamente 0,20 era rifiutato in alcuni casi (3/5 contro 2/5
 7/10 contro 5/10; 3/10 contro 1/10; 6/10 contro 4/10) e accettato in altri (1/5 contro 0/5; 4/10
 contro 2/10; 8/10 contro 6/10). L'ha fatto emergere `indipendente.py`, che confronta in aritmetica
 esatta e aveva elencato il punto fra le sue assunzioni; verificato direttamente sulla funzione dello
-strumento. La tesi (pdac-ml, `src/10_loco.py`, `abs(f8 - f4) < MIN_MARGIN`) ha lo stesso confronto,
+strumento. Il caso studio (pdac-ml, `src/10_loco.py`, `abs(f8 - f4) < MIN_MARGIN`) ha lo stesso confronto,
 quindi lo strumento la riproduceva anche in questo. Correzione: confronto con tolleranza 1e-9 (un
 margine diverso da 0,20 ne dista almeno 1/(5n) per un clone di n cellule). Test di regressione
 `tests/test_reference_margin.py`: fallisce sul codice precedente (5 casi su 8 con margine

@@ -55,6 +55,8 @@ class InputError(ValueError):
 
 
 def _parse_technical(items: list[str]) -> dict[str, str]:
+    """Converte le voci --technical ``ruolo=colonna`` in ruolo -> colonna. Errore se il formato non è valido,
+    il ruolo non è ammesso o è ripetuto."""
     out = {}
     for item in items:
         if "=" not in item:
@@ -70,6 +72,8 @@ def _parse_technical(items: list[str]) -> dict[str, str]:
 
 
 def _parse_comparisons(items: list[str], declared: list[str], patient_col: str) -> list[tuple[str, str, str]]:
+    """Converte le voci --compare ``colonna:livello_a:livello_b`` in tuple. Errore se il formato non è valido
+    o se la colonna è quella del paziente o non è dichiarata."""
     out = []
     for item in items:
         parts = item.split(":")
@@ -86,6 +90,7 @@ def _parse_comparisons(items: list[str], declared: list[str], patient_col: str) 
 
 
 def _print_design(result) -> None:
+    """Stampa la narrativa dell'audit del disegno, una riga per coppia di fattori e le note."""
     print(result.narrative)
     for pr in result.pairs:
         print(" -", pr.sentence)
@@ -94,6 +99,7 @@ def _print_design(result) -> None:
 
 
 def _cmd_design(args: argparse.Namespace) -> None:
+    """Comando ``design``: audit del disegno dai metadati (CSV/TSV o adata.obs), stampa e report HTML."""
     technical = _parse_technical(args.technical)
     cols = list(dict.fromkeys([args.patient_col] + ([args.tissue_col] if args.tissue_col else [])
                               + list(technical.values()) + list(args.outcome_col)))
@@ -125,9 +131,11 @@ class _ProgressLine:
     """Avanzamento su una sola riga aggiornata (su terminale) o una riga per passo (su file)."""
 
     def __init__(self) -> None:
+        """Annota se stderr è un terminale."""
         self.tty = sys.stderr.isatty()
 
     def __call__(self, msg: str) -> None:
+        """Scrive un messaggio su stderr: su terminale i passi «[i/n]» sovrascrivono la riga corrente."""
         if self.tty and msg.startswith("["):
             sys.stderr.write("\r\033[K" + msg)
         else:
@@ -141,6 +149,7 @@ class _ProgressLine:
 
 
 def _cmd_leakage(args: argparse.Namespace) -> None:
+    """Comando ``leakage``: Modulo A con avanzamento su stderr, stampa della narrativa e report HTML."""
     adata = ad.read_h5ad(args.h5ad)
     progress = _ProgressLine()
     result = run_leakage_audit(
@@ -175,10 +184,13 @@ def _cmd_serve(args: argparse.Namespace) -> None:
 
 
 def _csv_list(value: str | None) -> list[str] | None:
+    """Valori separati da virgola, senza spazi né voci vuote; None se ``value`` è None."""
     return None if value is None else [x.strip() for x in value.split(",") if x.strip()]
 
 
 def _read_marker_map(path: Path | None) -> dict[str, list[str]] | None:
+    """Legge e valida la mappa dei marcatori JSON; None se ``path`` è None. Errore d'input se il file è
+    illeggibile o la mappa non è valida."""
     if path is None:
         return None
     try:
@@ -192,6 +204,8 @@ def _read_marker_map(path: Path | None) -> dict[str, list[str]] | None:
 
 
 def _cmd_tcr(args: argparse.Namespace) -> None:
+    """Comando ``tcr``: Modulo B, stampa e report HTML; se richiesti, esporta i flag per cellula e stampa la
+    frazione di CD8 sperimentale."""
     if args.sperimentale_cd8 and not (args.marker_map and args.reference_compartment):
         raise InputError("--sperimentale-cd8 richiede --marker-map e --reference-compartment")
     if args.export_flags and not (args.marker_map and args.reference_compartment):
@@ -237,6 +251,8 @@ def _cmd_tcr(args: argparse.Namespace) -> None:
 
 
 def _cmd_demo(args: argparse.Namespace) -> None:
+    """Comando ``demo``: genera i dati sintetici, esegue disegno, Modulo A e Modulo B e scrive il report HTML
+    e i file VDJ di esempio."""
     out_dir = Path(args.data_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     print(USE_WARNING + "\n")

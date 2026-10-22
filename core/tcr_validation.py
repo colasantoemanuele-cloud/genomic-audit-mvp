@@ -167,6 +167,8 @@ class BarcodeMatch:
 
 
 def _match_fraction(obs: pd.DataFrame, clones: pd.DataFrame) -> tuple[int, float]:
+    """Numero e frazione dei barcode VDJ ritrovati nei metadati (chiave paziente, compartimento, libreria,
+    barcode)."""
     if clones.empty:
         return 0, 0.0
     n = len(clones.merge(obs[_KEY].drop_duplicates(), on=_KEY, how="inner"))
@@ -174,10 +176,12 @@ def _match_fraction(obs: pd.DataFrame, clones: pd.DataFrame) -> tuple[int, float
 
 
 def _strip(b: pd.Series) -> pd.Series:
+    """Barcode senza il suffisso finale "-N"."""
     return b.astype(str).str.replace(_SUFFIX_RE, "", regex=True)
 
 
 def _duplicate_key_error(obs: pd.DataFrame) -> None:
+    """Errore se più righe dei metadati condividono paziente, compartimento, libreria e barcode."""
     dup = obs.duplicated(_KEY, keep=False)
     if dup.any():
         ex = obs.loc[dup, _KEY].head(3).to_dict(orient="records")
@@ -251,6 +255,7 @@ def within_compartment_discordance(labels: np.ndarray) -> float:
 
 
 def _label_proportions(labels: np.ndarray, categories: np.ndarray) -> np.ndarray:
+    """Proporzione di ogni etichetta di ``categories`` in ``labels``; tutti zeri se ``labels`` è vuoto."""
     counts = pd.Series(labels).value_counts().reindex(categories, fill_value=0).values
     total = counts.sum()
     return counts / total if total else counts.astype(float)
@@ -319,6 +324,8 @@ class DiscordanceResult:
 
 
 def _summarize_discordance(pw: pd.DataFrame, min_patients_for_ci: int) -> DiscordanceResult:
+    """Eccesso di discordanza complessivo, a pesi uguali e per coppia di compartimenti, con intervallo t
+    cluster-robusto sui pazienti."""
     if pw.empty:
         return DiscordanceResult(n_pairs=0, n_patients=0, mean_excess=float("nan"),
                                  ci_low=float("nan"), ci_high=float("nan"), sufficient=False,
@@ -343,6 +350,7 @@ def _summarize_discordance(pw: pd.DataFrame, min_patients_for_ci: int) -> Discor
 # (B, opzionale) Tasso d'errore per compartimento via marcatori canonici
 # --------------------------------------------------------------------------- #
 def _check_counts(values: np.ndarray, what: str) -> None:
+    """Errore se i valori non sono conteggi grezzi (negativi o non interi)."""
     if values.size and (values < 0).any():
         raise ValueError(f"{what}: valori negativi; servono conteggi grezzi (interi >= 0)")
     if values.size and not np.allclose(values, np.round(values)):
@@ -607,6 +615,8 @@ def clone_level_units(
 
 
 def _summarize_units(units: pd.DataFrame, min_patients_for_ci: int) -> dict[str, ClusterInterval]:
+    """Tasso d'errore per compartimento sulle unità con errore definito: intervallo t cluster-robusto sui
+    pazienti, su scala logit."""
     out = {}
     for comp, g in units.dropna(subset=["error"]).groupby("compartment", observed=True):
         out[str(comp)] = cluster_t_interval(g["error"].values.astype(float), g["patient"].values,
@@ -729,11 +739,13 @@ class TcrValidationResult:
 
 
 def _fmt_ci(res: ClusterInterval, signed: bool = False) -> str:
+    """IC95% in testo, con il segno se ``signed``."""
     f = "+.3f" if signed else ".3f"
     return f"IC95% [{res.ci_low:{f}}, {res.ci_high:{f}}]"
 
 
 def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> str:
+    """Frase sull'eccesso di discordanza: stima, IC95%, lettura del risultato e sensibilità a pesi uguali."""
     if not d.sufficient and d.n_patients < min_patients_for_ci:
         return (f"Eccesso di discordanza: intervallo non prodotto ({d.n_patients} pazienti "
                 f"contribuiscono cloni comparabili, ne servono almeno {min_patients_for_ci}; "
@@ -767,6 +779,8 @@ def _discordance_narrative(d: DiscordanceResult, min_patients_for_ci: int) -> st
 
 def _conventions_narrative(conv: dict[str, ConventionResult] | None, reference_compartment: str,
                            min_patients_for_ci: int) -> str:
+    """Testo dei tassi d'errore per compartimento e delle differenze appaiate per ogni convenzione; vuoto
+    se non ci sono convenzioni."""
     if not conv:
         return ""
     parts = [f" Tasso d'errore dell'annotazione rispetto all'identità clonale dai marcatori "

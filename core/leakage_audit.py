@@ -67,6 +67,7 @@ class LogCPM(BaseEstimator, TransformerMixin):
     causare leakage, ma resta in Pipeline per garantire l'ordine delle operazioni."""
 
     def __init__(self, target_sum: float = 1e4):
+        """``target_sum``: totale a cui è riscalata ogni cellula prima del log1p."""
         self.target_sum = target_sum
 
     def fit(self, X, y=None):  # noqa: ARG002
@@ -90,6 +91,7 @@ class HVGSelector(BaseEstimator, TransformerMixin):
     Lavora sulla matrice sparsa, senza densificarla."""
 
     def __init__(self, n_top: int = N_HVG_DEFAULT):
+        """``n_top``: numero di geni da selezionare."""
         self.n_top = n_top
 
     def fit(self, X, y=None):  # noqa: ARG002
@@ -109,6 +111,8 @@ class HVGSelector(BaseEstimator, TransformerMixin):
 
 
 def _pipeline(estimator: BaseEstimator, reduce: bool, n_hvg: int, n_svd: int, seed: int) -> Pipeline:
+    """Pipeline di un fold: log-CPM, HVG, standardizzazione senza centratura, SVD se ``reduce`` e
+    classificatore."""
     steps = [("logcpm", LogCPM()), ("hvg", HVGSelector(n_top=n_hvg)),
              ("scale", StandardScaler(with_mean=False))]
     if reduce:
@@ -118,6 +122,7 @@ def _pipeline(estimator: BaseEstimator, reduce: bool, n_hvg: int, n_svd: int, se
 
 
 def _reference_model(seed: int) -> LogisticRegression:
+    """Classificatore di riferimento: regressione logistica con pesi bilanciati per classe."""
     return LogisticRegression(C=1.0, class_weight="balanced", max_iter=1000, random_state=seed)
 
 
@@ -212,6 +217,7 @@ class _Clock:
     """Avanzamento: numero di addestramenti fatti/previsti, tempo trascorso e stima."""
 
     def __init__(self, total: int, progress: Progress | None):
+        """``total``: addestramenti previsti; ``progress``: funzione che riceve i messaggi, o None."""
         self.total, self.done, self.t0, self.progress = total, 0, time.time(), progress
 
     def step(self, what: str) -> None:
@@ -226,6 +232,8 @@ class _Clock:
 
 
 def _top_genes(pipe: Pipeline, gene_names: np.ndarray, k: int) -> list[str]:
+    """I ``k`` geni HVG con coefficiente assoluto più grande (massimo fra le classi) nel classificatore
+    lineare della pipeline."""
     clf = pipe.named_steps["clf"]
     coef = np.abs(np.atleast_2d(clf.coef_)).max(axis=0)
     hvg = pipe.named_steps["hvg"].genes_
@@ -382,6 +390,8 @@ class XaiStability:
 
 
 def _jaccard_matrix(sets: list[list[str]]) -> np.ndarray:
+    """Matrice simmetrica dei Jaccard fra le liste di geni dei fold: 1 sulla diagonale, NaN se due liste
+    sono entrambe vuote."""
     n = len(sets)
     m = np.ones((n, n))
     for i in range(n):
@@ -392,6 +402,7 @@ def _jaccard_matrix(sets: list[list[str]]) -> np.ndarray:
 
 
 def _off_diag_mean(m: np.ndarray) -> float:
+    """Media dei valori fuori diagonale; NaN con meno di due fold."""
     n = m.shape[0]
     return float(m[~np.eye(n, dtype=bool)].mean()) if n > 1 else float("nan")
 
@@ -419,6 +430,8 @@ class LeakageAuditResult:
 
 
 def _narrative(grouped: SchemeSummary, random_: SchemeSummary, gap: float, std_ratio: float) -> str:
+    """Testo del Modulo A: macro-F1 dei due schemi, divario rispetto alla soglia di rumore e avvertenze
+    (classi assenti, mancata convergenza, sottocampionamento)."""
     if abs(gap) <= GAP_ALERT:
         gap_txt = (f"Divario sulla media: {gap:+.3f}, entro la soglia di rumore dichiarata (±{GAP_ALERT:g}): "
                    f"nessuna direzione indicata.")

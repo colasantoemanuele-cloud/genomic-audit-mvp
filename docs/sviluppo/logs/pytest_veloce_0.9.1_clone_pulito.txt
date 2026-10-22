@@ -1,0 +1,7 @@
+tests/test_input_errors.py::test_cli_sperimentale_cd8_assigns_flags_by_position_with_duplicate_obs_names
+  <clone>/cli.py:199: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.
+    adata = ad.read_h5ad(args.h5ad)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+141 passed, 3 skipped, 69 deselected, 65 warnings in 225.96s (0:03:45)
+

@@ -121,10 +121,12 @@ class SectionSummary:
 
 
 def _coppie(n: int) -> str:
+    """«1 coppia» oppure «n coppie»."""
     return "1 coppia" if n == 1 else f"{n} coppie"
 
 
 def _is_structural(p) -> bool:
+    """True se la coppia di fattori è annidata o coincidente (relazione strutturale)."""
     return bool(p.a_nested_in_b or p.b_nested_in_a or p.one_to_one)
 
 

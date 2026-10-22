@@ -178,6 +178,8 @@ def _scale(P: np.ndarray, k: float) -> np.ndarray | None:
 
 
 def _youden(P: np.ndarray) -> float:
+    """J = b8/(a8+b8) - b4/(a4+b4) della matrice ``P`` (vedi il docstring del modulo); NaN se una riga
+    non ha chiamate CD4 o CD8."""
     a4, b4, a8, b8 = P[0, 0], P[0, 1], P[1, 0], P[1, 1]
     if a8 + b8 <= 0 or a4 + b4 <= 0:
         return float("nan")
@@ -203,6 +205,7 @@ def invertible_range(P: np.ndarray) -> tuple[float, float]:
 
 
 def _fmt_interval(iv: ScenarioInterval) -> str:
+    """Intervallo di uno scenario in testo («1x: fra A e B») oppure il motivo per cui non è prodotto."""
     label = f"{iv.factor:g}x"
     if iv.low is None:
         return f"{label}: non prodotto ({iv.refused_reason})"
@@ -381,6 +384,7 @@ def format_cd8_text(result: CD8PropagationResult) -> str:
     notes = refusal_notes(result)
 
     def cell(iv: ScenarioInterval) -> str:
+        """Cella della tabella: intervallo dello scenario o «non prodotto» con il numero della nota."""
         return (f"{iv.low:.2f}-{iv.high:.2f}" if iv.low is not None
                 else f"non prodotto [{notes[iv.refused_reason]}]")
 

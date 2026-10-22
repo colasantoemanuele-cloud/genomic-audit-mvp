@@ -215,6 +215,7 @@ def cluster_t_interval(
     mean = float(v.mean())
 
     def refused(reason: str, df: float | None = None) -> ClusterInterval:
+        """Intervallo non prodotto: solo la media, con il motivo."""
         return ClusterInterval(mean, float("nan"), float("nan"), G, len(v), False, method, df, reason)
 
     if G < max(min_groups, 2):

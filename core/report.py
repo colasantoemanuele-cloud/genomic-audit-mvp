@@ -65,6 +65,7 @@ img { max-width: 100%; height: auto; display: block; margin: .8rem 0; }
 
 
 def _fig_to_data_uri(fig) -> str:
+    """Converte la figura in PNG incorporato come data URI e la chiude."""
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -84,11 +85,13 @@ def _card_class(summary: SectionSummary) -> str:
 
 
 def _limits_section() -> str:
+    """Sezione HTML dei limiti dichiarati."""
     items = "".join(f"<li>{html.escape(x)}</li>" for x in standing_limits())
     return f'<h2>Limiti dichiarati</h2><div class="card verdict-no"><ul class="narrative">{items}</ul></div>'
 
 
 def _summary_section(sections: list[SectionSummary]) -> str:
+    """Sezione HTML della sintesi dei controlli: una riga per controllo e le regole di ogni sezione."""
     rows = "".join(
         f"<tr><td>{html.escape(s.section)}</td><td>{html.escape(c.name)}</td>"
         f'<td><span class="tag tag-{c.state}">{html.escape(c.label)}</span></td>'
@@ -110,6 +113,7 @@ _KIND_LABEL = {
 
 
 def _design_section(result: DesignAuditResult) -> str:
+    """Sezione HTML dell'audit del disegno: confronti richiesti, fatti strutturali, Cramér V e note."""
     structural = [f for f in result.findings
                   if f.kind in ("annidamento", "uno-a-uno", "esito-determinato", "unità-tecnica")]
     verdict_cls = "verdict-warn" if structural else _card_class(design_summary(result))
@@ -167,6 +171,7 @@ def _design_section(result: DesignAuditResult) -> str:
 # Modulo A
 # --------------------------------------------------------------------------- #
 def _leakage_chart(result: LeakageAuditResult) -> str:
+    """Grafico a barre della macro-F1 media ± dev. std dei due split, come data URI."""
     fig, ax = plt.subplots(figsize=(5, 3.5))
     labels = ["Split per paziente", "Split casuale\n(controllo negativo)"]
     means = [result.grouped.mean, result.random.mean]
@@ -180,6 +185,7 @@ def _leakage_chart(result: LeakageAuditResult) -> str:
 
 
 def _model_comparison_chart(mc: ModelComparisonResult) -> str:
+    """Grafico a barre orizzontali della macro-F1 media ± dev. std per modello, come data URI."""
     names = list(mc.scores)
     means = np.array([mc.scores[n].mean for n in names])
     stds = np.array([mc.scores[n].std for n in names])
@@ -193,6 +199,8 @@ def _model_comparison_chart(mc: ModelComparisonResult) -> str:
 
 
 def _leakage_section(result: LeakageAuditResult) -> str:
+    """Sezione HTML del Modulo A: numeri con il loro significato, grafico e confronto fra modelli (o il
+    motivo per cui non è eseguito)."""
     verdict_cls = _card_class(leakage_summary(result))
     tag = (f'<span class="tag tag-warn">divario oltre la soglia di ±{GAP_ALERT:g}</span>' if abs(result.gap) > GAP_ALERT
            else f'<span class="tag tag-ok">divario entro la soglia di ±{GAP_ALERT:g}</span>')
@@ -260,6 +268,8 @@ def _leakage_section(result: LeakageAuditResult) -> str:
 # Modulo B
 # --------------------------------------------------------------------------- #
 def _discordance_chart(result: TcrValidationResult) -> str | None:
+    """Eccesso di discordanza con IC95% per coppia di compartimenti, come data URI; None se non ci sono
+    coppie."""
     d = result.discordance
     if d.by_compartment_pair.empty:
         return None
@@ -279,6 +289,8 @@ def _discordance_chart(result: TcrValidationResult) -> str | None:
 
 
 def _marker_error_chart(m: MarkerErrorResult) -> str | None:
+    """Tasso d'errore per compartimento con IC95% (solo compartimenti con IC prodotto), come data URI; None
+    se non ce n'è nessuno."""
     comps = [c for c, r in m.by_compartment.items() if r.sufficient]
     if not comps:
         return None
@@ -295,6 +307,8 @@ def _marker_error_chart(m: MarkerErrorResult) -> str | None:
 
 
 def _tcr_section(result: TcrValidationResult) -> str:
+    """Sezione HTML del Modulo B: discordanza, tassi d'errore per convenzione e copertura dei flag per
+    cellula."""
     d = result.discordance
     if not d.sufficient:
         tag = f'<span class="tag tag-warn">intervallo non prodotto: {html.escape(d.reason)}</span>'
@@ -379,6 +393,8 @@ def _tcr_section(result: TcrValidationResult) -> str:
         comps = sorted({c for conv in result.conventions.values() for c in conv.by_compartment})
 
         def fmt(res, ties=None):
+            """Cella di testo: media con IC, pazienti e unità, o il motivo per cui l'IC non è prodotto; «—» se
+            ``res`` è None."""
             if res is None:
                 return "—"
             units = f"{res.n_obs} unità" + (f"; unità in pareggio: {ties}" if ties is not None else "")

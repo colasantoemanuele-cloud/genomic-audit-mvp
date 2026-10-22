@@ -76,7 +76,7 @@ non è stato verificato, perché con 4 pazienti E1 fallisce comunque.
 
 Nessuno: il modulo non è stato eseguito. Una nota per chi riprenderà il lavoro su un altro dataset
 o su questo: `GSE139555_tcell_metadata.txt.gz` contiene solo cellule T, quindi gli errori verso NK
-osservati nella tesi non potrebbero comparire, e il confronto con la tesi riguarderebbe solo
+osservati nel caso studio non potrebbero comparire, e il confronto con il caso studio riguarderebbe solo
 CD4↔CD8.
 
 ## 4. Difetti trovati e correzioni

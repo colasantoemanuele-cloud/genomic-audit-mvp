@@ -259,6 +259,8 @@ def _pair_sentence(a: str, b: str, n: int, r: int, c: int, v: float | None, alar
 def _pairs_and_findings(
     sheet: pd.DataFrame, roles: dict[str, str], outcome_like: list[str], v_threshold: float,
 ) -> tuple[list[PairAssociation], list[StructuralFinding]]:
+    """Cramér V per ogni coppia di fattori non costanti né identificatori, e fatti strutturali: fattori
+    costanti, identificatori, coincidenze, annidamenti ed esiti determinati."""
     cols = list(roles)
     findings: list[StructuralFinding] = []
     n = len(sheet)
@@ -526,6 +528,7 @@ def assess_comparison(
 # 3. Scomposizione della varianza su pseudobulk
 # --------------------------------------------------------------------------- #
 def _design_matrix(factors: pd.DataFrame, cols: list[str]) -> np.ndarray:
+    """Matrice di disegno: intercetta più le variabili indicatrici (drop_first) dei fattori ``cols``."""
     parts = [np.ones((len(factors), 1))]
     for c in cols:
         d = pd.get_dummies(factors[c].astype(str), drop_first=True).values.astype(float)
@@ -535,6 +538,7 @@ def _design_matrix(factors: pd.DataFrame, cols: list[str]) -> np.ndarray:
 
 
 def _rss(X: np.ndarray, Y: np.ndarray) -> tuple[np.ndarray, int]:
+    """Somma dei quadrati dei residui dei minimi quadrati per ogni colonna di ``Y`` e rango di ``X``."""
     beta, *_ = np.linalg.lstsq(X, Y, rcond=None)
     resid = Y - X @ beta
     return (resid ** 2).sum(axis=0), int(np.linalg.matrix_rank(X))
@@ -583,6 +587,7 @@ def variance_shares(Y: np.ndarray, factors: pd.DataFrame,
 
 
 def _refused(reason: str, n_units: int, n_patients: int, n_genes: int) -> VarianceDecomposition:
+    """Scomposizione della varianza non identificabile: nessuna quota, con il motivo nella frase."""
     return VarianceDecomposition(
         identifiable=False, reason=reason, n_units=n_units, n_patients=n_patients,
         n_genes=n_genes, shares=[], residual_share=None,

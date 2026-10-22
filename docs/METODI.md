@@ -54,7 +54,7 @@ usato prima della revisione, è troppo stretto con pochi gruppi: 14,5% di interv
 valore vero con 5 pazienti nello scenario normale (test di calibrazione); nelle simulazioni
 esplorative che hanno guidato la scelta del metodo, 18% con 5 pazienti e 9% con 10, e BCa 17% con 5
 (`revisione/REGISTRO.md`, Fase 1). Il percentile resta nel codice
-(`cluster_bootstrap`) solo per riprodurre i numeri della tesi e per la frazione di CD8
+(`cluster_bootstrap`) solo per riprodurre i numeri del caso studio e per la frazione di CD8
 sperimentale.
 
 ## 3. Eccesso di discordanza (Modulo B)
@@ -77,7 +77,7 @@ parti uguali fra due etichette, come nel caso simulato di `tests/test_input_erro
 indica quindi assenza di errori, e la sintesi lo mostra in giallo.
 
 **Ipotesi biologica.** Lo stesso clone ha la stessa linea CD4/CD8. Eccezioni: CD4 con CD8αα,
-MAIT, NKT e γδ, doppietti T-NK, RNA ambientale specifico del compartimento. Le CD4 citotossiche, che esprimono programmi tipici delle CD8, NON sono un'eccezione: restano della linea CD4, e una loro etichetta CD8 è un errore di linea che il modulo conta correttamente; nella tesi (progetto pdac-ml) sono indicate come possibile causa di una parte delle chiamate CD8 sui cloni CD4 nel tumore di GSE278694. Solo
+MAIT, NKT e γδ, doppietti T-NK, RNA ambientale specifico del compartimento. Le CD4 citotossiche, che esprimono programmi tipici delle CD8, NON sono un'eccezione: restano della linea CD4, e una loro etichetta CD8 è un errore di linea che il modulo conta correttamente; nel caso studio (progetto-ml) sono indicate come possibile causa di una parte delle chiamate CD8 sui cloni CD4 nel tumore di GSE278694. Solo
 etichette di linea, non di stato.
 
 ## 4. Tasso d'errore via marcatori (Modulo B)
@@ -91,20 +91,20 @@ seconda è almeno 0,20; altrimenti il clone non ha riferimento.
 riferimento, con etichetta fra le chiavi della mappa dei marcatori; errore se l'etichetta è diversa
 dall'identità.
 
-**Convenzione per clone** (definizione della tesi). Unità = coppia clone-compartimento con almeno 3
+**Convenzione per clone** (definizione del caso studio). Unità = coppia clone-compartimento con almeno 3
 cellule; errore se l'etichetta di maggioranza è diversa dall'identità; le etichette fuori mappa
 ammesse (default: tutte) contano come errore; con `--clone-marker-priority` la positività è
 esclusiva in quell'ordine. Pareggi della maggioranza (due o più etichette con lo stesso conteggio
-massimo): l'etichetta di maggioranza non è definita e l'unità è esclusa dal tasso, come nella tesi
+massimo): l'etichetta di maggioranza non è definita e l'unità è esclusa dal tasso, come nel caso studio
 (progetto-ml, `10_loco.py`); il numero di pareggi è riportato accanto a ogni tasso. Come
 sensibilità, `--tie-rule error` li conta come errore e `--tie-rule correct` come corretti: le due
 sensibilità usano le stesse unità più i pareggi. La regola non dipende dall'ordine delle righe.
 
 **Scelta del contig.** Se una cellula ha più contig della stessa catena, vince quello con più UMI,
-poi quello con più reads, poi la CDR3 minore in ordine alfabetico. La tesi teneva il primo dopo un
+poi quello con più reads, poi la CDR3 minore in ordine alfabetico. Il caso studio teneva il primo dopo un
 ordinamento per UMI non stabile: su GSE278694 155 cellule hanno una CDR3 TRB diversa e 879 una CDR3
 TRA diversa. Con la regola di esclusione dei pareggi il tasso per clone (TRB) coincide comunque con
-quello della tesi; la sola unità in più (PA12, tumore) è un pareggio
+quello del caso studio; la sola unità in più (PA12, tumore) è un pareggio
 (`validation/results/a1_moduleB.json`, sezione `fedelta_S5`).
 
 Intervalli: sezione 2, su scala logit. Calibrazione: scenari «cellula» e «clone» della sezione 2.
